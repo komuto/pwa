@@ -1,0 +1,14 @@
+# MAC
+#
+.DS_Store
+.next/
+.env
+
+# node.js
+#
+node_modules/
+npm-debug.log
+.gitmodules
+
+# yarn
+*.log
