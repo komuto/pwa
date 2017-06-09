@@ -1,7 +1,7 @@
 // flow
 
-export default (({ title, linkTo, lastUpdate, light, onPress }) => {
+export default ({ title, linkTo, lastUpdate, light, onPress }) => {
   return (
     <div />
   )
-})
+}

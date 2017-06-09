@@ -7,7 +7,6 @@ import Router from 'next/router'
 import AuthActions, {isLoggedIn} from '../Redux/AuthRedux'
 
 class GuardContainer extends Component {
-
   state:{
     user: Object
   }

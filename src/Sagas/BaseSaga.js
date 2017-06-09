@@ -2,7 +2,7 @@ import {take, fork, call, put} from 'redux-saga/effects'
 import {END} from 'redux-saga'
 import AuthActions from './AuthSagas'
 
-export function* baseListen (type, fetchSaga, api, token) {
+export function * baseListen (type, fetchSaga, api, token) {
   let action = yield take(type)
   while (action !== END) {
     if (token) {
@@ -14,7 +14,7 @@ export function* baseListen (type, fetchSaga, api, token) {
   }
 }
 
-export function* baseFetchToken (api, data, getToken, successAction, failureAction) {
+export function * baseFetchToken (api, data, getToken, successAction, failureAction) {
   const token = yield call(getToken)
   if (!token) {
     yield put(AuthActions.authLogout())
@@ -31,7 +31,7 @@ export function* baseFetchToken (api, data, getToken, successAction, failureActi
   }
 }
 
-export function* baseFetchNoToken (api, data, successAction, failureAction) {
+export function * baseFetchNoToken (api, data, successAction, failureAction) {
   const res = yield call(api, data)
   if (!res.ok) {
     return yield put(failureAction('Terjadi kesalahan, ulangi beberapa saat lagi'))
@@ -43,7 +43,7 @@ export function* baseFetchNoToken (api, data, successAction, failureAction) {
   }
 }
 
-export function* baseFetchSideEffectToken (api, data, getToken, successAction, failureAction, sideEffect) {
+export function * baseFetchSideEffectToken (api, data, getToken, successAction, failureAction, sideEffect) {
   const token = yield call(getToken)
   if (!token) {
     return yield put(AuthActions.authLogout())

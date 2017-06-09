@@ -18,7 +18,7 @@ export default function reduxWrapper (ReduxComponent:Object) {
         store.dispatch(BannerActions.bannerServer())
         store.dispatch(END)
         await rootTask.done.then(() => {
-          return
+
         })
         return {query}
       } else {

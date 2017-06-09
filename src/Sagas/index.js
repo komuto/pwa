@@ -16,13 +16,13 @@ import API from '../Services/Api'
 // to the sagas which need it.
 const api = API.create()
 
-function* serverSagas () {
+function * serverSagas () {
   yield [
     fork(fetchBannerServer, api)
   ]
 }
 
-function* clientSagas () {
+function * clientSagas () {
   yield [
     takeLatest(StartupTypes.STARTUP, startup),
     fork(logout),
@@ -31,7 +31,7 @@ function* clientSagas () {
   ]
 }
 
-export default function* root () {
+export default function * root () {
   yield [
     fork(serverSagas),
     fork(clientSagas)

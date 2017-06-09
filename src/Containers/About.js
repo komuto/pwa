@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import {Images} from '../Themes'
 
 class About extends Component {
-
   state : {
     payload: any,
     fetching: boolean

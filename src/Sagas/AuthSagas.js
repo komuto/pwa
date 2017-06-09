@@ -8,13 +8,13 @@ import {baseListen, baseFetchToken, baseFetchNoToken} from './BaseSaga'
 // validator config
 
 // attempts to login
-export function* login (api) {
+export function * login (api) {
   yield baseListen(AuthTypes.AUTH_REQUEST,
     fetchLoginAPI,
     api)
 }
 // change password
-export function* changePassword (api, getToken) {
+export function * changePassword (api, getToken) {
   yield baseListen(AuthTypes.AUTH_CHANGE_PASSWORD_REQUEST,
     fetchChangePasswordAPI,
     api,
@@ -23,14 +23,14 @@ export function* changePassword (api, getToken) {
 }
 
 // forgot password
-export function* forgot (api) {
+export function * forgot (api) {
   yield baseListen(AuthTypes.AUTH_FORGOT_PASSWORD_REQUEST,
     fetchForgotPasswordAPI,
     api)
 }
 
 // attempts to logout
-export function* logout () {
+export function * logout () {
   let action = yield take(AuthTypes.AUTH_LOGOUT)
   while (action !== END) {
     yield localforage.removeItem('access_token')
@@ -38,7 +38,7 @@ export function* logout () {
   }
 }
 
-export function* fetchLoginAPI (api, { data }) {
+export function * fetchLoginAPI (api, { data }) {
   const hasError = validate(data, AuthValidator.loginConstraints, {format: 'custom'})
   if (hasError) {
     yield put(AuthActions.authFailure(hasError[0]))
@@ -56,7 +56,7 @@ export function* fetchLoginAPI (api, { data }) {
 }
 
 // change password API
-export function* fetchChangePasswordAPI (api, getToken, { data }) {
+export function * fetchChangePasswordAPI (api, getToken, { data }) {
   const hasError = validate(data, AuthValidator.changePasswordConstraints, {format: 'custom'})
   if (hasError) {
     return yield put(AuthActions.authChangePasswordFailure(hasError[0]))
@@ -70,7 +70,7 @@ export function* fetchChangePasswordAPI (api, getToken, { data }) {
 }
 
 // forgot password API
-export function* fetchForgotPasswordAPI (api, { data }) {
+export function * fetchForgotPasswordAPI (api, { data }) {
   const hasError = validate(data, AuthValidator.forgotConstraints, {format: 'custom'})
   if (hasError) {
     return yield put(AuthActions.authForgotPasswordFailure(hasError[0]))
