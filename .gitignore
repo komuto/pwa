@@ -3,6 +3,7 @@
 .DS_Store
 .next/
 .env
+.vscode
 
 # node.js
 #
@@ -12,3 +13,5 @@ npm-debug.log
 
 # yarn
 *.log
+
+yarn.lock
