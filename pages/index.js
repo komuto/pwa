@@ -1,16 +1,13 @@
 // @flow
 // layout
-import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import About from '../src/Containers/About'
+import Profile from '../src/Containers/Profile'
 // style custom
 
 const Index = () => (
-  <DefaultLayout>
-    <About />
-  </DefaultLayout>
+  <Profile />
 )
 
 export default ReduxPageWrapper(Index)
