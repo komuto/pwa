@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="159" height="182" viewBox="0 0 159 182">
+    <defs>
+        <rect id="a" width="84.297" height="130" x="37" y="52" rx="10"/>
+        <rect id="b" width="66" height="99" x="46" y="72" rx="4"/>
+        <rect id="c" width="44" height="57" rx="6"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd" transform="translate(0 -4)">
+        <g transform="translate(0 73)">
+            <rect width="44" height="57" fill="#FAFAFA" rx="6"/>
+            <rect width="21.284" height="1.86" x="11.44" y="34.907" fill="#E5E5E5" opacity=".602" rx=".93"/>
+            <rect width="14.08" height="5.581" x="14.96" y="43.419" fill="#E5E5E5" opacity=".602" rx="2.791"/>
+        </g>
+        <g transform="translate(115 119)">
+            <rect width="44" height="57" fill="#FAFAFA" rx="6"/>
+            <rect width="21.284" height="1.86" x="11.44" y="34.907" fill="#E5E5E5" opacity=".602" rx=".93"/>
+            <rect width="14.08" height="5.581" x="14.96" y="43.419" fill="#E5E5E5" opacity=".602" rx="2.791"/>
+        </g>
+        <use fill="#D2D2D2" xlink:href="#a"/>
+        <rect width="82.297" height="128" x="38" y="53" stroke="#5F6E81" stroke-width="2" rx="10"/>
+        <use fill="#FFF" xlink:href="#b"/>
+        <rect width="64" height="97" x="47" y="73" stroke="#606E81" stroke-width="2" rx="4"/>
+        <rect width="7" height="3" x="54" y="76" fill="#C2E2FC" rx="1.5"/>
+        <rect width="44" height="3" x="57" y="153" fill="#D5D5D5" rx="1.5"/>
+        <rect width="3" height="3" x="101" y="76" fill="#C2E2FC" rx="1.5"/>
+        <circle cx="78.5" cy="175.5" r="2.5" fill="#7F868F"/>
+        <rect width="130" height="4" x="17" y="182" fill="#EEE" rx="2"/>
+        <path fill="#89CAFF" d="M73.5 15.5v-2.003A1.5 1.5 0 0 0 72 12c-.834 0-1.5.67-1.5 1.497V15.5h-2.003A1.5 1.5 0 0 0 67 17c0 .834.67 1.5 1.497 1.5H70.5v2.003A1.5 1.5 0 0 0 72 22c.834 0 1.5-.67 1.5-1.497V18.5h2.003A1.5 1.5 0 0 0 77 17c0-.834-.67-1.5-1.497-1.5H73.5z"/>
+        <path fill="#D5D5D5" d="M59.55 31.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V33.55h1.402a1.05 1.05 0 0 0 0-2.1H59.55z"/>
+        <path fill="#FFDEDE" d="M88.9 34.1v-1.202A.894.894 0 0 0 88 32c-.5 0-.9.402-.9.898V34.1h-1.202A.894.894 0 0 0 85 35c0 .5.402.9.898.9H87.1v1.202c0 .504.403.898.9.898.5 0 .9-.402.9-.898V35.9h1.202A.894.894 0 0 0 91 35c0-.5-.402-.9-.898-.9H88.9z"/>
+        <path fill="#FF9292" d="M48.121 7.963l1.391-1.44a1.5 1.5 0 0 0-.039-2.12c-.6-.58-1.544-.56-2.119.035L45.963 5.88l-1.44-1.391a1.5 1.5 0 0 0-2.12.039c-.58.6-.56 1.544.035 2.119l1.441 1.391-1.391 1.44a1.5 1.5 0 0 0 .039 2.12c.6.58 1.544.56 2.119-.035l1.391-1.441 1.44 1.391a1.5 1.5 0 0 0 2.12-.039c.58-.6.56-1.544-.035-2.119L48.12 7.963z"/>
+        <path fill="#C3E3FD" d="M103.55 12.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V14.55h1.402a1.05 1.05 0 0 0 0-2.1h-1.402z"/>
+        <rect width="19" height="3" x="70" y="63" fill="#7F868F" rx="1.5"/>
+        <path fill="#BCE0FE" d="M110 93V75.006a.996.996 0 0 0-.999-1.006H48.999c-.553 0-.999.45-.999 1.006V93h62z"/>
+        <g transform="translate(57 86)">
+            <use fill="#F6F6F6" xlink:href="#c"/>
+            <rect width="42" height="55" x="1" y="1" stroke="#8C9BAE" stroke-width="2" rx="6"/>
+            <rect width="21.284" height="1.86" x="11.44" y="36.907" fill="#D5D5D5" rx=".93"/>
+            <rect width="14.08" height="5.581" x="14.96" y="43.419" fill="#FF9292" rx="2.791"/>
+        </g>
+        <path fill="#FFF" d="M79.266 74.971c-.147-.536.172-.971.73-.971h29.008c.55 0 .996.445.996 1.003v92.994a.999.999 0 0 1-1 1.003h-3c-.552 0-1.116-.424-1.266-.971L79.266 74.97z" opacity=".499"/>
+        <circle cx="79" cy="104" r="5" fill="#56AAEF"/>
+        <path fill="#56AAEF" d="M70.013 116.526a9 9 0 0 1 17.974 0H70.013z"/>
+        <path fill="#EDEDED" d="M30.987 101.526a9.005 9.005 0 0 0-6.511-8.181 5 5 0 1 0-4.952 0 9.005 9.005 0 0 0-6.511 8.18h17.974zM145.987 147.526a9.005 9.005 0 0 0-6.511-8.181 5 5 0 1 0-4.952 0 9.005 9.005 0 0 0-6.511 8.18h17.974z"/>
+    </g>
+</svg>
