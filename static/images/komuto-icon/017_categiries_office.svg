@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <g fill="none" fill-rule="evenodd">
+        <path d="M0 0h32v32H0z"/>
+        <g stroke="#404852" transform="translate(4 2.5)">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.387 1.74h5.09c.74 0 1.34.598 1.34 1.341v12.735m-7.1 8.714H2.045A1.336 1.336 0 0 1 .71 23.19V3.08c0-.74.599-1.34 1.335-1.34H7.08"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.368 21.595H4.74a1.342 1.342 0 0 1-1.337-1.347V3.088c0-.745.606-1.347 1.346-1.347h2.326c0 .74.598 1.34 1.34 1.34h4.63c.741 0 1.341-.6 1.341-1.34h2.398c.74 0 1.339.602 1.339 1.343v12.732"/>
+            <rect width="7.457" height="2.681" x="7.035" y=".452" stroke-linecap="round" stroke-linejoin="round" rx="1.341"/>
+            <path stroke-linecap="round" d="M7.412 7.5h6.703M7.412 9.5h4.022M7.412 11.5h2.011"/>
+            <path stroke-linecap="square" d="M19.301 17.724l1.849 1.552"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.123 16.687a.8.8 0 0 1 1.125-.104l1.246 1.045a.8.8 0 0 1 .093 1.127l-6.205 7.394-2.272.194-.192-2.262 6.205-7.394z"/>
+        </g>
+    </g>
+</svg>
