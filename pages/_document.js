@@ -16,8 +16,9 @@ export default class HomeDocument extends Document {
           <title>Komuto</title>
           <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
-
           <link rel='stylesheet prefetch' href={`static/dist/css/style.css`} />
+          <meta name='theme-color' content='#ff6600' />
+          <link rel='manifest' href='static/manifest.json' />
         </Head>
         <body>
 

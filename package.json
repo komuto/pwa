@@ -23,6 +23,7 @@
   "dependencies": {
     "apisauce": "^0.8.0",
     "dotenv": "^4.0.0",
+    "express": "^4.15.3",
     "glamor": "^2.20.24",
     "immutable": "^3.8.1",
     "localforage": "^1.4.3",
