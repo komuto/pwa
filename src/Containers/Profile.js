@@ -1,17 +1,18 @@
 // @flow
 import React, { Component } from 'react'
+import Link from 'next/link'
 import {Images} from '../Themes'
+// components
+import { Navigation } from '../Components/Navigation'
+import Tabbar, { PROFILE } from '../Components/Tabbar'
 class Profile extends Component {
   render () {
     return (
       <div className='main user'>
-        <nav className='level header is-fullwidth'>
-          <div className='nav-left'>
-            <a className='level-item'>
-              <span> Profile</span>
-            </a>
-          </div>
-        </nav>
+        <Navigation
+          path=''
+          icon=''
+          textPath='Profile' />
         <section className='content'>
           <div className='container is-fluid'>
             <div className='desc has-text-centered'>
@@ -21,20 +22,15 @@ class Profile extends Component {
             </div>
             <div className='columns is-mobile'>
               <div className='column'>
-                <a href='signup' className='button is-primary is-large is-fullwidth is-outlined'>Register</a>
+                <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>Register</a></Link>
               </div>
               <div className='column'>
-                <a href='signin' className='button is-primary is-large is-fullwidth'>Login</a>
+                <Link href='signin'><a className='button is-primary is-large is-fullwidth'>Login</a></Link>
               </div>
             </div>
           </div>
         </section>
-        <div className='level nav-bottom is-mobile'>
-          <a className='level-item has-text-centered'><span className='icon-home' />Home</a>
-          <a className='level-item has-text-centered'><span className='icon-bag' />Transaksi</a>
-          <a className='level-item has-text-centered'><span className='icon-bell' />Notifikasi</a>
-          <a className='level-item has-text-centered is-active'><span className='icon-user' />Profil</a>
-        </div>
+        <Tabbar active={PROFILE} />
       </div>
     )
   }
