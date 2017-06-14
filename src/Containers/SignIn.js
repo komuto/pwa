@@ -1,7 +1,9 @@
 // @flow
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
+import NProgress from 'nprogress'
 // components
 import { LoginFacebook } from '../Components/Facebook'
 import { Navigation, Hero } from '../Components/Navigation'
@@ -11,6 +13,8 @@ import { HrText } from '../Components/Hr'
 import TermConditions from '../Components/TermConditions'
 // validations
 import * as constraints from '../Validations/Auth'
+// actions
+import * as loginAction from '../actions/user'
 
 class SignIn extends Component {
   constructor (props) {
@@ -43,28 +47,42 @@ class SignIn extends Component {
   }
 
   handleSignInClick () {
-    console.log('handleSignInClick ()')
+    let { email, password } = this.state.input
+    if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
+      NProgress.start()
+      this.props.dispatch(loginAction.login({
+        email: email.value,
+        password: password.value
+      }))
+    }
   }
 
   onChange (event) {
+    const { name, value } = event.target
+    this.validation(name, value)
+  }
+
+  validation (name, value) {
     const { email, password } = constraints.loginConstraints
     const { danger, success } = constraints.classInfo
-    const { name, value } = event.target
     let { input } = this.state
-
+    let status = false
     switch (name) {
       case input.email.name:
         input.email.value = value
         if (value === '') {
           input.email.classInfo = danger
           input.email.textHelp = email.alert.empty
+          status = false
         } else {
           if (EmailValidator.validate(value)) {
             input.email.classInfo = success
             input.email.textHelp = ''
+            status = true
           } else {
             input.email.classInfo = danger
             input.email.textHelp = email.alert.valid
+            status = false
           }
         }
         break
@@ -73,15 +91,28 @@ class SignIn extends Component {
         if (value === '') {
           input.password.classInfo = danger
           input.password.textHelp = password.alert.empty
+          status = false
         } else {
           input.password.classInfo = success
           input.password.textHelp = ''
+          status = true
         }
         break
       default:
         break
     }
     this.setState({ input })
+    return status
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // console.log(nextProps.datalogin)
+    NProgress.done()
+    if (nextProps.datalogin.status === 200) {
+      // alert('Login BENAR', 'Email atau password BENAR')
+    } else if (nextProps.datalogin.status > 200) {
+      // alert('Login gagal', 'Email atau password salah')
+    }
   }
 
   render () {
@@ -121,7 +152,7 @@ class SignIn extends Component {
               <TermConditions />
               <ButtonFullWidth
                 text='Login'
-                onClick={this.handleSignInClick} />
+                onClick={() => this.handleSignInClick()} />
               <div className='has-text-centered'>
                 <Link href='/password-reset'><a>Lupa Password</a></Link>
               </div>
@@ -136,4 +167,10 @@ class SignIn extends Component {
   }
 }
 
-export default SignIn
+const mapStateToProps = (state) => {
+  return {
+    datalogin: state.user
+  }
+}
+
+export default connect(mapStateToProps)(SignIn)
