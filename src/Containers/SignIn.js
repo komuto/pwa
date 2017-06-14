@@ -9,6 +9,8 @@ import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
 import { HrText } from '../Components/Hr'
 import TermConditions from '../Components/TermConditions'
+// validations
+import * as constraints from '../Validations/Auth'
 
 class SignIn extends Component {
   constructor (props) {
@@ -45,26 +47,36 @@ class SignIn extends Component {
   }
 
   onChange (event) {
-    const name = event.target.name
-    const targetValue = event.target.value
+    const { email, password } = constraints.loginConstraints
+    const { danger, success } = constraints.classInfo
+    const { name, value } = event.target
     let { input } = this.state
+
     switch (name) {
       case input.email.name:
-        input.email.value = targetValue
-        if (EmailValidator.validate(targetValue)) {
-          input.email.classInfo = 'is-success'
-          input.email.textHelp = 'Format email sudah benar'
-        } else if (targetValue === '') {
-          input.email.classInfo = ''
-          input.email.textHelp = ''
+        input.email.value = value
+        if (value === '') {
+          input.email.classInfo = danger
+          input.email.textHelp = email.alert.empty
         } else {
-          input.email.classInfo = 'is-danger'
-          input.email.textHelp = 'Format email salah'
+          if (EmailValidator.validate(value)) {
+            input.email.classInfo = success
+            input.email.textHelp = ''
+          } else {
+            input.email.classInfo = danger
+            input.email.textHelp = email.alert.valid
+          }
         }
         break
       case input.password.name:
-        input.password.value = targetValue
-        input.password.classInfo = 'is-success'
+        input.password.value = value
+        if (value === '') {
+          input.password.classInfo = danger
+          input.password.textHelp = password.alert.empty
+        } else {
+          input.password.classInfo = success
+          input.password.textHelp = ''
+        }
         break
       default:
         break
