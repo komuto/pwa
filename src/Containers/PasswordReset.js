@@ -5,6 +5,8 @@ import * as EmailValidator from 'email-validator'
 import { Navigation } from '../Components/Navigation'
 import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
+// validations
+import * as constraints from '../Validations/Auth'
 class PasswordReset extends Component {
   constructor (props) {
     super(props)
@@ -24,25 +26,27 @@ class PasswordReset extends Component {
   }
 
   handleResetPasswordClick () {
-
   }
 
   onChange (event) {
-    const name = event.target.name
-    const targetValue = event.target.value
+    const { email } = constraints.loginConstraints
+    const { danger, success } = constraints.classInfo
+    const { name, value } = event.target
     let { input } = this.state
     switch (name) {
       case input.email.name:
-        input.email.value = targetValue
-        if (EmailValidator.validate(targetValue)) {
-          input.email.classInfo = 'is-success'
-          input.email.textHelp = 'Format email sudah benar'
-        } else if (targetValue === '') {
-          input.email.classInfo = ''
-          input.email.textHelp = ''
+        input.email.value = value
+        if (value === '') {
+          input.email.classInfo = danger
+          input.email.textHelp = email.alert.empty
         } else {
-          input.email.classInfo = 'is-danger'
-          input.email.textHelp = 'Format email salah'
+          if (EmailValidator.validate(value)) {
+            input.email.classInfo = success
+            input.email.textHelp = ''
+          } else {
+            input.email.classInfo = danger
+            input.email.textHelp = email.alert.valid
+          }
         }
         break
       default:
