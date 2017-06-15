@@ -29,8 +29,18 @@ function * forgetPassword (action) {
   }
 }
 
+function * loginSocial (action) {
+  try {
+    const {data} = yield userApi.loginSocial(action)
+    yield put({ type: userActions.LOGIN_SOCIAL_SUCCESS, ...data })
+  } catch (e) {
+    yield put({ type: userActions.LOGIN_SOCIAL_FAILURE })
+  }
+}
+
 export {
   login,
   register,
-  forgetPassword
+  forgetPassword,
+  loginSocial
 }

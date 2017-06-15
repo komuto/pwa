@@ -1,15 +1,13 @@
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import komutoApps from './reducers/reducers'
-// import dataSaga from './saga/saga'
 
 const sagaMiddleware = createSagaMiddleware()
-const store = () => createStore(komutoApps, applyMiddleware(sagaMiddleware))
-// sagaMiddleware.run(dataSaga)
+const reduxStore = createStore(komutoApps, applyMiddleware(sagaMiddleware))
+const store = () => reduxStore
 
 export function token () {
-  const state = store.getState()
-  // return state.user.token
+  const state = reduxStore.getState()
   return 'Bearer ' + state.user.token
 }
 

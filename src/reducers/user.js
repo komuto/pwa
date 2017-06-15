@@ -4,10 +4,20 @@ const initUser = {
   email: '',
   token: '',
   uid: '',
-  user: {}
+  isLoggedIn: false,
+  isAuthenticated: false,
+  user: {},
+  message: '',
+  status: ''
+}
+const initForgetPass = {
+  email: '',
+  message: '',
+  status: ''
 }
 
 function auth (state = initUser, action) {
+  console.log(action.type)
   switch (action.type) {
     case actions.USER_REGISTER_REQUEST:
       return {
@@ -15,6 +25,8 @@ function auth (state = initUser, action) {
         email: action.email,
         token: '',
         uid: 0,
+        isLoggedIn: false,
+        isAuthenticated: false,
         user: {},
         message: '',
         status: 0
@@ -24,6 +36,7 @@ function auth (state = initUser, action) {
         ...state,
         email: action.data.email,
         uid: action.data.id,
+        isLoggedIn: true,
         user: action,
         message: action.message,
         status: action.code
@@ -34,6 +47,7 @@ function auth (state = initUser, action) {
         email: '',
         token: '',
         uid: 0,
+        isLoggedIn: false,
         user: {},
         message: action.message,
         status: action.code
@@ -54,6 +68,7 @@ function auth (state = initUser, action) {
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
+        isLoggedIn: true,
         user: action,
         message: action.message,
         status: action.code
@@ -64,31 +79,34 @@ function auth (state = initUser, action) {
         email: '',
         token: '',
         uid: 0,
+        isLoggedIn: false,
         user: {},
         message: action.message,
         status: action.code
       }
-    case actions.FORGET_PASSWORD_REQUEST:
+    case actions.LOGIN_SOCIAL_REQUEST:
       return {
         ...state,
         email: action.email,
         token: '',
         uid: 0,
         user: {},
-        message: '',
-        status: ''
-      }
-    case actions.FORGET_PASSWORD_SUCCESS:
-      return {
-        ...state,
-        email: action.data.email,
-        token: '',
-        uid: 0,
-        user: {},
         message: action.message,
         status: action.code
       }
-    case actions.FORGET_PASSWORD_FAILURE:
+    case actions.LOGIN_SOCIAL_SUCCESS:
+      return {
+        ...state,
+        email: action.data.email,
+        token: action.data.token,
+        uid: action.data.id,
+        isLoggedIn: true,
+        user: action,
+        message: action.message,
+        status: action.code,
+        is_required_password: action.data.is_required_password
+      }
+    case actions.LOGIN_SOCIAL_FAILURE:
       return {
         ...state,
         email: '',
@@ -98,11 +116,58 @@ function auth (state = initUser, action) {
         message: action.message,
         status: action.code
       }
+    case actions.USER_AUTHENTICATION_REQUEST:
+      return {
+        ...state
+      }
+    case actions.USER_AUTHENTICATION_SUCCESS:
+      return {
+        ...state,
+        email: action.user.user.data.email,
+        token: action.user.user.data.token,
+        uid: action.user.user.data.id,
+        isLoggedIn: true,
+        user: action,
+        message: action.user.user.message,
+        status: action.user.user.code,
+        isAuthenticated: true
+      }
+    case actions.USER_AUTHENTICATION_FAILURE:
+      return {
+        ...state
+      }
+    default:
+      return state
+  }
+}
+
+function forgetPassword (state = initForgetPass, action) {
+  switch (action.type) {
+    case actions.FORGET_PASSWORD_REQUEST:
+      return {
+        ...state,
+        email: action.email,
+        message: '',
+        status: ''
+      }
+    case actions.FORGET_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code
+      }
+    case actions.FORGET_PASSWORD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code
+      }
     default:
       return state
   }
 }
 
 export {
-  auth
+  auth,
+  forgetPassword
 }
