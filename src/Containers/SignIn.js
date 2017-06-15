@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import { LoginFacebook } from '../Components/Facebook'
 import { Navigation, Hero } from '../Components/Navigation'
@@ -11,6 +12,7 @@ import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
 import { HrText } from '../Components/Hr'
 import TermConditions from '../Components/TermConditions'
+import Notification from '../Components/Notification'
 // validations
 import * as constraints from '../Validations/Auth'
 // actions
@@ -37,29 +39,10 @@ class SignIn extends Component {
           classInfo: '',
           textHelp: ''
         }
-      }
+      },
+      notification: false
     }
     this.onChange = this.onChange.bind(this)
-  }
-
-  responseFacebook (response) {
-    console.log(response)
-  }
-
-  handleSignInClick () {
-    let { email, password } = this.state.input
-    if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
-      NProgress.start()
-      this.props.dispatch(loginAction.login({
-        email: email.value,
-        password: password.value
-      }))
-    }
-  }
-
-  onChange (event) {
-    const { name, value } = event.target
-    this.validation(name, value)
   }
 
   validation (name, value) {
@@ -105,18 +88,44 @@ class SignIn extends Component {
     return status
   }
 
+  onChange (event) {
+    const { name, value } = event.target
+    this.validation(name, value)
+  }
+
+  responseFacebook (response) {
+    if (response) {
+      NProgress.start()
+      this.props.dispatch(loginAction.loginSocial({
+        provider_name: 'Facebook',
+        provider_uid: response.userID,
+        access_token: response.accessToken
+      }))
+    }
+  }
+
+  handleSignInClick () {
+    let { email, password } = this.state.input
+    if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
+      NProgress.start()
+      this.props.dispatch(loginAction.login({
+        email: email.value,
+        password: password.value
+      }))
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
-    // console.log(nextProps.datalogin)
-    NProgress.done()
     if (nextProps.datalogin.status === 200) {
-      // alert('Login BENAR', 'Email atau password BENAR')
+      Router.push('/signup-success')
+      NProgress.done()
     } else if (nextProps.datalogin.status > 200) {
-      // alert('Login gagal', 'Email atau password salah')
+      this.setState({notification: true})
     }
   }
 
   render () {
-    const { input } = this.state
+    const { input, notification } = this.state
     return (
       <div className='main user login'>
         <Navigation
@@ -130,6 +139,12 @@ class SignIn extends Component {
 
         <section className='content'>
           <div className='container is-fluid'>
+            <Notification
+              type='is-warning'
+              isShow={notification}
+              activeClose
+              onClose={() => this.setState({notification: false})}
+              message='Cek email dan password anda!' />
             <form action='#' className='form'>
               <Input
                 type={input.email.type}
@@ -158,7 +173,7 @@ class SignIn extends Component {
               </div>
               <HrText text='atau' />
               <LoginFacebook
-                responseFacebook={this.responseFacebook} />
+                responseFacebook={(response) => this.responseFacebook(response)} />
             </form>
           </div>
         </section>
