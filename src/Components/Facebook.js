@@ -4,7 +4,6 @@ import FacebookLogin from 'react-facebook-login'
 export const LoginFacebook = (props) => {
   return <FacebookLogin
     appId='829312977224065'
-    autoLoad
     fields='name,email,picture'
     textButton='Login dengan facebook'
     callback={(response) => props.responseFacebook(response)}
