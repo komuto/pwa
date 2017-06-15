@@ -18,7 +18,12 @@ export default class HomeDocument extends Document {
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
           <link rel='stylesheet prefetch' href={`static/dist/css/style.css`} />
           <link rel='stylesheet prefetch' href={`static/dist/css/nprogress.css`} />
+          {/* Chrome, Firefox OS and Opera */}
           <meta name='theme-color' content='#ff6600' />
+          {/* Windows Phone */}
+          <meta name='msapplication-navbutton-color' content='#ff6600' />
+          {/* iOS Safari */}
+          <meta name='apple-mobile-web-app-status-bar-style' content='#ff6600' />
           <link rel='manifest' href='static/manifest.json' />
         </Head>
         <body>
