@@ -1,12 +1,19 @@
 // @flow
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import * as EmailValidator from 'email-validator'
+import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import { Navigation } from '../Components/Navigation'
 import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
+import Notification from '../Components/Notification'
 // validations
 import * as constraints from '../Validations/Auth'
+// actions
+import * as loginAction from '../actions/user'
+
 class PasswordReset extends Component {
   constructor (props) {
     super(props)
@@ -20,32 +27,33 @@ class PasswordReset extends Component {
           classInfo: '',
           textHelp: ''
         }
-      }
+      },
+      notification: false
     }
     this.onChange = this.onChange.bind(this)
   }
 
-  handleResetPasswordClick () {
-  }
-
-  onChange (event) {
+  validation (name, value) {
     const { email } = constraints.loginConstraints
     const { danger, success } = constraints.classInfo
-    const { name, value } = event.target
     let { input } = this.state
+    let status = false
     switch (name) {
       case input.email.name:
         input.email.value = value
         if (value === '') {
           input.email.classInfo = danger
           input.email.textHelp = email.alert.empty
+          status = false
         } else {
           if (EmailValidator.validate(value)) {
             input.email.classInfo = success
             input.email.textHelp = ''
+            status = true
           } else {
             input.email.classInfo = danger
             input.email.textHelp = email.alert.valid
+            status = false
           }
         }
         break
@@ -53,10 +61,36 @@ class PasswordReset extends Component {
         break
     }
     this.setState({ input })
+    return status
+  }
+
+  onChange (event) {
+    const { name, value } = event.target
+    this.validation(name, value)
+  }
+
+  handleResetPasswordClick () {
+    let { email } = this.state.input
+    if (this.validation(email.name, email.value)) {
+      NProgress.start()
+      this.props.dispatch(loginAction.forgetPassword({
+        email: email.value
+      }))
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { forgetPassword } = nextProps
+    if (forgetPassword.status === 200) {
+      Router.push('/password-reset-verification')
+      NProgress.done()
+    } else if (forgetPassword.status > 200) {
+      this.setState({notification: true})
+    }
   }
 
   render () {
-    const { input } = this.state
+    const { input, notification } = this.state
     return (
       <div className='main user'>
         <Navigation
@@ -68,6 +102,12 @@ class PasswordReset extends Component {
             <div className='desc has-text-centered'>
               <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di Komuto</p>
             </div>
+            <Notification
+              type='is-warning'
+              isShow={notification}
+              activeClose
+              onClose={() => this.setState({notification: false})}
+              message='Email anda tidak terdaftar!' />
             <form action='#' className='form'>
               <Input
                 type={input.email.type}
@@ -80,7 +120,7 @@ class PasswordReset extends Component {
                 textHelp={input.email.textHelp} />
               <ButtonFullWidth
                 text='Reset Password'
-                onClick={this.handleResetPasswordClick} />\
+                onClick={() => this.handleResetPasswordClick()} />\
             </form>
           </div>
         </section>
@@ -89,4 +129,11 @@ class PasswordReset extends Component {
   }
 }
 
-export default PasswordReset
+const mapStateToProps = (state) => {
+  console.log(state)
+  return {
+    forgetPassword: state.forgetPassword
+  }
+}
+
+export default connect(mapStateToProps)(PasswordReset)
