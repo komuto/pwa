@@ -1,28 +1,13 @@
 // @flow
-import React, { Component } from 'react'
+import React from 'react'
 import {Images} from '../Themes'
+import { NotificationPage } from '../Components/Notification'
 
-class SignUpVerification extends Component {
-  render () {
-    return (
-      <div className='main user user-success'>
-        <section className='content'>
-          <div className='container is-fluid'>
-            <div className='desc has-text-centered'>
-              <img src={Images.password} alt='komuto' />
-              <p><strong>Link Verifikasi Email telah terkirim</strong></p>
-              <p>Kami telah mengirim link verifikasi email ke dwinawan@gmail.com. Silahkan periksa inbox Anda, dan ikuti petunjuk di email tersebut.</p>
-            </div>
-            <div className='columns is-mobile'>
-              <div className='column'>
-                <a href='signin' className='button is-primary is-large is-fullwidth'>Kembali Ke Halaman Login</a>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    )
-  }
+export default (props:any) => {
+  return <NotificationPage
+    icon={Images.password}
+    title='Link Verifikasi Email telah terkirim'
+    subTitle='Kami telah mengirim link verifikasi email ke dwinawan@gmail.com. Silahkan periksa inbox Anda, dan ikuti petunjuk di email tersebut.'
+    path='signin'
+    text='Ke Halaman Login' />
 }
-
-export default SignUpVerification
