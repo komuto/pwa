@@ -19,11 +19,11 @@ export default class HomeDocument extends Document {
           <link rel='stylesheet prefetch' href={`static/dist/css/style.css`} />
           <link rel='stylesheet prefetch' href={`static/dist/css/nprogress.css`} />
           {/* Chrome, Firefox OS and Opera */}
-          <meta name='theme-color' content='#ff6600' />
+          <meta name='theme-color' content='#ef5656' />
           {/* Windows Phone */}
-          <meta name='msapplication-navbutton-color' content='#ff6600' />
+          <meta name='msapplication-navbutton-color' content='#ef5656' />
           {/* iOS Safari */}
-          <meta name='apple-mobile-web-app-status-bar-style' content='#ff6600' />
+          <meta name='apple-mobile-web-app-status-bar-style' content='#ef5656' />
           <link rel='manifest' href='static/manifest.json' />
         </Head>
         <body>
