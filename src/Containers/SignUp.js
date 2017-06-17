@@ -65,10 +65,13 @@ class SignUp extends Component {
         genderGroup: {
           type: 'radio',
           name: 'gender',
-          selected: 'male'
+          selected: 'L'
         }
       },
-      notification: false
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
     this.onChange = this.onChange.bind(this)
     this.handleGenderChange = this.handleGenderChange.bind(this)
@@ -212,12 +215,13 @@ class SignUp extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { datalogin } = nextProps
-    if (datalogin.status === 200) {
+    const { register } = nextProps
+    if (register.status === 200) {
       Router.push('/signup-success')
       NProgress.done()
-    } else if (datalogin.status > 200) {
-      this.setState({notification: true})
+    } else if (register.status > 200) {
+      this.setState({ notification: { status: true, message: register.message } })
+      NProgress.done()
     }
   }
 
@@ -237,10 +241,10 @@ class SignUp extends Component {
           <div className='container is-fluid'>
             <Notification
               type='is-warning'
-              isShow={notification}
+              isShow={notification.status}
               activeClose
-              onClose={() => this.setState({notification: false})}
-              message='Gagal melakukan proses registrasi' />
+              onClose={() => this.setState({notification: {status: false, message: ''}})}
+              message={notification.message} />
             <form action='#' className='form'>
               <Input
                 type={input.nama.type}
@@ -293,14 +297,14 @@ class SignUp extends Component {
                 <p className='control'>
                   <InputRadio
                     text='Pria'
-                    value='male'
+                    value='L'
                     name={input.genderGroup.name}
                     selected={input.genderGroup.selected}
                     onChange={this.handleGenderChange} />
 
                   <InputRadio
                     text='Wanita'
-                    value='female'
+                    value='P'
                     name={input.genderGroup.name}
                     selected={input.genderGroup.selected}
                     onChange={this.handleGenderChange} />
@@ -323,7 +327,8 @@ class SignUp extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    datalogin: state.user
+    register: state.register,
+    social: state.social
   }
 }
 
