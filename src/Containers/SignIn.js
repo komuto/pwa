@@ -5,6 +5,7 @@ import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
+import localForage from 'localforage'
 // components
 import { LoginFacebook } from '../Components/Facebook'
 import { Navigation, Hero } from '../Components/Navigation'
@@ -40,7 +41,10 @@ class SignIn extends Component {
           textHelp: ''
         }
       },
-      notification: false
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
     this.onChange = this.onChange.bind(this)
   }
@@ -116,11 +120,18 @@ class SignIn extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.datalogin.status === 200) {
-      Router.push('/signup-success')
+    const { user } = nextProps
+    if (user.status === 200) {
+      localForage.setItem('sessionLogin', user)
+      Router.push({
+        pathname: '/profile',
+        query: { user: user }
+      })
       NProgress.done()
-    } else if (nextProps.datalogin.status > 200) {
-      this.setState({notification: true})
+    } else if (user.status > 200) {
+      // this.setState({ notification : { status: true, message: user.message } })
+      // NProgress.done()
+      Router.prefetch('/profile', { user: 'safe muslim' })
     }
   }
 
@@ -141,10 +152,10 @@ class SignIn extends Component {
           <div className='container is-fluid'>
             <Notification
               type='is-warning'
-              isShow={notification}
+              isShow={notification.status}
               activeClose
-              onClose={() => this.setState({notification: false})}
-              message='Cek email dan password anda!' />
+              onClose={() => this.setState({notification: {status: false, message: ''}})}
+              message={notification.message} />
             <form action='#' className='form'>
               <Input
                 type={input.email.type}
@@ -184,7 +195,8 @@ class SignIn extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    datalogin: state.user
+    user: state.user,
+    social: state.social
   }
 }
 
