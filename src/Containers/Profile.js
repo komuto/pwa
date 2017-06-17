@@ -1,35 +1,44 @@
 // @flow
 import React, { Component } from 'react'
-import Link from 'next/link'
-import {Images} from '../Themes'
+// import Link from 'next/link'
+// import {Images} from '../Themes'
+// import localForage from 'localforage'
 // components
 import { Navigation } from '../Components/Navigation'
 import Tabbar, { PROFILE } from '../Components/Tabbar'
+import AccountLogin from './AccountLogin'
+import Account from './Account'
 class Profile extends Component {
+  constructor (props) {
+    super(props)
+    this.state = ({
+      user: null
+    })
+  }
+  componentWillMount () {
+    // localForage.getItem('sessionLogin').then((value) => {
+    //   this.setState({ user: value })
+    // })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // const { pathname, query } = nextProps.url
+    // if (query.user) {
+    //   this.setState({
+    //     user: query.user
+    //   })
+    // }
+  }
+
   render () {
+    const { user } = this.state
     return (
-      <div className='main user'>
+      <div className='main user bg-grey'>
         <Navigation
           path=''
           icon=''
           textPath='Profile' />
-        <section className='content'>
-          <div className='container is-fluid'>
-            <div className='desc has-text-centered'>
-              <img src={Images.phoneAccount} alt='komuto' />
-              <p><strong>Masuk ke Akun Anda untuk mempermudah proses pembelian</strong></p>
-              <p>Terima Kasih, Anda telah berhasil melakukan pembelian Token Listrik. Untuk melihat Token silahkan menuju bagian Transaksi</p>
-            </div>
-            <div className='columns is-mobile'>
-              <div className='column'>
-                <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>Register</a></Link>
-              </div>
-              <div className='column'>
-                <Link href='signin'><a className='button is-primary is-large is-fullwidth'>Login</a></Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        { (user) ? <Account /> : <AccountLogin /> }
         <Tabbar active={PROFILE} />
       </div>
     )
