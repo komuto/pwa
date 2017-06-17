@@ -1,14 +1,14 @@
-import { authApi, publicApi } from './api'
+import { authApi, publicApi, publicApiKomuto } from './api'
 
 function register (action) {
-  let axios = publicApi()
+  let axios = publicApiKomuto()
   return axios.post('users', {
     ...action
   })
 }
 
 function login (action) {
-  let axios = authApi()
+  let axios = publicApiKomuto()
   return axios.post('users/login', {
     ...action
   })
@@ -28,10 +28,17 @@ function forgetPassword (action) {
   })
 }
 
+function newPassword (action) {
+  let axios = authApi()
+  return axios.put('users', {
+    ...action
+  })
+}
+
 export {
   login,
-  // loginAuth,
   loginSocial,
   register,
-  forgetPassword
+  forgetPassword,
+  newPassword
 }

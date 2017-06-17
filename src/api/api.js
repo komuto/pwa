@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { serviceUrl } from '../config'
+import { serviceUrl, apiKomuto } from '../config'
 import {token} from '../store'
 
 export function authApi () {
@@ -12,5 +12,18 @@ export function authApi () {
 export function publicApi () {
   return axios.create({
     baseURL: serviceUrl + '/'
+  })
+}
+
+export function publicApiKomuto () {
+  return axios.create({
+    baseURL: apiKomuto + '/'
+  })
+}
+
+export function authApiKomuto () {
+  return axios.create({
+    baseURL: apiKomuto + '/',
+    headers: {'Authorization': token()}
   })
 }
