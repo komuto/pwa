@@ -4,6 +4,8 @@ import React from 'react'
 import {Images} from '../Themes'
 
 export default (props:any) => {
+  const user = props.user.user.data
+  console.log(user)
   return (
     <div>
       <section className='section is-paddingless bg-white'>
@@ -20,7 +22,7 @@ export default (props:any) => {
                   <div className='media-content'>
                     <div className='content'>
                       <p className='user-name'>
-                        <strong>Dwinawan Hariwijaya</strong>
+                        <strong>{ user.name }</strong>
                         <br />
                         Kelola Akun
                       </p>
@@ -44,7 +46,7 @@ export default (props:any) => {
                       <p>
                         <strong>Saldo</strong>
                       </p>
-                      <div className='val-right'><span>Rp 580.000</span></div>
+                      <div className='val-right'><span>Rp { user.saldo_wallet }</span></div>
                     </div>
                   </div>
                 </article>
