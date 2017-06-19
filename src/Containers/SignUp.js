@@ -92,6 +92,7 @@ class SignUp extends Component {
           status = false
         } else {
           input.nama.classInfo = success
+          input.nama.textHelp = ''
           status = true
         }
         break
@@ -216,8 +217,12 @@ class SignUp extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { register } = nextProps
+    const { email } = this.state.input
     if (register.status === 200) {
-      Router.push('/signup-success')
+      Router.push({
+        pathname: '/signup-verification',
+        query: { email: email.value }
+      })
       NProgress.done()
     } else if (register.status > 200) {
       this.setState({ notification: { status: true, message: register.message } })
