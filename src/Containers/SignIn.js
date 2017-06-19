@@ -123,15 +123,11 @@ class SignIn extends Component {
     const { user } = nextProps
     if (user.status === 200) {
       localForage.setItem('sessionLogin', user)
-      Router.push({
-        pathname: '/profile',
-        query: { user: user }
-      })
+      Router.push('/profile')
       NProgress.done()
     } else if (user.status > 200) {
-      // this.setState({ notification : { status: true, message: user.message } })
-      // NProgress.done()
-      Router.prefetch('/profile', { user: 'safe muslim' })
+      this.setState({ notification: { status: true, message: user.message } })
+      NProgress.done()
     }
   }
 
