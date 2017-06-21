@@ -4,8 +4,6 @@ import React, { Component } from 'react'
 // import {Images} from '../Themes'
 import localForage from 'localforage'
 // components
-import { Navigation } from '../Components/Navigation'
-import Tabbar, { PROFILE } from '../Components/Tabbar'
 import AccountLogin from './AccountLogin'
 import Account from './Account'
 class Profile extends Component {
@@ -26,16 +24,7 @@ class Profile extends Component {
   render () {
     const { sessionReady, user } = this.state
     if (!sessionReady) return null
-    return (
-      <div className='main user bg-grey'>
-        <Navigation
-          path=''
-          icon=''
-          textPath='Profile' />
-        { (user) ? <Account user={user} /> : <AccountLogin /> }
-        <Tabbar active={PROFILE} />
-      </div>
-    )
+    return (user) ? <Account user={user} /> : <AccountLogin />
   }
 }
 
