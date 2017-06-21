@@ -18,6 +18,10 @@ export const FORGET_PASSWORD_REQUEST = 'FORGET_PASSWORD_REQUEST'
 export const FORGET_PASSWORD_SUCCESS = 'FORGET_PASSWORD_SUCCESS'
 export const FORGET_PASSWORD_FAILURE = 'FORGET_PASSWORD_FAILURE'
 
+export const GET_PROFILE_REQUEST = 'GET_PROFILE_REQUEST'
+export const GET_PROFILE_SUCCESS = 'GET_PROFILE_SUCCESS'
+export const GET_PROFILE_FAILURE = 'GET_PROFILE_FAILURE'
+
 export const IS_LOGIN = 'IS_LOGIN'
 
 function register (params) {
@@ -30,6 +34,13 @@ function register (params) {
 function newPassword (params) {
   return {
     type: USER_NEWPASSWORD_REQUEST,
+    ...params
+  }
+}
+
+function getProfile (params) {
+  return {
+    type: GET_PROFILE_REQUEST,
     ...params
   }
 }
@@ -66,6 +77,7 @@ export {
   register,
   login,
   newPassword,
+  getProfile,
   loginSocial,
   forgetPassword,
   stateLogin
