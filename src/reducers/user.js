@@ -7,13 +7,19 @@ const initUser = {
   isLoggedIn: false,
   user: {},
   message: '',
-  status: ''
+  status: '',
+  isLoading: false,
+  isError: false,
+  isFound: false
 }
 
 const initForgetPass = {
   email: '',
   message: '',
-  status: ''
+  status: '',
+  isLoading: false,
+  isError: false,
+  isFound: false
 }
 
 const initLogin = {
@@ -21,6 +27,7 @@ const initLogin = {
 }
 
 function auth (state = initUser, action) {
+  console.log(action.type)
   switch (action.type) {
     case actions.USER_LOGIN_REQUEST:
       return {
@@ -30,7 +37,8 @@ function auth (state = initUser, action) {
         uid: 0,
         user: {},
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: true
       }
     case actions.USER_LOGIN_SUCCESS:
       return {
@@ -38,10 +46,12 @@ function auth (state = initUser, action) {
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
-        isLoggedIn: true,
         user: action,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isError: false
       }
     case actions.USER_LOGIN_FAILURE:
       return {
@@ -49,30 +59,38 @@ function auth (state = initUser, action) {
         email: '',
         token: '',
         uid: 0,
-        isLoggedIn: false,
         user: {},
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isError: true,
+        isFound: false
       }
     case actions.USER_NEWPASSWORD_REQUEST:
       return {
-        ...state
+        ...state,
+        isLoading: true
       }
     case actions.USER_NEWPASSWORD_SUCCESS:
       return {
         ...state,
         email: action.data.email,
         uid: action.data.id,
-        isLoggedIn: true,
         user: action,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isError: false
       }
     case actions.USER_NEWPASSWORD_FAILURE:
       return {
         ...state,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isError: true,
+        isFound: false
       }
     default:
       return state
@@ -89,7 +107,8 @@ function authSocial (state = initUser, action) {
         uid: 0,
         user: {},
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: true
       }
     case actions.LOGIN_SOCIAL_SUCCESS:
       return {
@@ -97,11 +116,13 @@ function authSocial (state = initUser, action) {
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
-        isLoggedIn: true,
         user: action,
         message: action.message,
         status: action.code,
-        is_required_password: action.data.is_required_password
+        is_required_password: action.data.is_required_password,
+        isLoading: false,
+        isFound: true,
+        isError: false
       }
     case actions.LOGIN_SOCIAL_FAILURE:
       return {
@@ -111,7 +132,10 @@ function authSocial (state = initUser, action) {
         uid: 0,
         user: {},
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isError: true,
+        isFound: false
       }
     default:
       return state
@@ -125,21 +149,22 @@ function register (state = initUser, action) {
         email: action.email,
         token: '',
         uid: 0,
-        isLoggedIn: false,
-        isAuthenticated: false,
         user: {},
         message: '',
-        status: 0
+        status: 0,
+        isLoading: false
       }
     case actions.USER_REGISTER_SUCCESS:
       return {
         ...state,
         email: action.data.email,
         uid: action.data.id,
-        isLoggedIn: true,
         user: action,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isError: false
       }
     case actions.USER_REGISTER_FAILURE:
       return {
@@ -147,10 +172,12 @@ function register (state = initUser, action) {
         email: '',
         token: '',
         uid: 0,
-        isLoggedIn: false,
         user: {},
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isError: true,
+        isFound: false
       }
     default:
       return state
@@ -163,19 +190,26 @@ function forgetPassword (state = initForgetPass, action) {
         ...state,
         email: action.email,
         message: '',
-        status: ''
+        status: '',
+        isLoading: true
       }
     case actions.FORGET_PASSWORD_SUCCESS:
       return {
         ...state,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isError: false
       }
     case actions.FORGET_PASSWORD_FAILURE:
       return {
         ...state,
         message: action.message,
-        status: action.code
+        status: action.code,
+        isLoading: false,
+        isError: true,
+        isFound: false
       }
     default:
       return state
