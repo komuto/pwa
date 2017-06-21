@@ -5,7 +5,6 @@ import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
-import { Navigation } from '../Components/Navigation'
 import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
 import Notification from '../Components/Notification'
@@ -81,56 +80,65 @@ class PasswordReset extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { forgetPassword } = nextProps
-    if (forgetPassword.status === 200) {
-      Router.push('/password-reset-verification')
+    const { notification } = this.state
+    const { email } = this.state.input
+
+    if (!forgetPassword.isLoading) {
+      if (forgetPassword.isFound) {
+        Router.push({
+          pathname: '/password-reset-verification',
+          query: { email: email.value }
+        })
+      }
+
+      if (forgetPassword.isError) {
+        notification.status = true
+        notification.message = forgetPassword.message
+      } else if (!forgetPassword.isFound) {
+        notification.status = true
+        notification.message = 'Data tidak ditemukan'
+      }
+
       NProgress.done()
-    } else if (forgetPassword.status > 200) {
-      this.setState({notification: true})
+      this.setState({ notification })
     }
   }
 
   render () {
     const { input, notification } = this.state
     return (
-      <div className='main user'>
-        <Navigation
-          path='/signin'
-          icon={<span className='icon-arrow-left' />}
-          textPath='Lupa Password' />
-        <section className='content'>
-          <div className='container is-fluid'>
-            <div className='desc has-text-centered'>
-              <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di Komuto</p>
-            </div>
-            <Notification
-              type='is-warning'
-              isShow={notification}
-              activeClose
-              onClose={() => this.setState({notification: false})}
-              message='Email anda tidak terdaftar!' />
-            <form action='#' className='form'>
-              <Input
-                type={input.email.type}
-                placeholder={input.email.placeholder}
-                name={input.email.name}
-                classInfo={input.email.classInfo}
-                value={input.email.value}
-                onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.email.textHelp} />
-              <ButtonFullWidth
-                text='Reset Password'
-                onClick={() => this.handleResetPasswordClick()} />\
-            </form>
+      <section className='content'>
+        <div className='container is-fluid'>
+          <div className='desc has-text-centered'>
+            <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di Komuto</p>
           </div>
-        </section>
-      </div>
+          <Notification
+            type='is-warning'
+            isShow={notification}
+            activeClose
+            onClose={() => this.setState({notification: false})}
+            message='Email anda tidak terdaftar!' />
+          <form action='#' className='form'>
+            <Input
+              type={input.email.type}
+              placeholder={input.email.placeholder}
+              name={input.email.name}
+              classInfo={input.email.classInfo}
+              value={input.email.value}
+              onChange={this.onChange}
+              hasIconsRight
+              textHelp={input.email.textHelp} />
+            <ButtonFullWidth
+              text='Reset Password'
+              onClick={() => this.handleResetPasswordClick()} />
+          </form>
+        </div>
+      </section>
     )
   }
 }
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
     forgetPassword: state.forgetPassword
   }
