@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+    <defs>
+        <path id="b" d="M0 0h360v57H0z"/>
+        <filter id="a" width="107.2%" height="145.6%" x="-3.6%" y="-19.3%" filterUnits="objectBoundingBox">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="4"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0.237112041 0 0 0 0 0.423615544 0 0 0 0 0.610119048 0 0 0 0.0722939312 0"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(-17 -16)">
+            <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+            <use fill="#FFF" xlink:href="#b"/>
+        </g>
+        <path d="M0 0h24v24H0z"/>
+        <g stroke="#404852">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.414 4.855l11.44.024v6.474a5.711 5.711 0 0 1-5.72 5.711 5.733 5.733 0 0 1-5.72-5.736V4.855z"/>
+            <path d="M4.673 11.791l10.978-2.44"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.91 4.88h6.505V3.862c0-.561-.447-1.016-1.017-1.016H7.926c-.561 0-1.016.45-1.016 1.016v1.016z"/>
+            <path d="M11.162 2.93h-2.22v-.5a1.11 1.11 0 0 1 2.22 0v.5z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.128 17.077H6.505a2.036 2.036 0 0 0-2.035 2.032v2.033H14.2M15.854 7.319h2.44v4.47c0 .675-.542 1.222-1.22 1.222h-1.22V7.319zM3.644 4.836H4.93M15.37 4.865h1.286M21.068 19.98v1.22c0 .674-.555 1.22-1.224 1.22h-4.058a1.219 1.219 0 0 1-1.223-1.22v-1.22"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.603 19.98c0-1.41-1.248-2.555-2.788-2.555-1.54 0-2.788 1.144-2.788 2.556M13.815 19.962h8"/>
+        </g>
+    </g>
+</svg>
