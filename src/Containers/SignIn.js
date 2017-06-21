@@ -8,7 +8,6 @@ import Router from 'next/router'
 import localForage from 'localforage'
 // components
 import { LoginFacebook } from '../Components/Facebook'
-import { Navigation, Hero } from '../Components/Navigation'
 import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
 import { HrText } from '../Components/Hr'
@@ -18,6 +17,9 @@ import Notification from '../Components/Notification'
 import * as constraints from '../Validations/Auth'
 // actions
 import * as loginAction from '../actions/user'
+
+const LOGIN_SOCIAL = 'LOGIN_SOCIAL'
+const LOGIN_FORM = 'LOGIN_FORM'
 
 class SignIn extends Component {
   constructor (props) {
@@ -46,6 +48,7 @@ class SignIn extends Component {
         message: 'Error, default message.'
       }
     }
+    this.dipatchType = null
     this.onChange = this.onChange.bind(this)
   }
 
@@ -100,6 +103,7 @@ class SignIn extends Component {
   responseFacebook (response) {
     if (response) {
       NProgress.start()
+      this.dipatchType = LOGIN_SOCIAL
       this.props.dispatch(loginAction.loginSocial({
         provider_name: 'Facebook',
         provider_uid: response.userID,
@@ -112,6 +116,7 @@ class SignIn extends Component {
     let { email, password } = this.state.input
     if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
       NProgress.start()
+      this.dipatchType = LOGIN_FORM
       this.props.dispatch(loginAction.login({
         email: email.value,
         password: password.value
@@ -120,71 +125,73 @@ class SignIn extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { user } = nextProps
-    if (user.status === 200) {
-      localForage.setItem('sessionLogin', user)
-      Router.push('/profile')
+    const { user, social } = nextProps
+    const { notification } = this.state
+    const data = (this.dipatchType === LOGIN_SOCIAL) ? social : user
+
+    if (!data.isLoading) {
+      if (data.isFound) {
+        localForage.setItem('sessionLogin', data)
+        Router.push('/profile')
+        notification.status = false
+      }
+
+      if (data.isError) {
+        notification.status = true
+        notification.message = data.message
+      } else if (!data.isFound) {
+        notification.status = true
+        notification.message = 'Data tidak ditemukan'
+      }
+
       NProgress.done()
-    } else if (user.status > 200) {
-      this.setState({ notification: { status: true, message: user.message } })
-      NProgress.done()
+      this.setState({ notification })
     }
   }
 
   render () {
     const { input, notification } = this.state
     return (
-      <div className='main user login'>
-        <Navigation
-          path='/profile'
-          icon={<span className='icon-arrow-left' />}
-          textPath='Login' />
-        <Hero
-          path='/signup'
-          textPath='Daftar Disini'
-          textInfo='Belum punya akun?' />
-
-        <section className='content'>
-          <div className='container is-fluid'>
-            <Notification
-              type='is-warning'
-              isShow={notification.status}
-              activeClose
-              onClose={() => this.setState({notification: {status: false, message: ''}})}
-              message={notification.message} />
-            <form action='#' className='form'>
-              <Input
-                type={input.email.type}
-                placeholder={input.email.placeholder}
-                name={input.email.name}
-                classInfo={input.email.classInfo}
-                value={input.email.value}
-                onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.email.textHelp} />
-              <Input
-                type={input.password.type}
-                placeholder={input.password.placeholder}
-                name={input.password.name}
-                classInfo={input.password.classInfo}
-                value={input.password.value}
-                onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.password.textHelp} />
-              <TermConditions />
-              <ButtonFullWidth
-                text='Login'
-                onClick={() => this.handleSignInClick()} />
-              <div className='has-text-centered'>
-                <Link href='/password-reset'><a>Lupa Password</a></Link>
-              </div>
-              <HrText text='atau' />
-              <LoginFacebook
-                responseFacebook={(response) => this.responseFacebook(response)} />
-            </form>
-          </div>
-        </section>
-      </div>
+      <section className='content'>
+        <div className='container is-fluid'>
+          <Notification
+            type='is-warning'
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
+          <form action='#' className='form'>
+            <Input
+              type={input.email.type}
+              placeholder={input.email.placeholder}
+              name={input.email.name}
+              classInfo={input.email.classInfo}
+              value={input.email.value}
+              onChange={this.onChange}
+              hasIconsRight
+              textHelp={input.email.textHelp} />
+            <Input
+              type={input.password.type}
+              placeholder={input.password.placeholder}
+              name={input.password.name}
+              classInfo={input.password.classInfo}
+              value={input.password.value}
+              onChange={this.onChange}
+              hasIconsRight
+              textHelp={input.password.textHelp} />
+            <TermConditions />
+            <ButtonFullWidth
+              text='Login'
+              onClick={() => this.handleSignInClick()} />
+            <div className='has-text-centered'>
+              <Link href='/password-reset'><a>Lupa Password</a></Link>
+            </div>
+            <HrText text='atau' />
+            <LoginFacebook
+              responseFacebook={(response) => this.responseFacebook(response)} />
+          </form>
+        </div>
+      </section>
     )
   }
 }
