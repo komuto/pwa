@@ -6,6 +6,9 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import localForage from 'localforage'
 // components
+import Content from '../Components/Content'
+import Section from '../Components/Section'
+import Containers from '../Components/Containers'
 import { LoginFacebook } from '../Components/Facebook'
 import { Input, InputRadio } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
@@ -257,90 +260,92 @@ class SignUp extends Component {
   render () {
     const { input, notification } = this.state
     return (
-      <section className='content'>
-        <div className='container is-fluid'>
-          <Notification
-            type='is-warning'
-            isShow={notification.status}
-            activeClose
-            onClose={() => this.setState({notification: {status: false, message: ''}})}
-            message={notification.message} />
-          <form action='#' className='form'>
-            <Input
-              type={input.nama.type}
-              placeholder={input.nama.placeholder}
-              name={input.nama.name}
-              classInfo={input.nama.classInfo}
-              value={input.nama.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.nama.textHelp} />
-            <Input
-              type={input.handphone.type}
-              placeholder={input.handphone.placeholder}
-              name={input.handphone.name}
-              classInfo={input.handphone.classInfo}
-              value={input.handphone.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.handphone.textHelp} />
-            <Input
-              type={input.email.type}
-              placeholder={input.email.placeholder}
-              name={input.email.name}
-              classInfo={input.email.classInfo}
-              value={input.email.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.email.textHelp} />
-            <Input
-              type={input.password.type}
-              placeholder={input.password.placeholder}
-              name={input.password.name}
-              classInfo={input.password.classInfo}
-              value={input.password.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.password.textHelp} />
-            <Input
-              type={input.passwordRetype.type}
-              placeholder={input.passwordRetype.placeholder}
-              name={input.passwordRetype.name}
-              classInfo={input.passwordRetype.classInfo}
-              value={input.passwordRetype.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.passwordRetype.textHelp} />
+      <Content>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+        <Section className='content'>
+          <Containers>
+            <form action='#' className='form'>
+              <Input
+                type={input.nama.type}
+                placeholder={input.nama.placeholder}
+                name={input.nama.name}
+                classInfo={input.nama.classInfo}
+                value={input.nama.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.nama.textHelp} />
+              <Input
+                type={input.handphone.type}
+                placeholder={input.handphone.placeholder}
+                name={input.handphone.name}
+                classInfo={input.handphone.classInfo}
+                value={input.handphone.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.handphone.textHelp} />
+              <Input
+                type={input.email.type}
+                placeholder={input.email.placeholder}
+                name={input.email.name}
+                classInfo={input.email.classInfo}
+                value={input.email.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.email.textHelp} />
+              <Input
+                type={input.password.type}
+                placeholder={input.password.placeholder}
+                name={input.password.name}
+                classInfo={input.password.classInfo}
+                value={input.password.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.password.textHelp} />
+              <Input
+                type={input.passwordRetype.type}
+                placeholder={input.passwordRetype.placeholder}
+                name={input.passwordRetype.name}
+                classInfo={input.passwordRetype.classInfo}
+                value={input.passwordRetype.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.passwordRetype.textHelp} />
 
-            <div className='field'>
-              <label className='label'>Gender</label>
-              <p className='control'>
-                <InputRadio
-                  text='Pria'
-                  value='L'
-                  name={input.genderGroup.name}
-                  selected={input.genderGroup.selected}
-                  onChange={this.handleGenderChange} />
+              <div className='field'>
+                <label className='label'>Gender</label>
+                <p className='control'>
+                  <InputRadio
+                    text='Pria'
+                    value='L'
+                    name={input.genderGroup.name}
+                    selected={input.genderGroup.selected}
+                    onChange={this.handleGenderChange} />
 
-                <InputRadio
-                  text='Wanita'
-                  value='P'
-                  name={input.genderGroup.name}
-                  selected={input.genderGroup.selected}
-                  onChange={this.handleGenderChange} />
-              </p>
-            </div>
-            <TermConditions />
-            <ButtonFullWidth
-              text='Register'
-              onClick={() => this.handleRegisterClick()} />
-            <HrText
-              text='atau' />
-            <LoginFacebook
-              responseFacebook={(response) => this.responseFacebook(response)} />
-          </form>
-        </div>
-      </section>
+                  <InputRadio
+                    text='Wanita'
+                    value='P'
+                    name={input.genderGroup.name}
+                    selected={input.genderGroup.selected}
+                    onChange={this.handleGenderChange} />
+                </p>
+              </div>
+              <TermConditions />
+              <ButtonFullWidth
+                text='Register'
+                onClick={() => this.handleRegisterClick()} />
+              <HrText
+                text='atau' />
+              <LoginFacebook
+                responseFacebook={(response) => this.responseFacebook(response)} />
+            </form>
+          </Containers>
+        </Section>
+      </Content>
     )
   }
 }
