@@ -2,10 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-export const HOME = 'HOME'
-export const TRANSAKSI = 'TRANSAKSI'
-export const NOTIFIKASI = 'NOTIFIKASI'
-export const PROFILE = 'PROFILE'
+import { HOME, TRANSAKSI, NOTIFIKASI, PROFILE } from '../Utils/Constant'
 
 const Tabbar = (props) => {
   const { active } = props.params
