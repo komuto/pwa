@@ -38,6 +38,7 @@
     "react-infinite-scroller": "^1.0.7",
     "react-redux": "^5.0.2",
     "react-slick": "^0.14.11",
+    "react-sticky": "^6.0.1",
     "redux": "^3.6.0",
     "redux-immutablejs": "^0.0.8",
     "redux-persist": "^4.1.1",

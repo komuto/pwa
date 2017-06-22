@@ -1,8 +1,10 @@
 // @flow
+import React from 'react'
 // Containers
 import Header from '../Containers/Header'
-import { Navbar, Hero } from '../Containers/Navbar'
+import { Navbar, SearchBoox, Hero } from '../Containers/Navbar'
 import Tabbar from '../Containers/Tabbar'
+import { StickyContainer, Sticky } from 'react-sticky'
 
 export default (props: any) => {
   const { children } = props
@@ -12,9 +14,21 @@ export default (props: any) => {
       <Header params={header} />
       <div className={`main ${style}`}>
         { (navbar) ? <Navbar params={navbar} /> : null}
-        { (hero) ? <Hero params={hero} /> : null}
-        { children }
-        { (tabbar) ? <Tabbar params={tabbar} /> : null }
+        <StickyContainer>
+          { (hero) ? <Hero params={hero} /> : null}
+          { (navbar && navbar.searchBoox)
+            ? <Sticky>
+              {
+                  ({ isSticky, wasSticky, style, distanceFromTop, distanceFromBottom, calculatedHeight }) => {
+                    return <SearchBoox style={style} />
+                  }
+                }
+            </Sticky>
+            : null
+          }
+          { children }
+          { (tabbar) ? <Tabbar params={tabbar} /> : null }
+        </StickyContainer>
       </div>
     </div>
   )
