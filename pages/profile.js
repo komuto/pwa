@@ -1,16 +1,16 @@
 // @flow
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
-import { PROFILE } from '../src/Containers/Tabbar'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Profile from '../src/Containers/Profile'
-// style custom
+// utils
+import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   header: {
-    title: 'Komuto'
+    title: 'Profile'
   },
   navbar: {
     searchBoox: false,
