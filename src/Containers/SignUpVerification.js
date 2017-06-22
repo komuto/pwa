@@ -1,15 +1,28 @@
 // @flow
-import React from 'react'
+import React, { Component } from 'react'
 import Router from 'next/router'
-import { Images } from '../Themes'
-import { NotificationPage } from '../Components/Notification'
 
-export default (props:any) => {
-  const email = Router.query.email
-  return <NotificationPage
-    icon={Images.password}
-    title='Link Verifikasi Email telah terkirim'
-    subTitle={`Kami telah mengirim link verifikasi email ke ${email}. Silahkan periksa inbox Anda, dan ikuti petunjuk di email tersebut.`}
-    path='signin'
-    text='Ke Halaman Login' />
+class SignUpVerification extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      token: '...'
+    }
+  }
+
+  async componentDidMount () {
+    const token = await Router.query.token
+    this.setState({ token })
+  }
+
+  render () {
+    // const { token } = this.state
+    return (
+      <div className='has-text-centered'>
+        <p style={{position: 'absolute', top: '50%', left: '40%'}}> Loading ...</p>
+      </div>
+    )
+  }
 }
+
+export default SignUpVerification
