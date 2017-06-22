@@ -9,6 +9,7 @@ import Profile from '../src/Containers/Profile'
 import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
+  style: 'main user bg-grey',
   header: {
     title: 'Profile'
   },
