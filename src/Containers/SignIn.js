@@ -7,6 +7,9 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import localForage from 'localforage'
 // components
+import Content from '../Components/Content'
+import Section from '../Components/Section'
+import Containers from '../Components/Containers'
 import { LoginFacebook } from '../Components/Facebook'
 import { Input } from '../Components/Input'
 import { ButtonFullWidth } from '../Components/Button'
@@ -152,46 +155,48 @@ class SignIn extends Component {
   render () {
     const { input, notification } = this.state
     return (
-      <section className='content'>
-        <div className='container is-fluid'>
-          <Notification
-            type='is-warning'
-            isShow={notification.status}
-            activeClose
-            onClose={() => this.setState({notification: {status: false, message: ''}})}
-            message={notification.message} />
-          <form action='#' className='form'>
-            <Input
-              type={input.email.type}
-              placeholder={input.email.placeholder}
-              name={input.email.name}
-              classInfo={input.email.classInfo}
-              value={input.email.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.email.textHelp} />
-            <Input
-              type={input.password.type}
-              placeholder={input.password.placeholder}
-              name={input.password.name}
-              classInfo={input.password.classInfo}
-              value={input.password.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.password.textHelp} />
-            <TermConditions />
-            <ButtonFullWidth
-              text='Login'
-              onClick={() => this.handleSignInClick()} />
-            <div className='has-text-centered'>
-              <Link href='/password-reset'><a>Lupa Password</a></Link>
-            </div>
-            <HrText text='atau' />
-            <LoginFacebook
-              responseFacebook={(response) => this.responseFacebook(response)} />
-          </form>
-        </div>
-      </section>
+      <Content>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+        <Section className='content'>
+          <Containers>
+            <form action='#' className='form'>
+              <Input
+                type={input.email.type}
+                placeholder={input.email.placeholder}
+                name={input.email.name}
+                classInfo={input.email.classInfo}
+                value={input.email.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.email.textHelp} />
+              <Input
+                type={input.password.type}
+                placeholder={input.password.placeholder}
+                name={input.password.name}
+                classInfo={input.password.classInfo}
+                value={input.password.value}
+                onChange={this.onChange}
+                hasIconsRight
+                textHelp={input.password.textHelp} />
+              <TermConditions />
+              <ButtonFullWidth
+                text='Login'
+                onClick={() => this.handleSignInClick()} />
+              <div className='has-text-centered'>
+                <Link href='/password-reset'><a>Lupa Password</a></Link>
+              </div>
+              <HrText text='atau' />
+              <LoginFacebook
+                responseFacebook={(response) => this.responseFacebook(response)} />
+            </form>
+          </Containers>
+        </Section>
+      </Content>
     )
   }
 }
