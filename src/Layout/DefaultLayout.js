@@ -20,7 +20,7 @@ export default (props: any) => {
             ? <Sticky>
               {
                   ({ isSticky, wasSticky, style, distanceFromTop, distanceFromBottom, calculatedHeight }) => {
-                    return <SearchBoox style={style} />
+                    return <SearchBoox style={style} isSticky={isSticky} />
                   }
                 }
             </Sticky>
