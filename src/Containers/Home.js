@@ -177,7 +177,7 @@ class Home extends Component {
             </div>
             <div className='column is-paddingless'>
               <div className='see-all'>
-                <span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span>
+                <Link href='product-new'><a><span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span></a></Link>
               </div>
             </div>
           </div>
