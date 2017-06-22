@@ -5874,6 +5874,12 @@ body {
   .search-form .control.has-icons-left input {
     border-radius: 2px;
     box-shadow: 0 3px 4px 0 #da4b4b; }
+  .search-form.floating {
+    background-color: transparent;
+    padding: 0; }
+    .search-form.floating .control.has-icons-left input {
+      border-radius: 0;
+      box-shadow: 0 5px 5px 0 rgba(234, 234, 235, 0.3); }
 
 .on-search {
   position: fixed;
@@ -6076,7 +6082,11 @@ body {
         padding: 9px 15px; }
 
 .wishlist .search-form {
-  margin-bottom: 0; }
+  margin-bottom: 0;
+  background-color: #ffffff;
+  padding: 0; }
+  .wishlist .search-form .control.has-icons-left .input {
+    box-shadow: none; }
 
 .categories-option {
   height: 46px;
@@ -6157,45 +6167,48 @@ body {
       left: -180px;
       width: 180px;
       height: 100%;
-      background-color: #f4f5f6; }
-      .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul {
-        -webkit-box-align: normal;
-            -ms-flex-align: normal;
-                align-items: normal;
-        border-bottom: 1px solid #e9e9e9;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        text-align: left; }
-        .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li {
-          position: relative; }
-          .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active {
-            background-color: #ffffff; }
-            .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active a {
-              border-bottom: 1px solid #ffffff; }
-            .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active:after {
-              content: "";
-              position: absolute;
-              top: 50%;
-              right: 20px;
-              -webkit-transform: translateY(-50%);
-              transform: translateY(-50%);
-              width: 24px;
-              height: 24px;
-              background-image: url("../../images/komuto-icon/031_selected_sign.svg"); }
-          .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a {
-            -webkit-box-pack: left;
-                -ms-flex-pack: left;
-                    justify-content: left;
-            -webkit-box-align: normal;
-                -ms-flex-align: normal;
-                    align-items: normal;
-            border-bottom: 1px solid #e9e9e9;
-            font-size: 13px;
-            letter-spacing: 0.2px;
-            color: #404852;
-            padding: 20px; }
+      background-color: #f4f5f6;
+      overflow: auto; }
+      .modal-filter .modal-card .modal-card-body .fiter-side .tabs {
+        min-height: 450px; }
+        .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul {
+          -webkit-box-align: normal;
+              -ms-flex-align: normal;
+                  align-items: normal;
+          border-bottom: none;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          text-align: left; }
+          .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li {
+            position: relative; }
+            .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active {
+              background-color: #ffffff; }
+              .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active a {
+                border-bottom: 1px solid #ffffff; }
+              .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active:after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                -webkit-transform: translateY(-50%);
+                transform: translateY(-50%);
+                width: 24px;
+                height: 24px;
+                background-image: url("../../images/komuto-icon/031_selected_sign.svg"); }
+            .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a {
+              -webkit-box-pack: left;
+                  -ms-flex-pack: left;
+                      justify-content: left;
+              -webkit-box-align: normal;
+                  -ms-flex-align: normal;
+                      align-items: normal;
+              border-bottom: 1px solid #e9e9e9;
+              font-size: 13px;
+              letter-spacing: 0.2px;
+              color: #404852;
+              padding: 20px; }
     .modal-filter .modal-card .modal-card-body .filter-option {
       position: absolute;
       top: 0;
@@ -6203,12 +6216,14 @@ body {
       padding-left: 30px;
       width: 100%;
       height: 100%;
-      display: none; }
+      display: none;
+      overflow: auto; }
       .modal-filter .modal-card .modal-card-body .filter-option.active {
         display: block; }
       .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
         background-color: #ffffff;
-        width: 100%; }
+        width: 100%;
+        min-height: 450px; }
         .modal-filter .modal-card .modal-card-body .filter-option .sort-list p {
           padding: 20px; }
           .modal-filter .modal-card .modal-card-body .filter-option .sort-list p strong {
@@ -6255,14 +6270,15 @@ body {
               width: 100%;
               height: auto;
               border: none;
-              padding-left: 0; }
+              padding-left: 0;
+              font-size: 13px; }
             .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select:before {
               content: "";
               width: 24px;
               height: 24px;
               background-image: url("../../images/komuto-icon/035_arrow_down.svg");
               position: absolute;
-              top: 4px;
+              top: 0;
               right: 0; }
             .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select:after {
               display: none; }
@@ -6272,6 +6288,23 @@ body {
   background-color: #f4f5f6; }
   .modal-filter.categories .modal-card .modal-card-body .section .title {
     padding-top: 20px; }
+
+@media handheld, only screen and (max-width: 480px) {
+  .modal-filter .modal-card .modal-card-body {
+    margin-left: 139px; }
+    .modal-filter .modal-card .modal-card-body .fiter-side {
+      left: -139px;
+      width: 139px; }
+      .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a {
+        font-size: 11px; }
+      .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active:after {
+        right: 8px; }
+    .modal-filter .modal-card .modal-card-body .filter-option {
+      padding-left: 20px; }
+      .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
+        padding: 20px 10px; }
+        .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
+          font-size: 11px; } }
 
 .main.categories {
   padding-bottom: 0; }
