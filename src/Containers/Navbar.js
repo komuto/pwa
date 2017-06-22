@@ -29,8 +29,9 @@ export const Navbar = (props) => {
 
 export class SearchBoox extends PureComponent {
   render () {
+    const { isSticky, style } = this.props
     return (
-      <div className='field search-form is-clearfix sticky' style={{ ...this.props.style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
+      <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
         <p className='control has-icons-left'>
           <input className='input is-medium' type='text' placeholder='Cari barang atau toko' />
           <span className='icon is-left'>
