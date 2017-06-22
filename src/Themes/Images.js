@@ -5,7 +5,8 @@ const images = {
   regSuccess: '../../static/images/reg-success.svg',
   user: '../../static/images/pict.jpg',
   banner: '../../static/images/banner.jpg',
-  thumb: '../../static/images/thumb.jpg'
+  thumb: '../../static/images/thumb.jpg',
+  noImage: '../../static/images/imagenotfound.svg'
 }
 
 export default images
