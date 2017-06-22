@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react'
-// import Link from 'next/link'
+import Link from 'next/link'
 import {Images} from '../Themes'
 // components
 import Slider from 'react-slick'
@@ -71,7 +71,7 @@ class Home extends Component {
             </div>
             <div className='column is-paddingless'>
               <div className='see-all'>
-                <span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span>
+                <Link href='categories1'><a><span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span></a></Link>
               </div>
             </div>
           </div>
