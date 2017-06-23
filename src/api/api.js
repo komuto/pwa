@@ -19,14 +19,14 @@ export function publicApi () {
 export function publicApiKomuto () {
   return axios.create({
     baseURL: apiKomuto + '/',
-    timeout: 2000
+    timeout: 10000
   })
 }
 
 export function authApiKomuto () {
   const api = axios.create({
     baseURL: apiKomuto + '/',
-    timeout: 5000
+    timeout: 10000
   })
 
   api.interceptors.request.use(config => {
