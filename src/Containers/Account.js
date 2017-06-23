@@ -1,20 +1,35 @@
 // @flow
 import React, { Component } from 'react'
-
+import { connect } from 'react-redux'
+// import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
+// import { ButtonFullWidth } from '../Components/Button'
 // import Link from 'next/link'
 import {Images} from '../Themes'
+// actions
+import * as loginAction from '../actions/user'
 
 class Account extends Component {
+  handleSignOutClick () {
+    NProgress.start()
+    this.props.dispatch(loginAction.logout())
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // const { user } = nextProps
+    // const data = user
+  }
+
   render () {
-    const { data } = this.props.user.user
+    const { user } = this.props
     return (
       <Content>
         <Section className='bg-white'>
           {
-          data.status === 0
+          user.status === 0
           ? <div className='notif-verify'>
             <div className='box is-paddingless'>
               <article className='media'>
@@ -27,7 +42,7 @@ class Account extends Component {
                   <div className='content'>
                     <p>
                       <strong>Verifikasikan email untuk mengakses semua menu</strong>
-                      Silahkan klik link verifikasi yang telah kami kirimkan ke dwinawan@gmail.com
+                      Silahkan klik link verifikasi yang telah kami kirimkan ke { user.email }
                       <a className='button is-warning is-outlined'>Kirim Ulang link verifikasi</a>
                     </p>
                   </div>
@@ -44,13 +59,13 @@ class Account extends Component {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image user-pict'>
-                        <img src={(data.photo) ? data.photo : Images.noImage} alt='pict' />
+                        <img src={(user.photo) ? user.photo : Images.noImage} alt='pict' />
                       </figure>
                     </div>
                     <div className='media-content'>
                       <div className='content'>
                         <p className='user-name'>
-                          <strong>{ data.name }</strong>
+                          <strong>{ user.name }</strong>
                           <br />
                           Kelola Akun
                         </p>
@@ -74,7 +89,7 @@ class Account extends Component {
                         <p>
                           <strong>Saldo</strong>
                         </p>
-                        <div className='val-right'><span>Rp { data.saldo_wallet }</span></div>
+                        <div className='val-right'><span>Rp { user.saldo_wallet }</span></div>
                       </div>
                     </div>
                   </article>
@@ -133,5 +148,10 @@ class Account extends Component {
     )
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    // user: state.user
+  }
+}
 
-export default Account
+export default connect(mapStateToProps)(Account)
