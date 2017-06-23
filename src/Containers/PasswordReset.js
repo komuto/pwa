@@ -27,7 +27,10 @@ class PasswordReset extends Component {
           textHelp: ''
         }
       },
-      notification: false
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
     this.onChange = this.onChange.bind(this)
   }
@@ -114,10 +117,10 @@ class PasswordReset extends Component {
           </div>
           <Notification
             type='is-warning'
-            isShow={notification}
+            isShow={notification.status}
             activeClose
             onClose={() => this.setState({notification: false})}
-            message='Email anda tidak terdaftar!' />
+            message={notification.message} />
           <form action='#' className='form'>
             <Input
               type={input.email.type}
