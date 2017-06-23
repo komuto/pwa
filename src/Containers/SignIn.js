@@ -5,7 +5,6 @@ import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-import localForage from 'localforage'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -128,27 +127,25 @@ class SignIn extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { user, social } = nextProps
+    const { user } = nextProps
     const { notification } = this.state
-    const data = (this.dipatchType === LOGIN_SOCIAL) ? social : user
-
-    if (!data.isLoading) {
-      if (data.isFound) {
-        localForage.setItem('sessionLogin', data)
-        Router.push('/profile')
-        notification.status = false
-      }
-
-      if (data.isError) {
-        notification.status = true
-        notification.message = data.message
-      } else if (!data.isFound) {
-        notification.status = true
-        notification.message = 'Data tidak ditemukan'
-      }
-
+    const data = user
+    if (!data.isOnline) {
       NProgress.done()
+      notification.status = true
+      notification.message = data.message
       this.setState({ notification })
+    }
+
+    if (!data.isLoading && data.status === 400) {
+      notification.status = true
+      notification.message = data.message
+      this.setState({ notification })
+    }
+
+    if (!data.isLoading && !data.status === 200) {
+      NProgress.done()
+      Router.push('/profile')
     }
   }
 
@@ -202,9 +199,9 @@ class SignIn extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state.user)
   return {
-    user: state.user,
-    social: state.social
+    user: state.user
   }
 }
 
