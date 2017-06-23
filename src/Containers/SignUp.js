@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-import localForage from 'localforage'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -20,7 +19,7 @@ import * as constraints from '../Validations/Auth'
 // actions
 import * as loginAction from '../actions/user'
 
-const LOGIN_SOCIAL = 'LOGIN_SOCIAL'
+const LOGIN = 'LOGIN'
 const REGISTER = 'REGISTER'
 
 class SignUp extends Component {
@@ -196,7 +195,7 @@ class SignUp extends Component {
   responseFacebook (response) {
     if (response) {
       NProgress.start()
-      this.dipatchType = LOGIN_SOCIAL
+      this.dipatchType = LOGIN
       this.props.dispatch(loginAction.loginSocial({
         provider_name: 'Facebook',
         provider_uid: response.userID,
@@ -225,35 +224,26 @@ class SignUp extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { register, social } = nextProps
+    const { register, user } = nextProps
     const { notification } = this.state
-    const { email } = this.state.input
-    const data = (this.dipatchType === LOGIN_SOCIAL) ? social : register
+    const data = (this.dipatchType === LOGIN) ? user : register
 
-    if (!data.isLoading) {
-      if (data.isFound) {
-        if (this.dipatchType === LOGIN_SOCIAL) {
-          localForage.setItem('sessionLogin', data)
-          Router.push('/profile')
-          notification.status = false
-        } else {
-          Router.push({
-            pathname: '/signup-verification',
-            query: { email: email.value }
-          })
-        }
-      }
-
-      if (data.isError) {
-        notification.status = true
-        notification.message = data.message
-      } else if (!data.isFound) {
-        notification.status = true
-        notification.message = 'Data tidak ditemukan'
-      }
-
+    if (!data.isOnline) {
       NProgress.done()
+      notification.status = true
+      notification.message = data.message
       this.setState({ notification })
+    }
+
+    if (!data.isLoading && data.status === 400) {
+      notification.status = true
+      notification.message = data.message
+      this.setState({ notification })
+    }
+
+    if (!data.isLoading && !data.status === 200) {
+      NProgress.done()
+      Router.push('/profile')
     }
   }
 
@@ -262,7 +252,7 @@ class SignUp extends Component {
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type='is-warning'
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
@@ -353,7 +343,7 @@ const mapStateToProps = (state) => {
   console.log(state.register)
   return {
     register: state.register,
-    social: state.social
+    user: state.user
   }
 }
 
