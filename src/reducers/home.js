@@ -5,7 +5,7 @@ const initCategory = {
   message: '',
   status: '',
   isLoading: false,
-  isError: false,
+  isOnline: true,
   isFound: false
 }
 
@@ -14,7 +14,7 @@ const initProduct = {
   message: '',
   status: 0,
   isLoading: false,
-  isError: false,
+  isOnline: true,
   isFound: false
 }
 
@@ -31,6 +31,7 @@ function product (state = initProduct, action) {
         products: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -40,7 +41,7 @@ function product (state = initProduct, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     case homeActions.SEARCH_PRODUCT_REQUEST:
       return {
@@ -53,6 +54,7 @@ function product (state = initProduct, action) {
         products: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -62,7 +64,7 @@ function product (state = initProduct, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -82,6 +84,7 @@ function categoryList (state = initCategory, action) {
         categories: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -91,7 +94,7 @@ function categoryList (state = initCategory, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -108,7 +111,7 @@ function subCategory (state = initCategory, action) {
         status: 0,
         isLoading: false,
         isFound: false,
-        isError: false
+        isOnline: true
       }
     case homeActions.HOME_SUBCATEGORY_REQUEST:
       return {
@@ -121,6 +124,7 @@ function subCategory (state = initCategory, action) {
         categories: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -130,7 +134,7 @@ function subCategory (state = initCategory, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state

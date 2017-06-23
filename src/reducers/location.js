@@ -6,7 +6,7 @@ const initProvince = {
   status: 0,
   isLoading: false,
   isFound: false,
-  isError: false
+  isOnline: true
 }
 
 const initDistrict = {
@@ -15,7 +15,7 @@ const initDistrict = {
   status: 0,
   isLoading: false,
   isFound: false,
-  isError: false
+  isOnline: true
 }
 
 const initSubDistrict = {
@@ -24,7 +24,7 @@ const initSubDistrict = {
   status: 0,
   isLoading: false,
   isFound: false,
-  isError: false
+  isOnline: true
 }
 
 const initVillage = {
@@ -33,7 +33,7 @@ const initVillage = {
   status: 0,
   isLoading: false,
   isFound: false,
-  isError: false
+  isOnline: true
 }
 
 function province (state = initProvince, action) {
@@ -50,6 +50,7 @@ function province (state = initProvince, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
+        isOnline: true,
         isFound: true
       }
     case locationActions.GET_PROVINCE_FAILURE:
@@ -58,7 +59,7 @@ function province (state = initProvince, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -79,6 +80,7 @@ function district (state = initDistrict, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
+        isOnline: true,
         isFound: true
       }
     case locationActions.GET_DISTRICT_FAILURE:
@@ -87,7 +89,7 @@ function district (state = initDistrict, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -107,6 +109,7 @@ function subdistrict (state = initSubDistrict, action) {
         subdistricts: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -116,7 +119,7 @@ function subdistrict (state = initSubDistrict, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -136,6 +139,7 @@ function village (state = initVillage, action) {
         villages: action.data,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
         isFound: true
       }
@@ -145,7 +149,7 @@ function village (state = initVillage, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state

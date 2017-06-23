@@ -6,11 +6,12 @@ function product (action) {
   let check = [
     {value: action.page, string: 'page'},
     {value: action.limit, string: 'limit'},
-    {value: action.category_id, string: 'category_id'}
+    {value: action.category_id, string: 'category_id'},
+    {value: action.sort, string: 'sort'}
   ]
 
   let indeksCheck = []
-  let i
+  let i = 0
   for (i = 0; i < check.length; i++) {
     if (check[i].value !== undefined) {
       indeksCheck.push(i)
@@ -32,12 +33,24 @@ function product (action) {
   return axios.get('products' + param, {
     ...action
   })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
 }
 
 function search (action) {
   let axios = publicApiKomuto()
   return axios.get('products/search?q=' + action.query, {
     ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
   })
 }
 
@@ -46,12 +59,24 @@ function categoryList (action) {
   return axios.get('categories', {
     ...action
   })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
 }
 
 function subCategory (action) {
   let axios = publicApiKomuto()
   return axios.get('categories/' + action.id + '/sub-categories', {
     ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
   })
 }
 

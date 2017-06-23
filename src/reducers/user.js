@@ -4,12 +4,29 @@ const initUser = {
   email: '',
   token: '',
   uid: '',
-  isLoggedIn: false,
   user: {},
   message: '',
   status: '',
   isLoading: false,
-  isError: false,
+  isOnline: true,
+  isFound: false
+}
+
+const initValidate = {
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initProfile = {
+  message: '',
+  status: 0,
+  verifyStatus: '',
+  user: {},
+  isLoading: false,
+  isOnline: true,
   isFound: false
 }
 
@@ -18,8 +35,16 @@ const initForgetPass = {
   message: '',
   status: '',
   isLoading: false,
-  isError: false,
+  isOnline: true,
   isFound: false
+}
+
+const initVerify = {
+  message: '',
+  status: '',
+  isLoading: false,
+  isFound: false,
+  isOnline: true
 }
 
 const initLogin = {
@@ -50,8 +75,8 @@ function auth (state = initUser, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isFound: true,
-        isError: false
+        isOnline: true,
+        isFound: true
       }
     case actions.USER_LOGIN_FAILURE:
       return {
@@ -63,42 +88,9 @@ function auth (state = initUser, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true,
+        isOnline: action.isOnline,
         isFound: false
       }
-    case actions.USER_NEWPASSWORD_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.USER_NEWPASSWORD_SUCCESS:
-      return {
-        ...state,
-        email: action.data.email,
-        uid: action.data.id,
-        user: action,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isError: false
-      }
-    case actions.USER_NEWPASSWORD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isError: true,
-        isFound: false
-      }
-    default:
-      return state
-  }
-}
-
-function authSocial (state = initUser, action) {
-  switch (action.type) {
     case actions.LOGIN_SOCIAL_REQUEST:
       return {
         ...state,
@@ -121,8 +113,8 @@ function authSocial (state = initUser, action) {
         status: action.code,
         is_required_password: action.data.is_required_password,
         isLoading: false,
-        isFound: true,
-        isError: false
+        isOnline: true,
+        isFound: true
       }
     case actions.LOGIN_SOCIAL_FAILURE:
       return {
@@ -134,13 +126,110 @@ function authSocial (state = initUser, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true,
-        isFound: false
+        isOnline: action.isOnline
+      }
+    case actions.USER_LOGOUT_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true
       }
     default:
       return state
   }
 }
+
+function newPassword (state = initVerify, action) {
+  switch (action.type) {
+    case actions.USER_NEWPASSWORD_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.USER_NEWPASSWORD_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case actions.USER_NEWPASSWORD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function verify (state = initVerify, action) {
+  switch (action.type) {
+    case actions.USER_VERIFICATION_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.USER_VERIFICATION_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case actions.USER_VERIFICATION_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function getProfile (state = initProfile, action) {
+  switch (action.type) {
+    case actions.GET_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.GET_PROFILE_SUCCESS:
+      return {
+        ...state,
+        verifyStatus: action.data.user.status,
+        user: action.data.user,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case actions.GET_PROFILE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 function register (state = initUser, action) {
   switch (action.type) {
     case actions.USER_REGISTER_REQUEST:
@@ -159,12 +248,13 @@ function register (state = initUser, action) {
         ...state,
         email: action.data.email,
         uid: action.data.id,
-        user: action,
+        user: action.data,
+        token: action.data.token,
         message: action.message,
         status: action.code,
+        isOnline: true,
         isLoading: false,
-        isFound: true,
-        isError: false
+        isFound: true
       }
     case actions.USER_REGISTER_FAILURE:
       return {
@@ -176,13 +266,42 @@ function register (state = initUser, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true,
-        isFound: false
+        isOnline: action.isOnline
       }
     default:
       return state
   }
 }
+
+function validateToken (state = initValidate, action) {
+  switch (action.type) {
+    case actions.VALIDATE_TOKENFORGETPASSWORD_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.VALIDATE_TOKENFORGETPASSWORD_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isOnline: true,
+        isLoading: false,
+        isFound: true
+      }
+    case actions.VALIDATE_TOKENFORGETPASSWORD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 function forgetPassword (state = initForgetPass, action) {
   switch (action.type) {
     case actions.FORGET_PASSWORD_REQUEST:
@@ -199,8 +318,8 @@ function forgetPassword (state = initForgetPass, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isFound: true,
-        isError: false
+        isOnline: true,
+        isFound: true
       }
     case actions.FORGET_PASSWORD_FAILURE:
       return {
@@ -208,8 +327,7 @@ function forgetPassword (state = initForgetPass, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true,
-        isFound: false
+        isOnline: action.isOnline
       }
     default:
       return state
@@ -230,8 +348,11 @@ function isLogin (state = initLogin, action) {
 
 export {
   auth,
-  authSocial,
+  verify,
+  getProfile,
   register,
+  newPassword,
   forgetPassword,
-  isLogin
+  isLogin,
+  validateToken
 }

@@ -5,6 +5,12 @@ function getBrand (action) {
   return axios.get('brands', {
     ...action
   })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
 }
 
 export {

@@ -6,7 +6,7 @@ const initBrand = {
   status: 0,
   isLoading: false,
   isFound: false,
-  isError: false
+  isOnline: true
 }
 
 function brand (state = initBrand, action) {
@@ -23,6 +23,7 @@ function brand (state = initBrand, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
+        isOnline: true,
         isFound: true
       }
     case brandActions.GET_BRAND_FAILURE:
@@ -31,7 +32,7 @@ function brand (state = initBrand, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
-        isError: true
+        isOnline: action.isOnline
       }
     default:
       return state

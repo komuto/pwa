@@ -5,6 +5,12 @@ function getExpedition (action) {
   return axios.get('expeditions', {
     ...action
   })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
 }
 
 export {
