@@ -241,7 +241,7 @@ class SignUp extends Component {
       this.setState({ notification })
     }
 
-    if (!data.isLoading && !data.status === 200) {
+    if (!data.isLoading && data.status === 200) {
       NProgress.done()
       Router.push('/profile')
     }
