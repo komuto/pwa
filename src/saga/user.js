@@ -2,12 +2,7 @@ import { put } from 'redux-saga/effects'
 import * as userActions from '../actions/user'
 import * as userApi from '../api/user'
 import localForage from 'localforage'
-
-const error = {
-  message: 'Your device is offline',
-  code: 'ENOENT',
-  isOnline: false
-}
+import { errorHandling } from '../config'
 
 function * register (action) {
   try {
@@ -15,14 +10,7 @@ function * register (action) {
     yield localForage.setItem('token', data.data.token)
     yield put({ type: userActions.USER_REGISTER_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.USER_REGISTER_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.USER_REGISTER_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.USER_REGISTER_FAILURE, e)
   }
 }
 
@@ -32,34 +20,20 @@ function * login (action) {
     yield localForage.setItem('token', data.data.token)
     yield put({ type: userActions.USER_LOGIN_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.USER_LOGIN_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.USER_LOGIN_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.USER_LOGIN_FAILURE, e)
   }
 }
 
-function * validateToken (action) {
+function* validateToken (action) {
   try {
     const {data} = yield userApi.validateToken(action)
     yield put({ type: userActions.VALIDATE_TOKENFORGETPASSWORD_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.VALIDATE_TOKENFORGETPASSWORD_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.VALIDATE_TOKENFORGETPASSWORD_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.VALIDATE_TOKENFORGETPASSWORD_FAILURE, e)
   }
 }
 
-function * logout (action) {
+function* logout (action) {
   try {
     const data = yield userApi.logout(action)
     yield localForage.removeItem('token')
@@ -73,19 +47,12 @@ function * logout (action) {
   }
 }
 
-function * verify (action) {
+function* verify (action) {
   try {
     const {data} = yield userApi.verification(action)
     yield put({ type: userActions.USER_VERIFICATION_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.USER_VERIFICATION_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.USER_VERIFICATION_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.USER_VERIFICATION_FAILURE, e)
   }
 }
 
@@ -94,14 +61,7 @@ function * forgetPassword (action) {
     const {data} = yield userApi.forgetPassword(action)
     yield put({ type: userActions.FORGET_PASSWORD_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.FORGET_PASSWORD_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.FORGET_PASSWORD_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.FORGET_PASSWORD_FAILURE, e)
   }
 }
 
@@ -111,14 +71,7 @@ function * loginSocial (action) {
     yield localForage.setItem('token', data.data.token)
     yield put({ type: userActions.LOGIN_SOCIAL_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.LOGIN_SOCIAL_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.LOGIN_SOCIAL_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.LOGIN_SOCIAL_FAILURE, e)
   }
 }
 
@@ -127,30 +80,16 @@ function * newPassword (action) {
     const {data} = yield userApi.newPassword(action)
     yield put({ type: userActions.USER_NEWPASSWORD_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.USER_NEWPASSWORD_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.USER_NEWPASSWORD_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.USER_NEWPASSWORD_FAILURE, e)
   }
 }
 
-function * getProfile (action) {
+function* getProfile (action) {
   try {
     const {data} = yield userApi.getProfile(action)
     yield put({ type: userActions.GET_PROFILE_SUCCESS, ...data })
   } catch (e) {
-    const data = e.response
-    if (data !== undefined) {
-      const {data} = e.response
-      data.isOnline = true
-      yield put({ type: userActions.GET_PROFILE_FAILURE, ...data })
-    } else {
-      yield put({ type: userActions.GET_PROFILE_FAILURE, ...error })
-    }
+    yield errorHandling(userActions.GET_PROFILE_FAILURE, e)
   }
 }
 
@@ -165,3 +104,4 @@ export {
   newPassword,
   getProfile
 }
+

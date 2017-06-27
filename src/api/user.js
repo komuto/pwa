@@ -18,6 +18,12 @@ function verification (action) {
   return axios.get('signup-verification?token=' + action.token, {
     ...action
   })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
 }
 
 function login (action) {
@@ -89,6 +95,12 @@ function validateToken (action) {
   let axios = publicApiKomuto()
   return axios.get('passwords/new?token=' + action.token, {
     ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
   })
 }
 
