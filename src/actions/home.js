@@ -6,6 +6,10 @@ export const HOME_CATEGORY_REQUEST = 'HOME_CATEGORY_REQUEST'
 export const HOME_CATEGORY_SUCCESS = 'HOME_CATEGORY_SUCCESS'
 export const HOME_CATEGORY_FAILURE = 'HOME_CATEGORY_FAILURE'
 
+export const ALL_CATEGORY_REQUEST = 'ALL_CATEGORY_REQUEST'
+export const ALL_CATEGORY_SUCCESS = 'ALL_CATEGORY_SUCCESS'
+export const ALL_CATEGORY_FAILURE = 'ALL_CATEGORY_FAILURE'
+
 export const HOME_SUBCATEGORY_REQUEST = 'HOME_SUBCATEGORY_REQUEST'
 export const HOME_SUBCATEGORY_SUCCESS = 'HOME_SUBCATEGORY_SUCCESS'
 export const HOME_SUBCATEGORY_FAILURE = 'HOME_SUBCATEGORY_FAILURE'
@@ -16,9 +20,16 @@ export const SEARCH_PRODUCT_FAILURE = 'SEARCH_PRODUCT_FAILURE'
 
 export const RESET_STATUS_SUBCATEGORY = 'RESET_STATUS_SUBCATEGORY'
 
-function products () {
+function products (params) {
   return {
-    type: HOME_PRODUCT_REQUEST
+    type: HOME_PRODUCT_REQUEST,
+    ...params
+  }
+}
+
+function allCategory () {
+  return {
+    type: ALL_CATEGORY_REQUEST
   }
 }
 
@@ -50,6 +61,7 @@ function resetStatus () {
 
 export {
   products,
+  allCategory,
   categoryList,
   search,
   subCategory,

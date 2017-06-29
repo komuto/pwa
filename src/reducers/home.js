@@ -9,6 +9,15 @@ const initCategory = {
   isFound: false
 }
 
+const initAllCategory = {
+  allCategory: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isOnline: true,
+  isFound: false
+}
+
 const initProduct = {
   products: [],
   message: '',
@@ -64,6 +73,41 @@ function product (state = initProduct, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function allCategory (state = initAllCategory, action) {
+  switch (action.type) {
+    case homeActions.ALL_CATEGORY_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        message: '',
+        status: 0,
+        isFound: false,
+        isOnline: true
+      }
+    case homeActions.ALL_CATEGORY_SUCCESS:
+      return {
+        ...state,
+        allCategory: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case homeActions.ALL_CATEGORY_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
         isOnline: action.isOnline
       }
     default:
@@ -143,6 +187,7 @@ function subCategory (state = initCategory, action) {
 
 export {
   product,
+  allCategory,
   categoryList,
   subCategory
 }

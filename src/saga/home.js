@@ -21,6 +21,15 @@ function * search (action) {
   }
 }
 
+function * allCategory (action) {
+  try {
+    const {data} = yield homeApi.allCategory(action)
+    yield put({ type: homeActions.ALL_CATEGORY_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(homeActions.ALL_CATEGORY_FAILURE, e)
+  }
+}
+
 function * categoryList (action) {
   try {
     const {data} = yield homeApi.categoryList(action)
@@ -42,6 +51,7 @@ function * subCategory (action) {
 export {
   product,
   search,
+  allCategory,
   categoryList,
   subCategory
 }

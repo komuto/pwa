@@ -1,13 +1,28 @@
 import { publicApiKomuto } from './api'
 
 function product (action) {
+  console.log('INI ACTIONS')
+  console.log(action)
   let axios = publicApiKomuto()
   let param = ''
   let check = [
     {value: action.page, string: 'page'},
-    {value: action.limit, string: 'limit'},
+    {value: action.size, string: 'size'},
     {value: action.category_id, string: 'category_id'},
-    {value: action.sort, string: 'sort'}
+    // sort is filled with 'newest', 'cheapest', 'expensive', 'selling'
+    {value: action.sort, string: 'sort'},
+    // price is filled with range, e.g. 500-1000
+    {value: action.price, string: 'price'},
+    // condition is filled with 'new' or 'used' or '' for both
+    {value: action.condition, string: 'condition'},
+    // other is filled with 'discount', 'verified', 'wholesaler'
+    {value: action.other, string: 'other'},
+    // brands is filled with number separated by comma if more than one, e.g. 2,5,3
+    {value: action.brands, string: 'brands'},
+    // services is same with brands
+    {value: action.services, string: 'services'},
+    // address is number of district_id
+    {value: action.address, string: 'address'}
   ]
 
   let indeksCheck = []
@@ -17,6 +32,8 @@ function product (action) {
       indeksCheck.push(i)
     }
   }
+
+  console.log(indeksCheck)
 
   if (indeksCheck.length !== 0) {
     param = '?'
@@ -44,6 +61,19 @@ function product (action) {
 function search (action) {
   let axios = publicApiKomuto()
   return axios.get('products/search?q=' + action.query, {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function allCategory (action) {
+  let axios = publicApiKomuto()
+  return axios.get('categories/sub', {
     ...action
   })
   .then(function (data) {
@@ -83,6 +113,7 @@ function subCategory (action) {
 export {
   product,
   search,
+  allCategory,
   categoryList,
   subCategory
 }
