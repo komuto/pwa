@@ -8,6 +8,8 @@ import NProgress from 'nprogress'
 import RupiahFormat from '../Lib/RupiahFormat'
 // components
 import Slider from 'react-slick'
+import Content from '../Components/Content'
+import Section, { SectionTitle } from '../Components/Section'
 // actions
 import * as homeActions from '../actions/home'
 
@@ -31,28 +33,19 @@ class Home extends Component {
   componentWillReceiveProps (nextProps) {
     const { products, category } = nextProps
 
-    if (!products.isLoading) {
+    console.log(products)
+    console.log(category)
+
+    if (!products.isLoading && products.status === 200) {
       this.setState({ products })
     }
 
-    if (!category.isLoading) {
+    if (!category.isLoading && category.status === 200) {
       this.setState({ category })
     }
 
     if (!products.isLoading && !category.isLoading) {
       NProgress.done()
-    }
-  }
-
-  receiveData (data, state = '') {
-    switch (data.status) {
-      case 200:
-        this.setState({state: data})
-        break
-      case 400:
-        break
-      default:
-        break
     }
   }
 
@@ -116,22 +109,18 @@ class Home extends Component {
     }
 
     return (
-      <div>
-        <section className='section is-paddingless'>
-          <div className='slide-banner'>
+      <Content>
+        <Section>
+          <Content className='slide-banner'>
             <Slider {...settings}>
               <img src={Images.banner} alt='banner' style={{width: '100%'}} />
               <img src={Images.banner} alt='banner' style={{width: '100%'}} />
               <img src={Images.banner} alt='banner' style={{width: '100%'}} />
             </Slider>
-          </div>
-        </section>
-        <section className='section is-paddingless'>
-          <div className='container is-fluid'>
-            <div className='title'>
-              <h3>Kategori Produk</h3>
-            </div>
-          </div>
+          </Content>
+        </Section>
+        <Section>
+          <SectionTitle title='Kategori Produk' />
           <div className='columns is-mobile is-multiline custom'>
             { categoryItem }
             <div className='column is-paddingless'>
@@ -140,13 +129,9 @@ class Home extends Component {
               </div>
             </div>
           </div>
-        </section>
-        <section className='section is-paddingless'>
-          <div className='container is-fluid'>
-            <div className='title'>
-              <h3>Produk Terbaru</h3>
-            </div>
-          </div>
+        </Section>
+        <Section>
+          <SectionTitle title='Produk Terbaru' />
           <div className='columns is-mobile is-multiline custom'>
             { productItem }
             <div className='column is-paddingless'>
@@ -155,8 +140,8 @@ class Home extends Component {
               </div>
             </div>
           </div>
-        </section>
-      </div>
+        </Section>
+      </Content>
     )
   }
 }

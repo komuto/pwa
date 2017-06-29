@@ -1,8 +1,6 @@
 import { publicApiKomuto } from './api'
 
 function product (action) {
-  console.log('INI ACTIONS')
-  console.log(action)
   let axios = publicApiKomuto()
   let param = ''
   let check = [
@@ -32,8 +30,6 @@ function product (action) {
       indeksCheck.push(i)
     }
   }
-
-  console.log(indeksCheck)
 
   if (indeksCheck.length !== 0) {
     param = '?'
