@@ -70,7 +70,7 @@ class SignUp extends Component {
         genderGroup: {
           type: 'radio',
           name: 'gender',
-          selected: 'L'
+          selected: 'male'
         }
       },
       notification: {
@@ -311,14 +311,14 @@ class SignUp extends Component {
                 <p className='control'>
                   <InputRadio
                     text='Pria'
-                    value='L'
+                    value='male'
                     name={input.genderGroup.name}
                     selected={input.genderGroup.selected}
                     onChange={this.handleGenderChange} />
 
                   <InputRadio
                     text='Wanita'
-                    value='P'
+                    value='female'
                     name={input.genderGroup.name}
                     selected={input.genderGroup.selected}
                     onChange={this.handleGenderChange} />
