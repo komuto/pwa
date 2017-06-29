@@ -205,7 +205,6 @@ class PasswordNew extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.validation)
   return {
     validToken: state.validation,
     newPassword: state.newPassword

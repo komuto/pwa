@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import {Images} from '../Themes'
-// import NProgress from 'nprogress'
+import NProgress from 'nprogress'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // components
@@ -20,11 +20,11 @@ class Home extends Component {
     }
   }
 
-  componentWillMount () {
+  async componentWillMount () {
     const { products, category } = this.state
     if (products && category) {
-      // NProgress.start()
-      this.props.dispatch(homeActions.products()) && this.props.dispatch(homeActions.categoryList())
+      NProgress.start()
+      await this.props.dispatch(homeActions.products({sort: 'newest'})) && this.props.dispatch(homeActions.categoryList())
     }
   }
 
@@ -39,9 +39,9 @@ class Home extends Component {
       this.setState({ category })
     }
 
-    // if (!products.isLoading && !category.isLoading) {
-    //   NProgress.done()
-    // }
+    if (!products.isLoading && !category.isLoading) {
+      NProgress.done()
+    }
   }
 
   receiveData (data, state = '') {
@@ -71,8 +71,6 @@ class Home extends Component {
       slidesToScroll: 1
     }
 
-    console.log(products)
-    console.log(categories)
     if (categories.length > 0) {
       categoryItem = categories.map(category => {
         return (
@@ -95,7 +93,7 @@ class Home extends Component {
                 <div className='media-left'>
                   <figure className='image'>
                     <a><img src={product.images[0].file} alt='Image' /></a>
-                    { (product.product.discount > 0) ? <div className='pin disc'><span> { product.product.discount } %</span></div> : null }
+                    { (product.product.discount > 0) ? <div className='pin disc'><span> { product.product.discount }%</span></div> : null }
                     { (product.product.is_wholesaler) ? <div className='pin'><span>Grosir</span></div> : null }
                   </figure>
                 </div>
