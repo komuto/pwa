@@ -7,6 +7,7 @@ import Content from '../Components/Content'
 import AccountLogin from './AccountLogin'
 import Account from './Account'
 import Notification from '../Components/Notification'
+import GET_TOKEN from '../Services/GetToken'
 // actions
 import * as loginAction from '../actions/user'
 
@@ -23,9 +24,10 @@ class Profile extends Component {
   }
 
   async componentDidMount () {
-    if (this.state.user) {
+    const token = await GET_TOKEN.getToken()
+    if (token) {
       NProgress.start()
-      await this.props.dispatch(loginAction.getProfile())
+      this.props.dispatch(loginAction.getProfile())
     }
   }
 

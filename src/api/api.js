@@ -29,12 +29,12 @@ export function authApiKomuto () {
     timeout: 10000
   })
 
-  api.interceptors.request.use(config => {
+  api.interceptors.request.use(async (config) => {
     try {
-      let token = null
-      localForage.getItem('token', (value) => {
-        token = value
+      const token = await localForage.getItem('token', (value) => {
+        return value
       })
+      console.log(token)
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }
