@@ -18,6 +18,8 @@ import Notification from '../Components/Notification'
 import * as constraints from '../Validations/Auth'
 // actions
 import * as loginAction from '../actions/user'
+// utils
+import { Status } from '../Services/Status'
 
 const LOGIN = 'LOGIN'
 const REGISTER = 'REGISTER'
@@ -225,25 +227,22 @@ class SignUp extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { register, user } = nextProps
-    const { notification } = this.state
     const data = (this.dipatchType === LOGIN) ? user : register
-
-    if (!data.isOnline) {
+    if (!data.isLoading) {
       NProgress.done()
-      notification.status = true
-      notification.message = data.message
-      this.setState({ notification })
-    }
-
-    if (!data.isLoading && data.status === 400) {
-      notification.status = true
-      notification.message = data.message
-      this.setState({ notification })
-    }
-
-    if (!data.isLoading && data.status === 200) {
-      NProgress.done()
-      Router.push('/profile')
+      switch (data.status) {
+        case Status.SUCCESS :
+          (data.isFound)
+          ? Router.push('/profile')
+          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ notification: {status: true, message: data.message} })
+          break
+        default:
+          break
+      }
     }
   }
 
@@ -252,7 +251,7 @@ class SignUp extends Component {
     return (
       <Content>
         <Notification
-          type='is-warning'
+          type='is-danger'
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
