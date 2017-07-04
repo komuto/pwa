@@ -14,6 +14,10 @@ export const HOME_SUBCATEGORY_REQUEST = 'HOME_SUBCATEGORY_REQUEST'
 export const HOME_SUBCATEGORY_SUCCESS = 'HOME_SUBCATEGORY_SUCCESS'
 export const HOME_SUBCATEGORY_FAILURE = 'HOME_SUBCATEGORY_FAILURE'
 
+export const FILTER_PRODUCT_REQUEST = 'FILTER_PRODUCT_REQUEST'
+export const FILTER_PRODUCT_SUCCESS = 'FILTER_PRODUCT_SUCCESS'
+export const FILTER_PRODUCT_FAILURE = 'FILTER_PRODUCT_FAILURE'
+
 export const SEARCH_PRODUCT_REQUEST = 'SEARCH_PRODUCT_REQUEST'
 export const SEARCH_PRODUCT_SUCCESS = 'SEARCH_PRODUCT_SUCCESS'
 export const SEARCH_PRODUCT_FAILURE = 'SEARCH_PRODUCT_FAILURE'
@@ -46,6 +50,13 @@ function search (params) {
   }
 }
 
+function filter (params) {
+  return {
+    type: FILTER_PRODUCT_REQUEST,
+    ...params
+  }
+}
+
 function subCategory (params) {
   return {
     type: HOME_SUBCATEGORY_REQUEST,
@@ -63,6 +74,7 @@ export {
   products,
   allCategory,
   categoryList,
+  filter,
   search,
   subCategory,
   resetStatus

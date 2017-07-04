@@ -24,6 +24,7 @@ function * dataSaga () {
   yield takeEvery(userActions.USER_NEWPASSWORD_REQUEST, userSaga.newPassword)
   yield takeEvery(homeActions.HOME_PRODUCT_REQUEST, homeSaga.product)
   yield takeEvery(homeActions.SEARCH_PRODUCT_REQUEST, homeSaga.search)
+  yield takeEvery(homeActions.FILTER_PRODUCT_REQUEST, homeSaga.filterProduct)
   yield takeEvery(homeActions.ALL_CATEGORY_REQUEST, homeSaga.allCategory)
   yield takeEvery(homeActions.HOME_CATEGORY_REQUEST, homeSaga.categoryList)
   yield takeEvery(homeActions.HOME_SUBCATEGORY_REQUEST, homeSaga.subCategory)

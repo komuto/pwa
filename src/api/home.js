@@ -23,25 +23,30 @@ function product (action) {
     {value: action.address, string: 'address'}
   ]
 
-  let indeksCheck = []
-  let i = 0
-  for (i = 0; i < check.length; i++) {
-    if (check[i].value !== undefined) {
-      indeksCheck.push(i)
+  let indexCheck = []
+  // let i = 0
+  // for (i = 0; i < check.length; i++) {
+  //   if (check[i].value !== undefined) {
+  //     indexCheck.push(i)
+  //   }
+  // }
+  check.map(function (obj, index) {
+    if (obj.value !== undefined) {
+      indexCheck.push(index)
     }
-  }
+  })
 
-  if (indeksCheck.length !== 0) {
+  if (indexCheck.length !== 0) {
     param = '?'
   }
 
-  for (i = 0; i < indeksCheck.length; i++) {
-    if (i !== indeksCheck.length - 1) {
-      param = param + check[indeksCheck[i]].string + '=' + check[indeksCheck[i]].value + '&'
+  indexCheck.map(function (obj, index) {
+    if (index !== indexCheck.length - 1) {
+      param = param + check[obj].string + '=' + check[obj].value + '&'
     } else {
-      param = param + check[indeksCheck[i]].string + '=' + check[indeksCheck[i]].value
+      param = param + check[obj].string + '=' + check[obj].value
     }
-  }
+  })
   // console.log('ini nih paramnya: products' + param)
   return axios.get('products' + param, {
     ...action

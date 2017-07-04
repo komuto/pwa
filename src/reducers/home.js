@@ -9,6 +9,24 @@ const initCategory = {
   isFound: false
 }
 
+const initSearch = {
+  products: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isOnline: true,
+  isFound: false
+}
+
+const initFilter = {
+  products: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isOnline: true,
+  isFound: false
+}
+
 const initAllCategory = {
   allCategory: [],
   message: '',
@@ -52,6 +70,13 @@ function product (state = initProduct, action) {
         isLoading: false,
         isOnline: action.isOnline
       }
+    default:
+      return state
+  }
+}
+
+function searchProduct (state = initSearch, action) {
+  switch (action.type) {
     case homeActions.SEARCH_PRODUCT_REQUEST:
       return {
         ...state,
@@ -68,6 +93,35 @@ function product (state = initProduct, action) {
         isFound: true
       }
     case homeActions.SEARCH_PRODUCT_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function filterProduct (state = initFilter, action) {
+  switch (action.type) {
+    case homeActions.FILTER_PRODUCT_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case homeActions.FILTER_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        products: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true
+      }
+    case homeActions.FILTER_PRODUCT_FAILURE:
       return {
         ...state,
         message: action.message,
@@ -187,6 +241,8 @@ function subCategory (state = initCategory, action) {
 
 export {
   product,
+  searchProduct,
+  filterProduct,
   allCategory,
   categoryList,
   subCategory

@@ -12,6 +12,15 @@ function * product (action) {
   }
 }
 
+function * filterProduct (action) {
+  try {
+    const {data} = yield homeApi.product(action)
+    yield put({ type: homeActions.FILTER_PRODUCT_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(homeActions.FILTER_PRODUCT_FAILURE, e)
+  }
+}
+
 function * search (action) {
   try {
     const {data} = yield homeApi.search(action)
@@ -35,6 +44,7 @@ function * categoryList (action) {
     const {data} = yield homeApi.categoryList(action)
     yield put({ type: homeActions.HOME_CATEGORY_SUCCESS, ...data })
   } catch (e) {
+    console.log(e.response.status)
     yield errorHandling(homeActions.HOME_CATEGORY_FAILURE, e)
   }
 }
@@ -52,6 +62,7 @@ export {
   product,
   search,
   allCategory,
+  filterProduct,
   categoryList,
   subCategory
 }
