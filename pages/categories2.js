@@ -9,7 +9,7 @@ import Categories2 from '../src/Containers/Categories2'
 let params = {
   style: 'categories bg-grey',
   header: {
-    title: 'Fashion Pria'
+    title: 'Komuto'
   }
 }
 
