@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-// import NProgress from 'nprogress'
+import NProgress from 'nprogress'
 import Router from 'next/router'
 import url from 'url'
 // components
@@ -27,10 +27,10 @@ class Categories1 extends Component {
     }
   }
 
-  async componentWillMount () {
+  async componentDidMount () {
     const { allCategory } = this.state.allCategory
     if (allCategory.length < 1) {
-      // NProgress.start()
+      NProgress.start()
       await this.props.dispatch(homeActions.allCategory())
     }
   }
@@ -38,7 +38,7 @@ class Categories1 extends Component {
   componentWillReceiveProps (nextProps) {
     const { allCategory } = nextProps
     if (!allCategory.isLoading) {
-      // NProgress.done()
+      NProgress.done()
       if (allCategory.status === Status.SUCCESS) this.setState({ allCategory })
       if (allCategory.status === Status.OFFLINE) this.setState({ notification: {status: true, message: allCategory.message} })
       if (allCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: allCategory.message} })
@@ -53,21 +53,24 @@ class Categories1 extends Component {
         <Section key={category.id}>
           <SectionTitle title={category.name} />
           <CategoriesWrap>
-            <List key={category.id} onClick={() => {
-              Router.push(
+            <List
+              icon={category.icon}
+              key={category.id} onClick={() => {
+                Router.push(
                 url.format({
                   pathname: '/categories2',
                   query: {id: category.id}
                 }),
                 `/c/${category.slug}/${category.id}`
               )
-            }}
+              }}
               name={`Lihat Semua di ${category.name}`} />
           </CategoriesWrap>
           <CategoriesWrap>
             {
               category.sub_categories.map((subCategory) => {
                 return <List
+                  icon={subCategory.icon}
                   key={subCategory.id}
                   onClick={() => {
                     Router.push(
