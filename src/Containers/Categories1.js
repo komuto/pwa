@@ -1,41 +1,110 @@
 // @flow
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+// import NProgress from 'nprogress'
+import Router from 'next/router'
+import url from 'url'
 // components
-import List, { ListTitle } from '../Components/List'
+import List from '../Components/List'
 import CategoriesWrap from '../Components/CategoriesWrap'
-import Section from '../Components/Section'
+import Content from '../Components/Content'
+import Section, { SectionTitle } from '../Components/Section'
+import Notification from '../Components/Notification'
+// actions
+import * as homeActions from '../actions/home'
+// Utils
+import { Status } from '../Services/Status'
+// Libs
+import UrlParam from '../Lib/UrlParam'
 
 class Categories1 extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      allCategory: props.allCategory || null,
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
+    }
+  }
+
+  async componentWillMount () {
+    const { allCategory } = this.state.allCategory
+    if (allCategory.length < 1) {
+      // NProgress.start()
+      await this.props.dispatch(homeActions.allCategory())
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { allCategory } = nextProps
+    if (!allCategory.isLoading) {
+      // NProgress.done()
+      if (allCategory.status === Status.SUCCESS) this.setState({ allCategory })
+      if (allCategory.status === Status.OFFLINE) this.setState({ notification: {status: true, message: allCategory.message} })
+      if (allCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: allCategory.message} })
+    }
+  }
+
   render () {
+    const { notification } = this.state
+    const { allCategory } = this.state.allCategory
+    let categoriesItems = allCategory.map((category) => {
+      return (
+        <Section key={category.id}>
+          <SectionTitle title={category.name} />
+          <CategoriesWrap>
+            <List key={category.id} onClick={() => {
+              Router.push(
+                url.format({
+                  pathname: '/categories2',
+                  query: category
+                }),
+                `/c/${UrlParam(category.name)}/${category.id}`
+              )
+            }}
+              name={`Lihat Semua di ${category.name}`} />
+          </CategoriesWrap>
+          <CategoriesWrap>
+            {
+              category.sub_categories.map((subCategory) => {
+                return <List
+                  key={subCategory.id}
+                  onClick={() => {
+                    Router.push(
+                            url.format({
+                              pathname: '/categories2',
+                              query: subCategory
+                            }),
+                            `/c/${UrlParam(subCategory.name)}/${subCategory.id}`
+                            )
+                  }}
+                  name={subCategory.name} />
+              })
+            }
+          </CategoriesWrap>
+        </Section>
+      )
+    })
+
     return (
-      <div>
-        <Section>
-          <ListTitle name='Fashion dan Aksesoris' />
-          <CategoriesWrap>
-            <List path='categories2' name='Lihat Semua di Fashion dan Aksesoris' />
-          </CategoriesWrap>
-          <CategoriesWrap>
-            <List path='categories2' name='Fashion Pria' />
-            <List path='categories2' name='Fashion Wanita' />
-            <List path='categories2' name='Fashion Wanita' />
-            <List path='categories2' name='Fashion Wanita' />
-            <List path='categories2' name='Fashion Wanita' />
-          </CategoriesWrap>
-        </Section>
-        <Section>
-          <ListTitle name='Ibu dan Anak' />
-          <CategoriesWrap>
-            <List path='categories2' name='Lihat Semua di Ibu dan Anak' />
-          </CategoriesWrap>
-          <CategoriesWrap>
-            <List path='categories2' name='Perlengkapan Bayi' />
-            <List path='categories2' name='Susu dan Nutrisi Bayi' />
-            <List path='categories2' name='Baby Sitter' />
-          </CategoriesWrap>
-        </Section>
-      </div>
+      <Content>
+        <Notification
+          type='is-warning'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+        { categoriesItems }
+      </Content>
     )
   }
 }
 
-export default Categories1
+const mapStateToProps = (state) => {
+  return {
+    allCategory: state.allCategory
+  }
+}
+export default connect(mapStateToProps)(Categories1)
