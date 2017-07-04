@@ -5,14 +5,16 @@ import Header from '../Containers/Header'
 import { Navbar, SearchBoox, Hero } from '../Containers/Navbar'
 import Tabbar from '../Containers/Tabbar'
 import { StickyContainer, Sticky } from 'react-sticky'
+// Components
+import Content from '../Components/Content'
 
 export default (props: any) => {
   const { children } = props
   const { style, header, navbar, hero, tabbar } = props.params
   return (
-    <div>
+    <Content>
       <Header params={header} />
-      <div className={`main ${style}`}>
+      <Content className={`main ${style}`}>
         { (navbar) ? <Navbar params={navbar} /> : null}
         <StickyContainer>
           { (hero) ? <Hero params={hero} /> : null}
@@ -29,7 +31,7 @@ export default (props: any) => {
           { children }
           { (tabbar) ? <Tabbar params={tabbar} /> : null }
         </StickyContainer>
-      </div>
-    </div>
+      </Content>
+    </Content>
   )
 }
