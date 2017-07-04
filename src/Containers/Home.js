@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import {Images} from '../Themes'
-// import NProgress from 'nprogress'
+import NProgress from 'nprogress'
 // import Router from 'next/router'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
@@ -20,7 +20,6 @@ import { Status } from '../Services/Status'
 class Home extends Component {
   constructor (props) {
     super(props)
-    console.log(props.products)
     this.state = {
       products: props.products || null,
       category: props.category || null,
@@ -31,31 +30,63 @@ class Home extends Component {
     }
   }
 
-  async componentWillMount () {
+  async componentDidMount () {
     const { products } = this.state.products
     const { categories } = this.state.category
     if (products.length < 1 && categories.length < 1) {
-      // NProgress.start()
+      NProgress.start()
       await this.props.dispatch(homeActions.products({sort: 'newest'})) && this.props.dispatch(homeActions.categoryList())
     }
   }
 
+// switch (profile.status) {
+//   case Status.SUCCESS :
+//     (profile.isFound)
+//     ?
+//     : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
+//     break
+//   case Status.OFFLINE :
+//   case Status.FAILED :
+//     break
+//   default:
+//   break
+// }
   componentWillReceiveProps (nextProps) {
     const { products, category } = nextProps
 
     if (!products.isLoading) {
-      if (products.status === Status.SUCCESS) this.setState({ products })
-      if (products.status === Status.OFFLINE) this.setState({ notification: {status: true, message: products.message} })
-      if (products.status === Status.FAILED) this.setState({ notification: {status: true, message: products.message} })
+      switch (products.status) {
+        case Status.SUCCESS :
+          (products.isFound)
+          ? this.setState({ products })
+          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ notification: {status: true, message: products.message} })
+          break
+        default:
+          break
+      }
     }
 
     if (!category.isLoading) {
-      if (category.status === Status.SUCCESS) this.setState({ category })
-      if (category.status === Status.OFFLINE) this.setState({ notification: {status: true, message: category.message} })
-      if (category.status === Status.FAILED) this.setState({ notification: {status: true, message: category.message} })
+      switch (category.status) {
+        case Status.SUCCESS :
+          (category.isFound)
+          ? this.setState({ category })
+          : this.setState({ notification: {status: true, message: 'Data kategori tidak ditemukan'} })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ notification: {status: true, message: category.message} })
+          break
+        default:
+          break
+      }
     }
 
-    // if (!products.isLoading && !category.isLoading) NProgress.done()
+    if (!products.isLoading && !category.isLoading) NProgress.done()
   }
 
   render () {
@@ -123,7 +154,7 @@ class Home extends Component {
     return (
       <Content>
         <Notification
-          type='is-warning'
+          type='is-danger'
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
