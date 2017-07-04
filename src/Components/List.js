@@ -13,10 +13,22 @@ export const ListTitle = (props) => {
 }
 
 export default (props:any) => {
-  const { name } = props
+  const { icon, name } = props
+  const iconStyle = {
+    display: 'inline-block',
+    width: '28px',
+    height: '28px',
+    verticalAlign: 'middle',
+    marginRight: '8px'
+  }
   return (
     <li key={name}>
-      <a onClick={() => props.onClick()}><span className='categories-img' />{ name } <span className='icon-arrow-right' /></a>
+      <a onClick={() => props.onClick()}>
+        <img src={icon} style={iconStyle} />
+        {/* <span className='categories-img' /> */}
+        { name }
+        <span className='icon-arrow-right' />
+      </a>
     </li>
   )
 }
