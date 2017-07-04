@@ -39,6 +39,37 @@ function expedition (state = initExpedition, action) {
   }
 }
 
+function expeditionServices (state = initExpedition, action) {
+  switch (action.type) {
+    case expeditionActions.GET_EXPEDITIONSERVICES_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case expeditionActions.GET_EXPEDITIONSERVICES_SUCCESS:
+      return {
+        ...state,
+        expeditions: action.data,
+        message: action.message,
+        status: action.code,
+        isOnline: true,
+        isLoading: false,
+        isFound: true
+      }
+    case expeditionActions.GET_EXPEDITIONSERVICES_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
-  expedition
+  expedition,
+  expeditionServices
 }

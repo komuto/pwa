@@ -13,6 +13,20 @@ function getBrand (action) {
   })
 }
 
+function getBrandByCategory (action) {
+  let axios = publicApiKomuto()
+  return axios.get('categories/' + action.id + '/brands', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
-  getBrand
+  getBrand,
+  getBrandByCategory
 }

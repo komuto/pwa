@@ -12,6 +12,16 @@ function * getBrand (action) {
   }
 }
 
+function * getBrandByCategory (action) {
+  try {
+    const {data} = yield brandApi.getBrandByCategory(action)
+    yield put({ type: brandActions.BRAND_BYCATEGORY_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(brandActions.BRAND_BYCATEGORY_FAILURE, e)
+  }
+}
+
 export {
-  getBrand
+  getBrand,
+  getBrandByCategory
 }

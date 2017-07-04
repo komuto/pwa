@@ -39,6 +39,41 @@ function brand (state = initBrand, action) {
   }
 }
 
+function brandByCategory (state = initBrand, action) {
+  switch (action.type) {
+    case brandActions.BRAND_BYCATEGORY_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        message: '',
+        status: 0
+      }
+    case brandActions.BRAND_BYCATEGORY_SUCCESS:
+      return {
+        ...state,
+        brands: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case brandActions.BRAND_BYCATEGORY_FAILURE:
+      return {
+        ...state,
+        brands: [],
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 export {
-  brand
+  brand,
+  brandByCategory
 }

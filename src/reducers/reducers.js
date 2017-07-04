@@ -4,8 +4,10 @@ import * as userReducers from './user'
 import * as homeReducers from './home'
 import * as wishlistReducers from './wishlist'
 import * as brandReducers from './brand'
+import * as productReducers from './product'
 import * as expeditionReducers from './expedition'
 import * as locationReducers from './location'
+import * as reviewReducers from './review'
 
 const komutoApps = storage.reducer(combineReducers({
   user: userReducers.auth,
@@ -23,12 +25,17 @@ const komutoApps = storage.reducer(combineReducers({
   category: homeReducers.categoryList,
   subCategory: homeReducers.subCategory,
   brands: brandReducers.brand,
+  brandsByCategory: brandReducers.brandByCategory,
   expeditions: expeditionReducers.expedition,
+  expeditionServices: expeditionReducers.expeditionServices,
   provinces: locationReducers.province,
   districts: locationReducers.district,
   subdistricts: locationReducers.subdistrict,
   villages: locationReducers.village,
-  wishlist: wishlistReducers.wishlist
+  wishlist: wishlistReducers.wishlist,
+  productDetail: productReducers.getProduct,
+  review: reviewReducers.getReview,
+  addReview: reviewReducers.addReview
 }))
 
 export default komutoApps

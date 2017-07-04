@@ -1,0 +1,14 @@
+export const GET_PRODUCT_REQUEST = 'GET_PRODUCT_REQUEST'
+export const GET_PRODUCT_SUCCESS = 'GET_PRODUCT_SUCCESS'
+export const GET_PRODUCT_FAILURE = 'GET_PRODUCT_FAILURE'
+
+function getProduct (params) {
+  return {
+    type: GET_PRODUCT_REQUEST,
+    ...params
+  }
+}
+
+export {
+    getProduct
+}

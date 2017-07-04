@@ -13,6 +13,20 @@ function getExpedition (action) {
   })
 }
 
+function getServices (action) {
+  let axios = publicApiKomuto()
+  return axios.get('expeditions/services', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
-  getExpedition
+  getExpedition,
+  getServices
 }

@@ -12,6 +12,16 @@ function * getExpedition (action) {
   }
 }
 
+function * getServices (action) {
+  try {
+    const {data} = yield expeditionApi.getServices(action)
+    yield put({ type: expeditionActions.GET_EXPEDITIONSERVICES_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(expeditionActions.GET_EXPEDITIONSERVICES_FAILURE, e)
+  }
+}
+
 export {
-  getExpedition
+  getExpedition,
+  getServices
 }

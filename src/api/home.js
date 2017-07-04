@@ -3,19 +3,46 @@ import { publicApiKomuto } from './api'
 function product (action) {
   let axios = publicApiKomuto()
   let param = ''
+  let tempPrice = action.price
+  if (tempPrice !== undefined) {
+    if (tempPrice[0] === 0 && tempPrice[1] === 0) {
+      tempPrice = ''
+    } else {
+      if (tempPrice[0] === 0) {
+        tempPrice[0] = 50
+        tempPrice = tempPrice[0] + '-' + tempPrice[1]
+      } else {
+        tempPrice[1] = 1000000000000
+        tempPrice = tempPrice[0] + '-' + tempPrice[1]
+      }
+    }
+  }
+  if (action.other !== undefined || action.brands !== undefined || action.services !== undefined) {
+    if (action.other[0] === undefined) {
+      action.other = undefined
+    }
+    if (action.brands[0] === undefined) {
+      action.brands = undefined
+    }
+    if (action.services[0] === undefined) {
+      action.services = undefined
+    }
+  }
+  action.price = tempPrice
   let check = [
     {value: action.page, string: 'page'},
     {value: action.size, string: 'size'},
     {value: action.category_id, string: 'category_id'},
     // sort is filled with 'newest', 'cheapest', 'expensive', 'selling'
     {value: action.sort, string: 'sort'},
-    // price is filled with range, e.g. 500-1000
+    // price is filled with array with default value is [0,0] first value is stand for min price
+    // and the second value is stand for max price
     {value: action.price, string: 'price'},
     // condition is filled with 'new' or 'used' or '' for both
     {value: action.condition, string: 'condition'},
-    // other is filled with 'discount', 'verified', 'wholesaler'
+    // other is filled with array and the values are 'discount', 'verified', 'wholesaler'
     {value: action.other, string: 'other'},
-    // brands is filled with number separated by comma if more than one, e.g. 2,5,3
+    // brands is filled with array and id brands as the value
     {value: action.brands, string: 'brands'},
     // services is same with brands
     {value: action.services, string: 'services'},
@@ -31,7 +58,9 @@ function product (action) {
   //   }
   // }
   check.map(function (obj, index) {
-    if (obj.value !== undefined) {
+    if (obj.value === undefined || obj.value === '') {
+      // do nothing
+    } else {
       indexCheck.push(index)
     }
   })
@@ -100,7 +129,7 @@ function categoryList (action) {
 
 function subCategory (action) {
   let axios = publicApiKomuto()
-  return axios.get('categories/' + action.id + '/sub-categories', {
+  return axios.get('categories/' + action.id, {
     ...action
   })
   .then(function (data) {
