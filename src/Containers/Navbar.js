@@ -8,7 +8,7 @@ export const Navbar = (props) => {
     <nav className='level header is-fullwidth'>
       <div className='nav-left'>
         <a className='level-item' onClick={() => Router.back()}>
-          <span>
+          <span className={(path) ? '' : 'is-paddingless'}>
             {(path) ? <span className='back'><span className='icon-arrow-left' /></span> : null}
             {textPath}
           </span>
