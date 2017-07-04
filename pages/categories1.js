@@ -15,7 +15,7 @@ const params = {
   navbar: {
     searchBoox: false,
     path: '/',
-    textPath: 'Pilih Kategori'
+    textPath: 'Kategori'
   }
 }
 
