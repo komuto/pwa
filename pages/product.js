@@ -18,10 +18,13 @@ const params = {
   }
 }
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <Categories4 />
-  </DefaultLayout>
-)
+const Index = (props) => {
+  console.log(props)
+  return (
+    <DefaultLayout params={params}>
+      <Categories4 />
+    </DefaultLayout>
+  )
+}
 
 export default ReduxPageWrapper(Index)
