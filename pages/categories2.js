@@ -6,8 +6,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Categories2 from '../src/Containers/Categories2'
 // style custom
-
-const params = {
+let params = {
   style: 'categories bg-grey',
   header: {
     title: 'Fashion Pria'
@@ -19,10 +18,15 @@ const params = {
   }
 }
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <Categories2 />
-  </DefaultLayout>
-)
+const Index = (props) => {
+  console.log(props)
+  params.header.title = props.query.name
+  params.navbar.textPath = props.query.name
+  return (
+    <DefaultLayout params={params}>
+      <Categories2 />
+    </DefaultLayout>
+  )
+}
 
 export default ReduxPageWrapper(Index)
