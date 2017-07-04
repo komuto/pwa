@@ -20,7 +20,7 @@ app.prepare().then(_ => {
     res.sendFile(path.resolve('./.next/sw.js'))
   )
 
-  server.get('/c/:type/:id', (req, res) => {
+  server.get('/c/:slug/:id', (req, res) => {
     const params = Object.assign(req.query, req.params)
     return app.render(req, res, '/categories2', params)
   })
