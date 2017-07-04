@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<!-- saved from url=(0125)https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5 -->
+<html class="turbolinks-progress-bar" lang="en"><head prefix="og: http://ogp.me/ns#"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="object" property="og:type">
+<meta content="GitLab" property="og:site_name">
+<meta content="fix async await (095b67e2) · Commits · komuto / pwa" property="og:title">
+<meta content="GitLab Community Edition" property="og:description">
+<meta content="https://gitlab.skyshi.com/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="og:image">
+<meta content="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4" property="og:url">
+<meta content="summary" property="twitter:card">
+<meta content="fix async await (095b67e2) · Commits · komuto / pwa" property="twitter:title">
+<meta content="GitLab Community Edition" property="twitter:description">
+<meta content="https://gitlab.skyshi.com/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="twitter:image">
+
+<title>fix async await (095b67e2) · Commits · komuto / pwa · GitLab</title>
+<meta content="GitLab Community Edition" name="description">
+<link rel="shortcut icon" type="image/x-icon" href="https://gitlab.skyshi.com/assets/favicon-075eba76312e8421991a0c1f89a89ee81678bcde72319dd3e8047e2a47cd3a42.ico">
+<link rel="stylesheet" media="all" href="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/application-95970f1eedaa338f70cfe32c114efe83439793bf96581dd001b6d96ce2e04c50.css">
+<link rel="stylesheet" media="print" href="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/print-9c3a1eb4a2f45c9f3d7dd4de03f14c2e6b921e757168b595d7f161bbc320fc05.css">
+<script src="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/application-47cb3bfaca0e92332b3d895606b64288bf2bd391ea48a4e2ad2df5e991d1888c.js"></script><style>html.turbolinks-progress-bar::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  background-color: #0076ff;
+  height: 3px;
+  opacity: 0.99;
+  width: 0%;
+  transition: width 300ms ease-out, opacity 150ms ease-in;
+  transform: translate3d(0,0,0);
+}</style>
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="6JMdeIZC71diEROkhjYS2JywmQExjZRKvrydxKJ37WBdjh02irAc6PMkUpKi/EfdDcBAmefRXE53L8Ubbu1vow==">
+<meta content="origin-when-cross-origin" name="referrer">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+<meta content="#474D57" name="theme-color">
+<link rel="apple-touch-icon" type="image/x-icon" href="https://gitlab.skyshi.com/assets/touch-icon-iphone-5a9cee0e8a51212e70b90c87c12f382c428870c0ff67d1eb034d884b78d2dae7.png">
+<link rel="apple-touch-icon" type="image/x-icon" href="https://gitlab.skyshi.com/assets/touch-icon-ipad-a6eec6aeb9da138e507593b464fdac213047e49d3093fc30e90d9a995df83ba3.png" sizes="76x76">
+<link rel="apple-touch-icon" type="image/x-icon" href="https://gitlab.skyshi.com/assets/touch-icon-iphone-retina-72e2aadf86513a56e050e7f0f2355deaa19cc17ed97bbe5147847f2748e5a3e3.png" sizes="120x120">
+<link rel="apple-touch-icon" type="image/x-icon" href="https://gitlab.skyshi.com/assets/touch-icon-ipad-retina-8ebe416f5313483d9c1bc772b5bbe03ecad52a54eba443e5215a22caed2a16a2.png" sizes="152x152">
+<link color="rgb(226, 67, 41)" href="https://gitlab.skyshi.com/assets/logo-d36b5212042cebc89b96df4bf6ac24e43db316143e89926c0db839ff694d2de4.svg" rel="mask-icon">
+<meta content="/assets/msapplication-tile-1196ec67452f618d39cdd85e2e3a542f76574c071051ae7effbfde01710eb17d.png" name="msapplication-TileImage">
+<meta content="#30353E" name="msapplication-TileColor">
+
+
+
+
+</head>
+
+<body class="ui_charcoal" data-group="" data-page="projects:commit:show" data-project="pwa">
+<script>
+//<![CDATA[
+window.gon={};gon.api_version="v3";gon.default_avatar_url="https:\/\/gitlab.skyshi.com\/assets\/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png";gon.max_file_size=10;gon.relative_url_root="";gon.shortcuts_path="\/help\/shortcuts";gon.user_color_scheme="white";gon.award_menu_url="\/emojis";gon.katex_css_url="\/assets\/katex-e46cafe9c3fa73920a7c2c063ee8bb0613e0cf85fd96a3aea25f8419c4bfcfba.css";gon.katex_js_url="\/assets\/katex-04bcf56379fcda0ee7c7a63f71d0fc15ffd2e014d017cd9d51fd6554dfccf40a.js";gon.current_user_id=20;gon.current_username="safei";
+//]]>
+</script>
+<script>
+  window.project_uploads_path = "/komuto/pwa/uploads";
+  window.preview_markdown_path = "/komuto/pwa/preview_markdown";
+</script>
+
+<header class="navbar navbar-fixed-top navbar-gitlab with-horizontal-nav">
+<a class="sr-only gl-accessibility" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#content-body" tabindex="1">Skip to content</a>
+<div class="container-fluid">
+<div class="header-content">
+<button aria-label="Toggle global navigation" class="side-nav-toggle" type="button">
+<span class="sr-only">Toggle navigation</span>
+<i class="fa fa-bars"></i>
+</button>
+<button class="navbar-toggle" type="button">
+<span class="sr-only">Toggle navigation</span>
+<i class="fa fa-ellipsis-v"></i>
+</button>
+<div class="navbar-collapse collapse">
+<ul class="nav navbar-nav">
+<li class="hidden-sm hidden-xs">
+<div class="has-location-badge search search-form">
+<form class="navbar-form" action="https://gitlab.skyshi.com/search" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="✓"><div class="search-input-container">
+<div class="location-badge">This project</div>
+<div class="search-input-wrap">
+<div class="dropdown" data-url="/search/autocomplete">
+<input type="search" name="search" id="search" placeholder="Search" class="search-input dropdown-menu-toggle no-outline js-search-dashboard-options disabled" spellcheck="false" tabindex="1" autocomplete="off" data-toggle="dropdown" data-issues-path="https://gitlab.skyshi.com/dashboard/issues" data-mr-path="https://gitlab.skyshi.com/dashboard/merge_requests" value="">
+<div class="dropdown-menu dropdown-select">
+<div class="dropdown-content"><ul>
+<li>
+<a class="is-focused dropdown-menu-empty-link">
+Loading...
+</a>
+</li>
+</ul>
+</div><div class="dropdown-loading"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+<i class="search-icon"></i>
+<i class="clear-icon js-clear-input"></i>
+</div>
+</div>
+</div>
+<input type="hidden" name="group_id" id="group_id" class="js-search-group-options">
+<input type="hidden" name="project_id" id="search_project_id" value="110" class="js-search-project-options" data-project-path="pwa" data-name="pwa" data-issues-path="/komuto/pwa/issues" data-mr-path="/komuto/pwa/merge_requests">
+<input type="hidden" name="search_code" id="search_code" value="true">
+<input type="hidden" name="repository_ref" id="repository_ref">
+
+<div class="search-autocomplete-opts hide" data-autocomplete-path="/search/autocomplete" data-autocomplete-project-id="110"></div>
+</form></div>
+
+</li>
+<li class="visible-sm visible-xs">
+<a title="Search" aria-label="Search" data-toggle="tooltip" data-placement="bottom" data-container="body" href="https://gitlab.skyshi.com/search"><i class="fa fa-search"></i>
+</a></li>
+<li>
+<a title="Todos" aria-label="Todos" data-toggle="tooltip" data-placement="bottom" data-container="body" href="https://gitlab.skyshi.com/dashboard/todos"><i class="fa fa-bell fa-fw"></i>
+<span class="badge hidden todos-pending-count">
+0
+</span>
+</a></li>
+<li class="header-user dropdown">
+<a class="header-user-dropdown-toggle" data-toggle="dropdown" href="https://gitlab.skyshi.com/safei"><img width="26" height="26" class="header-user-avatar" src="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/305c1a52eaab548c6ffb45c5b944a6cb" alt="305c1a52eaab548c6ffb45c5b944a6cb?s=52&amp;d=identicon">
+<i class="fa fa-caret-down"></i>
+</a><div class="dropdown-menu-nav dropdown-menu-align-right">
+<ul>
+<li>
+<a class="profile-link" aria-label="Profile" data-user="safei" href="https://gitlab.skyshi.com/safei">Profile</a>
+</li>
+<li>
+<a aria-label="Settings" href="https://gitlab.skyshi.com/profile">Settings</a>
+</li>
+<li>
+<a aria-label="Help" href="https://gitlab.skyshi.com/help">Help</a>
+</li>
+<li class="divider"></li>
+<li>
+<a class="sign-out-link" aria-label="Sign out" rel="nofollow" data-method="delete" href="https://gitlab.skyshi.com/users/sign_out">Sign out</a>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<h1 class="title"><span><a href="https://gitlab.skyshi.com/komuto">komuto</a></span> / <a class="project-item-select-holder" href="https://gitlab.skyshi.com/komuto/pwa">pwa</a><button name="button" type="button" class="dropdown-toggle-caret js-projects-dropdown-toggle" aria-label="Toggle switch project dropdown" data-target=".js-dropdown-menu-projects" data-toggle="dropdown" data-order-by="last_activity_at"><i class="fa fa-chevron-down"></i></button></h1>
+<div class="header-logo">
+<a class="home" title="Dashboard" id="logo" href="https://gitlab.skyshi.com/"><svg width="36" height="36" class="tanuki-logo">
+  <path class="tanuki-shape tanuki-left-ear" fill="#e24329" d="M2 14l9.38 9v-9l-4-12.28c-.205-.632-1.176-.632-1.38 0z"></path>
+  <path class="tanuki-shape tanuki-right-ear" fill="#e24329" d="M34 14l-9.38 9v-9l4-12.28c.205-.632 1.176-.632 1.38 0z"></path>
+  <path class="tanuki-shape tanuki-nose" fill="#e24329" d="M18,34.38 3,14 33,14 Z"></path>
+  <path class="tanuki-shape tanuki-left-eye" fill="#fc6d26" d="M18,34.38 11.38,14 2,14 6,25Z"></path>
+  <path class="tanuki-shape tanuki-right-eye" fill="#fc6d26" d="M18,34.38 24.62,14 34,14 30,25Z"></path>
+  <path class="tanuki-shape tanuki-left-cheek" fill="#fca326" d="M2 14L.1 20.16c-.18.565 0 1.2.5 1.56l17.42 12.66z"></path>
+  <path class="tanuki-shape tanuki-right-cheek" fill="#fca326" d="M34 14l1.9 6.16c.18.565 0 1.2-.5 1.56L18 34.38z"></path>
+</svg>
+
+</a></div>
+<div class="js-dropdown-menu-projects">
+<div class="dropdown-menu dropdown-select dropdown-menu-projects">
+<div class="dropdown-title"><span>Go to a project</span><button class="dropdown-title-button dropdown-menu-close" aria-label="Close" type="button"><i class="fa fa-times dropdown-menu-close-icon"></i></button></div>
+<div class="dropdown-input"><input type="search" id="" class="dropdown-input-field" placeholder="Search your projects" autocomplete="off" value=""><i class="fa fa-search dropdown-input-search"></i><i role="button" class="fa fa-times dropdown-input-clear js-dropdown-input-clear"></i></div>
+<div class="dropdown-content"></div>
+<div class="dropdown-loading"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+</div>
+
+</div>
+</div>
+</header>
+
+<script>
+  var findFileURL = "/komuto/pwa/find_file/master";
+</script>
+
+<div class="page-with-sidebar">
+<div class="sidebar-wrapper nicescroll">
+<div class="sidebar-action-buttons">
+<div class="nav-header-btn toggle-nav-collapse" title="Open/Close">
+<span class="sr-only">Toggle navigation</span>
+<i class="fa fa-bars"></i>
+</div>
+<div class="nav-header-btn pin-nav-btn has-tooltip  js-nav-pin" data-container="body" data-placement="right" title="" data-original-title="Pin navigation">
+<span class="sr-only">Toggle navigation pinning</span>
+<i class="fa fa-fw fa-thumb-tack"></i>
+</div>
+</div>
+<div class="nav-sidebar" tabindex="0" style="overflow: hidden; outline: none;">
+<ul class="nav">
+<li class="active home"><a title="Projects" class="dashboard-shortcuts-projects" href="https://gitlab.skyshi.com/dashboard/projects"><span>
+Projects
+</span>
+</a></li><li class=""><a class="dashboard-shortcuts-activity" title="Activity" href="https://gitlab.skyshi.com/dashboard/activity"><span>
+Activity
+</span>
+</a></li><li class=""><a title="Groups" href="https://gitlab.skyshi.com/dashboard/groups"><span>
+Groups
+</span>
+</a></li><li class=""><a title="Milestones" href="https://gitlab.skyshi.com/dashboard/milestones"><span>
+Milestones
+</span>
+</a></li><li class=""><a title="Issues" class="dashboard-shortcuts-issues" href="https://gitlab.skyshi.com/dashboard/issues?assignee_id=20"><span>
+Issues
+<span class="count">0</span>
+</span>
+</a></li><li class=""><a title="Merge Requests" class="dashboard-shortcuts-merge_requests" href="https://gitlab.skyshi.com/dashboard/merge_requests?assignee_id=20"><span>
+Merge Requests
+<span class="count">0</span>
+</span>
+</a></li><li class=""><a title="Snippets" href="https://gitlab.skyshi.com/dashboard/snippets"><span>
+Snippets
+</span>
+</a></li><a title="About GitLab CE" class="about-gitlab" href="https://gitlab.skyshi.com/help"><span>
+About GitLab CE
+</span>
+</a></ul>
+</div>
+
+<div id="ascrail2000" class="nicescroll-rails nicescroll-rails-vr" style="width: 7px; z-index: 1000; cursor: default; position: absolute; top: 50px; left: 213px; height: 753px; touch-action: none; display: none;"><div class="nicescroll-cursors" style="position: relative; top: 0px; float: right; width: 5px; height: 0px; background-color: rgb(255, 255, 255); border: 1px solid rgb(255, 255, 255); background-clip: padding-box; border-radius: 5px; touch-action: none;"></div></div><div id="ascrail2000-hr" class="nicescroll-rails nicescroll-rails-hr" style="height: 7px; z-index: 1000; top: 796px; left: 0px; position: absolute; cursor: default; display: none;"><div class="nicescroll-cursors" style="position: absolute; top: 0px; height: 5px; width: 0px; background-color: rgb(255, 255, 255); border: 1px solid rgb(255, 255, 255); background-clip: padding-box; border-radius: 5px;"></div></div></div>
+<div class="layout-nav">
+<div class="container-fluid">
+<div class="controls">
+<div class="dropdown project-settings-dropdown">
+<a class="dropdown-new btn btn-default" data-toggle="dropdown" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#" id="project-settings-button">
+<i class="fa fa-cog"></i>
+<i class="fa fa-caret-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-menu-align-right">
+<li class=""><a title="Members" class="team-tab tab" href="https://gitlab.skyshi.com/komuto/pwa/settings/members"><span>
+Members
+</span>
+</a></li><li class=""><a title="Deploy Keys" href="https://gitlab.skyshi.com/komuto/pwa/deploy_keys"><span>
+Deploy Keys
+</span>
+</a></li><li class=""><a title="Integrations" href="https://gitlab.skyshi.com/komuto/pwa/settings/integrations"><span>
+Integrations
+</span>
+</a></li><li class=""><a title="Protected Branches" href="https://gitlab.skyshi.com/komuto/pwa/protected_branches"><span>
+Protected Branches
+</span>
+</a></li><li class=""><a title="Runners" href="https://gitlab.skyshi.com/komuto/pwa/runners"><span>
+Runners
+</span>
+</a></li><li class=""><a title="Variables" href="https://gitlab.skyshi.com/komuto/pwa/variables"><span>
+Variables
+</span>
+</a></li><li class=""><a title="Triggers" href="https://gitlab.skyshi.com/komuto/pwa/triggers"><span>
+Triggers
+</span>
+</a></li><li class=""><a title="CI/CD Pipelines" href="https://gitlab.skyshi.com/komuto/pwa/pipelines/settings"><span>
+CI/CD Pipelines
+</span>
+</a></li>
+<li class="divider"></li>
+<li>
+<a href="https://gitlab.skyshi.com/komuto/pwa/edit">Edit Project
+</a></li>
+</ul>
+</div>
+</div>
+<div class="nav-control scrolling-tabs-container">
+<div class="fade-left">
+<i class="fa fa-angle-left"></i>
+</div>
+<div class="fade-right">
+<i class="fa fa-angle-right"></i>
+</div>
+<ul class="nav-links scrolling-tabs">
+<li class="home"><a title="Project" class="shortcuts-project" href="https://gitlab.skyshi.com/komuto/pwa"><span>
+Project
+</span>
+</a></li><li class=""><a title="Activity" class="shortcuts-project-activity" href="https://gitlab.skyshi.com/komuto/pwa/activity"><span>
+Activity
+</span>
+</a></li><li class="active"><a title="Repository" class="shortcuts-tree" href="https://gitlab.skyshi.com/komuto/pwa/tree/master"><span>
+Repository
+</span>
+</a></li><li class=""><a title="Pipelines" class="shortcuts-pipelines" href="https://gitlab.skyshi.com/komuto/pwa/pipelines"><span>
+Pipelines
+</span>
+</a></li><li class=""><a title="Graphs" class="shortcuts-graphs" href="https://gitlab.skyshi.com/komuto/pwa/graphs/master"><span>
+Graphs
+</span>
+</a></li><li class=""><a title="Issues" class="shortcuts-issues" href="https://gitlab.skyshi.com/komuto/pwa/issues"><span>
+Issues
+</span>
+</a></li><li class=""><a title="Merge Requests" class="shortcuts-merge_requests" href="https://gitlab.skyshi.com/komuto/pwa/merge_requests"><span>
+Merge Requests
+<span class="badge count merge_counter">0</span>
+</span>
+</a></li><li class=""><a title="Wiki" class="shortcuts-wiki" href="https://gitlab.skyshi.com/komuto/pwa/wikis/home"><span>
+Wiki
+</span>
+</a></li><li class="hidden">
+<a title="Network" class="shortcuts-network" href="https://gitlab.skyshi.com/komuto/pwa/network/master">Network
+</a></li>
+<li class="hidden">
+<a class="shortcuts-new-issue" href="https://gitlab.skyshi.com/komuto/pwa/issues/new">Create a new issue
+</a></li>
+<li class="hidden">
+<a title="Builds" class="shortcuts-builds" href="https://gitlab.skyshi.com/komuto/pwa/builds">Builds
+</a></li>
+<li class="hidden">
+<a title="Commits" class="shortcuts-commits" href="https://gitlab.skyshi.com/komuto/pwa/commits/master">Commits
+</a></li>
+<li class="hidden">
+<a title="Issue Boards" class="shortcuts-issue-boards" href="https://gitlab.skyshi.com/komuto/pwa/boards">Issue Boards</a>
+</li>
+</ul>
+</div>
+
+</div>
+</div>
+<div class="content-wrapper page-with-layout-nav">
+<div class="scrolling-tabs-container sub-nav-scroll">
+<div class="fade-left">
+<i class="fa fa-angle-left"></i>
+</div>
+<div class="fade-right">
+<i class="fa fa-angle-right"></i>
+</div>
+
+<div class="nav-links sub-nav scrolling-tabs">
+<ul class="container-fluid container-limited">
+<li class=""><a href="https://gitlab.skyshi.com/komuto/pwa/tree/master">Files
+</a></li><li class="active"><a href="https://gitlab.skyshi.com/komuto/pwa/commits/master">Commits
+</a></li><li class=""><a href="https://gitlab.skyshi.com/komuto/pwa/network/master">Network
+</a></li><li class=""><a href="https://gitlab.skyshi.com/komuto/pwa/compare?from=master&amp;to=master">Compare
+</a></li><li class=""><a href="https://gitlab.skyshi.com/komuto/pwa/branches">Branches
+</a></li><li class=""><a href="https://gitlab.skyshi.com/komuto/pwa/tags">Tags
+</a></li></ul>
+</div>
+</div>
+
+<div class="alert-wrapper">
+
+
+<div class="flash-container flash-container-page">
+</div>
+
+
+</div>
+<div class=" ">
+<div class="content" id="content-body">
+
+<div class="container-fluid container-limited">
+<div class="page-content-header">
+<div class="header-main-content">
+<strong></strong>
+<button class="btn btn-clipboard btn-transparent" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="095b67e25d7c5a0c3c9dcf553331648343a916f4" type="button" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>
+095b67e2
+<span class="hidden-xs">authored</span>
+<time class="js-timeago" title="" datetime="2017-06-29T07:54:07Z" data-toggle="tooltip" data-placement="top" data-container="body" data-original-title="Jun 29, 2017 2:54pm GMT+0700" data-timeago-rendered="true">4 days ago</time>
+<span>by</span>
+<a href="mailto:pesakitan22@about.me"><img class="avatar has-tooltip s24 hidden-xs" alt="Pesakitan22&#39;s avatar" title="Pesakitan22" data-container="body" src="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/cc8177aa167b20ff3628969eb6f212d4"></a>
+<strong>
+<a class="commit-author-link has-tooltip" title="pesakitan22@about.me" href="mailto:pesakitan22@about.me"><span class="commit-author-name">Pesakitan22</span></a>
+</strong>
+</div>
+<div class="header-action-buttons">
+<a class="btn btn-default append-right-10 hidden-xs hidden-sm" href="https://gitlab.skyshi.com/komuto/pwa/tree/095b67e25d7c5a0c3c9dcf553331648343a916f4">Browse Files
+</a><div class="dropdown inline">
+<a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+<span>Options</span>
+<i class="fa fa-caret-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-menu-align-right">
+<li class="visible-xs-block visible-sm-block">
+<a href="https://gitlab.skyshi.com/komuto/pwa/tree/095b67e25d7c5a0c3c9dcf553331648343a916f4">Browse Files
+</a></li>
+<li class="clearfix">
+<a data-toggle="modal" data-container="body" class=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#modal-revert-commit">Revert</a>
+</li>
+<li class="clearfix">
+<a data-toggle="modal" data-container="body" class=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#modal-cherry-pick-commit">Cherry-pick</a>
+</li>
+<li class="clearfix">
+<a href="https://gitlab.skyshi.com/komuto/pwa/tags/new?ref=095b67e25d7c5a0c3c9dcf553331648343a916f4">Tag</a>
+</li>
+<li class="divider"></li>
+<li class="dropdown-header">
+Download
+</li>
+<li><a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4.patch">Email Patches</a></li>
+<li><a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4.diff">Plain Diff</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="commit-box">
+<h3 class="commit-title">
+fix async await
+</h3>
+</div>
+<div class="info-well">
+<div class="well-segment branch-info">
+<div class="icon-container commit-icon">
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <path fill="#8F8F8F" fill-rule="evenodd" d="M28.7769836,18 C27.8675252,13.9920226 24.2831748,11 20,11 C15.7168252,11 12.1324748,13.9920226 11.2230164,18 L4.0085302,18 C2.90195036,18 2,18.8954305 2,20 C2,21.1122704 2.8992496,22 4.0085302,22 L11.2230164,22 C12.1324748,26.0079774 15.7168252,29 20,29 C24.2831748,29 27.8675252,26.0079774 28.7769836,22 L35.9914698,22 C37.0980496,22 38,21.1045695 38,20 C38,18.8877296 37.1007504,18 35.9914698,18 L28.7769836,18 L28.7769836,18 Z M20,25 C22.7614237,25 25,22.7614237 25,20 C25,17.2385763 22.7614237,15 20,15 C17.2385763,15 15,17.2385763 15,20 C15,22.7614237 17.2385763,25 20,25 L20,25 Z"></path>
+</svg>
+
+</div>
+<span class="cgray">1 parent</span>
+<a class="monospace" href="https://gitlab.skyshi.com/komuto/pwa/commit/c3e1c3751271c34d558fe777e6518fa1736d49a9">c3e1c375</a>
+<span class="commit-info branches"><span>
+<a href="https://gitlab.skyshi.com/komuto/pwa/tree/async-await-deni"><span class="label label-gray">
+async-await-deni
+</span>
+</a></span>
+</span>
+</div>
+</div>
+<script>
+  $(".commit-info.branches").load("/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4/branches");
+</script>
+
+<div class="block-connector"></div>
+<div class="content-block oneline-block files-changed">
+<div class="inline-parallel-buttons">
+<a class="btn btn-default" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4?expand_all_diffs=1">Expand all</a>
+<a class="hidden-xs btn btn-default" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4?w=1">Hide whitespace changes</a>
+<div class="btn-group">
+<a id="inline-diff-btn" class="btn active" data-view-type="inline" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4?view=inline">Inline</a>
+<a id="parallel-diff-btn" class="btn" data-view-type="parallel" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4?view=parallel">Side-by-side</a>
+</div>
+</div>
+<div class="js-toggle-container">
+<div class="commit-stat-summary">
+Showing
+<a class="js-toggle-button" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><strong>5 changed files</strong>
+</a>with
+<strong class="cgreen">11 additions</strong>
+and
+<strong class="cred">9 deletions</strong>
+</div>
+<div class="file-stats js-toggle-content hide">
+<ul>
+<li>
+<span class="edit-file">
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea">
+<i class="fa fa-adjust"></i>
+src/Containers/Profile.js
+</a>
+</span>
+</li>
+<li>
+<span class="edit-file">
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5">
+<i class="fa fa-adjust"></i>
+src/Services/GetToken.js
+</a>
+</span>
+</li>
+<li>
+<span class="edit-file">
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b">
+<i class="fa fa-adjust"></i>
+src/api/api.js
+</a>
+</span>
+</li>
+<li>
+<span class="edit-file">
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801">
+<i class="fa fa-adjust"></i>
+src/config.js
+</a>
+</span>
+</li>
+<li>
+<span class="edit-file">
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#53585a096fe3a3b96321113856ae62602995a33b">
+<i class="fa fa-adjust"></i>
+yarn.lock
+</a>
+</span>
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+<div class="files" data-can-create-note="">
+<div class="diff-file file-holder" data-blob-diff-path="/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/Containers/Profile.js/diff" data-view="inline" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea">
+<div class="file-title">
+<i class="fa diff-toggle-caret fa-fw fa-caret-down"></i>
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea"><i class="fa fa-file-text-o fa-fw"></i>
+<strong>
+src/Containers/Profile.js
+</strong>
+</a><button class="btn btn-clipboard btn-transparent prepend-left-5" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="src/Containers/Profile.js" data-class="btn-clipboard btn-transparent prepend-left-5" data-title="Copy file path to clipboard" type="button" title="Copy file path to clipboard"><i class="fa fa-clipboard"></i></button>
+
+<div class="file-actions hidden-xs">
+<a class="js-toggle-diff-comments btn active has-tooltip btn-file-option" title="Toggle comments for this file" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><i class="fa fa-comment"></i>
+</a>
+<a class="btn view-file js-view-file btn-file-option" href="https://gitlab.skyshi.com/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/Containers/Profile.js">View file @<span class="commit-short-id">095b67e</span></a>
+</div>
+</div>
+<div class="diff-content diff-wrap-lines">
+<table class="code js-syntax-highlight text-file white" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-noteable-type="Commit">
+<tbody><tr class="line_holder match" id="">
+<td class="diff-line-num unfold js-unfold old_line" data-linenumber="7">...</td><td class="diff-line-num unfold js-unfold new_line" data-linenumber="7">...</td><td class="line_content match ">@@ -7,6 +7,7 @@ import Content from '../Components/Content'</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_7_7">
+<td class="diff-line-num old_line" data-linenumber="7">
+<a data-linenumber="7" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_7_7"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="7">
+<a data-linenumber="7" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_7_7"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="493080fc560486268b3eaa9df1f4ef7aae0559cd" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_7_7" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:7,&quot;new_line&quot;:7,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC7" class="line"><span class="kr">import</span> <span class="nx">AccountLogin</span> <span class="nx">from</span> <span class="s1">'./AccountLogin'</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_8_8">
+<td class="diff-line-num old_line" data-linenumber="8">
+<a data-linenumber="8" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_8_8"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="8">
+<a data-linenumber="8" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_8_8"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="e8e50d3c650181edcb4898fc9af7e3c019c3082b" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_8_8" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:8,&quot;new_line&quot;:8,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC8" class="line"><span class="kr">import</span> <span class="nx">Account</span> <span class="nx">from</span> <span class="s1">'./Account'</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_9_9">
+<td class="diff-line-num old_line" data-linenumber="9">
+<a data-linenumber="9" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_9_9"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="9">
+<a data-linenumber="9" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_9_9"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="585b9d556409af401b35575a6159d05d70433419" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_9_9" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:9,&quot;new_line&quot;:9,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC9" class="line"><span class="kr">import</span> <span class="nx">Notification</span> <span class="nx">from</span> <span class="s1">'../Components/Notification'</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_10">
+<td class="diff-line-num new old_line" data-linenumber="10">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_10"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="10">
+<a data-linenumber="10" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_10"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="5f9d78355d315f0f82959d37139747548e9fb3ea" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_10" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:10,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC10" class="line"><span class="kr">import</span> <span class="nx">GET_TOKEN</span> <span class="nx">from</span> <span class="s1">'../Services/GetToken'</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_11">
+<td class="diff-line-num old_line" data-linenumber="10">
+<a data-linenumber="10" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_11"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="11">
+<a data-linenumber="11" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_11"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="a53fe1adc26f5bd6b869fddf43c7a7be723c766f" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_10_11" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:10,&quot;new_line&quot;:11,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC11" class="line"><span class="c1">// actions</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_11_12">
+<td class="diff-line-num old_line" data-linenumber="11">
+<a data-linenumber="11" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_11_12"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="12">
+<a data-linenumber="12" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_11_12"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="d55fdb37604c3a80c67d6f761ebc5bcf50b2f147" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_11_12" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:11,&quot;new_line&quot;:12,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC12" class="line"><span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">loginAction</span> <span class="nx">from</span> <span class="s1">'../actions/user'</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_12_13">
+<td class="diff-line-num old_line" data-linenumber="12">
+<a data-linenumber="12" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_12_13"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="13">
+<a data-linenumber="13" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_12_13"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="a66f4f9f721743e0f87439b2783ab7ea716db7ca" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_12_13" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:12,&quot;new_line&quot;:13,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC13" class="line"></span>
+</td>
+</tr>
+<tr class="line_holder match" id="">
+<td class="diff-line-num unfold js-unfold old_line" data-linenumber="23">...</td><td class="diff-line-num unfold js-unfold new_line" data-linenumber="24">...</td><td class="line_content match ">@@ -23,9 +24,10 @@ class Profile extends Component {</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_23_24">
+<td class="diff-line-num old_line" data-linenumber="23">
+<a data-linenumber="23" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_23_24"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="24">
+<a data-linenumber="24" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_23_24"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="4acf5c46889584e034b1e05a2a1a079ecda17f2b" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_23_24" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:23,&quot;new_line&quot;:24,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC24" class="line">  <span class="p">}</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_24_25">
+<td class="diff-line-num old_line" data-linenumber="24">
+<a data-linenumber="24" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_24_25"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="25">
+<a data-linenumber="25" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_24_25"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="b37eb857c2adefd95308ba1bc4139d3f6fd71913" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_24_25" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:24,&quot;new_line&quot;:25,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC25" class="line"></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_25_26">
+<td class="diff-line-num old_line" data-linenumber="25">
+<a data-linenumber="25" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_25_26"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="26">
+<a data-linenumber="26" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_25_26"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="99abbe95ec0fa11206499f1753c055faa1b77681" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_25_26" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:25,&quot;new_line&quot;:26,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC26" class="line">  <span class="nx">async</span> <span class="nx">componentDidMount</span> <span class="p">()</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_26_27">
+<td class="diff-line-num old old_line" data-linenumber="26">
+<a data-linenumber="26" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_26_27"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="27">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_26_27"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="9083ea7f155ac1b340b1a5e733394de2e787ee33" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_26_27" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:26,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC26" class="line">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_27">
+<td class="diff-line-num new old_line" data-linenumber="27">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_27"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="27">
+<a data-linenumber="27" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_27"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="3190e9857b077a1703ec35adfb45c2d7f5c4ac47" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_27" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:27,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC27" class="line">    <span class="kr">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">GET_TOKEN</span><span class="p">.</span><span class="nx">getToken</span><span class="p">()</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_28">
+<td class="diff-line-num new old_line" data-linenumber="27">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_28"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="28">
+<a data-linenumber="28" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_28"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="ef1447f1036bc32ddb245ca26d2192b650c3d374" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_28" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:28,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC28" class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_29">
+<td class="diff-line-num old_line" data-linenumber="27">
+<a data-linenumber="27" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_29"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="29">
+<a data-linenumber="29" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_29"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="40f972711ded12eea313d111b71003c4ba743417" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_27_29" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:27,&quot;new_line&quot;:29,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC29" class="line">      <span class="nx">NProgress</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_28_30">
+<td class="diff-line-num old old_line" data-linenumber="28">
+<a data-linenumber="28" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_28_30"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="30">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_28_30"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="a97eaf7d1afce328e43abcc38982ff9d0421c279" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_28_30" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:28,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC28" class="line">      <span class="nx"><span class="idiff left">await</span></span><span class="idiff right"> </span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">loginAction</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">())</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_30">
+<td class="diff-line-num new old_line" data-linenumber="29">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_30"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="30">
+<a data-linenumber="30" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_30"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="d8c6bf2c8dc976905af0ea31c0e8334b4ebcbce2" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_30" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:30,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC30" class="line">      <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">loginAction</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">())</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_31">
+<td class="diff-line-num old_line" data-linenumber="29">
+<a data-linenumber="29" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_31"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="31">
+<a data-linenumber="31" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_31"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="15dff3233cb38f8a936571ef5773d3acf3944a27" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_29_31" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:29,&quot;new_line&quot;:31,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC31" class="line">    <span class="p">}</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_30_32">
+<td class="diff-line-num old_line" data-linenumber="30">
+<a data-linenumber="30" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_30_32"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="32">
+<a data-linenumber="32" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_30_32"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="4aa28e559d5757d4d4a7fa65399162a759753717" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_30_32" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:30,&quot;new_line&quot;:32,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC32" class="line">  <span class="p">}</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="48c1aa0ad4272269b8d135a9c38a632ede47cfea_31_33">
+<td class="diff-line-num old_line" data-linenumber="31">
+<a data-linenumber="31" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_31_33"></a>
+<button name="button" type="submit" class="btn add-diff-note js-add-diff-note-button" title="Add a comment to this line" data-noteable-type="Commit" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-note-type="DiffNote" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_31_33" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:31,&quot;new_line&quot;:33,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}" data-discussion-id="9163a5be26963f4e24c1c60ad089a9518b6a80d8"><i class="fa fa-comment-o"></i></button></td>
+<td class="diff-line-num new_line" data-linenumber="33">
+<a data-linenumber="33" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#48c1aa0ad4272269b8d135a9c38a632ede47cfea_31_33"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="9163a5be26963f4e24c1c60ad089a9518b6a80d8" data-line-code="48c1aa0ad4272269b8d135a9c38a632ede47cfea_31_33" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;new_path&quot;:&quot;src/Containers/Profile.js&quot;,&quot;old_line&quot;:31,&quot;new_line&quot;:33,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC33" class="line"></span>
+</td>
+</tr>
+
+<tr><td class="diff-line-num unfold js-unfold js-unfold-bottom old_line" data-linenumber="33">...</td><td class="diff-line-num unfold js-unfold js-unfold-bottom new_line" data-linenumber="33">...</td><td class="line_content match "></td>
+</tr></tbody></table>
+
+</div><div class="diff-content diff-wrap-lines" style="display: none;"><div class="nothing-here-block diff-collapsed">This diff is collapsed. <a class="click-to-expand">Click to expand it.</a></div></div>
+
+</div>
+
+<div class="diff-file file-holder" data-blob-diff-path="/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/Services/GetToken.js/diff" data-view="inline" id="3734ae3855483dc56fe960f15daa77278a2169e5">
+<div class="file-title">
+<i class="fa diff-toggle-caret fa-fw fa-caret-down"></i>
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5"><i class="fa fa-file-text-o fa-fw"></i>
+<strong>
+src/Services/GetToken.js
+</strong>
+</a><button class="btn btn-clipboard btn-transparent prepend-left-5" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="src/Services/GetToken.js" data-class="btn-clipboard btn-transparent prepend-left-5" data-title="Copy file path to clipboard" type="button" title="Copy file path to clipboard"><i class="fa fa-clipboard"></i></button>
+
+<div class="file-actions hidden-xs">
+<a class="js-toggle-diff-comments btn active has-tooltip btn-file-option" title="Toggle comments for this file" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><i class="fa fa-comment"></i>
+</a>
+<a class="btn view-file js-view-file btn-file-option" href="https://gitlab.skyshi.com/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/Services/GetToken.js">View file @<span class="commit-short-id">095b67e</span></a>
+</div>
+</div>
+<div class="diff-content diff-wrap-lines">
+<table class="code js-syntax-highlight text-file white" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-noteable-type="Commit">
+<tbody><tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_1_1">
+<td class="diff-line-num old_line" data-linenumber="1">
+<a data-linenumber="1" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_1_1"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="1">
+<a data-linenumber="1" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_1_1"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="1f692a0e579a27a385ca34f899ce1423dfcd7564" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_1_1" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:1,&quot;new_line&quot;:1,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC1" class="line"><span class="kr">import</span> <span class="nx">localforage</span> <span class="nx">from</span> <span class="s1">'localforage'</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_2_2">
+<td class="diff-line-num old_line" data-linenumber="2">
+<a data-linenumber="2" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_2_2"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="2">
+<a data-linenumber="2" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_2_2"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="a4740014eca7b69a215183bdf87efe2a3512f5eb" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_2_2" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:2,&quot;new_line&quot;:2,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC2" class="line"></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_3_3">
+<td class="diff-line-num old_line" data-linenumber="3">
+<a data-linenumber="3" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_3_3"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="3">
+<a data-linenumber="3" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_3_3"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="74ea373b238ca961b5fd79ca6cd1e8ff2a4119c0" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_3_3" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:3,&quot;new_line&quot;:3,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC3" class="line"><span class="kr">const</span> <span class="nx">getToken</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="3734ae3855483dc56fe960f15daa77278a2169e5_4_4">
+<td class="diff-line-num old old_line" data-linenumber="4">
+<a data-linenumber="4" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_4_4"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="4">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_4_4"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="f7335d13d3e26918f7ca1884b340cea5c795ca56" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_4_4" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:4,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC4" class="line">  <span class="k">return</span> <span class="nx">localforage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">'<span class="idiff left right">access_</span>token'</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="3734ae3855483dc56fe960f15daa77278a2169e5_5_4">
+<td class="diff-line-num new old_line" data-linenumber="5">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_5_4"></a>
+<button name="button" type="submit" class="btn add-diff-note js-add-diff-note-button" title="Add a comment to this line" data-noteable-type="Commit" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-note-type="DiffNote" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_5_4" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:4,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}" data-discussion-id="257ddd01ee74658c1705ccd855f459480cbbe242" data-line-type="new"><i class="fa fa-comment-o"></i></button></td>
+<td class="diff-line-num new new_line" data-linenumber="4">
+<a data-linenumber="4" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_5_4"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="257ddd01ee74658c1705ccd855f459480cbbe242" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_5_4" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:4,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC4" class="line">  <span class="k">return</span> <span class="nx">localforage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">'token'</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_5_5">
+<td class="diff-line-num old_line" data-linenumber="5">
+<a data-linenumber="5" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_5_5"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="5">
+<a data-linenumber="5" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_5_5"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="929d2fc1e5a3ea71189eb2b04a4c2c14fdd8f44f" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_5_5" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:5,&quot;new_line&quot;:5,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC5" class="line">    <span class="k">return</span> <span class="nx">value</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_6_6">
+<td class="diff-line-num old_line" data-linenumber="6">
+<a data-linenumber="6" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_6_6"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="6">
+<a data-linenumber="6" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_6_6"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="13c2754588f34d359f5fb72d6cea5579ac4da979" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_6_6" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:6,&quot;new_line&quot;:6,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC6" class="line">  <span class="p">}).</span><span class="k">catch</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="3734ae3855483dc56fe960f15daa77278a2169e5_7_7">
+<td class="diff-line-num old old_line" data-linenumber="7">
+<a data-linenumber="7" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_7_7"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="7">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_7_7"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="40a47d880d5bde16d3bcfc127cd1e3bf9765ea27" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_7_7" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:7,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC7" class="line"></span>
+</td>
+</tr>
+<tr class="line_holder new" id="3734ae3855483dc56fe960f15daa77278a2169e5_8_7">
+<td class="diff-line-num new old_line" data-linenumber="8">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_8_7"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="7">
+<a data-linenumber="7" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_8_7"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="914aa5dc9ec696886f6f36471534faa86cf01985" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_8_7" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:7,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC7" class="line">    <span class="k">return</span> <span class="kc">null</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_8_8">
+<td class="diff-line-num old_line" data-linenumber="8">
+<a data-linenumber="8" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_8_8"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="8">
+<a data-linenumber="8" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_8_8"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="aa69980d592348c220cd82e247e9774c6eda7821" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_8_8" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:8,&quot;new_line&quot;:8,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC8" class="line">  <span class="p">})</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_9_9">
+<td class="diff-line-num old_line" data-linenumber="9">
+<a data-linenumber="9" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_9_9"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="9">
+<a data-linenumber="9" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_9_9"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="cb82931cfd803ce44f397a03a1c067afddadb96f" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_9_9" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:9,&quot;new_line&quot;:9,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC9" class="line"><span class="p">}</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="3734ae3855483dc56fe960f15daa77278a2169e5_10_10">
+<td class="diff-line-num old_line" data-linenumber="10">
+<a data-linenumber="10" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_10_10"></a>
+<button name="button" type="submit" class="btn add-diff-note js-add-diff-note-button" title="Add a comment to this line" data-noteable-type="Commit" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-note-type="DiffNote" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_10_10" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:10,&quot;new_line&quot;:10,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}" data-discussion-id="8e7a08b6e7f681e6717e7ef69259d5288a19d209"><i class="fa fa-comment-o"></i></button></td>
+<td class="diff-line-num new_line" data-linenumber="10">
+<a data-linenumber="10" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#3734ae3855483dc56fe960f15daa77278a2169e5_10_10"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="8e7a08b6e7f681e6717e7ef69259d5288a19d209" data-line-code="3734ae3855483dc56fe960f15daa77278a2169e5_10_10" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;new_path&quot;:&quot;src/Services/GetToken.js&quot;,&quot;old_line&quot;:10,&quot;new_line&quot;:10,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC10" class="line"><span class="kr">export</span> <span class="k">default</span> <span class="p">{</span><span class="nx">getToken</span><span class="p">}</span></span></td>
+</tr>
+
+<tr><td class="diff-line-num unfold js-unfold js-unfold-bottom old_line" data-linenumber="10">...</td><td class="diff-line-num unfold js-unfold js-unfold-bottom new_line" data-linenumber="10">...</td><td class="line_content match "></td>
+</tr></tbody></table>
+
+</div><div class="diff-content diff-wrap-lines" style="display: none;"><div class="nothing-here-block diff-collapsed">This diff is collapsed. <a class="click-to-expand">Click to expand it.</a></div></div>
+
+</div>
+
+<div class="diff-file file-holder" data-blob-diff-path="/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/api/api.js/diff" data-view="inline" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b">
+<div class="file-title">
+<i class="fa diff-toggle-caret fa-fw fa-caret-down"></i>
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b"><i class="fa fa-file-text-o fa-fw"></i>
+<strong>
+src/api/api.js
+</strong>
+</a><button class="btn btn-clipboard btn-transparent prepend-left-5" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="src/api/api.js" data-class="btn-clipboard btn-transparent prepend-left-5" data-title="Copy file path to clipboard" type="button" title="Copy file path to clipboard"><i class="fa fa-clipboard"></i></button>
+
+<div class="file-actions hidden-xs">
+<a class="js-toggle-diff-comments btn active has-tooltip btn-file-option" title="Toggle comments for this file" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><i class="fa fa-comment"></i>
+</a>
+<a class="btn view-file js-view-file btn-file-option" href="https://gitlab.skyshi.com/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/api/api.js">View file @<span class="commit-short-id">095b67e</span></a>
+</div>
+</div>
+<div class="diff-content diff-wrap-lines">
+<table class="code js-syntax-highlight text-file white" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-noteable-type="Commit">
+<tbody><tr class="line_holder match" id="">
+<td class="diff-line-num unfold js-unfold old_line" data-linenumber="29">...</td><td class="diff-line-num unfold js-unfold new_line" data-linenumber="29">...</td><td class="line_content match ">@@ -29,12 +29,12 @@ export function authApiKomuto () {</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_29_29">
+<td class="diff-line-num old_line" data-linenumber="29">
+<a data-linenumber="29" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_29_29"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="29">
+<a data-linenumber="29" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_29_29"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="8687645826e193e95a9ad95d7caba8d02e0a9d38" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_29_29" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:29,&quot;new_line&quot;:29,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC29" class="line">    <span class="na">timeout</span><span class="p">:</span> <span class="mi">10000</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_30_30">
+<td class="diff-line-num old_line" data-linenumber="30">
+<a data-linenumber="30" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_30_30"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="30">
+<a data-linenumber="30" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_30_30"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="58135a95b8b121b01df24024d5464cc7fe0e4392" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_30_30" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:30,&quot;new_line&quot;:30,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC30" class="line">  <span class="p">})</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_31_31">
+<td class="diff-line-num old_line" data-linenumber="31">
+<a data-linenumber="31" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_31_31"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="31">
+<a data-linenumber="31" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_31_31"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="403db586bbe129cc1f5760256fc5299dfbc3819d" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_31_31" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:31,&quot;new_line&quot;:31,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC31" class="line"></span>
+</td>
+</tr>
+<tr class="line_holder old" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_32_32">
+<td class="diff-line-num old old_line" data-linenumber="32">
+<a data-linenumber="32" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_32_32"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="32">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_32_32"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="ddc98d21815f02751fef554064a77b2756ead59e" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_32_32" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:32,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC32" class="line">  <span class="nx">api</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx"><span class="idiff left right">config</span></span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_32">
+<td class="diff-line-num new old_line" data-linenumber="33">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_32"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="32">
+<a data-linenumber="32" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_32"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="44df70a2fdb1b4612ec07546189191ad9bb521fb" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_32" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:32,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC32" class="line">  <span class="nx">api</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx"><span class="idiff left">async</span></span><span class="idiff"> </span><span class="p"><span class="idiff">(</span></span><span class="nx"><span class="idiff">config</span></span><span class="p"><span class="idiff right">)</span></span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_33">
+<td class="diff-line-num old_line" data-linenumber="33">
+<a data-linenumber="33" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_33"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="33">
+<a data-linenumber="33" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_33"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="43be7a4eb366bf1f52724faaa51c962718764142" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_33_33" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:33,&quot;new_line&quot;:33,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC33" class="line">    <span class="k">try</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_34_34">
+<td class="diff-line-num old old_line" data-linenumber="34">
+<a data-linenumber="34" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_34_34"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="34">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_34_34"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="a7918434448aae5015bc15c8ca0c31682c65f6f4" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_34_34" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:34,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC34" class="line">      <span class="kd">let</span> <span class="nx">token</span> <span class="o">=</span> <span class="kc">null</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_35_34">
+<td class="diff-line-num old old_line" data-linenumber="35">
+<a data-linenumber="35" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_35_34"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="34">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_35_34"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="523e91492cddd41ec93def65469271d80733a23f" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_35_34" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:35,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC35" class="line">      <span class="nx">localForage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">'token'</span><span class="p">,</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_36_34">
+<td class="diff-line-num old old_line" data-linenumber="36">
+<a data-linenumber="36" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_36_34"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="34">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_36_34"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="e3934c27a86a6fb3f29ed6696214b95b588014fb" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_36_34" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:36,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC36" class="line">        <span class="nx">token</span> <span class="o">=</span> <span class="nx">value</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_34">
+<td class="diff-line-num new old_line" data-linenumber="37">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_34"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="34">
+<a data-linenumber="34" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_34"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="b20aa36bd5582d13131ec0e1de53f7fe3f524a68" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_34" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:34,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC34" class="line">      <span class="kr">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">localForage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">'token'</span><span class="p">,</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_35">
+<td class="diff-line-num new old_line" data-linenumber="37">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_35"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="35">
+<a data-linenumber="35" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_35"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="b40754776416ca45687df6409345e459fadb1a19" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_35" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:35,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC35" class="line">        <span class="k">return</span> <span class="nx">value</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_36">
+<td class="diff-line-num old_line" data-linenumber="37">
+<a data-linenumber="37" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_36"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="36">
+<a data-linenumber="36" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_36"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="4f3b8dfcb05f3a187d7ea5c5633f120fb7b8e3e6" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_37_36" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:37,&quot;new_line&quot;:36,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC36" class="line">      <span class="p">})</span></span>
+</td>
+</tr>
+<tr class="line_holder new" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_37">
+<td class="diff-line-num new old_line" data-linenumber="38">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_37"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="37">
+<a data-linenumber="37" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_37"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="e85fdf23b944cad98511051cb25546ce7f80cd4e" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_37" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:37,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC37" class="line">      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_38">
+<td class="diff-line-num old_line" data-linenumber="38">
+<a data-linenumber="38" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_38"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="38">
+<a data-linenumber="38" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_38"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="fb8be45c6bb98fa8f6331f05a4994218f190a84e" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_38_38" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:38,&quot;new_line&quot;:38,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC38" class="line">      <span class="k">if</span> <span class="p">(</span><span class="nx">token</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_39_39">
+<td class="diff-line-num old_line" data-linenumber="39">
+<a data-linenumber="39" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_39_39"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="39">
+<a data-linenumber="39" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_39_39"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="ce03aaf0cbdd222f602d1b5de835a61419e98f8d" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_39_39" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:39,&quot;new_line&quot;:39,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC39" class="line">        <span class="nx">config</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">'Authorization'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'JWT '</span> <span class="o">+</span> <span class="nx">token</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_40_40">
+<td class="diff-line-num old_line" data-linenumber="40">
+<a data-linenumber="40" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_40_40"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="40">
+<a data-linenumber="40" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_40_40"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="d1a6f97e8cc59b81b7186786d634be3b04e12d52" data-line-code="c4b5cc6e5316f0a41e5380b9c170bcfd1835974b_40_40" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/api/api.js&quot;,&quot;new_path&quot;:&quot;src/api/api.js&quot;,&quot;old_line&quot;:40,&quot;new_line&quot;:40,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC40" class="line">      <span class="p">}</span></span>
+</td>
+</tr>
+
+<tr><td class="diff-line-num unfold js-unfold js-unfold-bottom old_line" data-linenumber="40">...</td><td class="diff-line-num unfold js-unfold js-unfold-bottom new_line" data-linenumber="40">...</td><td class="line_content match "></td>
+</tr></tbody></table>
+
+</div><div class="diff-content diff-wrap-lines" style="display: none;"><div class="nothing-here-block diff-collapsed">This diff is collapsed. <a class="click-to-expand">Click to expand it.</a></div></div>
+
+</div>
+
+<div class="diff-file file-holder" data-blob-diff-path="/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/config.js/diff" data-view="inline" id="87f3e0e4cc62eefaef83559ad73420b22d52e801">
+<div class="file-title">
+<i class="fa diff-toggle-caret fa-fw fa-caret-down"></i>
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801"><i class="fa fa-file-text-o fa-fw"></i>
+<strong>
+src/config.js
+</strong>
+</a><button class="btn btn-clipboard btn-transparent prepend-left-5" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="src/config.js" data-class="btn-clipboard btn-transparent prepend-left-5" data-title="Copy file path to clipboard" type="button" title="Copy file path to clipboard"><i class="fa fa-clipboard"></i></button>
+
+<div class="file-actions hidden-xs">
+<a class="js-toggle-diff-comments btn active has-tooltip btn-file-option" title="Toggle comments for this file" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><i class="fa fa-comment"></i>
+</a>
+<a class="btn view-file js-view-file btn-file-option" href="https://gitlab.skyshi.com/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/src/config.js">View file @<span class="commit-short-id">095b67e</span></a>
+</div>
+</div>
+<div class="diff-content diff-wrap-lines">
+<table class="code js-syntax-highlight text-file white" data-commit-id="095b67e25d7c5a0c3c9dcf553331648343a916f4" data-noteable-type="Commit">
+<tbody><tr class="line_holder match" id="">
+<td class="diff-line-num unfold js-unfold old_line" data-linenumber="17">...</td><td class="diff-line-num unfold js-unfold new_line" data-linenumber="17">...</td><td class="line_content match ">@@ -17,4 +17,4 @@ export function errorHandling (actionType, res) {</td>
+</tr>
+<tr class="line_holder" id="87f3e0e4cc62eefaef83559ad73420b22d52e801_17_17">
+<td class="diff-line-num old_line" data-linenumber="17">
+<a data-linenumber="17" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_17_17"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="17">
+<a data-linenumber="17" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_17_17"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="3550a1aeffe7721d3299d5b6a63a1be295d3c591" data-line-code="87f3e0e4cc62eefaef83559ad73420b22d52e801_17_17" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/config.js&quot;,&quot;new_path&quot;:&quot;src/config.js&quot;,&quot;old_line&quot;:17,&quot;new_line&quot;:17,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC17" class="line">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="87f3e0e4cc62eefaef83559ad73420b22d52e801_18_18">
+<td class="diff-line-num old_line" data-linenumber="18">
+<a data-linenumber="18" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_18_18"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="18">
+<a data-linenumber="18" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_18_18"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="641b8210e0edc15503cf1149f135fcd8ea02b07f" data-line-code="87f3e0e4cc62eefaef83559ad73420b22d52e801_18_18" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/config.js&quot;,&quot;new_path&quot;:&quot;src/config.js&quot;,&quot;old_line&quot;:18,&quot;new_line&quot;:18,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC18" class="line">    <span class="k">return</span> <span class="nx">put</span><span class="p">({</span> <span class="na">type</span><span class="p">:</span> <span class="nx">actionType</span><span class="p">,</span> <span class="p">...</span><span class="nx">error</span> <span class="p">})</span></span>
+</td>
+</tr>
+<tr class="line_holder" id="87f3e0e4cc62eefaef83559ad73420b22d52e801_19_19">
+<td class="diff-line-num old_line" data-linenumber="19">
+<a data-linenumber="19" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_19_19"></a>
+</td>
+<td class="diff-line-num new_line" data-linenumber="19">
+<a data-linenumber="19" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_19_19"></a>
+</td>
+<td class="line_content noteable_line" data-discussion-id="21d9cb54b8559ec5157666cd432b91fef50327cf" data-line-code="87f3e0e4cc62eefaef83559ad73420b22d52e801_19_19" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/config.js&quot;,&quot;new_path&quot;:&quot;src/config.js&quot;,&quot;old_line&quot;:19,&quot;new_line&quot;:19,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC19" class="line">  <span class="p">}</span></span>
+</td>
+</tr>
+<tr class="line_holder old" id="87f3e0e4cc62eefaef83559ad73420b22d52e801_20_20">
+<td class="diff-line-num old old_line" data-linenumber="20">
+<a data-linenumber="20" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_20_20"></a>
+</td>
+<td class="diff-line-num new_line old" data-linenumber="20">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_20_20"></a>
+</td>
+<td class="line_content noteable_line old" data-discussion-id="3ee976451304ef4d19ec8420f7bc047d3500165b" data-line-code="87f3e0e4cc62eefaef83559ad73420b22d52e801_20_20" data-line-type="old" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/config.js&quot;,&quot;new_path&quot;:&quot;src/config.js&quot;,&quot;old_line&quot;:20,&quot;new_line&quot;:null,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC20" class="line"><span class="p">}</span></span></td>
+</tr>
+<tr class="line_holder nonewline" id="">
+<td class="old_line diff-line-num"></td>
+<td class="new_line diff-line-num"></td>
+<td class="line_content match">\ No newline at end of file</td>
+</tr>
+<tr class="line_holder new" id="87f3e0e4cc62eefaef83559ad73420b22d52e801_21_20">
+<td class="diff-line-num new old_line" data-linenumber="21">
+<a data-linenumber=" " href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_21_20"></a>
+</td>
+<td class="diff-line-num new new_line" data-linenumber="20">
+<a data-linenumber="20" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#87f3e0e4cc62eefaef83559ad73420b22d52e801_21_20"></a>
+</td>
+<td class="line_content new noteable_line" data-discussion-id="057fda9174bc454296a63b03dd1a5ba6e3f59060" data-line-code="87f3e0e4cc62eefaef83559ad73420b22d52e801_21_20" data-line-type="new" data-note-type="DiffNote" data-position="{&quot;old_path&quot;:&quot;src/config.js&quot;,&quot;new_path&quot;:&quot;src/config.js&quot;,&quot;old_line&quot;:null,&quot;new_line&quot;:20,&quot;base_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;start_sha&quot;:&quot;c3e1c3751271c34d558fe777e6518fa1736d49a9&quot;,&quot;head_sha&quot;:&quot;095b67e25d7c5a0c3c9dcf553331648343a916f4&quot;}"><span id="LC20" class="line"><span class="p">}</span></span></td>
+</tr>
+
+<tr><td class="diff-line-num unfold js-unfold js-unfold-bottom old_line" data-linenumber="20">...</td><td class="diff-line-num unfold js-unfold js-unfold-bottom new_line" data-linenumber="20">...</td><td class="line_content match "></td>
+</tr></tbody></table>
+
+</div><div class="diff-content diff-wrap-lines" style="display: none;"><div class="nothing-here-block diff-collapsed">This diff is collapsed. <a class="click-to-expand">Click to expand it.</a></div></div>
+
+</div>
+
+<div class="diff-file file-holder" data-blob-diff-path="/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/yarn.lock/diff" data-view="inline" id="53585a096fe3a3b96321113856ae62602995a33b">
+<div class="file-title">
+<i class="fa diff-toggle-caret fa-fw fa-caret-right"></i>
+<a href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#53585a096fe3a3b96321113856ae62602995a33b"><i class="fa fa-file-text-o fa-fw"></i>
+<strong>
+yarn.lock
+</strong>
+</a><button class="btn btn-clipboard btn-transparent prepend-left-5" data-toggle="tooltip" data-placement="bottom" data-container="body" data-clipboard-text="yarn.lock" data-class="btn-clipboard btn-transparent prepend-left-5" data-title="Copy file path to clipboard" type="button" title="Copy file path to clipboard"><i class="fa fa-clipboard"></i></button>
+
+<div class="file-actions hidden-xs">
+<a class="js-toggle-diff-comments btn active has-tooltip btn-file-option" title="Toggle comments for this file" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#"><i class="fa fa-comment"></i>
+</a>
+<a class="btn view-file js-view-file btn-file-option" href="https://gitlab.skyshi.com/komuto/pwa/blob/095b67e25d7c5a0c3c9dcf553331648343a916f4/yarn.lock">View file @<span class="commit-short-id">095b67e</span></a>
+</div>
+</div>
+<div class="diff-content diff-wrap-lines">
+<div class="nothing-here-block diff-collapsed" data-diff-for-path="/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4/diff_for_path?file_identifier=yarn.lock-false-false-false&amp;new_path=yarn.lock&amp;old_path=yarn.lock">
+This diff is collapsed.
+<a class="click-to-expand">
+Click to expand it.
+</a>
+</div>
+</div><div class="diff-content diff-wrap-lines loading" style="display: none;"><i class="fa fa-spinner fa-spin"></i></div>
+
+</div>
+
+</div>
+
+<ul class="notes main-notes-list timeline" id="notes-list">
+
+
+</ul>
+<div class="note-edit-form">
+<form class="edit-note common-note-form js-quick-submit" action="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="_method" value="put"><input type="hidden" name="authenticity_token" value="6JMdeIZC71diEROkhjYS2JywmQExjZRKvrydxKJ37WBdjh02irAc6PMkUpKi/EfdDcBAmefRXE53L8Ubbu1vow=="><input type="hidden" name="target_id" id="target_id" value="" class="js-form-target-id">
+<input type="hidden" name="target_type" id="target_type" value="" class="js-form-target-type">
+<div class="md-area">
+<div class="md-header">
+<ul class="nav-links clearfix">
+<li class="active">
+<a class="js-md-write-button" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#md-write-holder" tabindex="-1">
+Write
+</a>
+</li>
+<li>
+<a class="js-md-preview-button" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#md-preview-holder" tabindex="-1">
+Preview
+</a>
+</li>
+<li class="pull-right">
+<div class="toolbar-group">
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="**" data-container="body" title="Add bold text" aria-label="Add bold text"><i class="fa fa-bold fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="*" data-container="body" title="Add italic text" aria-label="Add italic text"><i class="fa fa-italic fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="&gt; " data-md-prepend="true" data-container="body" title="Insert a quote" aria-label="Insert a quote"><i class="fa fa-quote-right fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="`" data-md-block="```" data-container="body" title="Insert code" aria-label="Insert code"><i class="fa fa-code fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="* " data-md-prepend="true" data-container="body" title="Add a bullet list" aria-label="Add a bullet list"><i class="fa fa-list-ul fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="1. " data-md-prepend="true" data-container="body" title="Add a numbered list" aria-label="Add a numbered list"><i class="fa fa-list-ol fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="* [ ] " data-md-prepend="true" data-container="body" title="Add a task list" aria-label="Add a task list"><i class="fa fa-check-square-o fa-fw"></i></button>
+</div>
+<div class="toolbar-group">
+<button aria="{:label=&gt;&quot;Go full screen&quot;}" class="toolbar-btn js-zen-enter has-tooltip hidden-xs" data-container="body" tabindex="-1" title="Go full screen" type="button">
+<i class="fa fa-arrows-alt fa-fw"></i>
+</button>
+</div>
+</li>
+</ul>
+</div>
+<div class="md-write-holder">
+<div class="zen-backdrop">
+<textarea name="note[note]" id="note_note" class="note-textarea js-note-text js-task-list-field js-gfm-input js-autosize markdown-area" placeholder="Write a comment or drag your files here..." style="overflow-x: hidden; word-wrap: break-word; resize: vertical; overflow-y: visible;"></textarea>
+<a class="zen-control zen-control-leave js-zen-leave" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">
+<i class="fa fa-compress"></i>
+</a>
+</div>
+
+<div class="comment-toolbar clearfix">
+<div class="toolbar-text">
+Styling with
+<a target="_blank" tabindex="-1" href="https://gitlab.skyshi.com/help/user/markdown">Markdown</a>
+is
+supported
+</div>
+<button class="toolbar-button markdown-selector" tabindex="-1" type="button">
+<i class="fa fa-file-image-o toolbar-button-icon"></i>
+Attach a file
+</button>
+</div>
+
+
+</div>
+<div class="hide js-md-preview md md-preview md-preview-holder"></div>
+<div class="referenced-users hide">
+<span>
+<i class="fa fa-exclamation-triangle"></i>
+You are about to add
+<strong>
+<span class="js-referenced-users-count">0</span>
+people
+</strong>
+to the discussion. Proceed with caution.
+</span>
+</div>
+</div>
+<div class="note-form-actions clearfix">
+<div class="settings-message note-edit-warning js-edit-warning">
+Finish editing this message first!
+</div>
+<input type="submit" name="commit" value="Save Comment" class="btn btn-nr btn-save js-comment-button">
+<button class="btn btn-nr btn-cancel note-edit-cancel" type="button">
+Cancel
+</button>
+</div>
+</form></div>
+
+<ul class="notes notes-form timeline">
+<li class="timeline-entry">
+<div class="flash-container timeline-content"></div>
+<div class="timeline-icon hidden-xs hidden-sm">
+<a class="author_link" href="https://gitlab.skyshi.com/safei">
+<img alt="@safei" class="avatar s40" src="./fix async await (095b67e2) · Commits · komuto _ pwa · GitLab_files/305c1a52eaab548c6ffb45c5b944a6cb(1)">
+</a>
+</div>
+<div class="timeline-content timeline-content-form">
+<form data-type="json" class="new-note js-quick-submit common-note-form gfm-form js-main-target-form" enctype="multipart/form-data" action="https://gitlab.skyshi.com/komuto/pwa/notes" accept-charset="UTF-8" data-remote="true" method="post" style="display: block;"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="6JMdeIZC71diEROkhjYS2JywmQExjZRKvrydxKJ37WBdjh02irAc6PMkUpKi/EfdDcBAmefRXE53L8Ubbu1vow=="><input type="hidden" name="view" id="view" value="inline">
+<input type="hidden" name="line_type" id="line_type">
+<input type="hidden" name="merge_request_diff_head_sha" id="merge_request_diff_head_sha">
+<input type="hidden" name="target_type" id="target_type" value="commit"><input type="hidden" name="target_id" id="target_id" value="095b67e25d7c5a0c3c9dcf553331648343a916f4">
+<input type="hidden" value="095b67e25d7c5a0c3c9dcf553331648343a916f4" name="note[commit_id]" id="note_commit_id">
+
+<input type="hidden" name="note[noteable_id]" id="note_noteable_id">
+<input type="hidden" value="Commit" name="note[noteable_type]" id="note_noteable_type">
+
+
+<div class="md-area">
+<div class="md-header">
+<ul class="nav-links clearfix">
+<li class="active">
+<a class="js-md-write-button" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#md-write-holder" tabindex="-1">
+Write
+</a>
+</li>
+<li>
+<a class="js-md-preview-button" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#md-preview-holder" tabindex="-1">
+Preview
+</a>
+</li>
+<li class="pull-right">
+<div class="toolbar-group">
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="**" data-container="body" title="Add bold text" aria-label="Add bold text"><i class="fa fa-bold fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="*" data-container="body" title="Add italic text" aria-label="Add italic text"><i class="fa fa-italic fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="&gt; " data-md-prepend="true" data-container="body" title="Insert a quote" aria-label="Insert a quote"><i class="fa fa-quote-right fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="`" data-md-block="```" data-container="body" title="Insert code" aria-label="Insert code"><i class="fa fa-code fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="* " data-md-prepend="true" data-container="body" title="Add a bullet list" aria-label="Add a bullet list"><i class="fa fa-list-ul fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="1. " data-md-prepend="true" data-container="body" title="Add a numbered list" aria-label="Add a numbered list"><i class="fa fa-list-ol fa-fw"></i></button>
+<button type="button" class="toolbar-btn js-md has-tooltip hidden-xs" tabindex="-1" data-md-tag="* [ ] " data-md-prepend="true" data-container="body" title="Add a task list" aria-label="Add a task list"><i class="fa fa-check-square-o fa-fw"></i></button>
+</div>
+<div class="toolbar-group">
+<button aria="{:label=&gt;&quot;Go full screen&quot;}" class="toolbar-btn js-zen-enter has-tooltip hidden-xs" data-container="body" tabindex="-1" title="Go full screen" type="button">
+<i class="fa fa-arrows-alt fa-fw"></i>
+</button>
+</div>
+</li>
+</ul>
+</div>
+<div class="md-write-holder">
+<div class="zen-backdrop div-dropzone-wrapper">
+<div class="div-dropzone dz-clickable"><textarea class="note-textarea js-note-text js-gfm-input js-autosize markdown-area" placeholder="Write a comment or drag your files here..." data-supports-slash-commands="null" name="note[note]" id="note_note" style="overflow: hidden; word-wrap: break-word; resize: vertical; height: 140px;"></textarea><div class="div-dropzone-hover"><i class="fa fa-paperclip div-dropzone-icon"></i></div><div class="div-dropzone-spinner" style="opacity: 0; display: none;"><i class="fa fa-spinner fa-spin div-dropzone-icon"></i><div class="div-dropzone-progress"></div></div></div>
+<a class="zen-control zen-control-leave js-zen-leave" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">
+<i class="fa fa-compress"></i>
+</a>
+</div>
+
+<div class="comment-toolbar clearfix">
+<div class="toolbar-text">
+Styling with
+<a target="_blank" tabindex="-1" href="https://gitlab.skyshi.com/help/user/markdown">Markdown</a>
+is
+supported
+</div>
+<button class="toolbar-button markdown-selector" tabindex="-1" type="button">
+<i class="fa fa-file-image-o toolbar-button-icon"></i>
+Attach a file
+</button>
+</div>
+
+<div class="error-alert"></div>
+
+</div>
+<div class="hide js-md-preview md md-preview md-preview-holder"></div>
+<div class="referenced-users hide" style="display: none;">
+<span>
+<i class="fa fa-exclamation-triangle"></i>
+You are about to add
+<strong>
+<span class="js-referenced-users-count">0</span>
+people
+</strong>
+to the discussion. Proceed with caution.
+</span>
+</div>
+</div>
+<div class="note-form-actions clearfix">
+<input type="submit" name="commit" value="Comment" class="btn btn-nr btn-create append-right-10 comment-btn js-comment-button disabled" disabled="disabled">
+
+<a class="btn btn-cancel js-note-discard" data-cancel-text="Cancel" role="button" style="display: none;">
+Discard draft
+</a>
+</div>
+</form>
+</div>
+</li>
+</ul>
+<script>
+  var notes = new Notes("/komuto/pwa/notes?target_id=095b67e25d7c5a0c3c9dcf553331648343a916f4&target_type=commit", [], 1499132359, "inline")
+</script>
+
+<div class="modal" id="modal-revert-commit">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<a class="close" data-dismiss="modal" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">×</a>
+<h3 class="page-title">Revert this commit</h3>
+</div>
+<div class="modal-body">
+<form class="form-horizontal js-revert-form js-requires-input" action="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4/revert" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="6JMdeIZC71diEROkhjYS2JywmQExjZRKvrydxKJ37WBdjh02irAc6PMkUpKi/EfdDcBAmefRXE53L8Ubbu1vow=="><div class="form-group branch">
+<label class="control-label" for="target_branch">Revert in branch</label>
+<div class="col-sm-10">
+<input type="hidden" name="target_branch" id="target_branch" value="master">
+<div class="dropdown"><button class="dropdown-menu-toggle js-project-refs-dropdown js-target-branch dynamic" type="button" data-field-name="target_branch" data-selected="master" data-target-branch="master" data-refs-url="/komuto/pwa/branches" data-submit-form-on-click="false" data-toggle="dropdown"><span class="dropdown-toggle-text ">master</span><i class="fa fa-chevron-down"></i></button><div class="dropdown-menu dropdown-select dropdown-menu-selectable"><div class="dropdown-title"><span>Switch branch</span><button class="dropdown-title-button dropdown-menu-close" aria-label="Close" type="button"><i class="fa fa-times dropdown-menu-close-icon"></i></button></div><div class="dropdown-input"><input type="search" id="" class="dropdown-input-field" placeholder="Search branches" autocomplete="off" value=""><i class="fa fa-search dropdown-input-search"></i><i role="button" class="fa fa-times dropdown-input-clear js-dropdown-input-clear"></i></div><div class="dropdown-content"></div><div class="dropdown-loading"><i class="fa fa-spinner fa-spin"></i></div></div></div>
+<div class="js-create-merge-request-container">
+<div class="checkbox">
+<label><input type="checkbox" name="create_merge_request" value="1" class="js-create-merge-request" checked="checked">
+Start a <strong>new merge request</strong> with these changes
+</label></div>
+</div>
+</div>
+</div>
+<div class="form-actions">
+<input type="submit" name="commit" value="Revert" class="btn btn-create">
+<a class="btn btn-cancel" data-dismiss="modal" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">Cancel</a>
+</div>
+</form></div>
+</div>
+</div>
+</div>
+<script>
+  new NewCommitForm($('.js-revert-form'))
+</script>
+
+<div class="modal" id="modal-cherry-pick-commit">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<a class="close" data-dismiss="modal" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">×</a>
+<h3 class="page-title">Cherry-pick this commit</h3>
+</div>
+<div class="modal-body">
+<form class="form-horizontal js-cherry-pick-form js-requires-input" action="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4/cherry_pick" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="6JMdeIZC71diEROkhjYS2JywmQExjZRKvrydxKJ37WBdjh02irAc6PMkUpKi/EfdDcBAmefRXE53L8Ubbu1vow=="><div class="form-group branch">
+<label class="control-label" for="target_branch">Pick into branch</label>
+<div class="col-sm-10">
+<input type="hidden" name="target_branch" id="target_branch" value="master">
+<div class="dropdown"><button class="dropdown-menu-toggle js-project-refs-dropdown js-target-branch dynamic" type="button" data-field-name="target_branch" data-selected="master" data-target-branch="master" data-refs-url="/komuto/pwa/branches" data-submit-form-on-click="false" data-toggle="dropdown"><span class="dropdown-toggle-text ">master</span><i class="fa fa-chevron-down"></i></button><div class="dropdown-menu dropdown-select dropdown-menu-selectable"><div class="dropdown-title"><span>Switch branch</span><button class="dropdown-title-button dropdown-menu-close" aria-label="Close" type="button"><i class="fa fa-times dropdown-menu-close-icon"></i></button></div><div class="dropdown-input"><input type="search" id="" class="dropdown-input-field" placeholder="Search branches" autocomplete="off" value=""><i class="fa fa-search dropdown-input-search"></i><i role="button" class="fa fa-times dropdown-input-clear js-dropdown-input-clear"></i></div><div class="dropdown-content"></div><div class="dropdown-loading"><i class="fa fa-spinner fa-spin"></i></div></div></div>
+<div class="js-create-merge-request-container">
+<div class="checkbox">
+<label><input type="checkbox" name="create_merge_request" value="1" class="js-create-merge-request" checked="checked">
+Start a <strong>new merge request</strong> with these changes
+</label></div>
+</div>
+</div>
+</div>
+<div class="form-actions">
+<input type="submit" name="commit" value="Cherry-pick" class="btn btn-create">
+<a class="btn btn-cancel" data-dismiss="modal" href="https://gitlab.skyshi.com/komuto/pwa/commit/095b67e25d7c5a0c3c9dcf553331648343a916f4#">Cancel</a>
+</div>
+</form></div>
+</div>
+</div>
+</div>
+<script>
+  new NewCommitForm($('.js-cherry-pick-form'))
+</script>
+
+</div>
+
+</div>
+</div>
+</div>
+</div><input type="file" multiple="multiple" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
+
+
+<script>
+  gl.GfmAutoComplete.dataSources = {
+    emojis: "/komuto/pwa/autocomplete_sources/emojis",
+    members: "/komuto/pwa/autocomplete_sources/members?type=Commit&type_id=095b67e25d7c5a0c3c9dcf553331648343a916f4",
+    issues: "/komuto/pwa/autocomplete_sources/issues",
+    mergeRequests: "/komuto/pwa/autocomplete_sources/merge_requests",
+    labels: "/komuto/pwa/autocomplete_sources/labels",
+    milestones: "/komuto/pwa/autocomplete_sources/milestones",
+    commands: "/komuto/pwa/autocomplete_sources/commands?type=Commit&type_id=095b67e25d7c5a0c3c9dcf553331648343a916f4"
+  };
+  
+  gl.GfmAutoComplete.setup();
+</script>
+
+
+
+
+<div class="device-xs visible-xs"></div><div class="device-sm visible-sm"></div><div class="device-md visible-md"></div><div class="device-lg visible-lg"></div></body></html>
