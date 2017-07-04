@@ -1,6 +1,6 @@
 // @flow
 // layout
-import DefaultLayout from '../src/Layout/DefaultLayout'
+import DynamicNavBarLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
@@ -10,22 +10,14 @@ let params = {
   style: 'categories bg-grey',
   header: {
     title: 'Fashion Pria'
-  },
-  navbar: {
-    searchBoox: false,
-    path: 'categories1',
-    textPath: 'Fashion Pria'
   }
 }
 
 const Index = (props) => {
-  console.log(props)
-  params.header.title = props.query.name
-  params.navbar.textPath = props.query.name
   return (
-    <DefaultLayout params={params}>
-      <Categories2 />
-    </DefaultLayout>
+    <DynamicNavBarLayout params={params}>
+      <Categories2 query={props.query} />
+    </DynamicNavBarLayout>
   )
 }
 

@@ -20,7 +20,6 @@ const params = {
 }
 
 const Index = (props) => {
-  console.log(props)
   return (
     <DefaultLayout params={params}>
       <Categories1 />
