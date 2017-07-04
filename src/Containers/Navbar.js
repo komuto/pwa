@@ -37,6 +37,34 @@ export class SearchBoox extends PureComponent {
             <span className='icon-search' />
           </span>
         </p>
+        {/* <!-- dropdown search --> */}
+        {/* <div class="dropdown-search">
+          <div class="main-search">
+            <ul>
+              <li><span>Sepatu</span></li>
+              <li><span>Television</span></li>
+              <li><span>Jaket</span></li>
+              <li><span>Jam Tangan</span></li>
+              <li><span>Tas</span></li>
+              <li><span>Sepatu</span></li>
+              <li><span>Television</span></li>
+              <li><span>Jaket</span></li>
+              <li><span>Jam Tangan</span></li>
+            </ul>
+            <h3>Shop</h3>
+            <ul>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Sepatu</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Television</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jaket</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jam Tangan</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Tas</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Sepatu</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Television</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jaket</span></li>
+              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jam Tangan</span></li>
+            </ul>
+          </div>
+        </div> */}
       </div>
     )
   }
