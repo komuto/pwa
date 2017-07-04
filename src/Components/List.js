@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import Link from 'next/link'
 
 export const ListTitle = (props) => {
   const { name } = props
@@ -14,10 +13,10 @@ export const ListTitle = (props) => {
 }
 
 export default (props:any) => {
-  const {path, name} = props
+  const { name } = props
   return (
-    <li>
-      <Link href={path}><a><span className='categories-img' /> { name } <span className='icon-arrow-right' /></a></Link>
+    <li key={name}>
+      <a onClick={() => props.onClick()}><span className='categories-img' />{ name } <span className='icon-arrow-right' /></a>
     </li>
   )
 }
