@@ -9,11 +9,12 @@ import List from '../Components/List'
 import CategoriesWrap from '../Components/CategoriesWrap'
 import Section from '../Components/Section'
 import Content from '../Components/Content'
+import Notification from '../Components/Notification'
 // containers
 import { Navbar } from '../Containers/Navbar'
 // actions
 import * as homeActions from '../actions/home'
-// Utils
+// utils
 import { Status } from '../Services/Status'
 
 class Categories2 extends Component {
@@ -21,7 +22,11 @@ class Categories2 extends Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      categories: props.subCategory.categories || null
+      categories: props.subCategory || [],
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
@@ -32,7 +37,6 @@ class Categories2 extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { subCategory } = nextProps
-    console.log(subCategory)
     if (!subCategory.isLoading) {
       NProgress.done()
       switch (subCategory.status) {
@@ -52,38 +56,55 @@ class Categories2 extends Component {
   }
 
   render () {
-    const { categories } = this.state
+    const { categories, notification } = this.state
     const navbar = {
       searchBoox: false,
       path: '/',
-      textPath: 'NEED API UPDATE'
+      textPath: categories.name
     }
-
-    console.log(categories)
-
     return (
       <Content>
         <Navbar params={navbar} />
+        <Notification
+          type='is-warning'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <Section>
           <CategoriesWrap>
-            <List path='categories3' name='NEED API UPDATE' />
+            <List
+              onClick={() => {
+                Router.push(
+                  url.format({
+                    pathname: '/categories3',
+                    query: {id: categories.id}
+                  }),
+                  `/c/${categories.slug}/${categories.id}`
+                )
+              }}
+              icon={`${categories.icon}`}
+              name={`Lihat Semua di ${categories.name}`} />
           </CategoriesWrap>
           <CategoriesWrap>
             {
-              categories.map((category) => {
+              categories.sub_categories
+              ? categories.sub_categories.map((category) => {
                 return <List
+                  icon={category.icon}
                   key={category.id}
                   onClick={() => {
                     Router.push(
-                              url.format({
-                                pathname: '/categories2',
-                                query: {id: category.id}
-                              }),
-                              `/c/${category.slug}/${category.id}`
-                            )
+                      url.format({
+                        pathname: '/categories3',
+                        query: {id: category.id}
+                      }),
+                      `/c/${categories.slug}/${category.slug}/${category.id}`
+                    )
                   }}
                   name={category.name} />
               })
+              : null
             }
           </CategoriesWrap>
         </Section>
