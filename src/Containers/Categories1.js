@@ -14,8 +14,6 @@ import Notification from '../Components/Notification'
 import * as homeActions from '../actions/home'
 // Utils
 import { Status } from '../Services/Status'
-// Libs
-import UrlParam from '../Lib/UrlParam'
 
 class Categories1 extends Component {
   constructor (props) {
@@ -59,9 +57,9 @@ class Categories1 extends Component {
               Router.push(
                 url.format({
                   pathname: '/categories2',
-                  query: category
+                  query: {id: category.id}
                 }),
-                `/c/${UrlParam(category.name)}/${category.id}`
+                `/c/${category.slug}/${category.id}`
               )
             }}
               name={`Lihat Semua di ${category.name}`} />
@@ -73,12 +71,12 @@ class Categories1 extends Component {
                   key={subCategory.id}
                   onClick={() => {
                     Router.push(
-                            url.format({
-                              pathname: '/categories2',
-                              query: subCategory
-                            }),
-                            `/c/${UrlParam(subCategory.name)}/${subCategory.id}`
-                            )
+                      url.format({
+                        pathname: '/categories2',
+                        query: {id: subCategory.id}
+                      }),
+                      `/c/${subCategory.slug}/${subCategory.id}`
+                    )
                   }}
                   name={subCategory.name} />
               })
