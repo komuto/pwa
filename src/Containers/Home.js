@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import Link from 'next/link'
 import {Images} from '../Themes'
 import NProgress from 'nprogress'
-// import Router from 'next/router'
+import Router from 'next/router'
+import url from 'url'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // components
@@ -39,18 +40,6 @@ class Home extends Component {
     }
   }
 
-// switch (profile.status) {
-//   case Status.SUCCESS :
-//     (profile.isFound)
-//     ?
-//     : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-//     break
-//   case Status.OFFLINE :
-//   case Status.FAILED :
-//     break
-//   default:
-//   break
-// }
   componentWillReceiveProps (nextProps) {
     const { products, category } = nextProps
 
@@ -108,7 +97,18 @@ class Home extends Component {
     if (categories.length > 0) {
       categoryItem = categories.map(category => {
         return (
-          <div className='column is-one-third' key={category.id}>
+          <div
+            className='column is-one-third'
+            key={category.id}
+            onClick={() => {
+              Router.push(
+                url.format({
+                  pathname: '/categories2',
+                  query: {id: category.id}
+                }),
+                `/c/${category.slug}/${category.id}`
+              )
+            }} >
             <div className='has-text-centered'>
               {/* <img src={category.icon} /> */}
               <span className='icon-computer' />
