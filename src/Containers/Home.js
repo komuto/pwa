@@ -3,29 +3,39 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import {Images} from '../Themes'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
+// import Router from 'next/router'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // components
 import Slider from 'react-slick'
 import Content from '../Components/Content'
 import Section, { SectionTitle } from '../Components/Section'
+import Notification from '../Components/Notification'
 // actions
 import * as homeActions from '../actions/home'
+// Utils
+import { Status } from '../Services/Status'
 
 class Home extends Component {
   constructor (props) {
     super(props)
+    console.log(props.products)
     this.state = {
       products: props.products || null,
-      category: props.category || null
+      category: props.category || null,
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
   async componentWillMount () {
-    const { products, category } = this.state
-    if (products && category) {
-      NProgress.start()
+    const { products } = this.state.products
+    const { categories } = this.state.category
+    if (products.length < 1 && categories.length < 1) {
+      // NProgress.start()
       await this.props.dispatch(homeActions.products({sort: 'newest'})) && this.props.dispatch(homeActions.categoryList())
     }
   }
@@ -33,25 +43,25 @@ class Home extends Component {
   componentWillReceiveProps (nextProps) {
     const { products, category } = nextProps
 
-    console.log(products)
-    console.log(category)
-
-    if (!products.isLoading && products.status === 200) {
-      this.setState({ products })
+    if (!products.isLoading) {
+      if (products.status === Status.SUCCESS) this.setState({ products })
+      if (products.status === Status.OFFLINE) this.setState({ notification: {status: true, message: products.message} })
+      if (products.status === Status.FAILED) this.setState({ notification: {status: true, message: products.message} })
     }
 
-    if (!category.isLoading && category.status === 200) {
-      this.setState({ category })
+    if (!category.isLoading) {
+      if (category.status === Status.SUCCESS) this.setState({ category })
+      if (category.status === Status.OFFLINE) this.setState({ notification: {status: true, message: category.message} })
+      if (category.status === Status.FAILED) this.setState({ notification: {status: true, message: category.message} })
     }
 
-    if (!products.isLoading && !category.isLoading) {
-      NProgress.done()
-    }
+    // if (!products.isLoading && !category.isLoading) NProgress.done()
   }
 
   render () {
     const { categories } = this.state.category
     const { products } = this.state.products
+    const { notification } = this.state
 
     let categoryItem = null
     let productItem = null
@@ -69,7 +79,8 @@ class Home extends Component {
         return (
           <div className='column is-one-third' key={category.id}>
             <div className='has-text-centered'>
-              <img src={category.icon} />
+              {/* <img src={category.icon} /> */}
+              <span className='icon-computer' />
               <p> {category.name} </p>
             </div>
           </div>
@@ -85,7 +96,8 @@ class Home extends Component {
               <div className='media'>
                 <div className='media-left'>
                   <figure className='image'>
-                    <a><img src={product.images[0].file} alt='Image' /></a>
+                    {/* <a><img src={product.images[0].file} alt='Image' /></a> */}
+                    <a><img src='http://lorempixel.com/400/200/sports/' alt='Image' /></a>
                     { (product.product.discount > 0) ? <div className='pin disc'><span> { product.product.discount }%</span></div> : null }
                     { (product.product.is_wholesaler) ? <div className='pin'><span>Grosir</span></div> : null }
                   </figure>
@@ -110,6 +122,12 @@ class Home extends Component {
 
     return (
       <Content>
+        <Notification
+          type='is-warning'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <Section>
           <Content className='slide-banner'>
             <Slider {...settings}>
@@ -125,7 +143,7 @@ class Home extends Component {
             { categoryItem }
             <div className='column is-paddingless'>
               <div className='see-all'>
-                <Link href='categories1'><a><span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span></a></Link>
+                <Link href='categories1' as='c'><a><span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span></a></Link>
               </div>
             </div>
           </div>
@@ -136,7 +154,7 @@ class Home extends Component {
             { productItem }
             <div className='column is-paddingless'>
               <div className='see-all'>
-                <Link href='product-new'><a><span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span></a></Link>
+                <Link href='product'><a><span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span></a></Link>
               </div>
             </div>
           </div>
@@ -149,8 +167,7 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     products: state.products,
-    category: state.category,
-    subCategory: state.subCategory
+    category: state.category
   }
 }
 
