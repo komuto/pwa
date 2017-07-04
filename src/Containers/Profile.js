@@ -78,7 +78,6 @@ class Profile extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.profile)
   return {
     profile: state.profile
   }

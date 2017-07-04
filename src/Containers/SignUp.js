@@ -339,7 +339,6 @@ class SignUp extends Component {
   }
 }
 const mapStateToProps = (state) => {
-  console.log(state.register)
   return {
     register: state.register,
     user: state.user

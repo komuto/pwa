@@ -15,7 +15,6 @@ const params = {
   },
   navbar: {
     searchBoox: false,
-    path: '/',
     textPath: 'Profile'
   },
   tabbar: {
