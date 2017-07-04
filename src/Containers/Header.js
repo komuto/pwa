@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
 import Head from 'next/head'
-
 import AppConfig from '../Config/AppConfig'
+
 const Header = (props) => {
   const { title } = props.params
   return (
