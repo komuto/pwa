@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { serviceUrl, apiKomuto } from '../config'
 import {token} from '../store'
-import localForage from 'localforage'
+import localforage from 'localforage'
 
 export function authApi () {
   return axios.create({
@@ -29,12 +29,12 @@ export function authApiKomuto () {
     timeout: 10000
   })
 
-  api.interceptors.request.use(config => {
+  api.interceptors.request.use(async (config) => {
     try {
-      let token = null
-      localForage.getItem('token', (value) => {
-        token = value
+      const token = await localforage.getItem('token', (value) => {
+        return value
       })
+
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }
