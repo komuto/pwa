@@ -1,11 +1,18 @@
 // @flow
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 // components
 import List from '../Components/List'
 import CategoriesWrap from '../Components/CategoriesWrap'
 import Section from '../Components/Section'
+// actions
+// import * as homeActions from '../actions/home'
 
 class Categories2 extends Component {
+  // constructor (props) {
+  //   super(props)
+  // }
+
   render () {
     return (
       <Section>
@@ -24,4 +31,10 @@ class Categories2 extends Component {
   }
 }
 
-export default Categories2
+const mapStateToProps = (state) => {
+  return {
+    subCategory: state.subCategory
+  }
+}
+
+export default connect(mapStateToProps)(Categories2)
