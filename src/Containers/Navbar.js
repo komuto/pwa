@@ -1,19 +1,18 @@
 import React, { PureComponent } from 'react'
 import Link from 'next/link'
+import Router from 'next/router'
 
 export const Navbar = (props) => {
   const { searchBoox, path, textPath } = props.params
   return (
     <nav className='level header is-fullwidth'>
       <div className='nav-left'>
-        <Link href={(path) || ''}>
-          <a className='level-item'>
-            <span>
-              {(path) ? <span className='back'><span className='icon-arrow-left' /></span> : null}
-              {textPath}
-            </span>
-          </a>
-        </Link>
+        <a className='level-item' onClick={() => Router.back()}>
+          <span>
+            {(path) ? <span className='back'><span className='icon-arrow-left' /></span> : null}
+            {textPath}
+          </span>
+        </a>
       </div>
       {
         (searchBoox)
