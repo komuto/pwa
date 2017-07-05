@@ -55,13 +55,14 @@ class Categories1 extends Component {
           <CategoriesWrap>
             <List
               icon={category.icon}
-              key={category.id} onClick={() => {
+              key={category.id}
+              onClick={() => {
                 Router.push(
                 url.format({
-                  pathname: '/categories2',
+                  pathname: '/product',
                   query: {id: category.id}
                 }),
-                `/c/${category.slug}/${category.id}`
+                `/p/${category.slug}?id=${category.id}`
               )
               }}
               name={`Lihat Semua di ${category.name}`} />

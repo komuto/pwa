@@ -1,10 +1,10 @@
 // @flow
 // layout
-import DefaultLayout from '../src/Layout/DefaultLayout'
+import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Categories4 from '../src/Containers/Categories4'
+import Product from '../src/Containers/Product'
 
 const params = {
   style: 'categories bg-grey',
@@ -19,11 +19,10 @@ const params = {
 }
 
 const Index = (props) => {
-  console.log(props)
   return (
-    <DefaultLayout params={params}>
-      <Categories4 />
-    </DefaultLayout>
+    <DynamicNavBarLayout params={params}>
+      <Product query={props.query} />
+    </DynamicNavBarLayout>
   )
 }
 

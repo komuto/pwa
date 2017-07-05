@@ -15,7 +15,7 @@ import Section, { SectionTitle } from '../Components/Section'
 import Notification from '../Components/Notification'
 // actions
 import * as homeActions from '../actions/home'
-// Utils
+// utils
 import { Status } from '../Services/Status'
 
 class Home extends Component {
@@ -103,15 +103,14 @@ class Home extends Component {
             onClick={() => {
               Router.push(
                 url.format({
-                  pathname: '/categories2',
+                  pathname: '/product',
                   query: {id: category.id}
                 }),
-                `/c/${category.slug}/${category.id}`
+                `/p/${category.slug}?id=${category.id}`
               )
             }} >
             <div className='has-text-centered'>
-              {/* <img src={category.icon} /> */}
-              <span className='icon-computer' />
+              <img src={category.icon} />
               <p> {category.name} </p>
             </div>
           </div>
@@ -127,8 +126,7 @@ class Home extends Component {
               <div className='media'>
                 <div className='media-left'>
                   <figure className='image'>
-                    {/* <a><img src={product.images[0].file} alt='Image' /></a> */}
-                    <a><img src='http://lorempixel.com/400/200/sports/' alt='Image' /></a>
+                    <a><img src={product.images[0].file} alt='Image' /></a>
                     { (product.product.discount > 0) ? <div className='pin disc'><span> { product.product.discount }%</span></div> : null }
                     { (product.product.is_wholesaler) ? <div className='pin'><span>Grosir</span></div> : null }
                   </figure>
@@ -185,7 +183,18 @@ class Home extends Component {
             { productItem }
             <div className='column is-paddingless'>
               <div className='see-all'>
-                <Link href='product'><a><span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span></a></Link>
+                <a
+                  onClick={() => {
+                    Router.push(
+                      url.format({
+                        pathname: '/product',
+                        query: {sort: 'newest'}
+                      }),
+                      `/p?sort=newest`
+                    )
+                  }}>
+                  <span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span>
+                </a>
               </div>
             </div>
           </div>

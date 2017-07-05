@@ -20,9 +20,29 @@ app.prepare().then(_ => {
     res.sendFile(path.resolve('./.next/sw.js'))
   )
 
+  server.get('/p/:slugparent/:slugsubparent/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/product', params)
+  })
+
+  server.get('/p/:slugparent/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/product', params)
+  })
+
+  server.get('/p/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/product', params)
+  })
+
+  server.get('/p', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/product', params)
+  })
+
   server.get('/c/:slugparent/:slugsubparent/:slug/:id', (req, res) => {
     const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/categories4', params)
+    return app.render(req, res, '/product', params)
   })
 
   server.get('/c/:slugparent/:slug/:id', (req, res) => {

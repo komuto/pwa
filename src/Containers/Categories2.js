@@ -77,10 +77,10 @@ class Categories2 extends Component {
               onClick={() => {
                 Router.push(
                   url.format({
-                    pathname: '/categories3',
+                    pathname: '/product',
                     query: {id: categories.id}
                   }),
-                  `/c/${categories.slug}/${categories.id}`
+                  `/p/${categories.slug}?id=${categories.id}`
                 )
               }}
               icon={`${categories.icon}`}

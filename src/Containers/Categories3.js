@@ -76,10 +76,10 @@ class Categories3 extends Component {
               onClick={() => {
                 Router.push(
                   url.format({
-                    pathname: '/categories4',
+                    pathname: '/product',
                     query: {id: categories.id}
                   }),
-                  `/c/${categories.slug}/${categories.id}`
+                  `/p/${categories.slug}/${categories.id}`
                 )
               }}
               icon={`${categories.icon}`}
@@ -95,10 +95,10 @@ class Categories3 extends Component {
                   onClick={() => {
                     Router.push(
                       url.format({
-                        pathname: '/categories4',
+                        pathname: '/product',
                         query: {id: category.id}
                       }),
-                      `/c/${categories.slug}/${category.slug}/${category.id}`
+                      `/p/${categories.slug}/${category.slug}/${category.id}`
                     )
                   }}
                   name={category.name} />
