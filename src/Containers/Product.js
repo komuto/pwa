@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -24,6 +25,7 @@ class MyProduct extends Component {
   constructor (props) {
     super(props)
     this.state = ({
+      q: props.query.q || null,
       sort: props.query.sort || null,
       id: props.query.id || null,
       products: props.products || null,
@@ -103,7 +105,7 @@ class MyProduct extends Component {
   }
 
   async componentDidMount () {
-    const { id, sort } = this.state
+    const { id, sort, q } = this.state
     if (id) {
       NProgress.start()
       await this.props.dispatch(homeActions.products({category_id: id})) && this.props.dispatch(homeActions.subCategory({ id }))
@@ -113,13 +115,21 @@ class MyProduct extends Component {
       NProgress.start()
       await this.props.dispatch(homeActions.products({sort: 'newest'}))
     }
+
+    if (q) {
+      NProgress.start()
+      await this.props.dispatch(homeActions.products({query: q}))
+    }
   }
 
   componentWillReceiveProps (nextProps) {
     const { products, subCategory } = nextProps
+    const { q } = nextProps.query
     let { notification } = nextProps
     // reset notification
     notification = {status: false, message: 'Error, default message.'}
+
+    if (q) this.setState({ q })
 
     if (!products.isLoading) {
       NProgress.done()
@@ -204,13 +214,15 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { categories, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
+    const { q, categories, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
     const { products } = this.state.products
     const navbar = {
       searchBoox: false,
       path: '/',
-      textPath: categories.name || this.titleNavbar
+      textPath: categories.name || this.titleNavbar || q,
+      searchActive: !!q
     }
+
     return (
       <Content>
         <Navbar params={navbar} />
