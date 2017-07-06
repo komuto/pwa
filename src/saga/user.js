@@ -93,6 +93,26 @@ function * getProfile (action) {
   }
 }
 
+function * updateProfile (action) {
+  try {
+    const {data} = yield userApi.updateProfile(action)
+    yield put({ type: userActions.UPDATE_PROFILE_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(userActions.UPDATE_PROFILE_FAILURE, e)
+  }
+}
+
+function * getBalance (action) {
+  try {
+    const {data} = yield userApi.getBalance(action)
+    yield put({ type: userActions.USER_BALANCE_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(userActions.USER_BALANCE_FAILURE, e)
+  }
+}
+
 export {
   login,
   logout,
@@ -102,5 +122,7 @@ export {
   forgetPassword,
   loginSocial,
   newPassword,
-  getProfile
+  getProfile,
+  getBalance,
+  updateProfile
 }

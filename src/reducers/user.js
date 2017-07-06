@@ -12,6 +12,23 @@ const initUser = {
   isFound: false
 }
 
+const initUpdate = {
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initGetBalance = {
+  balance: 0,
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 const initValidate = {
   message: '',
   status: 0,
@@ -71,7 +88,7 @@ function auth (state = initUser, action) {
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
-        user: action,
+        user: action.data,
         message: action.message,
         status: action.code,
         isLoading: false,
@@ -108,7 +125,7 @@ function auth (state = initUser, action) {
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
-        user: action,
+        user: action.data,
         message: action.message,
         status: action.code,
         is_required_password: action.data.is_required_password,
@@ -223,6 +240,36 @@ function getProfile (state = initProfile, action) {
         message: action.message,
         status: action.code,
         isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function updateProfile (state = initUpdate, action) {
+  switch (action.type) {
+    case actions.UPDATE_PROFILE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.FORGET_PASSWORD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
         isOnline: action.isOnline
       }
     default:
@@ -346,6 +393,37 @@ function isLogin (state = initLogin, action) {
   }
 }
 
+function getBalance (state = initGetBalance, action) {
+  switch (action.type) {
+    case actions.USER_BALANCE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.USER_BALANCE_SUCCESS:
+      return {
+        ...state,
+        balance: action.data.user_balance,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.USER_BALANCE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
   auth,
   verify,
@@ -354,5 +432,7 @@ export {
   newPassword,
   forgetPassword,
   isLogin,
-  validateToken
+  validateToken,
+  getBalance,
+  updateProfile
 }

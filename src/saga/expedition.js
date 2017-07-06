@@ -21,7 +21,18 @@ function * getServices (action) {
   }
 }
 
+function * getShippingCharge (action) {
+  try {
+    const {data} = yield expeditionApi.getShippingCharge(action)
+    yield put({ type: expeditionActions.GET_SHIPPINGCHARGE_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(expeditionActions.GET_SHIPPINGCHARGE_FAILURE, e)
+  }
+}
+
 export {
   getExpedition,
-  getServices
+  getServices,
+  getShippingCharge
 }

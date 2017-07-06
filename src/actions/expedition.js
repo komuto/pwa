@@ -6,6 +6,10 @@ export const GET_EXPEDITIONSERVICES_REQUEST = 'GET_EXPEDITIONSERVICES_REQUEST'
 export const GET_EXPEDITIONSERVICES_SUCCESS = 'GET_EXPEDITIONSERVICES_SUCCESS'
 export const GET_EXPEDITIONSERVICES_FAILURE = 'GET_EXPEDITIONSERVICES_FAILURE'
 
+export const GET_SHIPPINGCHARGE_REQUEST = 'GET_SHIPPINGCHARGE_REQUEST'
+export const GET_SHIPPINGCHARGE_SUCCESS = 'GET_SHIPPINGCHARGE_SUCCESS'
+export const GET_SHIPPINGCHARGE_FAILURE = 'GET_SHIPPINGCHARGE_FAILURE'
+
 function getExpedition () {
   return {
     type: GET_EXPEDITION_REQUEST
@@ -18,7 +22,15 @@ function getServices () {
   }
 }
 
+function getShippingCharge (params) {
+  return {
+    type: GET_SHIPPINGCHARGE_REQUEST,
+    ...params
+  }
+}
+
 export {
   getExpedition,
-  getServices
+  getServices,
+  getShippingCharge
 }

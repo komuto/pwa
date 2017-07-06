@@ -9,6 +9,15 @@ const initExpedition = {
   isOnline: true
 }
 
+const initCharge = {
+  charges: [],
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 function expedition (state = initExpedition, action) {
   switch (action.type) {
     case expeditionActions.GET_EXPEDITION_REQUEST:
@@ -69,7 +78,39 @@ function expeditionServices (state = initExpedition, action) {
   }
 }
 
+function shippingCharge (state = initCharge, action) {
+  switch (action.type) {
+    case expeditionActions.GET_SHIPPINGCHARGE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case expeditionActions.GET_SHIPPINGCHARGE_SUCCESS:
+      return {
+        ...state,
+        charges: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case expeditionActions.GET_SHIPPINGCHARGE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 export {
   expedition,
-  expeditionServices
+  expeditionServices,
+  shippingCharge
 }

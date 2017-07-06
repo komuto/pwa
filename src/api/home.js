@@ -31,7 +31,7 @@ function product (action) {
   action.price = tempPrice
   let check = [
     {value: action.page, string: 'page'},
-    {value: action.size, string: 'size'},
+    {value: action.limit, string: 'limit'},
     {value: action.category_id, string: 'category_id'},
     // sort is filled with 'newest', 'cheapest', 'expensive', 'selling'
     {value: action.sort, string: 'sort'},
@@ -47,7 +47,8 @@ function product (action) {
     // services is same with brands
     {value: action.services, string: 'services'},
     // address is number of district_id
-    {value: action.address, string: 'address'}
+    {value: action.address, string: 'address'},
+    {value: action.query, string: 'q'}
   ]
 
   let indexCheck = []

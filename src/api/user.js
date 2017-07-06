@@ -104,6 +104,38 @@ function validateToken (action) {
   })
 }
 
+function getBalance (action) {
+  let axios = authApiKomuto()
+  return axios.get('users/balance', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function updateProfile (action) {
+  let axios = authApiKomuto()
+  // date_of_birth format is mm/dd/yyyy
+  let tempDate = action.date_of_birth
+  tempDate = tempDate.split('/')
+  let day = parseInt(tempDate[1]) + 1
+  tempDate[1] = String(day)
+  action.date_of_birth = new Date(tempDate).getTime() / 1000
+  return axios.put('users', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 function logout (action) {
   let data = {
     message: 'LOGOUT SUCCESS',
@@ -121,5 +153,7 @@ export {
   forgetPassword,
   newPassword,
   getProfile,
-  validateToken
+  validateToken,
+  getBalance,
+  updateProfile
 }

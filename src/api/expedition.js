@@ -26,7 +26,21 @@ function getServices (action) {
   })
 }
 
+function getShippingCharge (action) {
+  let axios = publicApiKomuto()
+  return axios.post('expeditions/' + action.id + '/cost', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
   getExpedition,
-  getServices
+  getServices,
+  getShippingCharge
 }

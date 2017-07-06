@@ -30,9 +30,17 @@ export const GET_PROFILE_REQUEST = 'GET_PROFILE_REQUEST'
 export const GET_PROFILE_SUCCESS = 'GET_PROFILE_SUCCESS'
 export const GET_PROFILE_FAILURE = 'GET_PROFILE_FAILURE'
 
+export const UPDATE_PROFILE_REQUEST = 'UPDATE_PROFILE_REQUEST'
+export const UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS'
+export const UPDATE_PROFILE_FAILURE = 'UPDATE_PROFILE_FAILURE'
+
 export const VALIDATE_TOKENFORGETPASSWORD_REQUEST = 'VALIDATE_TOKENFORGETPASSWORD_REQUEST'
 export const VALIDATE_TOKENFORGETPASSWORD_SUCCESS = 'VALIDATE_TOKENFORGETPASSWORD_SUCCESS'
 export const VALIDATE_TOKENFORGETPASSWORD_FAILURE = 'VALIDATE_TOKENFORGETPASSWORD_FAILURE'
+
+export const USER_BALANCE_REQUEST = 'USER_BALANCE_REQUEST'
+export const USER_BALANCE_SUCCESS = 'USER_BALANCE_SUCCESS'
+export const USER_BALANCE_FAILURE = 'USER_BALANCE_FAILURE'
 
 export const IS_LOGIN = 'IS_LOGIN'
 
@@ -105,6 +113,19 @@ function validateToken (params) {
   }
 }
 
+function getBalance () {
+  return {
+    type: USER_BALANCE_REQUEST
+  }
+}
+
+function updateProfile (params) {
+  return {
+    type: UPDATE_PROFILE_REQUEST,
+    ...params
+  }
+}
+
 export {
   register,
   verification,
@@ -115,5 +136,7 @@ export {
   loginSocial,
   forgetPassword,
   stateLogin,
-  validateToken
+  validateToken,
+  getBalance,
+  updateProfile
 }
