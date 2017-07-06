@@ -3,14 +3,14 @@ import RupiahFormat from '../Lib/RupiahFormat'
 // pin type: gross is grossir, disc is discount
 
 export default (props:any) => {
-  const {product, store, viewActive, imagesDefault} = props
+  const {product, images, store, viewActive} = props
   let pin = null
   if (product.is_discount) pin = <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
-  if (product.is_dropshipper) pin = <div className='pin'><span>Dropship</span></div>
+  // if (product.is_dropshipper) pin = <div className='pin'><span>Dropship</span></div>
   if (product.is_wholesaler) pin = <div className='pin'><span>Grossir</span></div>
 
-  const thumb = imagesDefault
-  // let thumb = images[0].file
+  // const thumb = imagesDefault
+  let thumb = images[0].file
   const priceBeforeDiscount = (product.discount > 0) ? <div className='discount'> Rp { RupiahFormat(product.price) } </div> : ''
   const priceAfterDiscount = (product.discount > 0) ? (product.price - (product.price * (product.discount / 100))) : product.price
 
@@ -20,7 +20,7 @@ export default (props:any) => {
         <div className='media'>
           <div className='media-left'>
             <figure className='image'>
-              <a><img src={thumb} alt='Image' /></a>
+              <a><img src={thumb} alt='Image' style={{ width: '150px' }} /></a>
               { pin }
             </figure>
           </div>
