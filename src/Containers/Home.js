@@ -6,13 +6,13 @@ import {Images} from '../Themes'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import url from 'url'
-// lib
-import RupiahFormat from '../Lib/RupiahFormat'
 // components
 import Slider from 'react-slick'
 import Content from '../Components/Content'
 import Section, { SectionTitle } from '../Components/Section'
 import Notification from '../Components/Notification'
+import Product from '../Components/Product'
+import ProductContainers from '../Components/ProductContainers'
 // actions
 import * as homeActions from '../actions/home'
 // utils
@@ -36,7 +36,7 @@ class Home extends Component {
     const { categories } = this.state.category
     if (products.length < 1 && categories.length < 1) {
       NProgress.start()
-      await this.props.dispatch(homeActions.products({sort: 'newest'})) && this.props.dispatch(homeActions.categoryList())
+      await this.props.dispatch(homeActions.products({sort: 'newest', page: 1, limit: 6})) && this.props.dispatch(homeActions.categoryList())
     }
   }
 
@@ -78,13 +78,32 @@ class Home extends Component {
     if (!products.isLoading && !category.isLoading) NProgress.done()
   }
 
+  renderProductColoumn (viewActive, products) {
+    return (
+      <ProductContainers>
+        {
+          products.map((myProduct) => {
+            const { images, product, store } = myProduct
+            return (
+              <Product
+                key={product.id}
+                viewActive={viewActive}
+                imagesDefault={Images.thumb}
+                images={images}
+                store={store}
+                product={product} />
+            )
+          })
+        }
+      </ProductContainers>
+    )
+  }
+
   render () {
     const { categories } = this.state.category
     const { products } = this.state.products
     const { notification } = this.state
 
-    let categoryItem = null
-    let productItem = null
     let settings = {
       autoplay: true,
       dots: false,
@@ -92,61 +111,6 @@ class Home extends Component {
       speed: 500,
       slidesToShow: 1,
       slidesToScroll: 1
-    }
-
-    if (categories.length > 0) {
-      categoryItem = categories.map(category => {
-        return (
-          <div
-            className='column is-one-third'
-            key={category.id}
-            onClick={() => {
-              Router.push(
-                url.format({
-                  pathname: '/product',
-                  query: {id: category.id}
-                }),
-                `/p/${category.slug}?id=${category.id}`
-              )
-            }} >
-            <div className='has-text-centered'>
-              <img src={category.icon} />
-              <p> {category.name} </p>
-            </div>
-          </div>
-        )
-      })
-    }
-
-    if (products.length > 0) {
-      productItem = products.map(product => {
-        return (
-          <div className='column is-half' key={product.product.id}>
-            <div className='box grid'>
-              <div className='media'>
-                <div className='media-left'>
-                  <figure className='image'>
-                    <a><img src={product.images[0].file} alt='Image' /></a>
-                    { (product.product.discount > 0) ? <div className='pin disc'><span> { product.product.discount }%</span></div> : null }
-                    { (product.product.is_wholesaler) ? <div className='pin'><span>Grosir</span></div> : null }
-                  </figure>
-                </div>
-                <div className='media-content'>
-                  <div className='content'>
-                    <h4>{ product.product.name }</h4>
-                    <div className='detail'>
-                      <p>GadgetArena <span className='icon-verified' /></p>
-                      <div className='discount' />
-                      <span className='price'> Rp { RupiahFormat(product.product.price) } </span>
-                      <span className='wish'><span className='icon-wishlist wishlisted' />1200</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      })
     }
 
     return (
@@ -168,21 +132,43 @@ class Home extends Component {
         </Section>
         <Section>
           <SectionTitle title='Kategori Produk' />
-          <div className='columns is-mobile is-multiline custom'>
-            { categoryItem }
-            <div className='column is-paddingless'>
-              <div className='see-all'>
+          <Content className='columns is-mobile is-multiline custom'>
+            {
+              categories.map(category => {
+                return (
+                  <div
+                    className='column is-one-third'
+                    key={category.id}
+                    onClick={() => {
+                      Router.push(
+                        url.format({
+                          pathname: '/product',
+                          query: {id: category.id}
+                        }),
+                        `/p/${category.slug}?id=${category.id}`
+                      )
+                    }} >
+                    <div className='has-text-centered'>
+                      <img src={category.icon} />
+                      <p> {category.name} </p>
+                    </div>
+                  </div>
+                )
+              })
+            }
+            <Content className='column is-paddingless'>
+              <Content className='see-all'>
                 <Link href='categories1' as='c'><a><span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span></a></Link>
-              </div>
-            </div>
-          </div>
+              </Content>
+            </Content>
+          </Content>
         </Section>
         <Section>
           <SectionTitle title='Produk Terbaru' />
-          <div className='columns is-mobile is-multiline custom'>
-            { productItem }
-            <div className='column is-paddingless'>
-              <div className='see-all'>
+          <Content className='columns is-mobile is-multiline custom'>
+            { products.length > 0 ? this.renderProductColoumn('grid', products) : '' }
+            <Content className='column is-paddingless'>
+              <Content className='see-all'>
                 <a
                   onClick={() => {
                     Router.push(
@@ -195,9 +181,9 @@ class Home extends Component {
                   }}>
                   <span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span>
                 </a>
-              </div>
-            </div>
-          </div>
+              </Content>
+            </Content>
+          </Content>
         </Section>
       </Content>
     )
