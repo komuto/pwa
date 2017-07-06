@@ -1,70 +1,101 @@
 import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
+// containers
+import Search from './Search'
 
-export const Navbar = (props) => {
-  const { searchBoox, path, textPath } = props.params
-  return (
-    <nav className='level header is-fullwidth'>
-      <div className='nav-left'>
-        <a className='level-item' onClick={() => Router.back()}>
-          <span className={(path) ? '' : 'is-paddingless'}>
-            {(path) ? <span className='back'><span className='icon-arrow-left' /></span> : null}
-            {textPath}
-          </span>
-        </a>
+export class Navbar extends PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {
+      activeSearch: false
+    }
+  }
+
+  backPress () {
+    this.setState({ activeSearch: false })
+  }
+
+  activeSearch (activeSearch) {
+    this.setState({ activeSearch })
+  }
+
+  render () {
+    const { searchBoox, path, textPath, searchActive } = this.props.params
+    const { activeSearch } = this.state
+    return (
+      <div>
+        <nav className={`level header is-fullwidth ${searchActive ? 'bg-white' : ''}`}>
+          <div className='nav-left'>
+            <a className='level-item' onClick={() => Router.back()}>
+              <span className={(path) ? '' : 'is-paddingless'}>
+                {(path) ? <span className='back'><span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} /></span> : null}
+                {textPath}
+              </span>
+            </a>
+          </div>
+          {
+            searchActive
+            ? <div className='button-search' onClick={() => this.setState({ activeSearch: true })}>
+              <span className='icon-search' />
+            </div>
+            : null
+          }
+          {
+            searchBoox
+            ? <div className='nav-right'>
+              <span className='icon-love' />
+              <span className='icon-cart'><span className='notif-cart'>4</span></span>
+            </div>
+            : null
+          }
+        </nav>
+        <Search
+          activeSearch={(params) => this.activeSearch(params)}
+          active={activeSearch}
+          backPress={() => this.backPress()} />
       </div>
-      {
-        (searchBoox)
-        ? <div className='nav-right'>
-          <span className='icon-love' />
-          <span className='icon-cart'><span className='notif-cart'>4</span></span>
-        </div>
-        : null
-      }
-    </nav>
-  )
+    )
+  }
 }
 
 export class SearchBoox extends PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {
+      activeSearch: false
+    }
+  }
+
+  onFocus () {
+    this.setState({ activeSearch: true })
+  }
+
+  backPress () {
+    this.setState({ activeSearch: false })
+  }
+
+  activeSearch (activeSearch) {
+    this.setState({ activeSearch })
+  }
+
   render () {
     const { isSticky, style } = this.props
+    const { activeSearch } = this.state
     return (
-      <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
-        <p className='control has-icons-left'>
-          <input className='input is-medium' type='text' placeholder='Cari barang atau toko' />
-          <span className='icon is-left'>
-            <span className='icon-search' />
-          </span>
-        </p>
-        {/* <!-- dropdown search --> */}
-        {/* <div class="dropdown-search">
-          <div class="main-search">
-            <ul>
-              <li><span>Sepatu</span></li>
-              <li><span>Television</span></li>
-              <li><span>Jaket</span></li>
-              <li><span>Jam Tangan</span></li>
-              <li><span>Tas</span></li>
-              <li><span>Sepatu</span></li>
-              <li><span>Television</span></li>
-              <li><span>Jaket</span></li>
-              <li><span>Jam Tangan</span></li>
-            </ul>
-            <h3>Shop</h3>
-            <ul>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Sepatu</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Television</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jaket</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jam Tangan</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Tas</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Sepatu</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Television</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jaket</span></li>
-              <li><span><img src="../images/thumb.jpg" alt="Image" /> Jam Tangan</span></li>
-            </ul>
-          </div>
-        </div> */}
+      <div>
+        <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
+          <p className='control has-icons-left'>
+            <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onFocus={() => this.onFocus()} />
+            <span className='icon is-left'>
+              <span className='icon-search' />
+            </span>
+          </p>
+        </div>
+        <Search
+          activeSearch={(params) => this.activeSearch(params)}
+          active={activeSearch}
+          backPress={() => this.backPress()} />
       </div>
     )
   }
