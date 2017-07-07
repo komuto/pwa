@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
-
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -18,6 +17,7 @@ import Filter from './Filter'
 import { Navbar } from './Navbar'
 // actions
 import * as homeActions from '../actions/home'
+import * as productActions from '../actions/product'
 // utils
 import { Status } from '../Services/Status'
 
@@ -28,7 +28,7 @@ class MyProduct extends Component {
       q: props.query.q || null,
       sort: props.query.sort || null,
       id: props.query.id || null,
-      products: props.products || null,
+      productBySearch: props.productBySearch || null,
       categories: props.subCategory || [],
       sortActive: false,
       filterActive: false,
@@ -40,6 +40,7 @@ class MyProduct extends Component {
       }
     })
     this.titleNavbar = this.createTitleNavbar(this.state.sort)
+    this.params = {}
   }
 
   createTitleNavbar (params) {
@@ -79,25 +80,24 @@ class MyProduct extends Component {
   }
 
   sortSelected (selectedSort) {
-    const { products } = this.state
+    let { productBySearch } = this.state
     switch (selectedSort) {
       case 'termurah':
-        products.products = _.orderBy(products.products, ['product.price'], ['asc'])
+        productBySearch.products = _.orderBy(productBySearch.products, ['product.price'], ['asc'])
         break
       case 'termahal':
-        products.products = _.orderBy(products.products, ['product.price'], ['desc'])
+        productBySearch.products = _.orderBy(productBySearch.products, ['product.price'], ['desc'])
         break
       case 'terbaru':
-        products.products = _.orderBy(products.products, ['product.created_at'], ['desc'])
+        productBySearch.products = _.orderBy(productBySearch.products, ['product.created_at'], ['desc'])
         break
       case 'terlaris':
-        products.products = _.orderBy(products.products, ['product.count_sold'], ['desc'])
+        productBySearch.products = _.orderBy(productBySearch.products, ['product.count_sold'], ['desc'])
         break
       default:
         break
     }
-
-    this.setState({ selectedSort, sortActive: false, products })
+    this.setState({ selectedSort, sortActive: false, productBySearch })
   }
 
   filterClose () {
@@ -106,68 +106,72 @@ class MyProduct extends Component {
 
   async componentDidMount () {
     const { id, sort, q } = this.state
-    if (id) {
-      NProgress.start()
-      await this.props.dispatch(homeActions.products({category_id: id})) && this.props.dispatch(homeActions.subCategory({ id }))
-    }
+    if (id) this.params.category_id = id
+    if (sort) this.params.sort = sort
+    if (q) this.params.query = q
+    NProgress.start()
+    if (id) await this.props.dispatch(homeActions.subCategory({ id }))
+    await this.props.dispatch(productActions.listProductBySearch(this.params))
+  }
 
-    if (sort) {
-      NProgress.start()
-      await this.props.dispatch(homeActions.products({sort: 'newest'}))
-    }
-
-    if (q) {
-      NProgress.start()
-      await this.props.dispatch(homeActions.products({query: q}))
-    }
+  async filterRealization (filters) {
+    filters.map((filter) => {
+      if (filter.id === 'condition') {
+        if (_.find(filter.options, (option) => { return option.id === 'new' }).selected) this.params.condition = 'new'
+        if (_.find(filter.options, (option) => { return option.id === 'used' }).selected) this.params.condition = 'used'
+        if (filter.selectedAll) this.params.condition = ''
+      }
+    })
+    NProgress.start()
+    await this.props.dispatch(productActions.listProductBySearch(this.params))
+    this.setState({ filterActive: false })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { products, subCategory } = nextProps
+    const { productBySearch, subCategory } = nextProps
     const { q } = nextProps.query
-    let { notification } = nextProps
+    let { notification, categories } = this.state
     // reset notification
     notification = {status: false, message: 'Error, default message.'}
 
     if (q) this.setState({ q })
 
-    if (!products.isLoading) {
+    if (!productBySearch.isLoading) {
       NProgress.done()
-      switch (products.status) {
+      switch (productBySearch.status) {
         case Status.SUCCESS :
-          if (products.isFound) {
-            if (products.products.length < 1) notification = {status: true, message: 'Produk tidak tersedia'}
+          if (productBySearch.isFound) {
+            if (productBySearch.products.length < 1) notification = {status: true, message: 'Produk tidak tersedia'}
           } else {
             notification = {status: true, message: 'Data produk tidak ditemukan'}
           }
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          notification = {status: true, message: products.message}
+          notification = {status: true, message: productBySearch.message}
           break
         default:
           break
       }
-      this.setState({ products, notification })
+      this.setState({ productBySearch, notification })
     }
 
     if (!subCategory.isLoading) {
       switch (subCategory.status) {
         case Status.SUCCESS :
-          (subCategory.isFound)
-          ? this.setState({ categories: subCategory.categories })
-          : this.setState({ notification: {status: true, message: 'Data kategori tidak ditemukan'} })
+          if (subCategory.isFound) { categories = subCategory.categories } else { notification = {status: true, message: 'Data kategori tidak ditemukan'} }
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.setState({ notification: {status: true, message: subCategory.message} })
+          notification = {status: true, message: subCategory.message}
           break
         default:
           break
       }
+      this.setState({ categories, notification })
     }
 
-    if (!products.isLoading && !subCategory.isLoading) NProgress.done()
+    if (!productBySearch.isLoading && !subCategory.isLoading) NProgress.done()
   }
 
   renderProductList (viewActive, products) {
@@ -215,7 +219,7 @@ class MyProduct extends Component {
 
   render () {
     const { q, categories, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
-    const { products } = this.state.products
+    const { products } = this.state.productBySearch
     const navbar = {
       searchBoox: false,
       path: '/',
@@ -227,7 +231,7 @@ class MyProduct extends Component {
       <Content>
         <Navbar params={navbar} />
         <Notification
-          type='is-warning'
+          type='is-danger'
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
@@ -251,14 +255,15 @@ class MyProduct extends Component {
           sortSelected={(data) => this.sortSelected(data)} />
         <Filter
           isShow={filterActive}
-          filterClose={() => this.filterClose()} />
+          filterClose={() => this.filterClose()}
+          filterRealization={(params) => this.filterRealization(params)} />
       </Content>
     )
   }
 }
 const mapStateToProps = (state) => {
   return {
-    products: state.products,
+    productBySearch: state.productBySearch,
     subCategory: state.subCategory
   }
 }
