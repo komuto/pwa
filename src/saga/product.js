@@ -12,6 +12,28 @@ function * getProduct (action) {
   }
 }
 
+function * productByCategory (action) {
+  try {
+    const {data} = yield productApi.productBy(action)
+    yield put({ type: productActions.LIST_PRODUCTBYCATEGORY_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(productActions.LIST_PRODUCTBYCATEGORY_FAILURE, e)
+  }
+}
+
+function * productBySearch (action) {
+  try {
+    const {data} = yield productApi.productBy(action)
+    yield put({ type: productActions.LIST_PRODUCTBYSEARCH_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(productActions.LIST_PRODUCTBYSEARCH_FAILURE, e)
+  }
+}
+
 export {
-    getProduct
+    getProduct,
+    productByCategory,
+    productBySearch
 }

@@ -120,11 +120,15 @@ function getBalance (action) {
 function updateProfile (action) {
   let axios = authApiKomuto()
   // date_of_birth format is mm/dd/yyyy
-  let tempDate = action.date_of_birth
-  tempDate = tempDate.split('/')
-  let day = parseInt(tempDate[1]) + 1
-  tempDate[1] = String(day)
-  action.date_of_birth = new Date(tempDate).getTime() / 1000
+  if (action.date_of_birth !== undefined || action.date_of_birth !== '') {
+    let tempDate = action.date_of_birth
+    tempDate = tempDate.split('/')
+    let day = parseInt(tempDate[1]) + 2
+    tempDate[1] = String(day)
+    let timeStamp = new Date(tempDate).getTime() / 1000
+    action.date_of_birth = timeStamp
+  }
+  console.log(action.date_of_birth)
   return axios.put('users', {
     ...action
   })

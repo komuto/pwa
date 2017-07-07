@@ -94,8 +94,10 @@ function * getProfile (action) {
 }
 
 function * updateProfile (action) {
+  // console.log(action)
   try {
     const {data} = yield userApi.updateProfile(action)
+    // console.log(data)
     yield put({ type: userActions.UPDATE_PROFILE_SUCCESS, ...data })
   } catch (e) {
     console.log(e)

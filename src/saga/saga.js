@@ -7,6 +7,9 @@ import * as locationActions from '../actions/location'
 import * as productActions from '../actions/product'
 import * as reviewActions from '../actions/review'
 import * as storeActions from '../actions/stores'
+import * as emailActions from '../actions/email'
+import * as addressActions from '../actions/address'
+import * as bankActions from '../actions/bank'
 import * as userSaga from './user'
 import * as homeSaga from './home'
 import * as brandSaga from './brand'
@@ -16,6 +19,9 @@ import * as locationSaga from './location'
 import * as productSaga from './product'
 import * as reviewSaga from './review'
 import * as storeSaga from './stores'
+import * as emailSaga from './email'
+import * as addressSaga from './address'
+import * as bankSaga from './bank'
 import { takeEvery } from 'redux-saga/effects'
 
 function * dataSaga () {
@@ -30,7 +36,10 @@ function * dataSaga () {
   yield takeEvery(userActions.LOGIN_SOCIAL_REQUEST, userSaga.loginSocial)
   yield takeEvery(userActions.USER_NEWPASSWORD_REQUEST, userSaga.newPassword)
   yield takeEvery(userActions.USER_BALANCE_REQUEST, userSaga.getBalance)
+  yield takeEvery(emailActions.CHECK_EMAILVALIDITY_REQUEST, emailSaga.checkEmail)
   yield takeEvery(productActions.GET_PRODUCT_REQUEST, productSaga.getProduct)
+  yield takeEvery(productActions.LIST_PRODUCTBYCATEGORY_REQUEST, productSaga.productByCategory)
+  yield takeEvery(productActions.LIST_PRODUCTBYSEARCH_REQUEST, productSaga.productBySearch)
   yield takeEvery(homeActions.HOME_PRODUCT_REQUEST, homeSaga.product)
   yield takeEvery(homeActions.SEARCH_PRODUCT_REQUEST, homeSaga.search)
   yield takeEvery(homeActions.FILTER_PRODUCT_REQUEST, homeSaga.filterProduct)
@@ -50,6 +59,13 @@ function * dataSaga () {
   yield takeEvery(reviewActions.GET_REVIEW_REQUEST, reviewSaga.getReview)
   yield takeEvery(reviewActions.ADD_REVIEW_REQUEST, reviewSaga.addReview)
   yield takeEvery(storeActions.GET_STORE_REQUEST, storeSaga.getStores)
+  yield takeEvery(addressActions.ADD_ADDRESS_REQUEST, addressSaga.addAddress)
+  yield takeEvery(addressActions.UPDATE_ADDRESS_REQUEST, addressSaga.updateAddress)
+  yield takeEvery(addressActions.DELETE_ADDRESS_REQUEST, addressSaga.deleteAddress)
+  yield takeEvery(addressActions.GET_ADDRESSDETAIL_REQUEST, addressSaga.getAddressDetail)
+  yield takeEvery(addressActions.GET_LISTADDRESS_REQUEST, addressSaga.getListAddress)
+  yield takeEvery(bankActions.LIST_BANK_REQUEST, bankSaga.listBank)
+  yield takeEvery(bankActions.GET_BANK_REQUEST, bankSaga.getBank)
 }
 
 export default dataSaga
