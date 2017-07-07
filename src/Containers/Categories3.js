@@ -79,7 +79,7 @@ class Categories3 extends Component {
                     pathname: '/product',
                     query: {id: categories.id}
                   }),
-                  `/p/${categories.slug}/${categories.id}`
+                  `/p/${categories.slug}?id=${categories.id}`
                 )
               }}
               icon={`${categories.icon}`}
@@ -98,7 +98,7 @@ class Categories3 extends Component {
                         pathname: '/product',
                         query: {id: category.id}
                       }),
-                      `/p/${categories.slug}/${category.slug}/${category.id}`
+                      `/p/${categories.slug}/${category.slug}?id=${category.id}`
                     )
                   }}
                   name={category.name} />
