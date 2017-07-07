@@ -1,227 +1,297 @@
 // @flow
-import React from 'react'
+import React, { Component } from 'react'
 
-const Filter = (props) => {
-  const { isShow } = props
-  return (
-    <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter'>
-      <div className='modal-background' />
-      <div className='modal-card'>
-        <header className='modal-card-head'>
-          <p className='modal-card-title'>Filter</p>
-          <button onClick={() => props.filterClose()} className='delete icon-close' />
-        </header>
-        <section className='modal-card-body'>
-          <div className='fiter-side'>
-            <div className='tabs'>
-              <ul>
-                <li className='is-active'><a data-target='#kondisi'>Kondisi</a></li>
-                <li><a data-target='#jasa'>Jasa Pngiriman</a></li>
-                <li><a data-target='#harga'>Rentang Harga</a></li>
-                <li><a data-target='#dikirim'>Dikirim Dari</a></li>
-                <li><a data-target='#brand'>Brand</a></li>
-                <li><a data-target='#lainnya'>Lainnya</a></li>
-              </ul>
+export class Filter extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tabActive: 'condition',
+      tabs: [
+        {
+          id: 'condition',
+          name: 'Kondisi',
+          viewCheckAll: true,
+          selectedAll: false,
+          options: [
+            {
+              id: 'new',
+              name: 'Baru',
+              selected: false
+            },
+            {
+              id: 'used',
+              name: 'Bekas',
+              selected: false
+            }
+          ]
+        },
+        {
+          id: 'jasa',
+          name: 'Jasa Pengiriman',
+          viewCheckAll: true,
+          selectedAll: false,
+          options: [
+            {
+              id: 'jnereguler',
+              name: 'JNE Reguler',
+              selected: false
+            },
+            {
+              id: 'jneoke',
+              name: 'JNE OKE',
+              selected: false
+            },
+            {
+              id: 'jneyes',
+              name: 'JNE Yes',
+              selected: false
+            }
+          ]
+        },
+        {
+          id: 'harga',
+          name: 'Rentang Harga',
+          viewCheckAll: false,
+          options: [
+            {
+              id: 'hargaMinimal',
+              name: 'Rp 200.000',
+              label: 'Harga Minimal',
+              selected: false
+            },
+            {
+              id: 'hargaMaksimal',
+              name: 'Rp 500.000',
+              label: 'Harga Maksimal',
+              selected: false
+            }
+          ]
+        },
+        {
+          id: 'dikirim',
+          name: 'Dikirim Dari',
+          viewCheckAll: false,
+          options: [
+            {
+              id: 'dari',
+              name: 'Dari',
+              options: [
+                {
+                  id: 'bandung',
+                  name: 'Bandung',
+                  selected: false
+                },
+                {
+                  id: 'jakarta',
+                  name: 'Jakarta',
+                  selected: false
+                }
+              ]
+            },
+            {
+              id: 'ke',
+              name: 'Ke',
+              options: [
+                {
+                  id: 'jogja',
+                  name: 'Yogyakarta',
+                  selected: false
+                },
+                {
+                  id: 'solo',
+                  name: 'Solo',
+                  selected: false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'brand',
+          name: 'Brand',
+          viewCheckAll: true,
+          selectedAll: false,
+          options: [
+            {
+              id: 'adidas',
+              name: 'Adidas',
+              selected: false
+            },
+            {
+              id: 'nike',
+              name: 'Nike',
+              selected: false
+            }
+          ]
+        },
+        {
+          id: 'lainya',
+          name: 'Lainya',
+          viewCheckAll: false,
+          options: [
+            {
+              id: 'diskon',
+              name: 'Diskon',
+              selected: false
+            },
+            {
+              id: 'seller',
+              name: 'Seller Terverifikasi',
+              selected: false
+            }
+          ]
+        }
+      ]
+    }
+  }
+
+  setTabActive (tabActive) {
+    this.setState({ tabActive })
+  }
+
+  viewCheckAll (event, tabActive) {
+    const selectedAll = event.target.checked
+    let { tabs } = this.state
+    tabs.map((tab) => {
+      if (tab.id === tabActive) {
+        tab.selectedAll = selectedAll
+        tab.options.map((option) => {
+          option.selected = selectedAll
+        })
+      }
+    })
+    this.setState({ tabs })
+  }
+
+  viewCheckItem (event, tabActive) {
+    const id = event.target.name
+    const selectedItem = event.target.checked
+    let { tabs } = this.state
+    tabs.map((tab) => {
+      if (tab.id === tabActive) {
+        // set item selected
+        tab.options.map((option) => {
+          if (option.id === id) {
+            option.selected = selectedItem
+          }
+        })
+        // find options with selected is false
+        tab.selectedAll = (tab.options.filter((option) => { return !option.selected }).length < 1)
+      }
+    })
+
+    this.setState({ tabs })
+  }
+
+  filterTabsByActive (tabActive) {
+    const { tabs } = this.state
+    return tabs.filter((tab) => { return tab.id === tabActive })[0]
+  }
+
+  filterReset () {
+    const { tabs } = this.state
+    tabs.map((tab) => {
+      tab.selectedAll = false
+      tab.options.map((option) => {
+        option.selected = false
+      })
+    })
+    this.setState({ tabs })
+  }
+
+  filterRealization () {
+    this.props.filterRealization(this.state.tabs)
+  }
+
+  render () {
+    const { isShow } = this.props
+    const { tabActive, tabs } = this.state
+    const filterTabResults = this.filterTabsByActive(tabActive)
+
+    return (
+      <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter' style={{ zIndex: 100 }}>
+        <div className='modal-background' />
+        <div className='modal-card'>
+          <header className='modal-card-head'>
+            <p className='modal-card-title'>Filter</p>
+            <button onClick={() => this.props.filterClose()} className='delete icon-close' />
+          </header>
+          <section className='modal-card-body' style={{ marginBottom: 0 }}>
+            <div className='fiter-side'>
+              <div className='tabs'>
+                <ul>
+                  {
+                    tabs.map((tab) => {
+                      return <li key={tab.id} className={`${tabActive === tab.id ? 'is-active' : ''}`}><a onClick={() => this.setTabActive(tab.id)}>{ tab.name }</a></li>
+                    })
+                  }
+                </ul>
+              </div>
             </div>
-          </div>
-          <div className='filter-option active' id='kondisi'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#semuaKondisi'>
-                <span className='sort-text'>Semua Kondisi</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='semuaKondisi' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#baru'>
-                <span className='sort-text'>Termurah</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='baru' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#bekas'>
-                <span className='sort-text'>Termahal</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='bekas' />
-                </span>
-              </label>
+            <div className='filter-option active'>
+              <div className='sort-list'>
+                {
+                filterTabResults.viewCheckAll
+                ? <label className='checkbox'>
+                  <span className='sort-text'>Pilih Semua</span>
+                  <span className={`input-wrapper ${filterTabResults.selectedAll ? 'checked' : ''}`}>
+                    <input type='checkbox' checked={filterTabResults.selectedAll} onChange={(event) => this.viewCheckAll(event, tabActive)} />
+                  </span>
+                </label>
+                : null
+              }
+                {
+                filterTabResults.options.map((option) => {
+                  if (option.options) {
+                    return (
+                      <label className='checkbox' key={option.id}>
+                        <span className='label'>{ option.name }</span>
+                        <div className='field'>
+                          <p className='control'>
+                            <span className='select'>
+                              <select>
+                                {
+                                  option.options.map((option) => {
+                                    return <option key={option.id}> { option.name }</option>
+                                  })
+                                }
+                              </select>
+                            </span>
+                          </p>
+                        </div>
+                      </label>
+                    )
+                  } else {
+                    return (
+                      <label className='checkbox' key={option.id}>
+                        {
+                          option.label ? <span className='label'>{ option.label }</span> : ''
+                        }
+                        <span className='sort-text'>{ option.name }</span>
+                        <span className={`input-wrapper ${option.selected ? 'checked' : ''}`}>
+                          <input type='checkbox' name={option.id} checked={option.selected} onChange={(event) => this.viewCheckItem(event, tabActive)} />
+                        </span>
+                      </label>
+                    )
+                  }
+                })}
+              </div>
             </div>
-          </div>
-          <div className='filter-option' id='jasa'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#semuaEkspedisi'>
-                <span className='sort-text'>Semua Ekspedisi</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='semuaEkspedisi' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#reguler'>
-                <span className='sort-text'>JNE Reguler</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='reguler' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#oke'>
-                <span className='sort-text'>JNE Yes</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='oke' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#popbox'>
-                <span className='sort-text'>JNE Popbox</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='popbox' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#ctc'>
-                <span className='sort-text'>JNE CTC</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='ctc' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#ctcOke'>
-                <span className='sort-text'>JNE CTC OKE</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='ctcOke' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#ctcYes'>
-                <span className='sort-text'>JNE CTC YES</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='ctcYes' />
-                </span>
-              </label>
+          </section>
+          <footer className='modal-card-foot'>
+            <div className='columns is-mobile'>
+              <div className='column'>
+                <a className='button is-large is-fullwidth is-outlined' onClick={() => this.filterReset()}>Reset Filter</a>
+              </div>
+              <div className='column'>
+                <a className='button is-primary is-large is-fullwidth' onClick={() => this.filterRealization()}>Terapkan Filter</a>
+              </div>
             </div>
-          </div>
-          <div className='filter-option' id='harga'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#hargaMinimal'>
-                <span className='label'>Harga Minimal</span>
-                <span className='sort-text'>Rp 100.000</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='hargaMinimal' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#hargaMaksimal'>
-                <span className='label'>Harga Maksimal</span>
-                <span className='sort-text'>Rp 250.000</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='hargaMaksimal' />
-                </span>
-              </label>
-            </div>
-          </div>
-          <div className='filter-option' id='dikirim'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#'>
-                <span className='label'>Harga Minimal</span>
-                <div className='field'>
-                  <p className='control'>
-                    <span className='select'>
-                      <select>
-                        <option>DKI Jakarta</option>
-                        <option>With options</option>
-                      </select>
-                    </span>
-                  </p>
-                </div>
-              </label>
-              <label className='checkbox' htmlFor='#'>
-                <span className='label'>Kota</span>
-                <div className='field'>
-                  <p className='control'>
-                    <span className='select'>
-                      <select>
-                        <option>Jakarta Barat</option>
-                        <option>With options</option>
-                      </select>
-                    </span>
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-          <div className='filter-option' id='brand'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#allBrand'>
-                <span className='sort-text'>Semua Brand</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='allBrand' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand1'>
-                <span className='sort-text'>Adidas</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='brand1' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand2'>
-                <span className='sort-text'>Nike</span>
-                <span className='input-wrapper'>
-                  <input className='checkbox' id='brand2' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand3'>
-                <span className='sort-text'>New Balance</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='brand3' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand4'>
-                <span className='sort-text'>Diadora</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='brand4' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand5'>
-                <span className='sort-text'>Rebook</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='brand35' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#brand6'>
-                <span className='sort-text'>Umbro</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='brand6' />
-                </span>
-              </label>
-            </div>
-          </div>
-          <div className='filter-option' id='lainnya'>
-            <div className='sort-list'>
-              <label className='checkbox' htmlFor='#diskon'>
-                <span className='sort-text'>Diskon</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='diskon' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#terverifikasi'>
-                <span className='sort-text'>Seller Terverifikasi</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='terverifikasi' />
-                </span>
-              </label>
-              <label className='checkbox' htmlFor='#grosir'>
-                <span className='sort-text'>Grosir</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' id='grosir' />
-                </span>
-              </label>
-            </div>
-          </div>
-        </section>
-        <footer className='modal-card-foot'>
-          <div className='columns is-mobile'>
-            <div className='column'>
-              <a className='button is-large is-fullwidth is-outlined'>Reset Filter</a>
-            </div>
-            <div className='column'>
-              <a className='button is-primary is-large is-fullwidth'>Terapkan Filter</a>
-            </div>
-          </div>
-        </footer>
+          </footer>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default Filter
