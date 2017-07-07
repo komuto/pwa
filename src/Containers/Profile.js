@@ -68,7 +68,7 @@ class Profile extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { (user)
+        { (!_.isEmpty(user))
           ? <Account user={user} />
           : <AccountLogin />
         }
