@@ -47,6 +47,7 @@ function province (state = initProvince, action) {
       return {
         ...state,
         provinces: action.data,
+        length: action.data.length,
         message: action.message,
         status: action.code,
         isLoading: false,
@@ -77,6 +78,7 @@ function district (state = initDistrict, action) {
       return {
         ...state,
         districts: action.data,
+        length: action.data.length,
         message: action.message,
         status: action.code,
         isLoading: false,
@@ -107,6 +109,7 @@ function subdistrict (state = initSubDistrict, action) {
       return {
         ...state,
         subdistricts: action.data,
+        length: action.data.length,
         message: action.message,
         status: action.code,
         isOnline: true,

@@ -24,7 +24,7 @@ function * login (action) {
   }
 }
 
-function * validateToken (action) {
+function* validateToken (action) {
   try {
     const {data} = yield userApi.validateToken(action)
     yield put({ type: userActions.VALIDATE_TOKENFORGETPASSWORD_SUCCESS, ...data })
@@ -33,7 +33,7 @@ function * validateToken (action) {
   }
 }
 
-function * logout (action) {
+function* logout (action) {
   try {
     const data = yield userApi.logout(action)
     yield localForage.removeItem('token')
@@ -47,7 +47,7 @@ function * logout (action) {
   }
 }
 
-function * verify (action) {
+function* verify (action) {
   try {
     const {data} = yield userApi.verification(action)
     yield put({ type: userActions.USER_VERIFICATION_SUCCESS, ...data })
@@ -84,7 +84,16 @@ function * newPassword (action) {
   }
 }
 
-function * getProfile (action) {
+function * changePassword (action) {
+  try {
+    const {data} = yield userApi.changePassword(action)
+    yield put({ type: userActions.CHANGE_PASSWORD_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.CHANGE_PASSWORD_FAILURE, e)
+  }
+}
+
+function* getProfile (action) {
   try {
     const {data} = yield userApi.getProfile(action)
     yield put({ type: userActions.GET_PROFILE_SUCCESS, ...data })
@@ -124,7 +133,9 @@ export {
   forgetPassword,
   loginSocial,
   newPassword,
+  changePassword,
   getProfile,
   getBalance,
   updateProfile
 }
+

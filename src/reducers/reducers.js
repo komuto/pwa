@@ -19,6 +19,7 @@ const komutoApps = storage.reducer(combineReducers({
   emailCheck: emailReducers.checkEmail,
   validation: userReducers.validateToken,
   newPassword: userReducers.newPassword,
+  changePassword: userReducers.changePassword,
   profile: userReducers.getProfile,
   updateProfile: userReducers.updateProfile,
   register: userReducers.register,
@@ -47,6 +48,9 @@ const komutoApps = storage.reducer(combineReducers({
   review: reviewReducers.getReview,
   addReview: reviewReducers.addReview,
   stores: storeReducers.stores,
+  createStore: storeReducers.createStore,
+  expeditionListStore: storeReducers.expeditionListStore,
+  expeditionStore: storeReducers.expeditionStore,
   bank: bankReducers.getBank,
   banks: bankReducers.listBank,
   address: addressReducers.address

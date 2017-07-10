@@ -22,6 +22,10 @@ export const USER_NEWPASSWORD_REQUEST = 'USER_NEWPASSWORD_REQUEST'
 export const USER_NEWPASSWORD_SUCCESS = 'USER_NEWPASSWORD_SUCCESS'
 export const USER_NEWPASSWORD_FAILURE = 'USER_NEWPASSWORD_FAILURE'
 
+export const CHANGE_PASSWORD_REQUEST = 'CHANGE_PASSWORD_REQUEST'
+export const CHANGE_PASSWORD_SUCCESS = 'CHANGE_PASSWORD_SUCCESS'
+export const CHANGE_PASSWORD_FAILURE = 'CHANGE_PASSWORD_FAILURE'
+
 export const FORGET_PASSWORD_REQUEST = 'FORGET_PASSWORD_REQUEST'
 export const FORGET_PASSWORD_SUCCESS = 'FORGET_PASSWORD_SUCCESS'
 export const FORGET_PASSWORD_FAILURE = 'FORGET_PASSWORD_FAILURE'
@@ -61,6 +65,13 @@ function verification (params) {
 function newPassword (params) {
   return {
     type: USER_NEWPASSWORD_REQUEST,
+    ...params
+  }
+}
+
+function changePassword (params) {
+  return {
+    type: CHANGE_PASSWORD_REQUEST,
     ...params
   }
 }
@@ -132,6 +143,7 @@ export {
   login,
   logout,
   newPassword,
+  changePassword,
   getProfile,
   loginSocial,
   forgetPassword,

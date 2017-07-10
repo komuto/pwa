@@ -424,12 +424,43 @@ function getBalance (state = initGetBalance, action) {
   }
 }
 
+function changePassword (state = initUpdate, action) {
+  switch (action.type) {
+    case actions.CHANGE_PASSWORD_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.CHANGE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.CHANGE_PASSWORD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
   auth,
   verify,
   getProfile,
   register,
   newPassword,
+  changePassword,
   forgetPassword,
   isLogin,
   validateToken,

@@ -12,6 +12,36 @@ function * getStores (action) {
   }
 }
 
+function * createStore (action) {
+  try {
+    const {data} = yield storeApi.createStore(action)
+    yield put({ type: storeActions.CREATE_STORE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.CREATE_STORE_FAILURE, e)
+  }
+}
+
+function * storeExpeditionList (action) {
+  try {
+    const {data} = yield storeApi.storeExpeditionList()
+    yield put({ type: storeActions.STORE_EXPEDITIONLIST_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.STORE_EXPEDITIONLIST_FAILURE, e)
+  }
+}
+
+function * storeExpeditionManage (action) {
+  try {
+    const {data} = yield storeApi.storeExpeditionManage()
+    yield put({ type: storeActions.STORE_EXPEDITIONMANAGE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.STORE_EXPEDITIONMANAGE_FAILURE, e)
+  }
+}
+
 export {
-  getStores
+  getStores,
+  createStore,
+  storeExpeditionList,
+  storeExpeditionManage
 }

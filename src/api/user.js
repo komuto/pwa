@@ -78,6 +78,19 @@ function newPassword (action) {
   })
 }
 
+function changePassword (action) {
+  let axios = authApiKomuto()
+  return axios.put('users/password', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 function getProfile (action) {
   let axios = authApiKomuto()
   return axios.get('users/profile', {
@@ -156,6 +169,7 @@ export {
   register,
   forgetPassword,
   newPassword,
+  changePassword,
   getProfile,
   validateToken,
   getBalance,
