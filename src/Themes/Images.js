@@ -6,7 +6,9 @@ const images = {
   user: '../../static/images/pict.jpg',
   banner: '../../static/images/banner.jpg',
   thumb: '../../static/images/thumb.jpg',
-  noImage: '../../static/images/imagenotfound.svg'
+  noImage: '../../static/images/imagenotfound.svg',
+  loading: '../../static/images/loading.png',
+  loadingFailed: '../../static/images/loading-failed.png'
 }
 
 export default images
