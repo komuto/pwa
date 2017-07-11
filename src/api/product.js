@@ -1,4 +1,6 @@
 import { publicApiKomuto } from './api'
+import Router from 'next/router'
+import url from 'url'
 
 function getProduct (action) {
   let axios = publicApiKomuto()
@@ -25,13 +27,13 @@ function productBy (action) {
     }
   }
   if (action.other !== undefined || action.brands !== undefined || action.services !== undefined) {
-    if (action.other[0] === undefined) {
+    if (action.other !== undefined && action.other[0] === undefined) {
       action.other = undefined
     }
-    if (action.brands[0] === undefined) {
+    if (action.brands !== undefined && action.brands[0] === undefined) {
       action.brands = undefined
     }
-    if (action.services[0] === undefined) {
+    if (action.services !== undefined && action.services[0] === undefined) {
       action.services = undefined
     }
   }
@@ -84,6 +86,15 @@ function productBy (action) {
       param = param + check[obj].string + '=' + check[obj].value
     }
   })
+
+  // setup url query
+  Router.push(
+    url.format({
+      pathname: '/product'
+    }),
+    `/p/${param}`
+  )
+
   // console.log('ini nih paramnya: products' + param)
   return axios.get('products' + param, {
     ...action

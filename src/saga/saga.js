@@ -59,6 +59,7 @@ function * dataSaga () {
   yield takeEvery(wishlistActions.GET_WISHLIST_REQUEST, wishlistSaga.wishlist)
   yield takeEvery(reviewActions.GET_REVIEW_REQUEST, reviewSaga.getReview)
   yield takeEvery(reviewActions.ADD_REVIEW_REQUEST, reviewSaga.addReview)
+  yield takeEvery(reviewActions.LIST_REVIEW_REQUEST, reviewSaga.listReviewPagination)
   yield takeEvery(storeActions.GET_STORE_REQUEST, storeSaga.getStores)
   yield takeEvery(storeActions.CREATE_STORE_REQUEST, storeSaga.createStore)
   yield takeEvery(storeActions.STORE_EXPEDITIONLIST_REQUEST, storeSaga.storeExpeditionList)

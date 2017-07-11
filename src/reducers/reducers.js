@@ -46,6 +46,7 @@ const komutoApps = storage.reducer(combineReducers({
   productByCategory: productReducers.productByCategory,
   productBySearch: productReducers.productBySearch,
   review: reviewReducers.getReview,
+  productReview: reviewReducers.listReviewPagination,
   addReview: reviewReducers.addReview,
   stores: storeReducers.stores,
   createStore: storeReducers.createStore,

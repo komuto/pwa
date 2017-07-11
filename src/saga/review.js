@@ -21,7 +21,17 @@ function * addReview (action) {
   }
 }
 
+function * listReviewPagination (action) {
+  try {
+    const {data} = yield reviewApi.listReviewPagination(action)
+    yield put({ type: reviewActions.LIST_REVIEW_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(reviewActions.LIST_REVIEW_FAILURE, e)
+  }
+}
+
 export {
   getReview,
-  addReview
+  addReview,
+  listReviewPagination
 }

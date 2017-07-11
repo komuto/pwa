@@ -50,7 +50,46 @@ function addReview (action) {
   })
 }
 
+function listReviewPagination (action) {
+  let axios = publicApiKomuto()
+  let params = ''
+  let check = [
+    {value: action.page, string: 'page'},
+    {value: action.limit, string: 'limit'}
+  ]
+  let indexCheck = []
+  check.map(function (obj, index) {
+    if (obj.value === '' || obj.value === undefined) {
+      // do nothing
+    } else {
+      indexCheck.push(index)
+    }
+  })
+
+  if (indexCheck.length !== 0) {
+    params = '?'
+  }
+
+  indexCheck.map(function (obj, index) {
+    if (index !== indexCheck.length - 1) {
+      params = params + check[obj].string + '=' + check[obj].value + '&'
+    } else {
+      params = params + check[obj].string + '=' + check[obj].value
+    }
+  })
+  return axios.get('products/' + action.id + '/reviews' + params, {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
   getReview,
+  listReviewPagination,
   addReview
 }

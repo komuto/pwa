@@ -50,6 +50,37 @@ function getReview (state = initReview, action) {
   }
 }
 
+function listReviewPagination (state = initReview, action) {
+  switch (action.type) {
+    case reviewActions.LIST_REVIEW_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case reviewActions.LIST_REVIEW_SUCCESS:
+      return {
+        ...state,
+        reviews: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case reviewActions.LIST_REVIEW_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 function addReview (state = initAdd, action) {
   switch (action.type) {
     case reviewActions.ADD_REVIEW_REQUEST:
@@ -93,5 +124,6 @@ function addReview (state = initAdd, action) {
 
 export {
     getReview,
+    listReviewPagination,
     addReview
 }
