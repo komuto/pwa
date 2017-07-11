@@ -1,10 +1,16 @@
 // @flow
 import React, { Component } from 'react'
+import Content from '../Components/Content'
+import _ from 'lodash'
 
 export class Filter extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      expeditions: props.expeditions || [],
+      provinces: props.provinces || [],
+      districts: props.districts || [],
+      brands: props.brands || [],
       tabActive: 'condition',
       tabs: [
         {
@@ -26,27 +32,11 @@ export class Filter extends Component {
           ]
         },
         {
-          id: 'jasa',
+          id: 'expeditions',
           name: 'Jasa Pengiriman',
           viewCheckAll: true,
           selectedAll: false,
-          options: [
-            {
-              id: 'jnereguler',
-              name: 'JNE Reguler',
-              selected: false
-            },
-            {
-              id: 'jneoke',
-              name: 'JNE OKE',
-              selected: false
-            },
-            {
-              id: 'jneyes',
-              name: 'JNE Yes',
-              selected: false
-            }
-          ]
+          options: []
         },
         {
           id: 'harga',
@@ -68,75 +58,37 @@ export class Filter extends Component {
           ]
         },
         {
-          id: 'dikirim',
+          id: 'sendFrom',
           name: 'Dikirim Dari',
           viewCheckAll: false,
-          options: [
-            {
-              id: 'dari',
-              name: 'Dari',
-              options: [
-                {
-                  id: 'bandung',
-                  name: 'Bandung',
-                  selected: false
-                },
-                {
-                  id: 'jakarta',
-                  name: 'Jakarta',
-                  selected: false
-                }
-              ]
-            },
-            {
-              id: 'ke',
-              name: 'Ke',
-              options: [
-                {
-                  id: 'jogja',
-                  name: 'Yogyakarta',
-                  selected: false
-                },
-                {
-                  id: 'solo',
-                  name: 'Solo',
-                  selected: false
-                }
-              ]
-            }
-          ]
+          districtsSelected: null,
+          customComponent: true
         },
         {
-          id: 'brand',
+          id: 'brands',
           name: 'Brand',
           viewCheckAll: true,
           selectedAll: false,
-          options: [
-            {
-              id: 'adidas',
-              name: 'Adidas',
-              selected: false
-            },
-            {
-              id: 'nike',
-              name: 'Nike',
-              selected: false
-            }
-          ]
+          options: []
         },
         {
-          id: 'lainya',
+          id: 'others',
           name: 'Lainya',
           viewCheckAll: false,
           options: [
             {
-              id: 'diskon',
+              id: 'discount',
               name: 'Diskon',
               selected: false
             },
             {
-              id: 'seller',
+              id: 'verified',
               name: 'Seller Terverifikasi',
+              selected: false
+            },
+            {
+              id: 'wholesaler',
+              name: 'Grosir',
               selected: false
             }
           ]
@@ -145,9 +97,27 @@ export class Filter extends Component {
     }
   }
 
-  setTabActive (tabActive) {
-    this.setState({ tabActive })
+  componentWillReceiveProps (nextProps) {
+    const { expeditions, provinces, brands, districts } = nextProps
+    let { tabs } = this.state
+    tabs.map((tab) => {
+      if (tab.id === 'expeditions' && tab.options.length < 1) {
+        expeditions.map((expedition) => {
+          expedition.name = expedition.full_name
+          expedition.selected = false
+        })
+        tab.options = expeditions
+      }
+
+      if (tab.id === 'brands') {
+        tab.options = brands
+      }
+    })
+
+    this.setState({ tabs, provinces, districts })
   }
+
+  setTabActive = (tabActive) => this.setState({ tabActive })
 
   viewCheckAll (event, tabActive) {
     const selectedAll = event.target.checked
@@ -171,7 +141,7 @@ export class Filter extends Component {
       if (tab.id === tabActive) {
         // set item selected
         tab.options.map((option) => {
-          if (option.id === id) {
+          if (_.toString(option.id) === _.toString(id)) {
             option.selected = selectedItem
           }
         })
@@ -179,7 +149,6 @@ export class Filter extends Component {
         tab.selectedAll = (tab.options.filter((option) => { return !option.selected }).length < 1)
       }
     })
-
     this.setState({ tabs })
   }
 
@@ -189,25 +158,68 @@ export class Filter extends Component {
   }
 
   filterReset () {
-    const { tabs } = this.state
+    let { tabs, districts } = this.state
     tabs.map((tab) => {
       tab.selectedAll = false
-      tab.options.map((option) => {
+      tab.customComponent
+      ? tab.districtsSelected = null
+      : tab.options.map((option) => {
         option.selected = false
       })
     })
-    this.setState({ tabs })
+    districts = []
+    this.setState({ tabs, districts })
   }
 
-  filterRealization () {
-    this.props.filterRealization(this.state.tabs)
+  // filter event button
+  filterRealization = () => this.props.filterRealization(this.state.tabs)
+  // change provinces event selected
+  onChangeProvinces = (event) => this.props.onChangeProvinces(event.target.value)
+  // change change event selected
+  onChangeDistrict (event) {
+    const { tabs } = this.state
+    const value = event.target.value
+    if (value !== 'default') tabs.map((tab) => { if (tab.id === 'sendFrom') tab.districtsSelected = value })
+    this.setState({ tabs })
   }
 
   render () {
     const { isShow } = this.props
-    const { tabActive, tabs } = this.state
+    const { tabActive, tabs, provinces, districts } = this.state
     const filterTabResults = this.filterTabsByActive(tabActive)
-
+    const tabsNav = tabs.map((tab) => { return <li key={tab.id} className={`${tabActive === tab.id ? 'is-active' : ''}`}><a onClick={() => this.setTabActive(tab.id)}>{ tab.name }</a></li> })
+    const checkAllButton = filterTabResults.viewCheckAll
+          ? <label className='checkbox'>
+            <span className='sort-text'>Pilih Semua</span>
+            <span className={`input-wrapper ${filterTabResults.selectedAll ? 'checked' : ''}`}>
+              <input type='checkbox' checked={filterTabResults.selectedAll} onChange={(event) => this.viewCheckAll(event, tabActive)} />
+            </span>
+          </label>
+          : null
+    const chekAllItems = filterTabResults.customComponent
+          ? <Content>
+            <InputDropdown
+              title='Wilayah / Provinsi'
+              onChange={(event) => this.onChangeProvinces(event)}
+              options={provinces} />
+            <InputDropdown
+              title='Kota'
+              onChange={(event) => this.onChangeDistrict(event)}
+              options={districts} />
+          </Content>
+          : filterTabResults.options.map((option) => {
+            return (
+              <label className='checkbox' key={option.id}>
+                {
+                    option.label ? <span className='label'>{ option.label }</span> : ''
+                  }
+                <span className='sort-text'>{ option.name }</span>
+                <span className={`input-wrapper ${option.selected ? 'checked' : ''}`}>
+                  <input type='checkbox' name={option.id} checked={option.selected ? option.selected : false} onChange={(event) => this.viewCheckItem(event, tabActive)} />
+                </span>
+              </label>
+            )
+          })
     return (
       <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter' style={{ zIndex: 100 }}>
         <div className='modal-background' />
@@ -220,61 +232,14 @@ export class Filter extends Component {
             <div className='fiter-side'>
               <div className='tabs'>
                 <ul>
-                  {
-                    tabs.map((tab) => {
-                      return <li key={tab.id} className={`${tabActive === tab.id ? 'is-active' : ''}`}><a onClick={() => this.setTabActive(tab.id)}>{ tab.name }</a></li>
-                    })
-                  }
+                  { tabsNav }
                 </ul>
               </div>
             </div>
             <div className='filter-option active'>
               <div className='sort-list'>
-                {
-                filterTabResults.viewCheckAll
-                ? <label className='checkbox'>
-                  <span className='sort-text'>Pilih Semua</span>
-                  <span className={`input-wrapper ${filterTabResults.selectedAll ? 'checked' : ''}`}>
-                    <input type='checkbox' checked={filterTabResults.selectedAll} onChange={(event) => this.viewCheckAll(event, tabActive)} />
-                  </span>
-                </label>
-                : null
-              }
-                {
-                filterTabResults.options.map((option) => {
-                  if (option.options) {
-                    return (
-                      <label className='checkbox' key={option.id}>
-                        <span className='label'>{ option.name }</span>
-                        <div className='field'>
-                          <p className='control'>
-                            <span className='select'>
-                              <select>
-                                {
-                                  option.options.map((option) => {
-                                    return <option key={option.id}> { option.name }</option>
-                                  })
-                                }
-                              </select>
-                            </span>
-                          </p>
-                        </div>
-                      </label>
-                    )
-                  } else {
-                    return (
-                      <label className='checkbox' key={option.id}>
-                        {
-                          option.label ? <span className='label'>{ option.label }</span> : ''
-                        }
-                        <span className='sort-text'>{ option.name }</span>
-                        <span className={`input-wrapper ${option.selected ? 'checked' : ''}`}>
-                          <input type='checkbox' name={option.id} checked={option.selected} onChange={(event) => this.viewCheckItem(event, tabActive)} />
-                        </span>
-                      </label>
-                    )
-                  }
-                })}
+                { checkAllButton }
+                { chekAllItems }
               </div>
             </div>
           </section>
@@ -292,6 +257,29 @@ export class Filter extends Component {
       </div>
     )
   }
+}
+
+const InputDropdown = (props) => {
+  const { title, options } = props
+  return (
+    <label className='checkbox'>
+      <span className='label'>{ title }</span>
+      <div className='field'>
+        <p className='control'>
+          <span className='select'>
+            <select onChange={(event) => props.onChange(event)}>
+              <option value='default'> Pilih { title }</option>
+              {
+                options.map((option) => {
+                  return <option key={option.id} value={option.id}> { option.name }</option>
+                })
+              }
+            </select>
+          </span>
+        </p>
+      </div>
+    </label>
+  )
 }
 
 export default Filter
