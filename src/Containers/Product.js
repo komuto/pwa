@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+// import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -18,6 +19,9 @@ import { Navbar } from './Navbar'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
+import * as expeditionActions from '../actions/expedition'
+import * as locationActions from '../actions/location'
+import * as brandActions from '../actions/brand'
 // utils
 import { Status } from '../Services/Status'
 
@@ -25,11 +29,23 @@ class MyProduct extends Component {
   constructor (props) {
     super(props)
     this.state = ({
-      q: props.query.q || null,
-      sort: props.query.sort || null,
-      id: props.query.id || null,
+      query: {
+        brands: props.query.brands || null,
+        other: props.query.other || null,
+        condition: props.query.condition || null,
+        services: props.query.services || null,
+        q: props.query.q || null,
+        sort: props.query.sort || null,
+        id: props.query.id || null
+      },
+      limit: 10,
+      hasMoreItems: true,
       productBySearch: props.productBySearch || null,
       categories: props.subCategory || [],
+      expeditions: props.expeditions || null,
+      provinces: props.provinces || null,
+      districts: props.districts || null,
+      brands: props.brands || null,
       sortActive: false,
       filterActive: false,
       viewActive: 'list',
@@ -43,40 +59,39 @@ class MyProduct extends Component {
     this.params = {}
   }
 
-  createTitleNavbar (params) {
-    let data = ''
-    switch (params) {
-      case 'newest':
-        data = 'Produk Terbaru'
-        break
-      case 'cheapest':
-        data = 'Produk Termurah'
-        break
-      case 'expensive':
-        data = 'Produk Termahal'
-        break
-      case 'selling':
-        data = 'Produk Terlaris'
-        break
-      default:
-        break
+  // create title for navbar
+  createTitleNavbar (param) {
+    let result = ''
+    switch (param) {
+      case 'newest': result = 'Produk Terbaru'; break
+      case 'cheapest': result = 'Produk Termurah'; break
+      case 'expensive': result = 'Produk Termahal'; break
+      case 'selling': result = 'Produk Terlaris'; break
+      default: result = 'Produk'; break
     }
-
-    return data
+    return result
   }
 
-  sortOnClick () {
-    this.setState({ sortActive: true })
-  }
-
-  filterOnClick () {
-    this.setState({ filterActive: true })
-  }
+  // sort button event
+  sortOnClick = () => this.setState({ sortActive: true })
+  // filter button event
+  filterOnClick = () => this.setState({ filterActive: true })
+  // filter view close
+  filterClose = () => this.setState({ filterActive: false })
+  // fetch district by province id
+  onChangeProvinces = (id) => this.props.dispatch(locationActions.getDistrict({province_id: id}))
 
   viewOnClick () {
     let { viewActive } = this.state
     viewActive = viewActive === 'list' ? 'grid' : 'list'
     this.setState({ viewActive })
+  }
+
+  loadMore () {
+    // console.log('loadMore()')
+    // const { limit } = this.state
+    // this.params.limit = limit + 10
+    // this.props.dispatch(productActions.listProductBySearch(this.params))
   }
 
   sortSelected (selectedSort) {
@@ -100,35 +115,81 @@ class MyProduct extends Component {
     this.setState({ selectedSort, sortActive: false, productBySearch })
   }
 
-  filterClose () {
-    this.setState({ filterActive: false })
-  }
-
   async componentDidMount () {
-    const { id, sort, q } = this.state
+    const { id, sort, q, condition, services, other, brands } = this.state.query
+    const { expeditions } = this.state.expeditions
+    const { provinces } = this.state.provinces
+    const myBrands = this.state.brands
+    // generate params
     if (id) this.params.category_id = id
     if (sort) this.params.sort = sort
     if (q) this.params.query = q
+    if (condition) this.params.condition = condition
+    if (services) this.params.services = services
+    if (other) this.params.other = other
+    if (brands) this.params.brands = brands
+    // start loading
     NProgress.start()
+    // fetch product & category
     if (id) await this.props.dispatch(homeActions.subCategory({ id }))
     await this.props.dispatch(productActions.listProductBySearch(this.params))
+    // fetch init data when data in redux empty
+    // fetch expeditions
+    if (expeditions.length < 1) await this.props.dispatch(expeditionActions.getServices())
+    // fetch provieces
+    if (provinces.length < 1) await this.props.dispatch(locationActions.getProvince())
+    // fetch brands
+    if (myBrands.brands.length < 1) await this.props.dispatch(brandActions.getBrand())
   }
 
   async filterRealization (filters) {
     filters.map((filter) => {
-      if (filter.id === 'condition') {
-        if (_.find(filter.options, (option) => { return option.id === 'new' }).selected) this.params.condition = 'new'
-        if (_.find(filter.options, (option) => { return option.id === 'used' }).selected) this.params.condition = 'used'
-        if (filter.selectedAll) this.params.condition = ''
+      switch (filter.id) {
+        case 'condition':
+            // set params conditions 'new' or 'used' or '' for both
+          this.params.condition = ''
+            // get status selected by id condition new
+          if (_.find(filter.options, (option) => { return option.id === 'new' }).selected) this.params.condition = 'new'
+            // get status selected by id condition used
+          if (_.find(filter.options, (option) => { return option.id === 'used' }).selected) this.params.condition = 'used'
+            // when selectedAll is checked so condition is ''
+          if (filter.selectedAll) this.params.condition = ''
+          break
+        case 'expeditions':
+            // set params expeditions services
+            // get id service when selected is true
+          const idServicesTrue = _.map(filter.options.filter((option) => { return option.selected }), 'id')
+          this.params.services = (idServicesTrue.length > 0) ? idServicesTrue : []
+          break
+        case 'brands':
+            // set params brands
+            // get id service when selected is true
+          const idBrandTrue = _.map(filter.options.filter((option) => { return option.selected }), 'id')
+          this.params.brands = (idBrandTrue.length > 0) ? idBrandTrue : []
+          break
+        case 'others':
+            // set params 'discount', 'verified', 'wholesaler'
+          const idOthersTrue = _.map(filter.options.filter((option) => { return option.selected }), 'id')
+          this.params.other = (idOthersTrue.length > 0) ? idOthersTrue : []
+          break
+        case 'sendFrom':
+            // set params districs/kota pengiriman
+          this.params.address = filter.districtsSelected ? filter.districtsSelected : ''
+          break
+        default:
+          break
       }
     })
+    // start loading
     NProgress.start()
+    // fetch product by params
     await this.props.dispatch(productActions.listProductBySearch(this.params))
+    // close filter
     this.setState({ filterActive: false })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productBySearch, subCategory } = nextProps
+    const { productBySearch, subCategory, expeditions, provinces, brands, districts } = nextProps
     const { q } = nextProps.query
     let { notification, categories } = this.state
     // reset notification
@@ -136,6 +197,7 @@ class MyProduct extends Component {
 
     if (q) this.setState({ q })
 
+    // product data
     if (!productBySearch.isLoading) {
       NProgress.done()
       switch (productBySearch.status) {
@@ -156,6 +218,7 @@ class MyProduct extends Component {
       this.setState({ productBySearch, notification })
     }
 
+    // category data
     if (!subCategory.isLoading) {
       switch (subCategory.status) {
         case Status.SUCCESS :
@@ -169,6 +232,70 @@ class MyProduct extends Component {
           break
       }
       this.setState({ categories, notification })
+    }
+
+    // expeditions data
+    if (!expeditions.isLoading) {
+      switch (expeditions.status) {
+        case Status.SUCCESS :
+          if (!expeditions.isFound) notification = {status: true, message: 'Data ekpedisi tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: expeditions.message}
+          break
+        default:
+          break
+      }
+      this.setState({ expeditions, notification })
+    }
+
+    // provinces data
+    if (!provinces.isLoading) {
+      switch (provinces.status) {
+        case Status.SUCCESS :
+          if (!provinces.isFound) notification = {status: true, message: 'Data provinsi tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: provinces.message}
+          break
+        default:
+          break
+      }
+      this.setState({ provinces, notification })
+    }
+
+    // districs data
+    if (!districts.isLoading) {
+      switch (districts.status) {
+        case Status.SUCCESS :
+          if (!districts.isFound) notification = {status: true, message: 'Data provinsi tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: districts.message}
+          break
+        default:
+          break
+      }
+      this.setState({ districts, notification })
+    }
+
+    // brands data
+    if (!brands.isLoading) {
+      switch (brands.status) {
+        case Status.SUCCESS :
+          if (!brands.isFound) notification = {status: true, message: 'Data brand tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: brands.message}
+          break
+        default:
+          break
+      }
+      this.setState({ brands, notification })
     }
 
     if (!productBySearch.isLoading && !subCategory.isLoading) NProgress.done()
@@ -218,7 +345,7 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { q, categories, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
+    const { q, categories, expeditions, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
     const { products } = this.state.productBySearch
     const navbar = {
       searchBoox: false,
@@ -226,6 +353,8 @@ class MyProduct extends Component {
       textPath: categories.name || this.titleNavbar || q,
       searchActive: !!q
     }
+    // const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
+    const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
 
     return (
       <Content>
@@ -236,13 +365,15 @@ class MyProduct extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <Section
-          style={{marginBottom: '40px'}}>
-          {
-            (viewActive === 'list')
-            ? this.renderProductList(viewActive, products)
-            : this.renderProductColoumn(viewActive, products)
-          }
+
+        <Section style={{marginBottom: '45px'}}>
+          {/* <InfiniteScroll
+            pageStart={0}
+            loadMore={() => this.loadMore()}
+            hasMore={this.state.hasMoreItems}
+            loader={loader} > */}
+          { listProducts }
+          {/* </InfiniteScroll> */}
         </Section>
         <TabbarCategories
           sortOnClick={() => this.sortOnClick()}
@@ -256,7 +387,12 @@ class MyProduct extends Component {
         <Filter
           isShow={filterActive}
           filterClose={() => this.filterClose()}
-          filterRealization={(params) => this.filterRealization(params)} />
+          filterRealization={(params) => this.filterRealization(params)}
+          onChangeProvinces={(id) => this.onChangeProvinces(id)}
+          expeditions={expeditions.expeditions}
+          provinces={provinces.provinces}
+          brands={brands.brands}
+          districts={districts.districts} />
       </Content>
     )
   }
@@ -264,7 +400,11 @@ class MyProduct extends Component {
 const mapStateToProps = (state) => {
   return {
     productBySearch: state.productBySearch,
-    subCategory: state.subCategory
+    subCategory: state.subCategory,
+    expeditions: state.expeditionServices,
+    provinces: state.provinces,
+    districts: state.districts,
+    brands: state.brands
   }
 }
 export default connect(mapStateToProps)(MyProduct)
