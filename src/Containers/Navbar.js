@@ -36,7 +36,7 @@ export class Navbar extends PureComponent {
           </div>
           {
             searchActive
-            ? <div className='button-search' onClick={() => this.setState({ activeSearch: true })}>
+            ? <div className='button-search' onClick={() => Router.push('/search')}>
               <span className='icon-search' />
             </div>
             : null
@@ -68,7 +68,7 @@ export class SearchBoox extends PureComponent {
   }
 
   onFocus () {
-    this.setState({ activeSearch: true })
+    Router.push('/search')
   }
 
   backPress () {

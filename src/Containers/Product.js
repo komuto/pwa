@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
-// import InfiniteScroll from 'react-infinite-scroller'
+import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -88,7 +88,7 @@ class MyProduct extends Component {
   }
 
   loadMore () {
-    // console.log('loadMore()')
+    console.log('loadMore()')
     // const { limit } = this.state
     // this.params.limit = limit + 10
     // this.props.dispatch(productActions.listProductBySearch(this.params))
@@ -353,7 +353,7 @@ class MyProduct extends Component {
       textPath: categories.name || this.titleNavbar || q,
       searchActive: !!q
     }
-    // const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
+    const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
 
     return (
@@ -367,13 +367,13 @@ class MyProduct extends Component {
           message={notification.message} />
 
         <Section style={{marginBottom: '45px'}}>
-          {/* <InfiniteScroll
+          <InfiniteScroll
             pageStart={0}
             loadMore={() => this.loadMore()}
             hasMore={this.state.hasMoreItems}
-            loader={loader} > */}
-          { listProducts }
-          {/* </InfiniteScroll> */}
+            loader={loader} >
+            { listProducts }
+          </InfiniteScroll>
         </Section>
         <TabbarCategories
           sortOnClick={() => this.sortOnClick()}

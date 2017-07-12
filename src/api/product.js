@@ -11,7 +11,8 @@ function getProduct (action) {
 
 function productBy (action) {
   let axios = publicApiKomuto()
-  let param = ''
+  let param = '' // params for api
+  let paramForUrl = '' // params for url
   let tempPrice = action.price
   if (tempPrice !== undefined) {
     if (tempPrice[0] === 0 && tempPrice[1] === 0) {
@@ -77,22 +78,33 @@ function productBy (action) {
 
   if (indexCheck.length !== 0) {
     param = '?'
+    paramForUrl = '?'
   }
 
   indexCheck.map(function (obj, index) {
     if (index !== indexCheck.length - 1) {
-      param = param + check[obj].string + '=' + check[obj].value + '&'
+      // params for api
+      let valueApi = (check[obj].string === 'q') ? check[obj].value.replace(/-/g, ' ') : check[obj].value
+      param = param + check[obj].string + '=' + valueApi + '&'
+      // params for url
+      let valueUrl = (check[obj].string === 'q') ? check[obj].value.replace(/\s+/g, '-') : check[obj].value
+      paramForUrl = paramForUrl + check[obj].string + '=' + valueUrl + '&'
     } else {
-      param = param + check[obj].string + '=' + check[obj].value
+      // params for api
+      let valueApi = (check[obj].string === 'q') ? check[obj].value.replace(/-/g, ' ') : check[obj].value
+      param = param + check[obj].string + '=' + valueApi
+      // params for url
+      let valueUrl = (check[obj].string === 'q') ? check[obj].value.replace(/\s+/g, '-') : check[obj].value
+      paramForUrl = paramForUrl + check[obj].string + '=' + valueUrl
     }
   })
 
-  // setup url query
+  // setup url
   Router.push(
     url.format({
       pathname: '/product'
     }),
-    `/p/${param}`
+    `/p/${paramForUrl}`
   )
 
   // console.log('ini nih paramnya: products' + param)
