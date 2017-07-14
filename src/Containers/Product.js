@@ -7,7 +7,6 @@ import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
-import {Images} from '../Themes'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import Notification from '../Components/Notification'
@@ -22,7 +21,7 @@ import * as productActions from '../actions/product'
 import * as expeditionActions from '../actions/expedition'
 import * as locationActions from '../actions/location'
 import * as brandActions from '../actions/brand'
-// utils
+// services
 import { Status } from '../Services/Status'
 
 class MyProduct extends Component {
@@ -92,6 +91,10 @@ class MyProduct extends Component {
     // const { limit } = this.state
     // this.params.limit = limit + 10
     // this.props.dispatch(productActions.listProductBySearch(this.params))
+  }
+
+  async wishlistPress (id) {
+    await this.props.dispatch(productActions.addToWishlist({ id })) && this.props.dispatch(productActions.listProductBySearch(this.params))
   }
 
   sortSelected (selectedSort) {
@@ -189,7 +192,7 @@ class MyProduct extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productBySearch, subCategory, expeditions, provinces, brands, districts } = nextProps
+    const { productBySearch, subCategory, expeditions, provinces, brands, districts, addWishlist } = nextProps
     const { q } = nextProps.query
     let { notification, categories } = this.state
     // reset notification
@@ -298,6 +301,19 @@ class MyProduct extends Component {
       this.setState({ brands, notification })
     }
 
+    if (!addWishlist.isLoading) {
+      switch (addWishlist.status) {
+        case Status.SUCCESS :
+          // this.props.dispatch(productActions.listProductBySearch(this.params))
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: brands.message}
+          break
+        default:
+          break
+      }
+    }
     if (!productBySearch.isLoading && !subCategory.isLoading) NProgress.done()
   }
 
@@ -311,9 +327,9 @@ class MyProduct extends Component {
               <ProductContainers key={product.id}>
                 <Product
                   viewActive={viewActive}
-                  imagesDefault={Images.thumb}
                   images={images}
                   store={store}
+                  wishlistPress={(productId) => this.wishlistPress(productId)}
                   product={product} />
               </ProductContainers>
             )
@@ -333,9 +349,9 @@ class MyProduct extends Component {
               <Product
                 key={product.id}
                 viewActive={viewActive}
-                imagesDefault={Images.thumb}
                 images={images}
                 store={store}
+                wishlistPress={(productId) => this.wishlistPress(productId)}
                 product={product} />
             )
           })
@@ -347,6 +363,7 @@ class MyProduct extends Component {
   render () {
     const { q, categories, expeditions, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
     const { products } = this.state.productBySearch
+
     const navbar = {
       searchBoox: false,
       path: '/',
@@ -376,6 +393,9 @@ class MyProduct extends Component {
           </InfiniteScroll>
         </Section>
         <TabbarCategories
+          sortButton
+          filterButton
+          viewButton
           sortOnClick={() => this.sortOnClick()}
           filterOnClick={() => this.filterOnClick()}
           viewOnClick={() => this.viewOnClick()}
@@ -404,7 +424,8 @@ const mapStateToProps = (state) => {
     expeditions: state.expeditionServices,
     provinces: state.provinces,
     districts: state.districts,
-    brands: state.brands
+    brands: state.brands,
+    addWishlist: state.addWishlist
   }
 }
 export default connect(mapStateToProps)(MyProduct)
