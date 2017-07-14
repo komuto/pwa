@@ -9,7 +9,7 @@ export default (props: any) => {
   const { children } = props
   const { style, header } = props.params
   return (
-    <Content>
+    <Content style={{height: '100%'}}>
       <Header params={header} />
       <Content className={`main ${style}`}>
         { children }

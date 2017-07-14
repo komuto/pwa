@@ -12,7 +12,7 @@ export default (props: any) => {
   const { children } = props
   const { style, header, navbar, hero, tabbar } = props.params
   return (
-    <Content>
+    <Content style={{height: '100%'}}>
       <Header params={header} />
       <Content className={`main ${style}`}>
         { (navbar) ? <Navbar params={navbar} /> : null}
