@@ -2,7 +2,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
-import {Images} from '../Themes'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import url from 'url'
@@ -15,8 +14,11 @@ import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 // actions
 import * as homeActions from '../actions/home'
-// utils
+import * as productActions from '../actions/product'
+// services
 import { Status } from '../Services/Status'
+// themes
+import Images from '../Themes/Images'
 
 class Home extends Component {
   constructor (props) {
@@ -29,6 +31,11 @@ class Home extends Component {
         message: 'Error, default message.'
       }
     }
+    this.params = {sort: 'newest', page: 1, limit: 6}
+  }
+
+  async wishlistPress (id) {
+    await this.props.dispatch(productActions.addToWishlist({ id })) && this.props.dispatch(homeActions.products(this.params))
   }
 
   async componentDidMount () {
@@ -36,7 +43,7 @@ class Home extends Component {
     const { categories } = this.state.category
     if (products.length < 1 && categories.length < 1) {
       NProgress.start()
-      await this.props.dispatch(homeActions.products({sort: 'newest', page: 1, limit: 6})) && this.props.dispatch(homeActions.categoryList())
+      await this.props.dispatch(homeActions.products(this.params)) && this.props.dispatch(homeActions.categoryList())
     }
   }
 
@@ -88,9 +95,9 @@ class Home extends Component {
               <Product
                 key={product.id}
                 viewActive={viewActive}
-                imagesDefault={Images.thumb}
                 images={images}
                 store={store}
+                wishlistPress={(id) => this.wishlistPress(id)}
                 product={product} />
             )
           })
@@ -193,7 +200,8 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     products: state.products,
-    category: state.category
+    category: state.category,
+    addWishlist: state.addWishlist
   }
 }
 
