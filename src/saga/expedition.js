@@ -31,8 +31,19 @@ function * getShippingCharge (action) {
   }
 }
 
+function * updateExpedition (action) {
+  try {
+    const {data} = yield expeditionApi.updateExpedition(action)
+    yield put({ type: expeditionActions.UPDATE_EXPEDITION_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(expeditionActions.UPDATE_EXPEDITION_FAILURE, e)
+  }
+}
+
 export {
   getExpedition,
   getServices,
-  getShippingCharge
+  getShippingCharge,
+  updateExpedition
 }

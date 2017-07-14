@@ -10,6 +10,10 @@ export const GET_SHIPPINGCHARGE_REQUEST = 'GET_SHIPPINGCHARGE_REQUEST'
 export const GET_SHIPPINGCHARGE_SUCCESS = 'GET_SHIPPINGCHARGE_SUCCESS'
 export const GET_SHIPPINGCHARGE_FAILURE = 'GET_SHIPPINGCHARGE_FAILURE'
 
+export const UPDATE_EXPEDITION_REQUEST = 'UPDATE_EXPEDITION_REQUEST'
+export const UPDATE_EXPEDITION_SUCCESS = 'UPDATE_EXPEDITION_SUCCESS'
+export const UPDATE_EXPEDITION_FAILURE = 'UPDATE_EXPEDITION_FAILURE'
+
 function getExpedition () {
   return {
     type: GET_EXPEDITION_REQUEST
@@ -29,8 +33,16 @@ function getShippingCharge (params) {
   }
 }
 
+function updateExpedition (params) {
+  return {
+    type: UPDATE_EXPEDITION_REQUEST,
+    ...params
+  }
+}
+
 export {
   getExpedition,
   getServices,
-  getShippingCharge
+  getShippingCharge,
+  updateExpedition
 }

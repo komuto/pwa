@@ -10,10 +10,28 @@ export const LIST_PRODUCTBYSEARCH_REQUEST = 'LIST_PRODUCTBYSEARCH_REQUEST'
 export const LIST_PRODUCTBYSEARCH_SUCCESS = 'LIST_PRODUCTBYSEARCH_SUCCESS'
 export const LIST_PRODUCTBYSEARCH_FAILURE = 'LIST_PRODUCTBYSEARCH_FAILURE'
 
+export const ADDTO_WISHLIST_REQUEST = 'ADDTO_WISHLIST_REQUEST'
+export const ADDTO_WISHLIST_SUCCESS = 'ADDTO_WISHLIST_SUCCESS'
+export const ADDTO_WISHLIST_FAILURE = 'ADDTO_WISHLIST_FAILURE'
+export const ADDTO_WISHLIST_RESET = 'ADDTO_WISHLIST_RESET'
+
 function getProduct (params) {
   return {
     type: GET_PRODUCT_REQUEST,
     ...params
+  }
+}
+
+function addToWishlist (params) {
+  return {
+    type: ADDTO_WISHLIST_REQUEST,
+    ...params
+  }
+}
+
+function resetAddToWishlist () {
+  return {
+    type: ADDTO_WISHLIST_RESET
   }
 }
 
@@ -33,6 +51,8 @@ function listProductBySearch (params) {
 
 export {
     getProduct,
+    addToWishlist,
+    resetAddToWishlist,
     listProductByCategory,
     listProductBySearch
 }

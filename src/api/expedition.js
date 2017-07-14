@@ -1,4 +1,4 @@
-import { publicApiKomuto } from './api'
+import { publicApiKomuto, authApiKomuto } from './api'
 
 function getExpedition (action) {
   let axios = publicApiKomuto()
@@ -39,8 +39,24 @@ function getShippingCharge (action) {
   })
 }
 
+function updateExpedition (action) {
+  let axios = authApiKomuto()
+  return axios({
+    method: 'put',
+    url: 'users/store/expeditions',
+    data: action.data
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
   getExpedition,
   getServices,
-  getShippingCharge
+  getShippingCharge,
+  updateExpedition
 }

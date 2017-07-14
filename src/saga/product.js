@@ -32,8 +32,19 @@ function * productBySearch (action) {
   }
 }
 
+function * addToWishlist (action) {
+  try {
+    const {data} = yield productApi.addToWishlist(action)
+    yield put({ type: productActions.ADDTO_WISHLIST_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(productActions.ADDTO_WISHLIST_FAILURE, e)
+  }
+}
+
 export {
     getProduct,
     productByCategory,
-    productBySearch
+    productBySearch,
+    addToWishlist
 }

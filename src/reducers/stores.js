@@ -18,6 +18,15 @@ const initExpedition = {
   isOnline: true
 }
 
+const initUpload = {
+  payload: [],
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 function stores (state = initStore, action) {
   switch (action.type) {
     case storeActions.GET_STORE_REQUEST:
@@ -142,8 +151,40 @@ function expeditionStore (state = initExpedition, action) {
   }
 }
 
+function photoUpload (state = initUpload, action) {
+  switch (action.type) {
+    case storeActions.PHOTO_UPLOAD_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case storeActions.PHOTO_UPLOAD_SUCCESS:
+      return {
+        ...state,
+        payload: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case storeActions.PHOTO_UPLOAD_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
     stores,
+    photoUpload,
     createStore,
     expeditionListStore,
     expeditionStore

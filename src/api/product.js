@@ -1,9 +1,17 @@
-import { publicApiKomuto } from './api'
-import Router from 'next/router'
-import url from 'url'
+import { publicApiKomuto, authApiKomuto } from './api'
+// import Router from 'next/router'
+// import url from 'url'
+import localforage from 'localforage'
 
 function getProduct (action) {
-  let axios = publicApiKomuto()
+  console.log(action)
+  let token = localforage.getItem('token')
+  let axios
+  if (token) {
+    axios = authApiKomuto()
+  } else {
+    axios = publicApiKomuto()
+  }
   return axios.get('products/' + action.id, {
     ...action
   })
@@ -99,13 +107,13 @@ function productBy (action) {
     }
   })
 
-  // setup url
-  Router.push(
-    url.format({
-      pathname: '/product'
-    }),
-    `/p/${paramForUrl}`
-  )
+  // // setup url
+  // Router.push(
+  //   url.format({
+  //     pathname: '/product'
+  //   }),
+  //   `/p/${paramForUrl}`
+  // )
 
   // console.log('ini nih paramnya: products' + param)
   return axios.get('products' + param, {
@@ -119,7 +127,21 @@ function productBy (action) {
   })
 }
 
+function addToWishlist (action) {
+  let axios = authApiKomuto()
+  return axios.get('products/' + action.id + '/wishlist', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
     getProduct,
-    productBy
+    productBy,
+    addToWishlist
 }

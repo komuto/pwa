@@ -8,7 +8,6 @@ function * product (action) {
     const {data} = yield homeApi.product(action)
     yield put({ type: homeActions.HOME_PRODUCT_SUCCESS, ...data })
   } catch (e) {
-    console.log(e)
     yield errorHandling(homeActions.HOME_PRODUCT_FAILURE, e)
   }
 }
@@ -45,7 +44,6 @@ function * categoryList (action) {
     const {data} = yield homeApi.categoryList(action)
     yield put({ type: homeActions.HOME_CATEGORY_SUCCESS, ...data })
   } catch (e) {
-    console.log(e.response.status)
     yield errorHandling(homeActions.HOME_CATEGORY_FAILURE, e)
   }
 }

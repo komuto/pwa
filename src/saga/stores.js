@@ -39,9 +39,19 @@ function * storeExpeditionManage (action) {
   }
 }
 
+function * photoUpload (action) {
+  try {
+    const {data} = yield storeApi.photoUpload(action)
+    yield put({ type: storeActions.PHOTO_UPLOAD_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.PHOTO_UPLOAD_FAILURE, e)
+  }
+}
+
 export {
   getStores,
   createStore,
+  photoUpload,
   storeExpeditionList,
   storeExpeditionManage
 }

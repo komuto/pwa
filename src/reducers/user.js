@@ -20,8 +20,26 @@ const initUpdate = {
   isOnline: true
 }
 
+const initBucket = {
+  count: 0,
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 const initGetBalance = {
   balance: 0,
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initGetPhone = {
+  phone: '',
   message: '',
   status: 0,
   isLoading: false,
@@ -223,6 +241,11 @@ function getProfile (state = initProfile, action) {
         ...state,
         isLoading: true
       }
+    case actions.GET_PROFILEMANAGE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
     case actions.GET_PROFILE_SUCCESS:
       return {
         ...state,
@@ -234,7 +257,26 @@ function getProfile (state = initProfile, action) {
         isOnline: true,
         isFound: true
       }
+    case actions.GET_PROFILEMANAGE_SUCCESS:
+      return {
+        ...state,
+        verifyStatus: action.data.user.status,
+        user: action.data.user,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
     case actions.GET_PROFILE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    case actions.GET_PROFILEMANAGE_FAILURE:
       return {
         ...state,
         message: action.message,
@@ -454,6 +496,98 @@ function changePassword (state = initUpdate, action) {
   }
 }
 
+function favoriteStore (state = initUpdate, action) {
+  switch (action.type) {
+    case actions.FAVORITE_STORE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.FAVORITE_STORE_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.FAVORITE_STORE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function countBucket (state = initBucket, action) {
+  switch (action.type) {
+    case actions.COUNT_BUCKET_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.COUNT_BUCKET_SUCCESS:
+      return {
+        ...state,
+        count: action.data.count,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.COUNT_BUCKET_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function getPhone (state = initGetPhone, action) {
+  switch (action.type) {
+    case actions.GET_PHONE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.GET_PHONE_SUCCESS:
+      return {
+        ...state,
+        phone: action.data.phone_number,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.GET_PHONE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
   auth,
   verify,
@@ -465,5 +599,8 @@ export {
   isLogin,
   validateToken,
   getBalance,
-  updateProfile
+  updateProfile,
+  favoriteStore,
+  countBucket,
+  getPhone
 }

@@ -18,6 +18,14 @@ const initProduct = {
   isFound: false
 }
 
+const initAddWishlist = {
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 function getProduct (state = initDetailProduct, action) {
   switch (action.type) {
     case productActions.GET_PRODUCT_REQUEST:
@@ -113,8 +121,43 @@ function productBySearch (state = initProduct, action) {
   }
 }
 
+function addToWishlist (state = initAddWishlist, action) {
+  switch (action.type) {
+    case productActions.ADDTO_WISHLIST_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case productActions.ADDTO_WISHLIST_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isOnline: true,
+        isLoading: false,
+        isFound: true
+      }
+    case productActions.ADDTO_WISHLIST_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    case productActions.ADDTO_WISHLIST_RESET:
+      return {
+        ...state,
+        status: 0
+      }
+    default:
+      return state
+  }
+}
+
 export {
     getProduct,
     productByCategory,
-    productBySearch
+    productBySearch,
+    addToWishlist
 }

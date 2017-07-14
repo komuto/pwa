@@ -34,6 +34,10 @@ export const GET_PROFILE_REQUEST = 'GET_PROFILE_REQUEST'
 export const GET_PROFILE_SUCCESS = 'GET_PROFILE_SUCCESS'
 export const GET_PROFILE_FAILURE = 'GET_PROFILE_FAILURE'
 
+export const GET_PROFILEMANAGE_REQUEST = 'GET_PROFILEMANAGE_REQUEST'
+export const GET_PROFILEMANAGE_SUCCESS = 'GET_PROFILEMANAGE_SUCCESS'
+export const GET_PROFILEMANAGE_FAILURE = 'GET_PROFILEMANAGE_FAILURE'
+
 export const UPDATE_PROFILE_REQUEST = 'UPDATE_PROFILE_REQUEST'
 export const UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS'
 export const UPDATE_PROFILE_FAILURE = 'UPDATE_PROFILE_FAILURE'
@@ -45,6 +49,18 @@ export const VALIDATE_TOKENFORGETPASSWORD_FAILURE = 'VALIDATE_TOKENFORGETPASSWOR
 export const USER_BALANCE_REQUEST = 'USER_BALANCE_REQUEST'
 export const USER_BALANCE_SUCCESS = 'USER_BALANCE_SUCCESS'
 export const USER_BALANCE_FAILURE = 'USER_BALANCE_FAILURE'
+
+export const FAVORITE_STORE_REQUEST = 'FAVORITE_STORE_REQUEST'
+export const FAVORITE_STORE_SUCCESS = 'FAVORITE_STORE_SUCCESS'
+export const FAVORITE_STORE_FAILURE = 'FAVORITE_STORE_FAILURE'
+
+export const COUNT_BUCKET_REQUEST = 'COUNT_BUCKET_REQUEST'
+export const COUNT_BUCKET_SUCCESS = 'COUNT_BUCKET_SUCCESS'
+export const COUNT_BUCKET_FAILURE = 'COUNT_BUCKET_FAILURE'
+
+export const GET_PHONE_REQUEST = 'GET_PHONE_REQUEST'
+export const GET_PHONE_SUCCESS = 'GET_PHONE_SUCCESS'
+export const GET_PHONE_FAILURE = 'GET_PHONE_FAILURE'
 
 export const IS_LOGIN = 'IS_LOGIN'
 
@@ -80,6 +96,12 @@ function getProfile (params) {
   return {
     type: GET_PROFILE_REQUEST,
     ...params
+  }
+}
+
+function getProfileManage () {
+  return {
+    type: GET_PROFILEMANAGE_REQUEST
   }
 }
 
@@ -137,6 +159,25 @@ function updateProfile (params) {
   }
 }
 
+function favoriteStore (params) {
+  return {
+    type: FAVORITE_STORE_REQUEST,
+    ...params
+  }
+}
+
+function countBucket () {
+  return {
+    type: COUNT_BUCKET_REQUEST
+  }
+}
+
+function getPhone () {
+  return {
+    type: GET_PHONE_REQUEST
+  }
+}
+
 export {
   register,
   verification,
@@ -145,10 +186,14 @@ export {
   newPassword,
   changePassword,
   getProfile,
+  getProfileManage,
   loginSocial,
   forgetPassword,
   stateLogin,
   validateToken,
   getBalance,
-  updateProfile
+  updateProfile,
+  favoriteStore,
+  countBucket,
+  getPhone
 }

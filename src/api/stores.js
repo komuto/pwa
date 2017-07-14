@@ -68,6 +68,19 @@ function storeExpeditionList (action) {
   })
 }
 
+function photoUpload (action) {
+  let axios = authApiKomuto()
+  return axios.post('images', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 function storeExpeditionManage (action) {
   let axios = authApiKomuto()
   return axios.get('users/store/expeditions/manage', {
@@ -97,6 +110,7 @@ function storeUpdateExpedition (action) {
 export {
     getStores,
     createStore,
+    photoUpload,
     storeExpeditionList,
     storeExpeditionManage,
     storeUpdateExpedition

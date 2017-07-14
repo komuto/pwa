@@ -1,13 +1,13 @@
 import { put } from 'redux-saga/effects'
 import * as userActions from '../actions/user'
 import * as userApi from '../api/user'
-import localForage from 'localforage'
+import localforage from 'localforage'
 import { errorHandling } from '../config'
 
 function * register (action) {
   try {
     const {data} = yield userApi.register(action)
-    yield localForage.setItem('token', data.data.token)
+    yield localforage.setItem('token', data.data.token)
     yield put({ type: userActions.USER_REGISTER_SUCCESS, ...data })
   } catch (e) {
     yield errorHandling(userActions.USER_REGISTER_FAILURE, e)
@@ -17,7 +17,7 @@ function * register (action) {
 function * login (action) {
   try {
     const {data} = yield userApi.login(action)
-    yield localForage.setItem('token', data.data.token)
+    yield localforage.setItem('token', data.data.token)
     yield put({ type: userActions.USER_LOGIN_SUCCESS, ...data })
   } catch (e) {
     yield errorHandling(userActions.USER_LOGIN_FAILURE, e)
@@ -36,7 +36,7 @@ function * validateToken (action) {
 function * logout (action) {
   try {
     const data = yield userApi.logout(action)
-    yield localForage.removeItem('token')
+    yield localforage.removeItem('token')
     yield put({ type: userActions.USER_LOGOUT_SUCCESS, ...data })
   } catch (e) {
     const data = {
@@ -68,7 +68,7 @@ function * forgetPassword (action) {
 function * loginSocial (action) {
   try {
     const {data} = yield userApi.loginSocial(action)
-    yield localForage.setItem('token', data.data.token)
+    yield localforage.setItem('token', data.data.token)
     yield put({ type: userActions.LOGIN_SOCIAL_SUCCESS, ...data })
   } catch (e) {
     yield errorHandling(userActions.LOGIN_SOCIAL_FAILURE, e)
@@ -102,6 +102,24 @@ function * getProfile (action) {
   }
 }
 
+function * getProfileManage (action) {
+  try {
+    const {data} = yield userApi.getProfileManage(action)
+    yield put({ type: userActions.GET_PROFILEMANAGE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.GET_PROFILEMANAGE_FAILURE, e)
+  }
+}
+
+function * getPhone (action) {
+  try {
+    const {data} = yield userApi.getPhone(action)
+    yield put({ type: userActions.GET_PHONE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.GET_PHONE_FAILURE, e)
+  }
+}
+
 function * updateProfile (action) {
   // console.log(action)
   try {
@@ -124,6 +142,24 @@ function * getBalance (action) {
   }
 }
 
+function * favoriteStore (action) {
+  try {
+    const {data} = yield userApi.favoriteStore(action)
+    yield put({ type: userActions.FAVORITE_STORE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.FAVORITE_STORE_FAILURE, e)
+  }
+}
+
+function * countBucket (action) {
+  try {
+    const {data} = yield userApi.countBucket(action)
+    yield put({ type: userActions.COUNT_BUCKET_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.COUNT_BUCKET_FAILURE, e)
+  }
+}
+
 export {
   login,
   logout,
@@ -135,6 +171,10 @@ export {
   newPassword,
   changePassword,
   getProfile,
+  getProfileManage,
   getBalance,
-  updateProfile
+  getPhone,
+  updateProfile,
+  favoriteStore,
+  countBucket
 }

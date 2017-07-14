@@ -18,9 +18,20 @@ export const STOREEXPEDITION_UPDATE_REQUEST = 'STOREEXPEDITION_UPDATE_REQUEST'
 export const STOREEXPEDITION_UPDATE_SUCCESS = 'STOREEXPEDITION_UPDATE_SUCCESS'
 export const STOREEXPEDITION_UPDATE_FAILURE = 'STOREEXPEDITION_UPDATE_FAILURE'
 
+export const PHOTO_UPLOAD_REQUEST = 'PHOTO_UPLOAD_REQUEST'
+export const PHOTO_UPLOAD_SUCCESS = 'PHOTO_UPLOAD_SUCCESS'
+export const PHOTO_UPLOAD_FAILURE = 'PHOTO_UPLOAD_FAILURE'
+
 function getStores (params) {
   return {
     type: GET_STORE_REQUEST,
+    ...params
+  }
+}
+
+function photoUpload (params) {
+  return {
+    type: PHOTO_UPLOAD_REQUEST,
     ...params
   }
 }
@@ -54,6 +65,7 @@ function storeUpdateExpedition (params) {
 export {
   getStores,
   createStore,
+  photoUpload,
   storeExpeditionList,
   storeExpeditionManage,
   storeUpdateExpedition
