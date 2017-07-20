@@ -93,7 +93,6 @@ class Store extends Component {
 
   async componentWillReceiveProps (nextProps) {
     const { store, addWishlist } = nextProps
-
     if (!store.isLoading) {
       NProgress.done()
       switch (store.status) {
@@ -246,7 +245,7 @@ const ContentPenilaian = (store) => {
           <div className='column'>
             <div className='rating-content'>
               <h3>Kualitas Produk</h3>
-              <span className='value-rate' style={{display: 'block'}}>{store.rating.quality.toFixed(1) || 0}</span>
+              <span className='value-rate' style={{display: 'block'}}>{(store.rating.quality && store.rating.quality.toFixed(1)) || 0}</span>
               <MyRating
                 readonly
                 initialRate={store.rating.quality}
@@ -257,7 +256,7 @@ const ContentPenilaian = (store) => {
           <div className='column'>
             <div className='rating-content'>
               <h3>Akurasi Produk</h3>
-              <span className='value-rate' style={{display: 'block'}}>{store.rating.accuracy.toFixed(1) || 0}</span>
+              <span className='value-rate' style={{display: 'block'}}>{(store.rating.accuracy && store.rating.accuracy.toFixed(1)) || 0}</span>
               <MyRating
                 readonly
                 initialRate={store.rating.accuracy}
@@ -362,9 +361,7 @@ const ContentPenilaian = (store) => {
 }
 
 const ContentProfile = (store) => {
-  console.log(store)
   let verificationDate = moment.unix(store.verification_at).format('MM/DD/YYYY')
-  console.log(verificationDate)
   let longMonth = moment().diff(verificationDate, 'months')
   let openUntil = 'bulan yang lalu'
   if (longMonth < 1) {
