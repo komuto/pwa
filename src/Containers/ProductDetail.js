@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
-
+// import swal from 'sweetalert2'
 // components
 import Content from '../Components/Content'
 import Notification from '../Components/Notification'
@@ -9,6 +9,7 @@ import Notification from '../Components/Notification'
 import * as productActions from '../actions/product'
 // services
 import { Status } from '../Services/Status'
+import GET_TOKEN from '../Services/GetToken'
 // containers
 import { Navbar } from './Navbar'
 import ProductDetailItem from './ProductDetailItem'
@@ -25,6 +26,7 @@ class ProductDetail extends Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
+      token: null,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -41,10 +43,15 @@ class ProductDetail extends Component {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
     }
+
+    const token = await GET_TOKEN.getToken()
+    this.setState({ token })
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const { productDetail } = nextProps
+    const nextId = nextProps.query.id
+
     if (!productDetail.isLoading) {
       NProgress.done()
       switch (productDetail.status) {
@@ -52,6 +59,12 @@ class ProductDetail extends Component {
           (productDetail.isFound)
           ? this.setState({ productDetail })
           : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
+
+          if (String(productDetail.detail.product.id) !== String(nextId)) {
+            NProgress.start()
+            await this.props.dispatch(productActions.getProduct({ id: nextId }))
+          }
+
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -63,18 +76,34 @@ class ProductDetail extends Component {
     }
   }
 
-  wishlistPress = (id) => console.log(id)
+  async wishlistPress (id) {
+    let { productDetail, token } = this.state
+    if (token) {
+      productDetail.detail.other_products.map((product) => {
+        if (product.id === id) {
+          (product.is_liked) ? product.count_like -= 1 : product.count_like += 1
+          product.is_liked = !product.is_liked
+        }
+      })
+      await this.props.dispatch(productActions.addToWishlist({ id }))
+      this.setState({ productDetail })
+    } else {
+      this.setState({notification: {status: true, message: 'Anda harus login'}})
+    }
+  }
   notification = (message) => this.setState({notification: {status: true, message: message}})
 
   render () {
-    const { productDetail, notification } = this.state
+    console.log('render')
+    const { productDetail, notification, token } = this.state
     const { detail } = productDetail
     const navbar = {
       searchBoox: false,
       path: '/',
-      textPath: 'Produk Detail'
+      textPath: 'Produk Detail',
+      moreButton: true,
+      productId: productDetail.isFound && detail.product.id
     }
-
     return (
       <Content>
         <Navbar params={navbar} />
@@ -88,6 +117,7 @@ class ProductDetail extends Component {
             productDetail.isFound &&
             <Content>
               <ProductDetailItem
+                token={token}
                 images={detail.images}
                 product={detail.product}
                 rating={detail.rating}
@@ -99,7 +129,8 @@ class ProductDetail extends Component {
                 product={detail.product}
                 reviews={detail.reviews} />
               <ProductDetailServices
-                product={detail.product} />
+                product={detail.product}
+                storeData={detail.store} />
               <ProductDetailRule
                 store={detail.store} />
               <ProductDetailSuggestions
