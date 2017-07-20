@@ -23,11 +23,13 @@ import * as locationActions from '../actions/location'
 import * as brandActions from '../actions/brand'
 // services
 import { Status } from '../Services/Status'
+import GET_TOKEN from '../Services/GetToken'
 
 class MyProduct extends Component {
   constructor (props) {
     super(props)
     this.state = ({
+      token: null,
       query: {
         brands: props.query.brands || null,
         other: props.query.other || null,
@@ -37,7 +39,10 @@ class MyProduct extends Component {
         sort: props.query.sort || null,
         id: props.query.id || null
       },
-      limit: 10,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       hasMoreItems: true,
       productBySearch: props.productBySearch || null,
       categories: props.subCategory || [],
@@ -49,11 +54,13 @@ class MyProduct extends Component {
       filterActive: false,
       viewActive: 'list',
       selectedSort: null,
+      fetching: false,
       notification: {
         status: false,
         message: 'Error, default message.'
       }
     })
+    this.wishlistId = null
     this.titleNavbar = this.createTitleNavbar(this.state.sort)
     this.params = {}
   }
@@ -86,15 +93,32 @@ class MyProduct extends Component {
     this.setState({ viewActive })
   }
 
-  loadMore () {
+  async loadMore () {
     console.log('loadMore()')
-    // const { limit } = this.state
-    // this.params.limit = limit + 10
-    // this.props.dispatch(productActions.listProductBySearch(this.params))
+    // !this.props.productBySearch.isLoading &&
+    // console.log(this.props.productBySearch)
+    // const { pagination } = this.state
+    // pagination.limit +=10
+    // this.params.limit = pagination.limit
+    // this.params.page = pagination.page
+    // await this.props.dispatch(productActions.listProductBySearch(this.params))
+    // this.setState({ pagination })
   }
 
   async wishlistPress (id) {
-    await this.props.dispatch(productActions.addToWishlist({ id })) && this.props.dispatch(productActions.listProductBySearch(this.params))
+    let { productBySearch, token } = this.state
+    if (token) {
+      productBySearch.products.map((myProduct) => {
+        if (myProduct.product.id === id) {
+          (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
+          myProduct.product.is_liked = !myProduct.product.is_liked
+        }
+      })
+      await this.props.dispatch(productActions.addToWishlist({ id }))
+      this.setState({ productBySearch })
+    } else {
+      this.setState({notification: {status: true, message: 'Anda harus login'}})
+    }
   }
 
   sortSelected (selectedSort) {
@@ -143,6 +167,7 @@ class MyProduct extends Component {
     if (provinces.length < 1) await this.props.dispatch(locationActions.getProvince())
     // fetch brands
     if (myBrands.brands.length < 1) await this.props.dispatch(brandActions.getBrand())
+    this.setState({ token: await GET_TOKEN.getToken() })
   }
 
   async filterRealization (filters) {
@@ -191,7 +216,7 @@ class MyProduct extends Component {
     this.setState({ filterActive: false })
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const { productBySearch, subCategory, expeditions, provinces, brands, districts, addWishlist } = nextProps
     const { q } = nextProps.query
     let { notification, categories } = this.state
@@ -304,7 +329,12 @@ class MyProduct extends Component {
     if (!addWishlist.isLoading) {
       switch (addWishlist.status) {
         case Status.SUCCESS :
-          // this.props.dispatch(productActions.listProductBySearch(this.params))
+          if (addWishlist.isFound) {
+            if (this.wishlistId && addWishlist.wishlist.id === this.wishlistId) {
+              this.wishlistId = null
+              await this.props.dispatch(productActions.listProductBySearch(this.params))
+            }
+          }
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -363,7 +393,6 @@ class MyProduct extends Component {
   render () {
     const { q, categories, expeditions, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
     const { products } = this.state.productBySearch
-
     const navbar = {
       searchBoox: false,
       path: '/',
@@ -373,6 +402,27 @@ class MyProduct extends Component {
     const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
 
+    // let data = [
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>),
+    //   (<p style={{marginTop: 30}}>1</p>)
+    // ]
     return (
       <Content>
         <Navbar params={navbar} />
@@ -383,13 +433,13 @@ class MyProduct extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
 
-        <Section style={{marginBottom: '45px'}}>
+        <Section style={{marginBottom: '45px', overflowAnchor: 'none'}}>
           <InfiniteScroll
             pageStart={0}
             loadMore={() => this.loadMore()}
             hasMore={this.state.hasMoreItems}
-            loader={loader} >
-            { listProducts }
+            loader={this.state.fetching ? loader : null} >
+            {listProducts}
           </InfiniteScroll>
         </Section>
         <TabbarCategories
