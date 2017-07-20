@@ -179,9 +179,35 @@ function favoriteStore (action) {
   })
 }
 
+function addToBucket (action) {
+  let axios = authApiKomuto()
+  return axios.post('buckets', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 function countBucket (action) {
   let axios = authApiKomuto()
   return axios.get('buckets/count', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function getBucket (action) {
+  let axios = authApiKomuto()
+  return axios.get('users/bucket', {
     ...action
   })
   .then(function (data) {
@@ -202,6 +228,32 @@ function getPhone (action) {
   })
   .catch(function (err) {
     return (err)
+  })
+}
+
+function updatePhone (action) {
+  let axios = authApiKomuto()
+  return axios.put('accounts/phone', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function getDiscussion (action) {
+  let axios = authApiKomuto()
+  return axios.get('users/discussions', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
   })
 }
 
@@ -227,7 +279,11 @@ export {
   getBalance,
   updateProfile,
   favoriteStore,
+  addToBucket,
   countBucket,
+  getBucket,
   getProfileManage,
-  getPhone
+  getPhone,
+  updatePhone,
+  getDiscussion
 }

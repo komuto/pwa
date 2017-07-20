@@ -1,4 +1,4 @@
-import { publicApiKomuto, authApiKomuto } from './api'
+import { publicApiKomuto, authApiKomuto, publicApi } from './api'
 
 function getExpedition (action) {
   let axios = publicApiKomuto()
@@ -16,6 +16,19 @@ function getExpedition (action) {
 function getServices (action) {
   let axios = publicApiKomuto()
   return axios.get('expeditions/services', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function estimatedShipping (action) {
+  let axios = publicApi()
+  return axios.get('expeditions/cost?product_id=' + action.id + '&origin_ro_id=' + action.origin_id + '&destination_ro_id=' + action.destination_id + '&weight=' + action.weight, {
     ...action
   })
   .then(function (data) {
@@ -57,6 +70,7 @@ function updateExpedition (action) {
 export {
   getExpedition,
   getServices,
+  estimatedShipping,
   getShippingCharge,
   updateExpedition
 }

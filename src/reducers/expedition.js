@@ -86,6 +86,37 @@ function expeditionServices (state = initExpedition, action) {
   }
 }
 
+function estimatedShipping (state = initCharge, action) {
+  switch (action.type) {
+    case expeditionActions.ESTIMATED_SHIPPING_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case expeditionActions.ESTIMATED_SHIPPING_SUCCESS:
+      return {
+        ...state,
+        charges: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case expeditionActions.ESTIMATED_SHIPPING_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 function shippingCharge (state = initCharge, action) {
   switch (action.type) {
     case expeditionActions.GET_SHIPPINGCHARGE_REQUEST:
@@ -150,6 +181,7 @@ function updateExpediton (state = initUpdate, action) {
 export {
   expedition,
   expeditionServices,
+  estimatedShipping,
   shippingCharge,
   updateExpediton
 }

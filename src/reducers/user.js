@@ -12,6 +12,15 @@ const initUser = {
   isFound: false
 }
 
+const initDiscussion = {
+  discussions: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isOnline: true,
+  isFound: false
+}
+
 const initUpdate = {
   message: '',
   status: 0,
@@ -22,6 +31,15 @@ const initUpdate = {
 
 const initBucket = {
   count: 0,
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initGetBucket = {
+  buckets: [],
   message: '',
   status: 0,
   isLoading: false,
@@ -526,6 +544,36 @@ function favoriteStore (state = initUpdate, action) {
   }
 }
 
+function addToBucket (state = initUpdate, action) {
+  switch (action.type) {
+    case actions.ADDTO_BUCKET_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.ADDTO_BUCKET_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.ADDTO_BUCKET_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 function countBucket (state = initBucket, action) {
   switch (action.type) {
     case actions.COUNT_BUCKET_REQUEST:
@@ -588,6 +636,98 @@ function getPhone (state = initGetPhone, action) {
   }
 }
 
+function getBucket (state = initGetBucket, action) {
+  switch (action.type) {
+    case actions.GET_BUCKET_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.GET_BUCKET_SUCCESS:
+      return {
+        ...state,
+        bukcets: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.GET_BUCKET_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function updatePhone (state = initUpdate, action) {
+  switch (action.type) {
+    case actions.UPDATE_PHONE_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.UPDATE_PHONE_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.UPDATE_PHONE_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function getDiscussion (state = initDiscussion, action) {
+  switch (action.type) {
+    case actions.GET_USERDISCUSSION_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.GET_USERDISCUSSION_SUCCESS:
+      return {
+        ...state,
+        discussions: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: true,
+        isOnline: true
+      }
+    case actions.GET_USERDISCUSSION_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isFound: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
 export {
   auth,
   verify,
@@ -601,6 +741,10 @@ export {
   getBalance,
   updateProfile,
   favoriteStore,
+  addToBucket,
   countBucket,
-  getPhone
+  getBucket,
+  getPhone,
+  updatePhone,
+  getDiscussion
 }

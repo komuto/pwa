@@ -15,15 +15,15 @@ function getStores (action) {
 
 function createStore (action) {
   let axios = authApiKomuto()
-  // store is filled with default array with 4 element e.g. stores = ['Toko Makmur', 'Maju Terus', 'Toko yang asik', 'https://dimana']
+  // store is filled with default array with 4 element e.g. store = ['Toko Makmur', 'Maju Terus', 'Toko yang asik', 'https://dimana']
   // first element is store name, second slogan, third description, fourth logo url
   let storeTemp = {
-    name: action.stores[0],
-    slogan: action.stores[1],
-    description: action.stores[2],
-    logo: action.stores[3]
+    name: action.store[0],
+    slogan: action.store[1],
+    description: action.store[2],
+    logo: action.store[3]
   }
-  action.stores = storeTemp
+  action.store = storeTemp
   // user is filled with default array with 2 element e.g. user = ['10213231', 'Mother Diane']
   // first element represent id_number, second mother_name
   let userTemp = {

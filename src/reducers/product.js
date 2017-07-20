@@ -1,7 +1,16 @@
 import * as productActions from '../actions/product'
 
 const initDetailProduct = {
-  detail: [],
+  detail: {},
+  message: '',
+  status: '',
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initNewDiscussion = {
+  discussion: {},
   message: '',
   status: '',
   isLoading: false,
@@ -18,7 +27,17 @@ const initProduct = {
   isFound: false
 }
 
+const initDiscussion = {
+  discussions: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 const initAddWishlist = {
+  wishlist: [],
   message: '',
   status: 0,
   isLoading: false,
@@ -131,6 +150,7 @@ function addToWishlist (state = initAddWishlist, action) {
     case productActions.ADDTO_WISHLIST_SUCCESS:
       return {
         ...state,
+        wishlist: action.data,
         message: action.message,
         status: action.code,
         isOnline: true,
@@ -155,9 +175,76 @@ function addToWishlist (state = initAddWishlist, action) {
   }
 }
 
+function getDiscussion (state = initDiscussion, action) {
+  switch (action.type) {
+    case productActions.GET_DISCUSSION_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case productActions.GET_DISCUSSION_SUCCESS:
+      return {
+        ...state,
+        discussions: action.data,
+        message: action.message,
+        status: action.code,
+        isOnline: true,
+        isLoading: false,
+        isFound: true
+      }
+    case productActions.GET_DISCUSSION_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    default:
+      return state
+  }
+}
+
+function newDiscussion (state = initNewDiscussion, action) {
+  switch (action.type) {
+    case productActions.NEW_DISCUSSION_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        message: '',
+        status: 0,
+        isFound: false,
+        isOnline: true
+      }
+    case productActions.NEW_DISCUSSION_SUCCESS:
+      return {
+        ...state,
+        discussion: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case productActions.NEW_DISCUSSION_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 export {
     getProduct,
     productByCategory,
     productBySearch,
-    addToWishlist
+    addToWishlist,
+    getDiscussion,
+    newDiscussion
 }

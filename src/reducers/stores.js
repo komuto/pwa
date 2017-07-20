@@ -1,7 +1,7 @@
 import * as storeActions from '../actions/stores'
 
 const initStore = {
-  store: [],
+  store: {},
   message: '',
   status: 0,
   isLoading: false,

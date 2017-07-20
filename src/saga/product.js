@@ -37,8 +37,25 @@ function * addToWishlist (action) {
     const {data} = yield productApi.addToWishlist(action)
     yield put({ type: productActions.ADDTO_WISHLIST_SUCCESS, ...data })
   } catch (e) {
-    console.log(e)
     yield errorHandling(productActions.ADDTO_WISHLIST_FAILURE, e)
+  }
+}
+
+function * getDiscussion (action) {
+  try {
+    const {data} = yield productApi.getDiscussion(action)
+    yield put({ type: productActions.GET_DISCUSSION_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(productActions.GET_DISCUSSION_FAILURE, e)
+  }
+}
+
+function * newDiscussion (action) {
+  try {
+    const {data} = yield productApi.newDiscussion(action)
+    yield put({ type: productActions.NEW_DISCUSSION_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(productActions.NEW_DISCUSSION_FAILURE, e)
   }
 }
 
@@ -46,5 +63,7 @@ export {
     getProduct,
     productByCategory,
     productBySearch,
-    addToWishlist
+    addToWishlist,
+    getDiscussion,
+    newDiscussion
 }

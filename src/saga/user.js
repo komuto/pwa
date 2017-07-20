@@ -1,7 +1,8 @@
+
+import localforage from 'localforage'
 import { put } from 'redux-saga/effects'
 import * as userActions from '../actions/user'
 import * as userApi from '../api/user'
-import localforage from 'localforage'
 import { errorHandling } from '../config'
 
 function * register (action) {
@@ -120,6 +121,15 @@ function * getPhone (action) {
   }
 }
 
+function * updatePhone (action) {
+  try {
+    const {data} = yield userApi.updatePhone(action)
+    yield put({ type: userActions.UPDATE_PHONE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.UPDATE_PHONE_FAILURE, e)
+  }
+}
+
 function * updateProfile (action) {
   // console.log(action)
   try {
@@ -151,12 +161,39 @@ function * favoriteStore (action) {
   }
 }
 
+function * addToBucket (action) {
+  try {
+    const {data} = yield userApi.addToBucket(action)
+    yield put({ type: userActions.ADDTO_BUCKET_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.ADDTO_BUCKET_FAILURE, e)
+  }
+}
+
 function * countBucket (action) {
   try {
     const {data} = yield userApi.countBucket(action)
     yield put({ type: userActions.COUNT_BUCKET_SUCCESS, ...data })
   } catch (e) {
     yield errorHandling(userActions.COUNT_BUCKET_FAILURE, e)
+  }
+}
+
+function * getBucket (action) {
+  try {
+    const {data} = yield userApi.getBucket(action)
+    yield put({ type: userActions.GET_BUCKET_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.GET_BUCKET_FAILURE, e)
+  }
+}
+
+function * getDiscussion (action) {
+  try {
+    const {data} = yield userApi.getDiscussion(action)
+    yield put({ type: userActions.GET_USERDISCUSSION_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.GET_USERDISCUSSION_FAILURE, e)
   }
 }
 
@@ -174,7 +211,11 @@ export {
   getProfileManage,
   getBalance,
   getPhone,
+  updatePhone,
   updateProfile,
   favoriteStore,
-  countBucket
+  addToBucket,
+  countBucket,
+  getBucket,
+  getDiscussion
 }

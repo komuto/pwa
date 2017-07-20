@@ -21,12 +21,21 @@ function * getServices (action) {
   }
 }
 
+function * estimatedCharge (action) {
+  try {
+    const {data} = yield expeditionApi.estimatedShipping(action)
+    yield put({ type: expeditionActions.ESTIMATED_SHIPPING_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(expeditionActions.ESTIMATED_SHIPPING_FAILURE, e)
+  }
+}
+
 function * getShippingCharge (action) {
   try {
     const {data} = yield expeditionApi.getShippingCharge(action)
     yield put({ type: expeditionActions.GET_SHIPPINGCHARGE_SUCCESS, ...data })
   } catch (e) {
-    console.log(e)
     yield errorHandling(expeditionActions.GET_SHIPPINGCHARGE_FAILURE, e)
   }
 }
@@ -44,6 +53,7 @@ function * updateExpedition (action) {
 export {
   getExpedition,
   getServices,
+  estimatedCharge,
   getShippingCharge,
   updateExpedition
 }
