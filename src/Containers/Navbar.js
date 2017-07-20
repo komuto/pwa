@@ -2,13 +2,14 @@ import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
 // containers
-import Search from './Search'
+// import Search from './Search'
 
 export class Navbar extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-      activeSearch: false
+      activeSearch: false,
+      activeMoreOptions: false
     }
   }
 
@@ -20,9 +21,14 @@ export class Navbar extends PureComponent {
     this.setState({ activeSearch })
   }
 
+  moreButtonPress () {
+    this.setState({ activeMoreOptions: !this.state.activeMoreOptions })
+  }
+
   render () {
-    const { searchBoox, path, textPath, searchActive } = this.props.params
-    const { activeSearch } = this.state
+    const { searchBoox, path, textPath, searchActive, moreButton, productId } = this.props.params
+    // const { activeSearch, activeMoreOptions } = this.state
+    const { activeMoreOptions } = this.state
     return (
       <div>
         <nav className={`level header is-fullwidth ${searchActive ? 'bg-white' : ''}`}>
@@ -49,11 +55,20 @@ export class Navbar extends PureComponent {
             </div>
             : null
           }
+          {
+            moreButton &&
+            <div className='button-search js-option' onClick={() => this.moreButtonPress()}>
+              <span className='icon-dots' />
+            </div>
+          }
         </nav>
-        <Search
+        {/* <Search
           activeSearch={(params) => this.activeSearch(params)}
           active={activeSearch}
-          backPress={() => this.backPress()} />
+          backPress={() => this.backPress()} /> */}
+        <MoreOptions
+          productId={productId}
+          active={activeMoreOptions} />
       </div>
     )
   }
@@ -81,7 +96,7 @@ export class SearchBoox extends PureComponent {
 
   render () {
     const { isSticky, style } = this.props
-    const { activeSearch } = this.state
+    // const { activeSearch } = this.state
     return (
       <div>
         <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
@@ -92,10 +107,26 @@ export class SearchBoox extends PureComponent {
             </span>
           </p>
         </div>
-        <Search
+        {/* <Search
           activeSearch={(params) => this.activeSearch(params)}
           active={activeSearch}
-          backPress={() => this.backPress()} />
+          backPress={() => this.backPress()} /> */}
+      </div>
+    )
+  }
+}
+
+export class MoreOptions extends PureComponent {
+  render () {
+    const { active, productId } = this.props
+    return (
+      <div className='sort-option' style={{ display: active && 'block' }}>
+        <div className='sort-list'>
+          <ul className='other-option'>
+            <li><a><span className='icon-share' />Bagikan</a></li>
+            <li onClick={() => Router.push(`/report?id=${productId}`)}><a><span className='icon-warning' />Laporkan Barang</a></li>
+          </ul>
+        </div>
       </div>
     )
   }
