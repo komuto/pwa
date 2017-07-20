@@ -36,16 +36,11 @@ class ProductDetail extends Component {
 
   async componentDidMount () {
     const { id, productDetail } = this.state
-    if (!productDetail.isFound) {
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
-    } else if (productDetail.isFound && productDetail.detail.product.id !== id) {
+    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
     }
-
-    const token = await GET_TOKEN.getToken()
-    this.setState({ token })
+    this.setState({ token: await GET_TOKEN.getToken() })
   }
 
   async componentWillReceiveProps (nextProps) {
