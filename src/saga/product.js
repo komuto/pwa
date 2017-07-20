@@ -86,6 +86,16 @@ function * getComment (action) {
   }
 }
 
+function * reportProduct (action) {
+  try {
+    const {data} = yield productApi.reportProduct(action)
+    yield put({ type: productActions.REPORT_PRODUCT_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(productActions.REPORT_PRODUCT_FAILURE, e)
+  }
+}
+
 export {
     getProduct,
     productByCategory,
@@ -95,5 +105,6 @@ export {
     getDiscussion,
     newDiscussion,
     newComment,
-    getComment
+    getComment,
+    reportProduct
 }

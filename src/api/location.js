@@ -15,7 +15,13 @@ function getProvince (action) {
 
 function getDistrict (action) {
   let axios = publicApiKomuto()
-  return axios.get('locations/districts?province_id=' + action.province_id, {
+  let params
+  if (action.province_id === undefined) {
+    params = ''
+  } else {
+    params = '?province_id=' + action.province_id
+  }
+  return axios.get('locations/districts' + params, {
     ...action
   })
   .then(function (data) {
@@ -28,8 +34,13 @@ function getDistrict (action) {
 
 function getSubDistrict (action) {
   let axios = publicApiKomuto()
-  console.log(action.district_id)
-  return axios.get('locations/sub-districts?district_id=' + action.district_id, {
+  let params
+  if (action.district_id === undefined) {
+    params = ''
+  } else {
+    params = '?district_id=' + action.district_id
+  }
+  return axios.get('locations/sub-districts' + params, {
     ...action
   })
   .then(function (data) {
@@ -42,7 +53,13 @@ function getSubDistrict (action) {
 
 function getVillage (action) {
   let axios = publicApiKomuto()
-  return axios.get('locations/villages?sub_district_id=' + action.sub_district_id, {
+  let params
+  if (action.sub_district_id === undefined) {
+    params = ''
+  } else {
+    params = '?sub_district_id=' + action.sub_district_id
+  }
+  return axios.get('locations/villages' + params, {
     ...action
   })
   .then(function (data) {

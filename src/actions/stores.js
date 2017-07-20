@@ -22,6 +22,15 @@ export const PHOTO_UPLOAD_REQUEST = 'PHOTO_UPLOAD_REQUEST'
 export const PHOTO_UPLOAD_SUCCESS = 'PHOTO_UPLOAD_SUCCESS'
 export const PHOTO_UPLOAD_FAILURE = 'PHOTO_UPLOAD_FAILURE'
 
+export const VERIFY_STORE_REQUEST = 'VERIFY_STORE_REQUEST'
+export const VERIFY_STORE_SUCCESS = 'VERIFY_STORE_SUCCESS'
+export const VERIFY_STORE_FAILURE = 'VERIFY_STORE_FAILURE'
+
+export const MESSAGE_STORE_REQUEST = 'MESSAGE_STORE_REQUEST'
+export const MESSAGE_STORE_SUCCESS = 'MESSAGE_STORE_SUCCESS'
+export const MESSAGE_STORE_FAILURE = 'MESSAGE_STORE_FAILURE'
+export const MESSAGE_STORE_RESET = 'MESSAGE_STORE_RESET'
+
 function getStores (params) {
   return {
     type: GET_STORE_REQUEST,
@@ -62,11 +71,35 @@ function storeUpdateExpedition (params) {
   }
 }
 
+function verifyStore (params) {
+  return {
+    type: VERIFY_STORE_REQUEST,
+    ...params
+  }
+}
+
+function sendMessageStore (params) {
+  return {
+    type: MESSAGE_STORE_REQUEST,
+    ...params
+  }
+}
+
+function sendMessageStoreReset () {
+  return {
+    type: MESSAGE_STORE_RESET
+  }
+}
+
 export {
   getStores,
   createStore,
   photoUpload,
   storeExpeditionList,
   storeExpeditionManage,
-  storeUpdateExpedition
+  storeUpdateExpedition,
+  verifyStore,
+  sendMessageStore,
+  sendMessageStoreReset
+
 }

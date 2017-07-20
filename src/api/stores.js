@@ -107,11 +107,39 @@ function storeUpdateExpedition (action) {
   })
 }
 
+function verifyStore (action) {
+  let axios = authApiKomuto()
+  return axios.post('users/store/verify', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function sendMessageStore (action) {
+  let axios = authApiKomuto()
+  return axios.post('stores/' + action.id + '/message', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
     getStores,
     createStore,
     photoUpload,
     storeExpeditionList,
     storeExpeditionManage,
-    storeUpdateExpedition
+    storeUpdateExpedition,
+    verifyStore,
+    sendMessageStore
 }

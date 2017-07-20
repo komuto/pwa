@@ -64,6 +64,7 @@ const komutoApps = storage.reducer(combineReducers({
   newDiscussion: productReducers.newDiscussion,
   comments: productReducers.getComment,
   newComment: productReducers.newComment,
+  report: productReducers.reportProduct,
   review: reviewReducers.getReview,
   productReview: reviewReducers.listReviewPagination,
   addReview: reviewReducers.addReview,
@@ -72,6 +73,8 @@ const komutoApps = storage.reducer(combineReducers({
   createStore: storeReducers.createStore,
   expeditionListStore: storeReducers.expeditionListStore,
   expeditionStore: storeReducers.expeditionStore,
+  verifyStore: storeReducers.verifyStore,
+  sendMessageStore: storeReducers.sendMessageStore,
   createCatalog: catalogReducers.createCatalog,
   updateCatalog: catalogReducers.updateCatalog,
   getCatalog: catalogReducers.getDetailCatalog,
@@ -79,7 +82,8 @@ const komutoApps = storage.reducer(combineReducers({
   deleteCatalog: catalogReducers.deleteCatalog,
   bank: bankReducers.getBank,
   banks: bankReducers.listBank,
-  address: addressReducers.address
+  address: addressReducers.address,
+  primaryAddress: addressReducers.primaryAddress
 }))
 
 export default komutoApps

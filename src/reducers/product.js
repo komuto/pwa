@@ -63,6 +63,15 @@ const initAddWishlist = {
   isOnline: true
 }
 
+const initReport = {
+  report: {},
+  message: '',
+  status: 0,
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 function getProduct (state = initDetailProduct, action) {
   switch (action.type) {
     case productActions.GET_PRODUCT_REQUEST:
@@ -380,6 +389,42 @@ function newComment (state = initNewComment, action) {
   }
 }
 
+function reportProduct (state = initReport, action) {
+  console.log(action.type)
+  switch (action.type) {
+    case productActions.REPORT_PRODUCT_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        message: '',
+        status: 0,
+        isFound: false,
+        isOnline: true
+      }
+    case productActions.REPORT_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        report: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case productActions.REPORT_PRODUCT_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 export {
     getProduct,
     productByCategory,
@@ -389,5 +434,6 @@ export {
     getDiscussion,
     newDiscussion,
     getComment,
-    newComment
+    newComment,
+    reportProduct
 }

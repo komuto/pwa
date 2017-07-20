@@ -39,6 +39,10 @@ export const NEW_COMMENT_SUCCESS = 'NEW_COMMENT_SUCCESS'
 export const NEW_COMMENT_FAILURE = 'NEW_COMMENT_FAILURE'
 export const NEW_COMMENT_RESET = 'NEW_COMMENT_RESET'
 
+export const REPORT_PRODUCT_REQUEST = 'REPORT_PRODUCT_REQUEST'
+export const REPORT_PRODUCT_SUCCESS = 'REPORT_PRODUCT_SUCCESS'
+export const REPORT_PRODUCT_FAILURE = 'REPORT_PRODUCT_FAILURE'
+
 function getProduct (params) {
   return {
     type: GET_PRODUCT_REQUEST,
@@ -132,6 +136,13 @@ function resetNewComment () {
   }
 }
 
+function reportProduct (params) {
+  return {
+    type: REPORT_PRODUCT_REQUEST,
+    ...params
+  }
+}
+
 export {
     getProduct,
     resetDetail,
@@ -146,5 +157,6 @@ export {
     resetDiscussion,
     getComment,
     newComment,
-    resetNewComment
+    resetNewComment,
+    reportProduct
 }

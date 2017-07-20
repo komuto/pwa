@@ -67,10 +67,24 @@ function getListAddress (action) {
   })
 }
 
+function getPrimaryAddress (action) {
+  let axios = authApiKomuto()
+  return axios.get('users/address', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
   addAddress,
   updateAddress,
   deleteAddress,
   getAddressDetail,
-  getListAddress
+  getListAddress,
+  getPrimaryAddress
 }

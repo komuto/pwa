@@ -48,10 +48,30 @@ function * photoUpload (action) {
   }
 }
 
+function * verifyStore (action) {
+  try {
+    const {data} = yield storeApi.verifyStore(action)
+    yield put({ type: storeActions.VERIFY_STORE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.VERIFY_STORE_FAILURE, e)
+  }
+}
+
+function * sendMessageStore (action) {
+  try {
+    const {data} = yield storeApi.sendMessageStore(action)
+    yield put({ type: storeActions.MESSAGE_STORE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(storeActions.MESSAGE_STORE_FAILURE, e)
+  }
+}
+
 export {
   getStores,
   createStore,
   photoUpload,
   storeExpeditionList,
-  storeExpeditionManage
+  storeExpeditionManage,
+  verifyStore,
+  sendMessageStore
 }

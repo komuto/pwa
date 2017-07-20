@@ -143,6 +143,38 @@ function address (state = initAddress, action) {
   }
 }
 
+function primaryAddress (state = initAddress, action) {
+  switch (action.type) {
+    case actions.GET_PRIMARYADDRESS_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case actions.GET_PRIMARYADDRESS_SUCCESS:
+      return {
+        ...state,
+        address: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case actions.GET_PRIMARYADDRESS_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
 export {
-  address
+  address,
+  primaryAddress
 }

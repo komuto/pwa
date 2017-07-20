@@ -18,6 +18,10 @@ export const GET_LISTADDRESS_REQUEST = 'GET_LISTADDRESS_REQUEST'
 export const GET_LISTADDRESS_SUCCESS = 'GET_LISTADDRESS_SUCCESS'
 export const GET_LISTADDRESS_FAILURE = 'GET_LISTADDRESS_FAILURE'
 
+export const GET_PRIMARYADDRESS_REQUEST = 'GET_PRIMARYADDRESS_REQUEST'
+export const GET_PRIMARYADDRESS_SUCCESS = 'GET_PRIMARYADDRESS_SUCCESS'
+export const GET_PRIMARYADDRESS_FAILURE = 'GET_PRIMARYADDRESS_FAILURE'
+
 export const RESET_STATUS_ADDRESS = 'RESET_STATUS_ADDRESS'
 
 function addAddress (params) {
@@ -60,11 +64,18 @@ function resetStatusAddress () {
   }
 }
 
+function getPrimaryAddress () {
+  return {
+    type: GET_PRIMARYADDRESS_REQUEST
+  }
+}
+
 export {
   addAddress,
   updateAddress,
   deleteAddress,
   getAddressDetail,
   getListAddress,
-  resetStatusAddress
+  resetStatusAddress,
+  getPrimaryAddress
 }

@@ -348,6 +348,19 @@ function newComment (action) {
   })
 }
 
+function reportProduct (action) {
+  let axios = authApiKomuto()
+  return axios.post('products/' + action.id + '/report', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 export {
     getProduct,
     productBy,
@@ -356,5 +369,6 @@ export {
     getDiscussion,
     newDiscussion,
     getComment,
-    newComment
+    newComment,
+    reportProduct
 }

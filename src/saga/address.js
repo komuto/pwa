@@ -49,10 +49,21 @@ function * getListAddress (action) {
   }
 }
 
+function * getPrimaryAddress (action) {
+  try {
+    const {data} = yield apis.getPrimaryAddress(action)
+    yield put({ type: actions.GET_PRIMARYADDRESS_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(actions.GET_PRIMARYADDRESS_FAILURE, e)
+  }
+}
+
 export {
     addAddress,
     updateAddress,
     deleteAddress,
     getAddressDetail,
-    getListAddress
+    getListAddress,
+    getPrimaryAddress
 }
