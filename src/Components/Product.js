@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 // import { connect } from 'react-redux'
-import Img from 'react-image'
 import Router from 'next/router'
 import url from 'url'
-// themes
-import Images from '../Themes/Images'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
-// actions
-import * as productActions from '../actions/product'
+// component
+import MyImage from '../Components/MyImage'
 
 class Product extends Component {
   constructor (props) {
@@ -18,27 +15,18 @@ class Product extends Component {
     }
   }
 
-  async wishlistPress (id) {
-    await this.props.dispatch(productActions.addToWishlist({ id }))
-  }
-
-  componentWillReceiveProps (nextProps) {
-    // const { addWishlist } = nextProps
-    // console.log(addWishlist)
-    // !addWishlist.isLoading && this.setState({ wishlistStatus: addWishlist.status })
+  wishlistPress (e, id) {
+    e.stopPropagation()
+    this.props.wishlistPress(id)
   }
 
   render () {
-    const { product, images, store, viewActive, ...props } = this.props
-    const loader = <img src={Images.loading} />
-    const unloader = <img src={Images.loadingFailed} />
+    const { product, images, store, viewActive } = this.props
 
     // set pin
     let pin = null
     if (product.is_discount) pin = <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
     if (product.is_wholesaler) pin = <div className='pin'><span>Grossir</span></div>
-    const thumb = images[0].file
-    // const thumb = 'https://komutodev.aptmi.com/uploads/produk/8011774ba21b8cc99a20583008bc07e43d19bdc1_klepon5.jpg'
     // set real price
     const priceBeforeDiscount = (product.discount > 0) ? <div className='discount'> Rp { RupiahFormat(product.price) } </div> : ''
     // set price - dicsount
@@ -57,11 +45,7 @@ class Product extends Component {
           <div className='media'>
             <div className='media-left'>
               <figure className='image' style={{width: '150px'}}>
-                <Img
-                  src={thumb}
-                  loader={loader}
-                  unloader={unloader}
-                  />
+                <MyImage src={images[0].file} />
                 { pin }
               </figure>
             </div>
@@ -73,7 +57,7 @@ class Product extends Component {
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                   <span className='wish'>
-                    <span className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`} onClick={() => props.wishlistPress(product.id)} />
+                    <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`} onClick={(e) => this.wishlistPress(e, product.id)} />
                     { product.count_like }
                   </span>
                 </div>
@@ -86,10 +70,4 @@ class Product extends Component {
   }
 }
 
-// const mapStateToProps = (state) => {
-//   return {
-//     addWishlist: state.addWishlist
-//   }
-// }
-// export default connect(mapStateToProps)(Product)
 export default Product
