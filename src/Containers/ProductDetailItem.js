@@ -9,50 +9,52 @@ import ProductDetailSlider from './ProductDetailSlider'
 import * as productActions from '../actions/product'
 // services
 import { Status } from '../Services/Status'
+// lib
+import RupiahFormat from '../Lib/RupiahFormat'
 
 class ProductDetailItem extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      wishlistStatus: false
+      wishlistStatus: false,
+      wishlist: props.wishlist || null
     }
   }
 
   async wishlistPress (id) {
-    await this.props.dispatch(productActions.addToWishlist({ id }))
+    (this.props.token) && await this.props.dispatch(productActions.addToWishlist({ id }))
   }
 
   componentWillReceiveProps (nextProps) {
-    const { addWishlist } = nextProps
-    let { wishlistStatus } = this.state
-    if (!addWishlist.isLoading) {
-      switch (addWishlist.status) {
+    const { wishlist } = nextProps
+
+    if (!wishlist.isLoading) {
+      switch (wishlist.status) {
         case Status.SUCCESS :
-          wishlistStatus = true
+          this.setState({ wishlist })
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.props.notification(addWishlist.message)
           break
         default:
           break
       }
-      this.setState({ wishlistStatus })
     }
   }
 
   render () {
     const { product, rating, ...props } = this.props
-    let { wishlistStatus } = this.state
-    let wishlist = product.is_liked || wishlistStatus
+    const { wishlist } = this.state
+    let wishlistStatus = product.is_liked
+    if (wishlist.isFound && (wishlist.wishlist.id === product.id)) wishlistStatus = wishlist.wishlist.is_liked
 
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
         <ProductDetailSlider {...props} />
         <div className='detail-product'>
           <h3>{ product.name }</h3>
-          <span className='price'>Rp { product.price }</span>
-          <span className={`icon-wishlist ${wishlist ? 'wishlisted' : ''}`} onClick={() => this.wishlistPress(product.id)} />
+          <span className='price'>Rp { RupiahFormat(product.price) }</span>
+          <span className={`icon-wishlist ${wishlistStatus ? 'wishlisted' : ''}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>
           <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
@@ -109,7 +111,7 @@ class ProductDetailItem extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    addWishlist: state.addWishlist
+    wishlist: state.addWishlist
   }
 }
 
