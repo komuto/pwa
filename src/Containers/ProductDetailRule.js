@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Router from 'next/router'
 import Img from 'react-image'
 // themes
 import Images from '../Themes/Images'
@@ -42,7 +43,8 @@ class ProductDetailRule extends Component {
                       </div>
                       <div className='media-content'>
                         <div className='content'>
-                          <h4> { store.name }
+                          <h4>
+                            <a onClick={() => Router.push(`/store?id=${store.id}&tab=Produk`)}>{ store.name }</a>
                             <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} />
                           </h4>
                           <div className='detail'>
