@@ -28,14 +28,23 @@ class ProductDetailSuggestions extends Component {
             // set price - dicsount
             const priceAfterDiscount = (product.discount > 0) ? (product.price - (product.price * (product.discount / 100))) : product.price
             return (
-              <div className='columns is-mobile is-multiline custom' key={product.id}>
+              <div
+                className='columns is-mobile is-multiline custom'
+                key={product.id}
+                onClick={() => Router.push(
+                  url.format({
+                    pathname: '/product-detail',
+                    query: {id: product.id}
+                  }),
+                  `/product-detail?id=${product.id}`
+                )}>
                 <div className='column'>
                   <div className='box list'>
                     <div className='media'>
                       <div className='media-left' style={{width: '40%'}}>
                         <figure className='image'>
                           <a>
-                            <MyImage src={store.logo} />
+                            <MyImage src={product.image} />
                           </a>
                           { pin }
                         </figure>
@@ -48,7 +57,11 @@ class ProductDetailSuggestions extends Component {
                             { priceBeforeDiscount }
                             <span className='price' style={{ marginRight: 10 }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                             <span className='wish'>
-                              <span className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`} onClick={() => props.wishlistPress(product.id)} />
+                              <span className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  props.wishlistPress(product.id)
+                                }} />
                               { product.count_like }
                             </span>
                           </div>
