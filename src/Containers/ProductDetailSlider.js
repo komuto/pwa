@@ -16,12 +16,10 @@ class ProductDetailSlider extends Component {
       slidesToScroll: 1,
       variableWidth: true
     }
-    let i = 0
     return <Slider {...settings}>
       {
-              images.map((image) => {
-                i++
-                return <div style={imgStyle} key={i}>
+              images.map((image, index) => {
+                return <div style={imgStyle} key={index}>
                   <MyImage src={image.file} alt='Image' />
                 </div>
               })
