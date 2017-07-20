@@ -10,10 +10,10 @@ class ProductDetailReview extends Component {
       <Section className='section is-paddingless has-shadow'>
         <div className='container is-fluid'>
           <div className='title'>
-            <h3>Ulasan ({reviews.length})</h3>
+            <h3>Ulasan ({ reviews.length })</h3>
           </div>
         </div>
-        { reviews.map((review, index) => { if (index < 2) return <ReviewItem {...review} key={review.id} /> }) }) }
+        { reviews.map((review, index) => { if (index < 2) return <ReviewItem {...review} key={review.id} /> }) }
         <div className='column is-paddingless'>
           <div className='see-all' onClick={() => Router.push(`/reviews?id=${product.id}`)}>
             <span className='link'>Lihat semua ulasan <span className='icon-arrow-right' /></span>
