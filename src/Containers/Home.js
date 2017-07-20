@@ -12,11 +12,13 @@ import Section, { SectionTitle } from '../Components/Section'
 import Notification from '../Components/Notification'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
+import MyImage from '../Components/MyImage'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
 // services
 import { Status } from '../Services/Status'
+import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
 
@@ -26,16 +28,30 @@ class Home extends Component {
     this.state = {
       products: props.products || null,
       category: props.category || null,
+      token: null,
       notification: {
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.wishlistId = null
     this.params = {sort: 'newest', page: 1, limit: 6}
   }
 
   async wishlistPress (id) {
-    await this.props.dispatch(productActions.addToWishlist({ id })) && this.props.dispatch(homeActions.products(this.params))
+    let { products, token } = this.state
+    if (token) {
+      products.products.map((myProduct) => {
+        if (myProduct.product.id === id) {
+          (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
+          myProduct.product.is_liked = !myProduct.product.is_liked
+        }
+      })
+      await this.props.dispatch(productActions.addToWishlist({ id }))
+      this.setState({ products })
+    } else {
+      this.setState({notification: {status: true, message: 'Anda harus login'}})
+    }
   }
 
   async componentDidMount () {
@@ -45,10 +61,26 @@ class Home extends Component {
       NProgress.start()
       await this.props.dispatch(homeActions.products(this.params)) && this.props.dispatch(homeActions.categoryList())
     }
+    this.setState({ token: await GET_TOKEN.getToken() })
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { products, category } = nextProps
+  async componentWillReceiveProps (nextProps) {
+    const { products, addWishlist, category } = nextProps
+    if (!addWishlist.isLoading) {
+      switch (addWishlist.status) {
+        case Status.SUCCESS :
+          (addWishlist.isFound)
+          ? this.setState({ addWishlist })
+          : this.setState({ notification: {status: true, message: 'Gagal menambah wishlist'} })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ notification: {status: true, message: addWishlist.message} })
+          break
+        default:
+          break
+      }
+    }
 
     if (!products.isLoading) {
       switch (products.status) {
@@ -110,7 +142,6 @@ class Home extends Component {
     const { categories } = this.state.category
     const { products } = this.state.products
     const { notification } = this.state
-
     let settings = {
       autoplay: true,
       dots: false,
@@ -156,7 +187,7 @@ class Home extends Component {
                       )
                     }} >
                     <div className='has-text-centered'>
-                      <img src={category.icon} />
+                      <MyImage src={category.icon} />
                       <p> {category.name} </p>
                     </div>
                   </div>
