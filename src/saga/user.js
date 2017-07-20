@@ -25,7 +25,7 @@ function * login (action) {
   }
 }
 
-function * validateToken (action) {
+function* validateToken (action) {
   try {
     const {data} = yield userApi.validateToken(action)
     yield put({ type: userActions.VALIDATE_TOKENFORGETPASSWORD_SUCCESS, ...data })
@@ -34,7 +34,7 @@ function * validateToken (action) {
   }
 }
 
-function * logout (action) {
+function* logout (action) {
   try {
     const data = yield userApi.logout(action)
     yield localforage.removeItem('token')
@@ -48,7 +48,7 @@ function * logout (action) {
   }
 }
 
-function * verify (action) {
+function* verify (action) {
   try {
     const {data} = yield userApi.verification(action)
     yield put({ type: userActions.USER_VERIFICATION_SUCCESS, ...data })
@@ -94,7 +94,7 @@ function * changePassword (action) {
   }
 }
 
-function * getProfile (action) {
+function* getProfile (action) {
   try {
     const {data} = yield userApi.getProfile(action)
     yield put({ type: userActions.GET_PROFILE_SUCCESS, ...data })
@@ -103,7 +103,7 @@ function * getProfile (action) {
   }
 }
 
-function * getProfileManage (action) {
+function* getProfileManage (action) {
   try {
     const {data} = yield userApi.getProfileManage(action)
     yield put({ type: userActions.GET_PROFILEMANAGE_SUCCESS, ...data })
@@ -112,7 +112,7 @@ function * getProfileManage (action) {
   }
 }
 
-function * getPhone (action) {
+function* getPhone (action) {
   try {
     const {data} = yield userApi.getPhone(action)
     yield put({ type: userActions.GET_PHONE_SUCCESS, ...data })
@@ -121,7 +121,7 @@ function * getPhone (action) {
   }
 }
 
-function * updatePhone (action) {
+function* updatePhone (action) {
   try {
     const {data} = yield userApi.updatePhone(action)
     yield put({ type: userActions.UPDATE_PHONE_SUCCESS, ...data })
@@ -197,6 +197,34 @@ function * getDiscussion (action) {
   }
 }
 
+function * listFavoriteStore (action) {
+  try {
+    const {data} = yield userApi.listFavoriteStore(action)
+    yield put({ type: userActions.LIST_FAVORITSTORE_SUCCESS, ...data })
+  } catch (e) {
+    console.log(e)
+    yield errorHandling(userActions.LIST_FAVORITSTORE_FAILURE, e)
+  }
+}
+
+function * sendOTPPhone (action) {
+  try {
+    const {data} = yield userApi.sendOTPPhone(action)
+    yield put({ type: userActions.SEND_PHONEOTP_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.SEND_PHONEOTP_FAILURE, e)
+  }
+}
+
+function * verifyPhone (action) {
+  try {
+    const {data} = yield userApi.verifyPhone(action)
+    yield put({ type: userActions.VERIFIY_PHONE_SUCCESS, ...data })
+  } catch (e) {
+    yield errorHandling(userActions.VERIFIY_PHONE_FAILURE, e)
+  }
+}
+
 export {
   login,
   logout,
@@ -217,5 +245,8 @@ export {
   addToBucket,
   countBucket,
   getBucket,
-  getDiscussion
+  getDiscussion,
+  listFavoriteStore,
+  verifyPhone,
+  sendOTPPhone
 }

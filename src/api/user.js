@@ -257,6 +257,68 @@ function getDiscussion (action) {
   })
 }
 
+function listFavoriteStore (action) {
+  let axios = authApiKomuto()
+  let params = ''
+  let check = [
+    {value: action.page, string: 'page'},
+    {value: action.limit, string: 'limit'}
+  ]
+  let indexCheck = []
+  check.map(function (obj, index) {
+    if (obj.value === undefined || obj.value === '') {
+      // do nothing
+    } else {
+      indexCheck.push(index)
+    }
+  })
+  if (indexCheck.length !== 0) {
+    params = '?'
+  }
+  indexCheck.map(function (obj, index) {
+    if (index !== indexCheck.length - 1) {
+      params = params + check[obj].string + '=' + check[obj].value + '&'
+    } else {
+      params = params + check[obj].string + '=' + check[obj].value
+    }
+  })
+  return axios.get('users/store/favorites' + params, {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function sendOTPPhone (action) {
+  let axios = authApiKomuto()
+  return axios.post('accounts/otp/phone', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
+function verifyPhone (action) {
+  let axios = authApiKomuto()
+  return axios.post('accounts/phone/verify', {
+    ...action
+  })
+  .then(function (data) {
+    return data
+  })
+  .catch(function (err) {
+    throw (err)
+  })
+}
+
 function logout (action) {
   let data = {
     message: 'LOGOUT SUCCESS',
@@ -285,5 +347,8 @@ export {
   getProfileManage,
   getPhone,
   updatePhone,
-  getDiscussion
+  getDiscussion,
+  listFavoriteStore,
+  sendOTPPhone,
+  verifyPhone
 }

@@ -10,6 +10,7 @@ import * as storeActions from '../actions/stores'
 import * as emailActions from '../actions/email'
 import * as addressActions from '../actions/address'
 import * as bankActions from '../actions/bank'
+import * as catalogActions from '../actions/catalog'
 import * as userSaga from './user'
 import * as homeSaga from './home'
 import * as brandSaga from './brand'
@@ -22,6 +23,7 @@ import * as storeSaga from './stores'
 import * as emailSaga from './email'
 import * as addressSaga from './address'
 import * as bankSaga from './bank'
+import * as catalogSaga from './catalog'
 import { takeEvery } from 'redux-saga/effects'
 
 function * dataSaga () {
@@ -45,13 +47,19 @@ function * dataSaga () {
   yield takeEvery(userActions.GET_PHONE_REQUEST, userSaga.getPhone)
   yield takeEvery(userActions.UPDATE_PHONE_REQUEST, userSaga.updatePhone)
   yield takeEvery(userActions.GET_USERDISCUSSION_REQUEST, userSaga.getDiscussion)
+  yield takeEvery(userActions.LIST_FAVORITSTORE_REQUEST, userSaga.listFavoriteStore)
+  yield takeEvery(userActions.SEND_PHONEOTP_REQUEST, userSaga.sendOTPPhone)
+  yield takeEvery(userActions.VERIFIY_PHONE_REQUEST, userSaga.verifyPhone)
   yield takeEvery(emailActions.CHECK_EMAILVALIDITY_REQUEST, emailSaga.checkEmail)
   yield takeEvery(productActions.GET_PRODUCT_REQUEST, productSaga.getProduct)
   yield takeEvery(productActions.LIST_PRODUCTBYCATEGORY_REQUEST, productSaga.productByCategory)
   yield takeEvery(productActions.LIST_PRODUCTBYSEARCH_REQUEST, productSaga.productBySearch)
   yield takeEvery(productActions.ADDTO_WISHLIST_REQUEST, productSaga.addToWishlist)
+  yield takeEvery(productActions.ADDTO_WISHLISTHOME_REQUEST, productSaga.addToWishlistHome)
   yield takeEvery(productActions.GET_DISCUSSION_REQUEST, productSaga.getDiscussion)
   yield takeEvery(productActions.NEW_DISCUSSION_REQUEST, productSaga.newDiscussion)
+  yield takeEvery(productActions.GET_COMMENT_REQUEST, productSaga.getComment)
+  yield takeEvery(productActions.NEW_COMMENT_REQUEST, productSaga.newComment)
   yield takeEvery(homeActions.HOME_PRODUCT_REQUEST, homeSaga.product)
   yield takeEvery(homeActions.SEARCH_PRODUCT_REQUEST, homeSaga.search)
   yield takeEvery(homeActions.FILTER_PRODUCT_REQUEST, homeSaga.filterProduct)
@@ -77,6 +85,11 @@ function * dataSaga () {
   yield takeEvery(storeActions.CREATE_STORE_REQUEST, storeSaga.createStore)
   yield takeEvery(storeActions.PHOTO_UPLOAD_REQUEST, storeSaga.photoUpload)
   yield takeEvery(storeActions.STORE_EXPEDITIONLIST_REQUEST, storeSaga.storeExpeditionList)
+  yield takeEvery(catalogActions.CREATE_CATALOG_REQUEST, catalogSaga.createCatalog)
+  yield takeEvery(catalogActions.GET_CATALOG_REQUEST, catalogSaga.getCatalog)
+  yield takeEvery(catalogActions.GET_LISTCATALOG_REQUEST, catalogSaga.getListCatalog)
+  yield takeEvery(catalogActions.UPDATE_CATALOG_REQUEST, catalogSaga.updateCatalog)
+  yield takeEvery(catalogActions.DELETE_CATALOG_REQUEST, catalogSaga.deleteCatalog)
   yield takeEvery(storeActions.STORE_EXPEDITIONMANAGE_REQUEST, storeSaga.storeExpeditionManage)
   yield takeEvery(addressActions.ADD_ADDRESS_REQUEST, addressSaga.addAddress)
   yield takeEvery(addressActions.UPDATE_ADDRESS_REQUEST, addressSaga.updateAddress)

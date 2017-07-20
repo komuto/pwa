@@ -78,6 +78,18 @@ export const GET_USERDISCUSSION_REQUEST = 'GET_USERDISCUSSION_REQUEST'
 export const GET_USERDISCUSSION_SUCCESS = 'GET_USERDISCUSSION_SUCCESS'
 export const GET_USERDISCUSSION_FAILURE = 'GET_USERDISCUSSION_FAILURE'
 
+export const LIST_FAVORITSTORE_REQUEST = 'LIST_FAVORITSTORE_REQUEST'
+export const LIST_FAVORITSTORE_SUCCESS = 'LIST_FAVORITSTORE_SUCCESS'
+export const LIST_FAVORITSTORE_FAILURE = 'LIST_FAVORITSTORE_FAILURE'
+
+export const SEND_PHONEOTP_REQUEST = 'SEND_PHONEOTP_REQUEST'
+export const SEND_PHONEOTP_SUCCESS = 'SEND_PHONEOTP_SUCCESS'
+export const SEND_PHONEOTP_FAILURE = 'SEND_PHONEOTP_FAILURE'
+
+export const VERIFIY_PHONE_REQUEST = 'VERIFIY_PHONE_REQUEST'
+export const VERIFIY_PHONE_SUCCESS = 'VERIFIY_PHONE_SUCCESS'
+export const VERIFIY_PHONE_FAILURE = 'VERIFIY_PHONE_FAILURE'
+
 export const IS_LOGIN = 'IS_LOGIN'
 
 function register (params) {
@@ -220,6 +232,26 @@ function getDiscussion () {
   }
 }
 
+function listFavorite (params) {
+  return {
+    type: LIST_FAVORITSTORE_REQUEST,
+    ...params
+  }
+}
+
+function sendOTPPhone () {
+  return {
+    type: SEND_PHONEOTP_REQUEST
+  }
+}
+
+function verifyPhone (params) {
+  return {
+    type: VERIFIY_PHONE_REQUEST,
+    ...params
+  }
+}
+
 export {
   register,
   verification,
@@ -241,5 +273,8 @@ export {
   getBucket,
   getPhone,
   updatePhone,
-  getDiscussion
+  getDiscussion,
+  listFavorite,
+  sendOTPPhone,
+  verifyPhone
 }

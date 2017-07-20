@@ -12,6 +12,7 @@ import * as reviewReducers from './review'
 import * as storeReducers from './stores'
 import * as addressReducers from './address'
 import * as bankReducers from './bank'
+import * as catalogReducers from './catalog'
 
 const komutoApps = storage.reducer(combineReducers({
   user: userReducers.auth,
@@ -33,6 +34,9 @@ const komutoApps = storage.reducer(combineReducers({
   phone: userReducers.getPhone,
   updatePhone: userReducers.updatePhone,
   userDiscussion: userReducers.getDiscussion,
+  listFavoriteStore: userReducers.listFavoriteStore,
+  sendOTPPhone: userReducers.sendOTPPhone,
+  verifyPhone: userReducers.verifyPhone,
   products: homeReducers.product,
   searchProduct: homeReducers.searchProduct,
   filterProduct: homeReducers.filterProduct,
@@ -55,8 +59,11 @@ const komutoApps = storage.reducer(combineReducers({
   productByCategory: productReducers.productByCategory,
   productBySearch: productReducers.productBySearch,
   addWishlist: productReducers.addToWishlist,
+  addWishlistHome: productReducers.addToWishlistHome,
   discussions: productReducers.getDiscussion,
   newDiscussion: productReducers.newDiscussion,
+  comments: productReducers.getComment,
+  newComment: productReducers.newComment,
   review: reviewReducers.getReview,
   productReview: reviewReducers.listReviewPagination,
   addReview: reviewReducers.addReview,
@@ -65,6 +72,11 @@ const komutoApps = storage.reducer(combineReducers({
   createStore: storeReducers.createStore,
   expeditionListStore: storeReducers.expeditionListStore,
   expeditionStore: storeReducers.expeditionStore,
+  createCatalog: catalogReducers.createCatalog,
+  updateCatalog: catalogReducers.updateCatalog,
+  getCatalog: catalogReducers.getDetailCatalog,
+  getListCatalog: catalogReducers.getListCatalog,
+  deleteCatalog: catalogReducers.deleteCatalog,
   bank: bankReducers.getBank,
   banks: bankReducers.listBank,
   address: addressReducers.address

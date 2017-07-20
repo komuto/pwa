@@ -18,6 +18,24 @@ const initNewDiscussion = {
   isOnline: true
 }
 
+const initComment = {
+  comments: [],
+  message: '',
+  status: '',
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
+const initNewComment = {
+  comment: {},
+  message: '',
+  status: '',
+  isLoading: false,
+  isFound: false,
+  isOnline: true
+}
+
 const initProduct = {
   products: [],
   message: '',
@@ -74,6 +92,11 @@ function getProduct (state = initDetailProduct, action) {
         isLoading: false,
         isOnline: action.isOnline,
         isFound: false
+      }
+    case productActions.GET_PRODUCT_RESET:
+      return {
+        ...state,
+        status: 0
       }
     default:
       return state
@@ -175,11 +198,47 @@ function addToWishlist (state = initAddWishlist, action) {
   }
 }
 
+function addToWishlistHome (state = initAddWishlist, action) {
+  switch (action.type) {
+    case productActions.ADDTO_WISHLISTHOME_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      }
+    case productActions.ADDTO_WISHLISTHOME_SUCCESS:
+      return {
+        ...state,
+        wishlist: action.data,
+        message: action.message,
+        status: action.code,
+        isOnline: true,
+        isLoading: false,
+        isFound: true
+      }
+    case productActions.ADDTO_WISHLISTHOME_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline
+      }
+    case productActions.ADDTO_WISHLISTHOME_RESET:
+      return {
+        ...state,
+        status: 0
+      }
+    default:
+      return state
+  }
+}
+
 function getDiscussion (state = initDiscussion, action) {
   switch (action.type) {
     case productActions.GET_DISCUSSION_REQUEST:
       return {
         ...state,
+        discussions: [],
         isLoading: true
       }
     case productActions.GET_DISCUSSION_SUCCESS:
@@ -235,6 +294,87 @@ function newDiscussion (state = initNewDiscussion, action) {
         isOnline: action.isOnline,
         isFound: false
       }
+    case productActions.NEW_DISCUSSION_RESET:
+      return {
+        ...state,
+        status: 0
+      }
+    default:
+      return state
+  }
+}
+
+function getComment (state = initComment, action) {
+  switch (action.type) {
+    case productActions.GET_COMMENT_REQUEST:
+      return {
+        ...state,
+        comments: [],
+        isLoading: true,
+        message: '',
+        status: 0,
+        isFound: false,
+        isOnline: true
+      }
+    case productActions.GET_COMMENT_SUCCESS:
+      return {
+        ...state,
+        comments: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case productActions.GET_COMMENT_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    default:
+      return state
+  }
+}
+
+function newComment (state = initNewComment, action) {
+  switch (action.type) {
+    case productActions.NEW_COMMENT_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        message: '',
+        status: 0,
+        isFound: false,
+        isOnline: true
+      }
+    case productActions.NEW_COMMENT_SUCCESS:
+      return {
+        ...state,
+        comment: action.data,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: true,
+        isFound: true
+      }
+    case productActions.NEW_COMMENT_FAILURE:
+      return {
+        ...state,
+        message: action.message,
+        status: action.code,
+        isLoading: false,
+        isOnline: action.isOnline,
+        isFound: false
+      }
+    case productActions.NEW_COMMENT_RESET:
+      return {
+        ...state,
+        status: 0
+      }
     default:
       return state
   }
@@ -245,6 +385,9 @@ export {
     productByCategory,
     productBySearch,
     addToWishlist,
+    addToWishlistHome,
     getDiscussion,
-    newDiscussion
+    newDiscussion,
+    getComment,
+    newComment
 }
