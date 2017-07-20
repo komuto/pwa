@@ -40,7 +40,7 @@ export default (props) => {
         <div className='column is-half'>
           <div className='rating-content is-left'>
             <h3>Kualitas Produk</h3>
-            <span className='value-rate' style={{ display: 'block' }}>{props.quality}</span>
+            <span className='value-rate' style={{ display: 'block' }}>{props.quality.toFixed(1) || 0}</span>
             <MyRating
               readonly
               initialRate={props.quality}
@@ -51,7 +51,7 @@ export default (props) => {
         <div className='column is-half'>
           <div className='rating-content is-left'>
             <h3>Akurasi Produk</h3>
-            <span className='value-rate' style={{ display: 'block' }}>{props.accuracy}</span>
+            <span className='value-rate' style={{ display: 'block' }}>{props.accuracy.toFixed(1) || 0}</span>
             <MyRating
               readonly
               initialRate={props.accuracy}
