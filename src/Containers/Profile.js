@@ -19,7 +19,7 @@ class Profile extends Component {
   constructor (props) {
     super(props)
     this.state = ({
-      user: props.profile.user || null,
+      user: props.user || null,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -31,26 +31,25 @@ class Profile extends Component {
     const { user } = this.state
     const token = await GET_TOKEN.getToken()
 
-    if (token && _.isEmpty(user)) {
+    if (token && _.isEmpty(user.user)) {
       NProgress.start()
       this.props.dispatch(loginAction.getProfile())
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { profile } = nextProps
-
-    if (!profile.isLoading) {
+    const { user } = nextProps
+    if (!user.isLoading) {
       NProgress.done()
-      switch (profile.status) {
+      switch (user.status) {
         case Status.SUCCESS :
-          (profile.isFound)
-          ? this.setState({ user: profile.user })
+          (user.isFound)
+          ? this.setState({ user })
           : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.setState({ notification: {status: true, message: profile.message} })
+          this.setState({ notification: {status: true, message: user.message} })
           break
         default:
           break
@@ -60,6 +59,8 @@ class Profile extends Component {
 
   render () {
     let { user, notification } = this.state
+
+    console.log(user.user)
     return (
       <Content>
         <Notification
@@ -68,8 +69,9 @@ class Profile extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { (!_.isEmpty(user))
-          ? <Account user={user} />
+        {
+          user.isFound
+          ? <Account user={user.user.user} />
           : <AccountLogin />
         }
       </Content>
@@ -79,7 +81,7 @@ class Profile extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    profile: state.profile
+    user: state.profile
   }
 }
 
