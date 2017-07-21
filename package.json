@@ -41,6 +41,7 @@
     "react-infinite-scroller": "^1.0.14",
     "react-rating": "^0.8.0",
     "react-redux": "^5.0.2",
+    "react-scroll": "^1.5.4",
     "react-slick": "^0.14.11",
     "react-sticky": "^6.0.1",
     "redux": "^3.6.0",
