@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Element, Link } from 'react-scroll'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
@@ -478,7 +479,7 @@ const ContentProduk = (props) => {
         myStore.catalogs.map((catalog, index) => {
           let listCatalog = catalog.products.map((product, index) => { return props.itemCatalog(product, index) })
           return (
-            <Section id={catalog.id} className='section is-paddingless' key={index}>
+            <Element name={String(catalog.id)} className={`section is-paddingless`} key={index}>
               <div className='columns is-mobile view-all'>
                 <div className='column'>
                   <p>{ catalog.name }</p><p /></div>
@@ -495,7 +496,7 @@ const ContentProduk = (props) => {
                   </div>
                 </div>
               }
-            </Section>
+            </Element>
           )
         })
       }
@@ -507,7 +508,9 @@ const ContentProduk = (props) => {
           <ul>
             {
               myStore.catalogs.map((catalog, index) => {
-                return <li key={index} onClick={() => props.scrollToElement(catalog.id)}><a>{ catalog.name }</a></li>
+                return <li key={index}>
+                  <Link activeClass='active' className={String(catalog.id)} to={String(catalog.id)} spy smooth duration={500}>{ catalog.name }</Link>
+                </li>
               })
             }
           </ul>
