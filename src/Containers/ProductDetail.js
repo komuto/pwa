@@ -89,7 +89,6 @@ class ProductDetail extends Component {
   notification = (message) => this.setState({notification: {status: true, message: message}})
 
   render () {
-    console.log('render')
     const { productDetail, notification, token } = this.state
     const { detail } = productDetail
     const navbar = {
@@ -132,7 +131,7 @@ class ProductDetail extends Component {
                 products={detail.other_products}
                 store={detail.store}
                 wishlistPress={(id) => this.wishlistPress(id)} />
-              <ProductDetailNavBottom />
+              <ProductDetailNavBottom {...detail.product} />
               </Content>
           }
 
