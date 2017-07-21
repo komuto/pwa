@@ -351,10 +351,10 @@ class MyProduct extends Component {
     return (
       <Content>
         {
-          products.map((myProduct) => {
+          products.map((myProduct, index) => {
             let { images, product, store } = myProduct
             return (
-              <ProductContainers key={product.id}>
+              <ProductContainers key={index}>
                 <Product
                   viewActive={viewActive}
                   images={images}
@@ -373,11 +373,11 @@ class MyProduct extends Component {
     return (
       <ProductContainers>
         {
-          products.map((myProduct) => {
+          products.map((myProduct, index) => {
             const { images, product, store } = myProduct
             return (
               <Product
-                key={product.id}
+                key={index}
                 viewActive={viewActive}
                 images={images}
                 store={store}
@@ -402,27 +402,6 @@ class MyProduct extends Component {
     const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
 
-    // let data = [
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>),
-    //   (<p style={{marginTop: 30}}>1</p>)
-    // ]
     return (
       <Content>
         <Navbar params={navbar} />

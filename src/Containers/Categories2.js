@@ -89,10 +89,10 @@ class Categories2 extends Component {
           <CategoriesWrap>
             {
               categories.sub_categories
-              ? categories.sub_categories.map((category) => {
+              ? categories.sub_categories.map((category, index) => {
                 return <List
                   icon={category.icon}
-                  key={category.id}
+                  key={index}
                   onClick={() => {
                     Router.push(
                       url.format({
