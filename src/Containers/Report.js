@@ -26,7 +26,11 @@ class Report extends Component {
       report: {
         options: ['Salah Kategori', 'Iklan Situs Luar', 'Pornografi', 'Pelanggaran Merk Dagang', 'Lainnya'],
         selected: 'Salah Kategori',
-        description: null
+        description: {
+          value: '',
+          error: false,
+          errorMessage: null
+        }
       },
       notification: {
         status: false,
@@ -45,11 +49,18 @@ class Report extends Component {
 
   reportSelected = (selected) => this.setState({ report: { ...this.state.report, selected } })
 
-  descriptionOnChange = (e) => this.setState({ report: { ...this.state.report, description: e.target.value } })
+  descriptionOnChange (e) {
+    let value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    this.setState({ report: { ...this.state.report, description: {error: false, value, errorMessage: ''} } })
+  }
 
   submitReport () {
     const { id, report } = this.state
-    this.props.dispatch(productActions.reportProduct({ id, report_type: _.indexOf(report.options, report.selected) + 1, description: report.description }))
+    if (report.description.value === '') {
+      this.setState({ report: { ...this.state.report, description: {value: '', error: true, errorMessage: 'Silahkan isi deskripsi laporan anda!'} } })
+    } else {
+      this.props.dispatch(productActions.reportProduct({ id, report_type: _.indexOf(report.options, report.selected) + 1, description: report.description.value }))
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -93,6 +104,10 @@ class Report extends Component {
   render () {
     const { productDetail, report, notifReport, notification } = this.state
     const { product, images } = productDetail.detail
+    const styleError = {
+      color: 'red',
+      borderColor: 'red'
+    }
     return (
       <Content>
         <Notification
@@ -147,9 +162,9 @@ class Report extends Component {
                 </form>
               </div>
               <div className='field'>
-                <label>Laporan Anda</label>
+                <label style={report.description.error ? styleError : {}}> { report.description.error ? report.description.errorMessage : 'Laporan Anda' }</label>
                 <p className='control'>
-                  <textarea onChange={(event) => this.descriptionOnChange(event)} defaultValue={report.description} className='textarea text-discus' placeholder='Tulis Laporan' rows='1' />
+                  <textarea style={report.description.error ? styleError : {}} onChange={(event) => this.descriptionOnChange(event)} value={report.description.value} className='textarea text-discus' placeholder='Tulis Laporan' rows='1' />
                 </p>
                 <p className='control'>
                   <button onClick={() => this.submitReport()} className='button is-primary is-large is-fullwidth js-sort'>Kirimkan Lapporan</button>
@@ -173,6 +188,7 @@ class Report extends Component {
     )
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     productDetail: state.productDetail,
