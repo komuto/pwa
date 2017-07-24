@@ -42,20 +42,9 @@ export class Filter extends Component {
           id: 'harga',
           name: 'Rentang Harga',
           viewCheckAll: false,
-          options: [
-            {
-              id: 'hargaMinimal',
-              name: 'Rp 200.000',
-              label: 'Harga Minimal',
-              selected: false
-            },
-            {
-              id: 'hargaMaksimal',
-              name: 'Rp 500.000',
-              label: 'Harga Maksimal',
-              selected: false
-            }
-          ]
+          customComponent: true,
+          priceMinimum: 0,
+          priceMaximum: 0
         },
         {
           id: 'sendFrom',
@@ -183,6 +172,20 @@ export class Filter extends Component {
     this.setState({ tabs })
   }
 
+  onChangePriceMinimum (e) {
+    let value = e.target.value.replace(/[^0-9 ]/g, '')
+    let { tabs } = this.state
+    tabs.map((tab) => { if (tab.id === 'harga') tab.priceMinimum = value })
+    this.setState({ tabs })
+  }
+
+  onChangePriceMaximun (e) {
+    let value = e.target.value.replace(/[^0-9 ]/g, '')
+    let { tabs } = this.state
+    tabs.map((tab) => { if (tab.id === 'harga') tab.priceMaximum = value })
+    this.setState({ tabs })
+  }
+
   render () {
     const { isShow } = this.props
     const { tabActive, tabs, provinces, districts } = this.state
@@ -196,30 +199,51 @@ export class Filter extends Component {
             </span>
           </label>
           : null
-    const chekAllItems = filterTabResults.customComponent
-          ? <Content>
-            <InputDropdown
-              title='Wilayah / Provinsi'
-              onChange={(event) => this.onChangeProvinces(event)}
-              options={provinces} />
-            <InputDropdown
-              title='Kota'
-              onChange={(event) => this.onChangeDistrict(event)}
-              options={districts} />
-          </Content>
-          : filterTabResults.options.map((option) => {
-            return (
-              <label className='checkbox' key={option.id}>
-                {
-                    option.label ? <span className='label'>{ option.label }</span> : ''
-                  }
-                <span className='sort-text'>{ option.name }</span>
-                <span className={`input-wrapper ${option.selected ? 'checked' : ''}`}>
-                  <input type='checkbox' name={option.id} checked={option.selected ? option.selected : false} onChange={(event) => this.viewCheckItem(event, tabActive)} />
-                </span>
-              </label>
-            )
-          })
+
+    let chekAllItems = null
+    if (filterTabResults.customComponent && filterTabResults.id === 'sendFrom') {
+      chekAllItems = <Content>
+        <InputDropdown
+          title='Wilayah / Provinsi'
+          onChange={(event) => this.onChangeProvinces(event)}
+          options={provinces} />
+        <InputDropdown
+          title='Kota'
+          onChange={(event) => this.onChangeDistrict(event)}
+          options={districts} />
+      </Content>
+    } else if (filterTabResults.customComponent && filterTabResults.id === 'harga') {
+      chekAllItems = <Content>
+        <label className='checkbox'>
+          <span className='label'>Harga Minimal</span>
+          <div className='filter-price'>
+            <span className='currency'>Rp</span>
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} />
+          </div>
+        </label>
+        <label className='checkbox'>
+          <span className='label'>Harga Maksimal</span>
+          <div className='filter-price'>
+            <span className='currency'>Rp</span>
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMaximun(e)} value={filterTabResults.priceMaximum} />
+          </div>
+        </label>
+      </Content>
+    } else {
+      chekAllItems = filterTabResults.options.map((option) => {
+        return (
+          <label className='checkbox' key={option.id}>
+            {
+                                option.label ? <span className='label'>{ option.label }</span> : ''
+                              }
+            <span className='sort-text'>{ option.name }</span>
+            <span className={`input-wrapper ${option.selected ? 'checked' : ''}`}>
+              <input type='checkbox' name={option.id} checked={option.selected ? option.selected : false} onChange={(event) => this.viewCheckItem(event, tabActive)} />
+            </span>
+          </label>
+        )
+      })
+    }
     return (
       <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter' style={{ zIndex: 100 }}>
         <div className='modal-background' />

@@ -204,6 +204,10 @@ class MyProduct extends Component {
             // set params districs/kota pengiriman
           this.params.address = filter.districtsSelected ? filter.districtsSelected : ''
           break
+        case 'harga':
+          // set params for price range
+          this.params.price = filter.priceMinimum + '-' + filter.priceMaximum
+          break
         default:
           break
       }
