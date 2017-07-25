@@ -10,6 +10,7 @@ import Section from '../Components/Section'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import Notification from '../Components/Notification'
+import LoadMoreLoading from '../Components/LoadMoreLoading'
 // containers
 import TabbarCategories from './TabbarCategories'
 import Sort from './Sort'
@@ -29,8 +30,11 @@ class MyProduct extends Component {
   constructor (props) {
     super(props)
     this.state = ({
+      max: 50,
       token: null,
       query: {
+        page: props.query.page || null,
+        limit: props.query.limit || null,
         brands: props.query.brands || null,
         other: props.query.other || null,
         condition: props.query.condition || null,
@@ -39,6 +43,7 @@ class MyProduct extends Component {
         sort: props.query.sort || null,
         id: props.query.id || null
       },
+      hasMore: true,
       pagination: {
         page: 1,
         limit: 10
@@ -63,6 +68,7 @@ class MyProduct extends Component {
     this.wishlistId = null
     this.titleNavbar = this.createTitleNavbar(this.state.sort)
     this.params = {}
+    this.element = []
   }
 
   // create title for navbar
@@ -143,12 +149,14 @@ class MyProduct extends Component {
   }
 
   async componentDidMount () {
-    const { id, sort, q, condition, services, other, brands } = this.state.query
+    const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
     const { expeditions } = this.state.expeditions
     const { provinces } = this.state.provinces
     const myBrands = this.state.brands
     // generate params
     if (id) this.params.category_id = id
+    if (page) this.params.page = page
+    if (limit) this.params.limit = limit
     if (sort) this.params.sort = sort
     if (q) this.params.query = q
     if (condition) this.params.condition = condition
@@ -220,6 +228,17 @@ class MyProduct extends Component {
     this.setState({ filterActive: false })
   }
 
+  async handleLoadMore () {
+    let { pagination, fetching } = this.state
+    if (!fetching) {
+      pagination.page += 1
+      this.params.page = pagination.page
+      this.params.limit = pagination.limit
+      await this.props.dispatch(productActions.listProductBySearch(this.params))
+      this.setState({ pagination, fetching: true })
+    }
+  }
+
   async componentWillReceiveProps (nextProps) {
     const { productBySearch, subCategory, expeditions, provinces, brands, districts, addWishlist } = nextProps
     const { q } = nextProps.query
@@ -229,13 +248,15 @@ class MyProduct extends Component {
 
     if (q) this.setState({ q })
 
+    // console.log(productBySearch)
+
     // product data
     if (!productBySearch.isLoading) {
       NProgress.done()
       switch (productBySearch.status) {
         case Status.SUCCESS :
           if (productBySearch.isFound) {
-            if (productBySearch.products.length < 1) notification = {status: true, message: 'Produk tidak tersedia'}
+            if (productBySearch.products.length < 1 && this.state.productBySearch.products.length < 1) notification = {status: true, message: 'Produk tidak tersedia'}
           } else {
             notification = {status: true, message: 'Data produk tidak ditemukan'}
           }
@@ -247,7 +268,8 @@ class MyProduct extends Component {
         default:
           break
       }
-      this.setState({ productBySearch, notification })
+      let products = productBySearch.products.length > 0 ? this.state.productBySearch.products.concat(productBySearch.products) : this.state.productBySearch.products
+      this.setState({ fetching: false, hasMore: (productBySearch.products.length > 0), productBySearch: { ...productBySearch, products }, notification })
     }
 
     // category data
@@ -403,7 +425,6 @@ class MyProduct extends Component {
       textPath: categories.name || this.titleNavbar || q,
       searchActive: !!q
     }
-    const loader = <div className='is-fullwidth has-text-centered' style={{ color: '#656565' }}> loading ... </div>
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
 
     return (
@@ -415,15 +436,20 @@ class MyProduct extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-
         <Section style={{marginBottom: '45px', overflowAnchor: 'none'}}>
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={() => this.loadMore()}
-            hasMore={this.state.hasMoreItems}
-            loader={this.state.fetching ? loader : null} >
-            {listProducts}
-          </InfiniteScroll>
+          {
+            products.length < 1
+            ? null
+            : <InfiniteScroll
+              pageStart={0}
+              loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
+              hasMore={this.state.hasMore}
+              loader={<LoadMoreLoading text='Loading...' />}>
+              {
+                    listProducts
+                  }
+            </InfiniteScroll>
+          }
         </Section>
         <TabbarCategories
           sortButton

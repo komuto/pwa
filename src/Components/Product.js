@@ -45,7 +45,7 @@ class Product extends Component {
           <div className='media'>
             <div className='media-left'>
               <figure className='image' style={{width: '150px'}}>
-                <MyImage src={images[0].file} />
+                <MyImage src={images.length > 0 ? images[0].file : null} />
                 { pin }
               </figure>
             </div>
