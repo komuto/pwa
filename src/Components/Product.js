@@ -21,7 +21,7 @@ class Product extends Component {
   }
 
   render () {
-    const { product, images, store, viewActive } = this.props
+    const { product, store, viewActive } = this.props
 
     // set pin
     let pin = null
@@ -45,7 +45,7 @@ class Product extends Component {
           <div className='media'>
             <div className='media-left'>
               <figure className='image' style={{width: '150px'}}>
-                <MyImage src={images.length > 0 ? images[0].file : null} />
+                <MyImage src={product.image} />
                 { pin }
               </figure>
             </div>

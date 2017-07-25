@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import _ from 'lodash'
+import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Section from '../Components/Section'
 import Notification from '../Components/Notification'
 import MyImage from '../Components/MyImage'
 import ReviewItem from '../Components/ReviewItem'
+import LoadMoreLoading from '../Components/LoadMoreLoading'
 // actions
 import * as reviewActions from '../actions/review'
 import * as productActions from '../actions/product'
@@ -21,6 +24,12 @@ class Reviews extends Component {
       id: props.query.id || null,
       reviews: props.reviews || null,
       productDetail: props.productDetail || null,
+      fetching: false,
+      hasMore: true,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -30,15 +39,20 @@ class Reviews extends Component {
 
   async componentDidMount () {
     const { id, productDetail } = this.state
-    await this.props.dispatch(reviewActions.getReview({ id, page: 1, limit: 10 }))
-    if (!productDetail.isFound) {
-      // fetch product when isFound false
+    NProgress.start()
+    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
-    } else if (productDetail.isFound && productDetail.detail.product.id !== id) {
-      // fetch product when isFound true but product id is different
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+    }
+    await this.props.dispatch(reviewActions.getReview({ id, ...this.state.pagination }))
+  }
+
+  async handleLoadMore () {
+    let { id, pagination, fetching } = this.state
+    if (!fetching) {
+      pagination.page += 1
+      await this.props.dispatch(reviewActions.getReview({ id, ...this.state.pagination }))
+      this.setState({ pagination, fetching: true })
     }
   }
 
@@ -66,9 +80,13 @@ class Reviews extends Component {
       NProgress.done()
       switch (reviews.status) {
         case Status.SUCCESS :
-          (reviews.isFound)
-          ? this.setState({ reviews })
-          : this.setState({ notification: {status: true, message: 'Data reviews tidak ditemukan'} })
+          if (reviews.isFound) {
+            let hasMore = reviews.reviews.length > 0
+            // reviews.reviews = this.state.reviews.reviews.concat(reviews.reviews)
+            this.setState({ fetching: false, hasMore, reviews })
+          } else {
+            this.setState({ notification: {status: true, message: 'Data reviews tidak ditemukan'} })
+          }
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -83,6 +101,9 @@ class Reviews extends Component {
   render () {
     const { reviews, productDetail, notification } = this.state
     const { product, images } = productDetail.detail
+
+    console.log(reviews)
+    if (!productDetail.isFound) return null
     return (
       <Section>
         <Notification
@@ -119,7 +140,14 @@ class Reviews extends Component {
               </div>
           }
         {
-            reviews.isFound && reviews.reviews.map((review) => { return <ReviewItem {...review} key={review.id} /> })
+            reviews.reviews.length > 0 &&
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
+              hasMore={this.state.hasMore}
+              loader={<LoadMoreLoading text='Loading...' />}>
+                { reviews.reviews.map((review, index) => { return <ReviewItem {...review} key={index} /> }) }
+              </InfiniteScroll>
           }
       </Section>
     )

@@ -62,6 +62,9 @@ class Discussion extends Component {
     const { productDetail, discussions } = nextProps
     const beforeDiscuss = this.props.newDiscussion
     const nextDiscuss = nextProps.newDiscussion
+    let { notification } = this.state
+
+    notification = {status: false, message: 'Error, default message.'}
 
     if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
       discussions.discussions.splice(0, 0, nextDiscuss.discussion)
@@ -74,38 +77,38 @@ class Discussion extends Component {
       NProgress.done()
       switch (productDetail.status) {
         case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'} })
+          if (!productDetail.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.setState({ notification: {type: 'is-danger', status: true, message: productDetail.message} })
+          notification = {type: 'is-danger', status: true, message: productDetail.message}
           break
         default:
           break
       }
+      this.setState({ productDetail, notification })
     }
 
     if (!discussions.isLoading) {
       NProgress.done()
+      let hasMore = false
       switch (discussions.status) {
         case Status.SUCCESS :
           if (discussions.isFound) {
-            let hasMore = discussions.discussions.length > 0
+            hasMore = discussions.discussions.length > 0
             discussions.discussions = this.state.discussions.discussions.concat(discussions.discussions)
-            this.setState({ fetching: false, hasMore, discussions })
           } else {
-            this.setState({ notification: {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'} })
+            notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
           }
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.setState({ notification: {type: 'is-danger', status: true, message: discussions.message} })
+          notification = {type: 'is-danger', status: true, message: discussions.message}
           break
         default:
           break
       }
+      this.setState({ fetching: false, hasMore, discussions, notification })
     }
   }
 
@@ -160,7 +163,7 @@ class Discussion extends Component {
                         let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
                         return (
                           <li
-                            key={index}
+                            key={discussion.id}
                             onClick={() => {
                               Router.push(`/discussion-detail?id=${product.id}&idd=${discussion.id}`)
                             }}>

@@ -365,12 +365,11 @@ class MyProduct extends Component {
       <Content>
         {
           products.map((myProduct, index) => {
-            let { images, product, store } = myProduct
+            let { product, store } = myProduct
             return (
-              <ProductContainers key={index}>
+              <ProductContainers key={product.id}>
                 <Product
                   viewActive={viewActive}
-                  images={images}
                   store={store}
                   wishlistPress={(productId) => this.wishlistPress(productId)}
                   product={product} />
@@ -387,12 +386,11 @@ class MyProduct extends Component {
       <ProductContainers>
         {
           products.map((myProduct, index) => {
-            const { images, product, store } = myProduct
+            const { product, store } = myProduct
             return (
               <Product
-                key={index}
+                key={product.id}
                 viewActive={viewActive}
-                images={images}
                 store={store}
                 wishlistPress={(productId) => this.wishlistPress(productId)}
                 product={product} />
@@ -413,7 +411,7 @@ class MyProduct extends Component {
       searchActive: !!q
     }
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
-
+    console.log(products)
     return (
       <Content>
         <Navbar params={navbar} />
