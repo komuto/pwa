@@ -97,8 +97,7 @@ class DiscussionDetail extends Component {
       switch (comments.status) {
         case Status.SUCCESS :
           if (comments.isFound) {
-            let tamComments = _.orderBy(comments.comments, ['id'], ['asc'])
-            comments.comments = tamComments
+            comments.comments = _.orderBy(comments.comments, ['id'], ['asc'])
             this.setState({ comments })
           } else {
             this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
