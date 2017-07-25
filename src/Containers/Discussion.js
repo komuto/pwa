@@ -3,11 +3,14 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import moment from 'moment'
+import _ from 'lodash'
+import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Section from '../Components/Section'
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
+import LoadMoreLoading from '../Components/LoadMoreLoading'
 // actions
 import * as productActions from '../actions/product'
 // services
@@ -23,7 +26,9 @@ class Discussion extends Component {
       productDetail: props.productDetail || null,
       discussions: props.discussions || null,
       newDiscussion: props.newDiscussion || null,
-      params: {
+      fetching: false,
+      hasMore: true,
+      pagination: {
         page: 1,
         limit: 10
       },
@@ -41,11 +46,16 @@ class Discussion extends Component {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
     }
+    await this.props.dispatch(productActions.getDiscussion({ id, ...this.state.pagination }))
+  }
 
-    // if (!discussions.isFound || (discussions.isFound && String(discussions.discussions.id) !== String(id))) {
-      // NProgress.start()
-    await this.props.dispatch(productActions.getDiscussion({ id, ...this.state.params }))
-    // }
+  async handleLoadMore () {
+    let { id, pagination, fetching } = this.state
+    if (!fetching) {
+      pagination.page += 1
+      await this.props.dispatch(productActions.getDiscussion({ id, ...this.state.pagination }))
+      this.setState({ pagination, fetching: true })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -53,11 +63,9 @@ class Discussion extends Component {
     const beforeDiscuss = this.props.newDiscussion
     const nextDiscuss = nextProps.newDiscussion
 
-    if (nextDiscuss.isFound) {
-      if (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id) {
-        discussions.discussions.splice(0, 0, nextDiscuss.discussion)
-        this.setState({ discussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
-      }
+    if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
+      discussions.discussions.splice(0, 0, nextDiscuss.discussion)
+      this.setState({ discussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
     } else if (nextDiscuss.status === Status.OFFLINE || nextDiscuss.status === Status.FAILED) {
       this.setState({ notification: {type: 'is-danger', status: true, message: nextDiscuss.message} })
     }
@@ -78,13 +86,18 @@ class Discussion extends Component {
           break
       }
     }
+
     if (!discussions.isLoading) {
       NProgress.done()
       switch (discussions.status) {
         case Status.SUCCESS :
-          (discussions.isFound)
-          ? this.setState({ discussions })
-          : this.setState({ notification: {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'} })
+          if (discussions.isFound) {
+            let hasMore = discussions.discussions.length > 0
+            discussions.discussions = this.state.discussions.discussions.concat(discussions.discussions)
+            this.setState({ fetching: false, hasMore, discussions })
+          } else {
+            this.setState({ notification: {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'} })
+          }
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -101,7 +114,7 @@ class Discussion extends Component {
     const { product, images } = productDetail.detail
     if (!productDetail.isFound) return null
     return (
-      <Content>
+      <Content style={{paddingBottom: 0}}>
         <Notification
           type={notification.type}
           isShow={notification.status}
@@ -134,37 +147,47 @@ class Discussion extends Component {
             </ul>
             <ul className='main-discuss'>
               {
-                discussions.discussions.map((discussion, index) => {
-                  moment.locale('id')
-                  let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
-                  return (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        Router.push(`/discussion-detail?id=${product.id}&idd=${discussion.id}`)
-                      }}>
-                      <div className='box is-paddingless'>
-                        <article className='media'>
-                          <div className='media-left'>
-                            <figure className='image user-pict'>
-                              <MyImage src={discussion.user.photo} alt='pict' />
-                            </figure>
-                          </div>
-                          <div className='media-content'>
-                            <div className='content'>
-                              <p className='user-name'>
-                                <strong>{discussion.user.name}</strong>
-                                <span className='date-discuss'>{ createDate }</span>
-                                { discussion.question}
-                              </p>
+                discussions.discussions.length < 1
+                ? null
+                : <InfiniteScroll
+                  pageStart={0}
+                  loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
+                  hasMore={this.state.hasMore}
+                  loader={<LoadMoreLoading text='Loading...' />}>
+                  {
+                      discussions.discussions.map((discussion, index) => {
+                        moment.locale('id')
+                        let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
+                        return (
+                          <li
+                            key={index}
+                            onClick={() => {
+                              Router.push(`/discussion-detail?id=${product.id}&idd=${discussion.id}`)
+                            }}>
+                            <div className='box is-paddingless'>
+                              <article className='media'>
+                                <div className='media-left'>
+                                  <figure className='image user-pict'>
+                                    <MyImage src={discussion.user.photo} alt='pict' />
+                                  </figure>
+                                </div>
+                                <div className='media-content'>
+                                  <div className='content'>
+                                    <p className='user-name'>
+                                      <strong>{discussion.user.name}</strong>
+                                      <span className='date-discuss'>{ createDate }</span>
+                                      { discussion.question}
+                                    </p>
+                                  </div>
+                                </div>
+                              </article>
+                              <a className='comment-count'><span className='icon-comment' /> { discussion.count_comments } komentar</a>
                             </div>
-                          </div>
-                        </article>
-                        <a className='comment-count'><span className='icon-comment' /> { discussion.count_comments } komentar</a>
-                      </div>
-                    </li>
-                  )
-                })
+                          </li>
+                        )
+                      })
+                    }
+                </InfiniteScroll>
               }
             </ul>
           </div>
