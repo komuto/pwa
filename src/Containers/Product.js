@@ -43,12 +43,12 @@ class MyProduct extends Component {
         sort: props.query.sort || null,
         id: props.query.id || null
       },
+      fetching: false,
       hasMore: true,
       pagination: {
         page: 1,
         limit: 10
       },
-      hasMoreItems: true,
       productBySearch: props.productBySearch || null,
       categories: props.subCategory || [],
       expeditions: props.expeditions || null,
@@ -59,7 +59,6 @@ class MyProduct extends Component {
       filterActive: false,
       viewActive: 'list',
       selectedSort: null,
-      fetching: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -99,18 +98,6 @@ class MyProduct extends Component {
     this.setState({ viewActive })
   }
 
-  async loadMore () {
-    console.log('loadMore()')
-    // !this.props.productBySearch.isLoading &&
-    // console.log(this.props.productBySearch)
-    // const { pagination } = this.state
-    // pagination.limit +=10
-    // this.params.limit = pagination.limit
-    // this.params.page = pagination.page
-    // await this.props.dispatch(productActions.listProductBySearch(this.params))
-    // this.setState({ pagination })
-  }
-
   async wishlistPress (id) {
     let { productBySearch, token } = this.state
     if (token) {
@@ -124,6 +111,17 @@ class MyProduct extends Component {
       this.setState({ productBySearch })
     } else {
       this.setState({notification: {status: true, message: 'Anda harus login'}})
+    }
+  }
+
+  async handleLoadMore () {
+    let { pagination, fetching } = this.state
+    if (!fetching) {
+      pagination.page += 1
+      this.params.page = pagination.page
+      this.params.limit = pagination.limit
+      await this.props.dispatch(productActions.listProductBySearch(this.params))
+      this.setState({ pagination, fetching: true })
     }
   }
 
@@ -226,17 +224,6 @@ class MyProduct extends Component {
     await this.props.dispatch(productActions.listProductBySearch(this.params))
     // close filter
     this.setState({ filterActive: false })
-  }
-
-  async handleLoadMore () {
-    let { pagination, fetching } = this.state
-    if (!fetching) {
-      pagination.page += 1
-      this.params.page = pagination.page
-      this.params.limit = pagination.limit
-      await this.props.dispatch(productActions.listProductBySearch(this.params))
-      this.setState({ pagination, fetching: true })
-    }
   }
 
   async componentWillReceiveProps (nextProps) {
@@ -445,9 +432,7 @@ class MyProduct extends Component {
               loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
               hasMore={this.state.hasMore}
               loader={<LoadMoreLoading text='Loading...' />}>
-              {
-                    listProducts
-                  }
+              { listProducts }
             </InfiniteScroll>
           }
         </Section>
