@@ -101,8 +101,6 @@ class Reviews extends Component {
   render () {
     const { reviews, productDetail, notification } = this.state
     const { product, images } = productDetail.detail
-
-    console.log(reviews)
     if (!productDetail.isFound) return null
     return (
       <Section>

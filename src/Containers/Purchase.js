@@ -117,7 +117,10 @@ class Purchase extends Component {
 
     if (!insurance.selected) {
       this.setState({ error: 'insurance' })
+      return
     }
+
+    this.setState({ submiting: true })
   }
 
   async onChangeNoted (e) {
