@@ -8,6 +8,7 @@ import * as brandReducers from './brand'
 import * as productReducers from './product'
 import * as expeditionReducers from './expedition'
 import * as locationReducers from './location'
+import * as purchaseReducers from './purchase'
 import * as reviewReducers from './review'
 import * as storeReducers from './stores'
 import * as addressReducers from './address'
@@ -54,6 +55,12 @@ const komutoApps = storage.reducer(combineReducers({
   districts: locationReducers.district,
   subdistricts: locationReducers.subdistrict,
   villages: locationReducers.village,
+  shippingInformation: purchaseReducers.shippingInformation,
+  courierExpedition: purchaseReducers.courierExpedition,
+  amountProduct: purchaseReducers.amountProduct,
+  packageExpedition: purchaseReducers.packageExpedition,
+  noted: purchaseReducers.noted,
+  insurance: purchaseReducers.insurance,
   wishlist: wishlistReducers.wishlist,
   productDetail: productReducers.getProduct,
   productByCategory: productReducers.productByCategory,
