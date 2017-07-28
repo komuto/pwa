@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 // components
 import Section from '../Components/Section'
+import OptionsProvince from '../Components/OptionsProvince'
+import OptionsDistritcs from '../Components/OptionsDistritcs'
+import OptionsSubDistritcs from '../Components/OptionsSubDistritcs'
 // actions
 import * as locationActions from '../actions/location'
 import * as expeditionActions from '../actions/expedition'
@@ -225,86 +228,6 @@ class ProductDetailServices extends Component {
       </Section>
     )
   }
-}
-
-const OptionsProvince = (props) => {
-  return (
-    <div className='sort-option' id='province' style={{display: props.show && 'block'}}>
-      <div className='sort-list'>
-        <p><strong>Pilih Provinsi</strong></p>
-        <form action='#' className='form'>
-          <div className='field'>
-            <div className='control popup-option' style={{ height: '500px', overflow: 'scroll' }}>
-              {
-                props.data.provinces.map((province) => {
-                  return (
-                    <label key={province.id} className={`radio ${props.selected.id === province.id && 'checked'}`} onClick={() => props.provinceSelected(province)}>
-                      <input type='radio' name='provinsi' />
-                      { province.name }
-                    </label>
-                  )
-                })
-              }
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
-}
-
-const OptionsDistritcs = (props) => {
-  return (
-    <div className='sort-option' id='province' style={{display: props.show && 'block'}}>
-      <div className='sort-list'>
-        <p><strong>Pilih Kabupaten</strong></p>
-        <form action='#' className='form'>
-          <div className='field'>
-            <div className='control popup-option' style={{ height: '500px', overflow: 'scroll' }}>
-              {
-                props.data &&
-                props.data.districts.map((district) => {
-                  return (
-                    <label key={district.id} className={`radio ${props.selected.id === district.id && 'checked'}`} onClick={() => props.districtSelected(district)}>
-                      <input type='radio' name='provinsi' />
-                      { district.name }
-                    </label>
-                  )
-                })
-              }
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
-}
-
-const OptionsSubDistritcs = (props) => {
-  return (
-    <div className='sort-option' id='province' style={{display: props.show && 'block'}}>
-      <div className='sort-list'>
-        <p><strong>Pilih Kecamatan</strong></p>
-        <form action='#' className='form'>
-          <div className='field'>
-            <div className='control popup-option' style={{ height: '500px', overflow: 'scroll' }}>
-              {
-                props.data &&
-                props.data.subdistricts.map((subDistrict) => {
-                  return (
-                    <label key={subDistrict.id} className={`radio ${props.selected.id === subDistrict.id && 'checked'}`} onClick={() => props.subDistrictSelected(subDistrict)}>
-                      <input type='radio' name='provinsi' />
-                      { subDistrict.name }
-                    </label>
-                  )
-                })
-              }
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
 }
 
 const mapStateToProps = (state) => {
