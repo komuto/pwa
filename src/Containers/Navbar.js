@@ -33,9 +33,9 @@ export class Navbar extends PureComponent {
       <div>
         <nav className={`level header is-fullwidth ${searchActive ? 'bg-white' : ''}`}>
           <div className='nav-left'>
-            <a className='level-item' onClick={() => Router.back()}>
+            <a className='level-item'>
               <span className={(path) ? '' : 'is-paddingless'}>
-                {(path) ? <span className='back'><span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} /></span> : null}
+                {(path) ? <span className='back' onClick={() => Router.back()}><span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} /></span> : null}
                 {textPath}
               </span>
             </a>

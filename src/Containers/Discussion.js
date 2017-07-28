@@ -206,6 +206,7 @@ class Discussion extends Component {
     )
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     productDetail: state.productDetail,
