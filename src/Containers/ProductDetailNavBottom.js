@@ -10,7 +10,8 @@ class ProductDetailNavBottom extends Component {
           onClick={() => {
             Router.push(`/discussion?id=${props.id}`)
           }}><span className='icon-comment black' /> Diskusi ({props.count_discussion})</a>
-        <a className='button is-primary is-m-lg is-fullwidth'>Beli Sekarang</a>
+        <a className='button is-primary is-m-lg is-fullwidth'
+          onClick={() => Router.push(`/purchase?id=${props.id}`)}>Beli Sekarang</a>
       </div>
     )
   }
