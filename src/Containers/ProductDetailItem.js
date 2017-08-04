@@ -54,7 +54,7 @@ class ProductDetailItem extends Component {
         <div className='detail-product'>
           <h3>{ product.name }</h3>
           <span className='price'>Rp { RupiahFormat(product.price) }</span>
-          <span className={`icon-wishlist ${wishlistStatus ? 'wishlisted' : ''}`} onClick={() => this.wishlistPress(product.id)} />
+          <span className={`icon-wishlist ${wishlistStatus && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>
           <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
