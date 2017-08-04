@@ -2,45 +2,55 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-import _ from 'lodash'
 // components
 import Section from '../Components/Section'
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
+import OptionsAdresess from '../Components/OptionsAdresess'
 import OptionsExpeditions from '../Components/OptionsExpeditions'
 import OptionsExpeditionPackages from '../Components/OptionsExpeditionPackages'
 import OptionsInsurance from '../Components/OptionsInsurance'
 // actions
 import * as productActions from '../actions/product'
-import * as loginActions from '../actions/user'
+import * as addressActions from '../actions/address'
 import * as purchaseActions from '../actions/purchase'
+import * as cartActions from '../actions/cart'
+import * as expeditionActions from '../actions/expedition'
 // services
 import { Status } from '../Services/Status'
-import GET_TOKEN from '../Services/GetToken'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // validations
 import * as inputValidations from '../Validations/Input'
+// themes
+import Images from '../Themes/Images'
 
 class Purchase extends Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      user: props.user || null,
       productDetail: props.productDetail || null,
+      listAddress: props.listAddress || null,
       shippingInformation: props.shippingInformation,
       amountProduct: props.amountProduct.amountProduct,
+      address: {
+        data: (props.listAddress.isFound && props.listAddress.address) || [],
+        show: false,
+        selected: {
+          ...props.addressSelected
+        }
+      },
       expeditions: {
-        data: (props.productDetail.detail && props.productDetail.detail.expeditions) || null,
+        data: (props.productDetail.isFound && props.productDetail.detail.expeditions) || [],
         show: false,
         selected: {
           ...props.courierExpedition
         }
       },
       expeditionsPackage: {
-        data: props.estimatedCharges.charges || null,
+        data: (props.estimatedCharges.isFound && props.estimatedCharges.charges) || [],
         show: false,
         selected: {
           ...props.packageExpedition
@@ -58,10 +68,12 @@ class Purchase extends Component {
       },
       noted: props.noted.noted,
       error: null,
-      submiting: false
+      submiting: false,
+      cartNotification: false
     }
   }
 
+  // min button press
   async plussPress () {
     let { amountProduct } = this.state
     amountProduct += 1
@@ -69,6 +81,7 @@ class Purchase extends Component {
     this.setState({ amountProduct })
   }
 
+  // plus button press
   async minPress () {
     let { amountProduct } = this.state
     amountProduct -= 1
@@ -76,6 +89,22 @@ class Purchase extends Component {
     this.setState({ amountProduct })
   }
 
+  // address event
+  onClickAddress = () => this.setState({ address: { ...this.state.address, show: true } })
+
+  async addressSelected (selected) {
+    const { id, productDetail } = this.state
+    await this.props.dispatch(expeditionActions.estimatedShipping({
+      id,
+      origin_id: productDetail.detail.store.district.id,
+      destination_id: selected.district.id,
+      weight: 1
+    }))
+    await this.props.dispatch(purchaseActions.addressSelected({ ...selected, status: true }))
+    this.setState({ address: {...this.state.address, show: false, selected: { ...selected, status: true }}, error: this.state.error === 'addressSelected' && null })
+  }
+
+  // expedition event
   onClickExpedition = () => this.setState({ expeditions: { ...this.state.expeditions, show: true } })
 
   async expeditionSelected (selected) {
@@ -83,6 +112,7 @@ class Purchase extends Component {
     this.setState({ expeditions: { ...this.state.expeditions, show: false, selected }, error: this.state.error === 'expeditions' && null })
   }
 
+  // expedition package event
   onClickExpeditionPackage = () => this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: true } })
 
   async expeditionsPackageSelected (selected) {
@@ -90,6 +120,7 @@ class Purchase extends Component {
     this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, selected, show: false }, error: this.state.error === 'expeditionsPackage' && null })
   }
 
+  // insurance event
   onClickInsurance = () => this.setState({ insurance: { ...this.state.insurance, show: true } })
 
   async insuranceSelected (selected) {
@@ -97,11 +128,21 @@ class Purchase extends Component {
     this.setState({ insurance: { ...this.state.insurance, selected, show: false }, error: this.state.error === 'insurance' && null })
   }
 
+  // noted event
+  async onChangeNoted (e) {
+    let { noted } = this.state
+    noted = inputValidations.inputNormal(e.target.value)
+    await this.props.dispatch(purchaseActions.noted({ noted }))
+    this.setState({ noted })
+  }
+
+  // submit event
   onSubmit (e) {
     e.preventDefault()
-    const { shippingInformation, expeditions, expeditionsPackage, insurance } = this.state
-    if (!shippingInformation.isFound) {
-      this.setState({ error: 'shippingInformation' })
+    const { productDetail, id, amountProduct, address, expeditions, expeditionsPackage, insurance, noted } = this.state
+
+    if (!address.selected.status) {
+      this.setState({ error: 'addressSelected' })
       return
     }
 
@@ -120,39 +161,85 @@ class Purchase extends Component {
       return
     }
 
-    this.setState({ submiting: true })
-  }
+    // ((qty * weight) * price expeditions gram) / 1000 kg
 
-  async onChangeNoted (e) {
-    let { noted } = this.state
-    noted = inputValidations.inputNormal(e.target.value)
-    await this.props.dispatch(purchaseActions.noted({ noted }))
-    this.setState({ noted })
+    this.setState({ submiting: true })
+    this.props.dispatch(cartActions.addToCart({
+      'product_id': Number(id),
+      'expedition_id': expeditions.selected.id,
+      'expedition_service_id': expeditionsPackage.selected.id,
+      'qty': amountProduct,
+      'note': noted,
+      'address_id': address.selected.id,
+      'is_insurance': insurance === 'Ya',
+      'delivery_cost': (((amountProduct * productDetail.detail.product.weight) * expeditionsPackage.selected.cost) / 1000)
+    }))
   }
 
   async componentDidMount () {
-    const { id, productDetail, user } = this.state
+    const { id, productDetail, listAddress } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
     }
 
-    const token = await GET_TOKEN.getToken()
-
-    if (token && _.isEmpty(user.user)) {
+    if (!listAddress.isFound) {
       NProgress.start()
-      this.props.dispatch(loginActions.getProfile())
+      await this.props.dispatch(addressActions.getListAddress())
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, user } = nextProps
-    let { notification } = this.state
-
+    const { productDetail, listAddress, cart, estimatedCharges } = nextProps
+    let { notification, submiting } = this.state
     notification = {status: false, message: 'Error, default message.'}
 
+    if (!listAddress.isLoading) {
+      switch (listAddress.status) {
+        case Status.SUCCESS :
+          if (!listAddress.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          break
+        default:
+          break
+      }
+      this.setState({ listAddress, address: { ...this.state.address, data: listAddress.address }, notification })
+    }
+
+    if (!estimatedCharges.isLoading) {
+      switch (estimatedCharges.status) {
+        case Status.SUCCESS :
+          if (!estimatedCharges.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          break
+        default:
+          break
+      }
+      this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges }, notification })
+    }
+
+    if (!cart.isLoading) {
+      switch (cart.status) {
+        case Status.SUCCESS :
+          if (!cart.status === 200) notification = {type: 'is-danger', status: true, message: 'Gagal menambahkan data keranjang belanja'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          break
+        default:
+          break
+      }
+      submiting && this.setState({ submiting: false, cart, notification, cartNotification: cart.status === 200 })
+    }
+
     if (!productDetail.isLoading) {
-      NProgress.done()
       switch (productDetail.status) {
         case Status.SUCCESS :
           if (!productDetail.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
@@ -167,29 +254,14 @@ class Purchase extends Component {
       this.setState({ productDetail, expeditions: { ...this.state.expeditions, data: productDetail.detail.expeditions }, notification })
     }
 
-    if (!user.isLoading) {
-      NProgress.done()
-      switch (user.status) {
-        case Status.SUCCESS :
-          (user.isFound)
-          ? this.setState({ user })
-          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: user.message} })
-          break
-        default:
-          break
-      }
-    }
+    if (!listAddress.isLoading && !productDetail.isLoading) NProgress.done()
   }
 
   render () {
-    const { id, productDetail, user, shippingInformation, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
-    const { product, images } = productDetail.detail
-
+    const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
     if (!productDetail.isFound) return null
+    const { product, images } = productDetail.detail
+    const insurancePrice = (product.insurance * product.price * amountProduct) / 100
     return (
       <Content style={{paddingBottom: 0}}>
         <Notification
@@ -230,11 +302,11 @@ class Purchase extends Component {
           </div>
         </Section>
         {
-            !shippingInformation.isFound
+            !address.selected.status
             ? <section
-              className={`section is-paddingless has-shadow ${error === 'shippingInformation' && 'is-error'}`}
-              onClick={() => Router.push(`/shipping-information?id=${id}`)}>
-              <div className={`column is-paddingless ${error === 'shippingInformation' && 'is-error'}`}>
+              className={`section is-paddingless has-shadow ${error === 'addressSelected' && 'is-error'}`}
+              onClick={() => this.onClickAddress()}>
+              <div className={`column is-paddingless ${error === 'addressSelected' && 'is-error'}`}>
                 <div className='see-all'>
                   <span className='link'>Isi Informasi Data Pengiriman<span className='icon-arrow-right' /></span>
                 </div>
@@ -245,14 +317,14 @@ class Purchase extends Component {
               <div className='info-purchase'>
                 <div className='detail-purchase summary'>
                   <h3>Informasi Data Pengiriman</h3>
-                  <a className='btn-change' onClick={() => Router.push(`/shipping-information?id=${id}`)}>Ganti</a>
+                  <a className='btn-change' onClick={() => this.onClickAddress()}>Ganti</a>
                   <div className='detail-result white'>
                     <ul className='data-delivery'>
                       <li>
                         <div className='columns custom is-mobile'>
                           <div className='column'>
                             <strong>Nama Penerima</strong>
-                            <span>{ shippingInformation.recipient }</span>
+                            <span>{ address.selected.name }</span>
                           </div>
                         </div>
                       </li>
@@ -260,7 +332,7 @@ class Purchase extends Component {
                         <div className='columns custom is-mobile'>
                           <div className='column'>
                             <strong>Alamat Email</strong>
-                            <span>{ user.user && user.user.user.email }</span>
+                            <span>{ address.selected.email }</span>
                           </div>
                         </div>
                       </li>
@@ -268,7 +340,7 @@ class Purchase extends Component {
                         <div className='columns custom is-mobile'>
                           <div className='column'>
                             <strong>No Handphone</strong>
-                            <span>{ shippingInformation.handphone }</span>
+                            <span>{ address.selected.phone_number }</span>
                           </div>
                         </div>
                       </li>
@@ -277,10 +349,10 @@ class Purchase extends Component {
                           <div className='column'>
                             <strong>Alamat</strong>
                             <span>
-                              { shippingInformation.address } { shippingInformation.villages.name },<br />
-                              { shippingInformation.subDistricts.name }<br />
-                              { shippingInformation.districts.name }<br />
-                              { shippingInformation.provinces.name }, Indonesia { shippingInformation.postalCode }
+                              { address.selected.address } { address.selected.village.name },<br />
+                              { address.selected.subDistrict.name }<br />
+                              { address.selected.district.name }<br />
+                              { address.selected.province.name }, Indonesia { address.selected.postal_code }
                             </span>
                           </div>
                         </div>
@@ -344,13 +416,13 @@ class Purchase extends Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><span>Ongkos Kirim</span></div>
-                      <div className='column is-half has-text-right'><span>{ expeditionsPackage.selected.cost }</span></div>
+                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(expeditionsPackage.selected.cost) }</span></div>
                     </div>
                   </li>
                   <li>
                     <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Asuransi</span></div>
-                      <div className='column is-half has-text-right'><span>{ insurance.selected }</span></div>
+                      <div className='column is-half'><span>Biaya Asuransi</span></div>
+                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(insurancePrice) }</span></div>
                     </div>
                   </li>
                 </ul>
@@ -369,6 +441,10 @@ class Purchase extends Component {
         <div className='level nav-bottom nav-button purchase is-mobile'>
           <a onClick={(e) => !submiting && this.onSubmit(e)} className={`button is-primary is-m-lg is-fullwidth btn-add-cart ${submiting && 'is-loading'}`}>Masukan Ke Keranjang</a>
         </div>
+        <OptionsAdresess
+          {...address}
+          id={id}
+          addressSelected={(selected) => this.addressSelected(selected)} />
         <OptionsExpeditions
           {...expeditions}
           expeditionSelected={(selected) => this.expeditionSelected(selected)} />
@@ -378,6 +454,14 @@ class Purchase extends Component {
         <OptionsInsurance
           {...insurance}
           insuranceSelected={(selected) => this.insuranceSelected(selected)} />
+        <div className='sort-option' id='addCartNotif' style={{ display: cartNotification && 'block' }}>
+          <div className='notif-report add-cart-notif'>
+            <MyImage src={Images.phoneAccount} />
+            <p>Produk telah berhasil dimasukkan ke Keranjang Belanja</p>
+            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/shopping-cart')}>Lihat Keranjang Belanja</button>
+            <button className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/')}>Kembali Belanja</button>
+          </div>
+        </div>
       </Content>
     )
   }
@@ -386,14 +470,16 @@ class Purchase extends Component {
 const mapStateToProps = (state) => {
   return {
     productDetail: state.productDetail,
+    listAddress: state.listAddress,
     amountProduct: state.amountProduct,
+    addressSelected: state.addressSelected,
     shippingInformation: state.shippingInformation,
     courierExpedition: state.courierExpedition,
     packageExpedition: state.packageExpedition,
     estimatedCharges: state.estimatedCharges,
     insurance: state.insurance,
     noted: state.noted,
-    user: state.profile
+    cart: state.cart
   }
 }
 
