@@ -7,7 +7,7 @@ export class Filter extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      expeditions: props.expeditions || [],
+      expeditionServices: props.expeditionServices || [],
       provinces: props.provinces || [],
       districts: props.districts || [],
       brands: props.brands || [],
@@ -32,7 +32,7 @@ export class Filter extends Component {
           ]
         },
         {
-          id: 'expeditions',
+          id: 'expeditionServices',
           name: 'Jasa Pengiriman',
           viewCheckAll: true,
           selectedAll: false,
@@ -87,15 +87,15 @@ export class Filter extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { expeditions, provinces, brands, districts } = nextProps
+    const { expeditionServices, provinces, brands, districts } = nextProps
     let { tabs } = this.state
     tabs.map((tab) => {
-      if (tab.id === 'expeditions' && tab.options.length < 1) {
-        expeditions.map((expedition) => {
+      if (tab.id === 'expeditionServices' && tab.options.length < 1) {
+        expeditionServices.map((expedition) => {
           expedition.name = expedition.full_name
           expedition.selected = false
         })
-        tab.options = expeditions
+        tab.options = expeditionServices
       }
 
       if (tab.id === 'brands') {
