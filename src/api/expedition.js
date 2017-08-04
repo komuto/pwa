@@ -1,76 +1,31 @@
 import { publicApiKomuto, authApiKomuto, publicApi } from './api'
 
-function getExpedition (action) {
+export const getExpedition = (action) => {
   let axios = publicApiKomuto()
-  return axios.get('expeditions', {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+  return axios.get('expeditions', action).catch((err) => { throw err })
 }
 
-function getServices (action) {
+export const getServices = (action) => {
   let axios = publicApiKomuto()
-  return axios.get('expeditions/services', {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+  return axios.get('expeditions/services', action).catch((err) => { throw err })
 }
 
-function estimatedShipping (action) {
+export const estimatedShipping = ({ id, origin_id: oriId, destination_id: destId, weight }) => {
   let axios = publicApi()
-  return axios.get('expeditions/cost?product_id=' + action.id + '&origin_ro_id=' + action.origin_id + '&destination_ro_id=' + action.destination_id + '&weight=' + action.weight, {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+  return axios.get(`expeditions/cost?product_id=${id}&origin_ro_id=${oriId}&destination_ro_id=${destId}&weight=${weight}`).catch((err) => { throw err })
 }
 
-function getShippingCharge (action) {
+export const getShippingCharge = ({ id, origin_id: oriId, destination_id: destId, weight }) => {
   let axios = publicApiKomuto()
-  return axios.get('expeditions/' + action.id + '/cost?origin_ro_id=' + action.origin_id + '&destination_ro_id=' + action.destination_id + '&weight=' + action.weight, {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+  return axios.get(`expeditions/${id}/cost?origin_ro_id=${oriId}&destination_ro_id=${destId}&weight=${weight}`).catch((err) => { throw err })
 }
 
-function updateExpedition (action) {
+export const updateExpedition = ({ data }) => {
   let axios = authApiKomuto()
-  return axios({
-    method: 'put',
-    url: 'users/store/expeditions',
-    data: action.data
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+  return axios.put('users/store/expeditions', data).catch((err) => { throw err })
 }
 
-export {
-  getExpedition,
-  getServices,
-  estimatedShipping,
-  getShippingCharge,
-  updateExpedition
+export const getStoreExpeditions = () => {
+  const axios = authApiKomuto()
+  return axios.get('users/store/expeditions').catch((err) => { throw err })
 }

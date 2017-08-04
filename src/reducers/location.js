@@ -1,66 +1,41 @@
-import * as locationActions from '../actions/location'
+import * as actions from '../actions/location'
+import { buildReducer, buildType, initState, typeReq, typeSucc, typeFail, reqState, succState, failState } from '../config'
 
 const initProvince = {
   provinces: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initDistrict = {
   districts: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initSubDistrict = {
   subdistricts: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initVillage = {
   villages: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 function province (state = initProvince, action) {
   switch (action.type) {
-    case locationActions.GET_PROVINCE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case locationActions.GET_PROVINCE_SUCCESS:
+    case typeReq(actions.GET_PROVINCE):
+      return reqState(state)
+    case typeSucc(actions.GET_PROVINCE):
       return {
         ...state,
         provinces: action.data,
         length: action.data.length,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case locationActions.GET_PROVINCE_FAILURE:
+    case typeFail(actions.GET_PROVINCE):
       return {
         ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...failState(action)
       }
     default:
       return state
@@ -69,29 +44,18 @@ function province (state = initProvince, action) {
 
 function district (state = initDistrict, action) {
   switch (action.type) {
-    case locationActions.GET_DISTRICT_REQUEST:
+    case typeReq(actions.GET_DISTRICT):
+      return reqState(state)
+    case typeSucc(actions.GET_DISTRICT):
       return {
-        ...state,
-        isLoading: true
-      }
-    case locationActions.GET_DISTRICT_SUCCESS:
-      return {
-        ...state,
         districts: action.data,
         length: action.data.length,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case locationActions.GET_DISTRICT_FAILURE:
+    case typeFail(actions.GET_DISTRICT):
       return {
         ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...failState(action)
       }
     default:
       return state
@@ -100,29 +64,19 @@ function district (state = initDistrict, action) {
 
 function subdistrict (state = initSubDistrict, action) {
   switch (action.type) {
-    case locationActions.GET_SUBDISTRICT_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case locationActions.GET_SUBDISTRICT_SUCCESS:
+    case typeReq(actions.GET_SUBDISTRICT):
+      return reqState(state)
+    case typeSucc(actions.GET_SUBDISTRICT):
       return {
         ...state,
         subdistricts: action.data,
         length: action.data.length,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
+        ...succState(action)
       }
-    case locationActions.GET_SUBDISTRICT_FAILURE:
+    case typeFail(actions.GET_SUBDISTRICT):
       return {
         ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...failState(action)
       }
     default:
       return state
@@ -130,30 +84,10 @@ function subdistrict (state = initSubDistrict, action) {
 }
 
 function village (state = initVillage, action) {
-  switch (action.type) {
-    case locationActions.GET_VILLAGE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case locationActions.GET_VILLAGE_SUCCESS:
-      return {
-        ...state,
-        villages: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case locationActions.GET_VILLAGE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_VILLAGE:
+      return buildReducer(state, action, type, 'villages')
     default:
       return state
   }

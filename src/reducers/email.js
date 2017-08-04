@@ -1,38 +1,15 @@
 import * as actions from '../actions/email'
+import { buildReducer, buildType, initState } from '../config'
 
 const initCheckEmail = {
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 function checkEmail (state = initCheckEmail, action) {
-  switch (action.type) {
-    case actions.CHECK_EMAILVALIDITY_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.CHECK_EMAILVALIDITY_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.CHECK_EMAILVALIDITY_FAILURE:
-      return {
-        ...state,
-        message: action.data.email[0],
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.CHECK_EMAIL_VALIDITY:
+      return buildReducer(state, action, type)
     default:
       return state
   }

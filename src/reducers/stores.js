@@ -1,256 +1,132 @@
-import * as storeActions from '../actions/stores'
+import * as actions from '../actions/stores'
+import { buildReducer, buildType, initState } from '../config'
 
 const initStore = {
   store: {},
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initExpedition = {
   expeditions: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initVerify = {
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initUpload = {
   payload: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
+}
+
+const initOwnStore = {
+  ownStore: {},
+  ...initState()
+}
+
+const initStoreProducts = {
+  storeProducts: {},
+  ...initState()
 }
 
 function stores (state = initStore, action) {
-  switch (action.type) {
-    case storeActions.GET_STORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.GET_STORE_SUCCESS:
-      return {
-        ...state,
-        store: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.GET_STORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_STORE:
+      return buildReducer(state, action, type, 'store')
     default:
       return state
   }
 }
 
 function createStore (state = initStore, action) {
-  switch (action.type) {
-    case storeActions.CREATE_STORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.CREATE_STORE_SUCCESS:
-      return {
-        ...state,
-        store: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.CREATE_STORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.CREATE_STORE:
+      return buildReducer(state, action, type, 'store')
     default:
       return state
   }
 }
 
 function expeditionListStore (state = initExpedition, action) {
-  switch (action.type) {
-    case storeActions.STORE_EXPEDITIONLIST_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.STORE_EXPEDITIONLIST_SUCCESS:
-      return {
-        ...state,
-        expeditions: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.STORE_EXPEDITIONLIST_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.STORE_EXPEDITION_LIST:
+      return buildReducer(state, action, type, 'expeditions')
     default:
       return state
   }
 }
 
 function expeditionStore (state = initExpedition, action) {
-  switch (action.type) {
-    case storeActions.STORE_EXPEDITIONMANAGE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.STORE_EXPEDITIONMANAGE_SUCCESS:
-      return {
-        ...state,
-        expeditions: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.STORE_EXPEDITIONMANAGE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.STORE_EXPEDITION_MANAGE:
+      return buildReducer(state, action, type, 'expeditions')
     default:
       return state
   }
 }
 
 function photoUpload (state = initUpload, action) {
-  switch (action.type) {
-    case storeActions.PHOTO_UPLOAD_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.PHOTO_UPLOAD_SUCCESS:
-      return {
-        ...state,
-        payload: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.PHOTO_UPLOAD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.PHOTO_UPLOAD:
+      return buildReducer(state, action, type, 'payload')
     default:
       return state
   }
 }
 
 function verifyStore (state = initVerify, action) {
-  switch (action.type) {
-    case storeActions.VERIFY_STORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.VERIFY_STORE_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.VERIFY_STORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.VERIFY_STORE:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
 function sendMessageStore (state = initStore, action) {
-  switch (action.type) {
-    case storeActions.MESSAGE_STORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case storeActions.MESSAGE_STORE_SUCCESS:
-      return {
-        ...state,
-        store: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case storeActions.MESSAGE_STORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
-    case storeActions.MESSAGE_STORE_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.MESSAGE_STORE:
+      return buildReducer(state, action, type, 'store')
+    case actions.MESSAGE_STORE_RESET:
+      return initStore
+    default:
+      return state
+  }
+}
+
+export const getOwnStore = (state = initOwnStore, action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_OWN_STORE:
+      return buildReducer(state, action, type, 'ownStore')
+    default:
+      return state
+  }
+}
+
+export const getStoreProducts = (state = initStoreProducts, action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_STORE_PRODUCTS:
+      return buildReducer(state, action, type, 'storeProducts')
+    default:
+      return state
+  }
+}
+
+export const getStoreCatalogProducts = (state = initState({ storeCatalogProducts: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_STORE_CATALOG_PRODUCTS:
+      return buildReducer(state, action, type, 'storeCatalogProducts')
     default:
       return state
   }

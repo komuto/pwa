@@ -4,6 +4,10 @@ const initAmountProduct = {
   amountProduct: 1
 }
 
+const initAddressSelected = {
+  status: false
+}
+
 const initShippingInformation = {
   alias: '',
   recipient: '',
@@ -53,6 +57,18 @@ const initNote = {
 
 const initInsurance = {
   insurance: null
+}
+
+function addressSelected (state = initAddressSelected, action) {
+  switch (action.type) {
+    case purchaseActions.ADDRESS_SELECTED:
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
 }
 
 function amountProduct (state = initAmountProduct, action) {
@@ -147,6 +163,7 @@ function noted (state = initNote, action) {
 }
 
 export {
+  addressSelected,
   amountProduct,
   shippingInformation,
   courierExpedition,

@@ -1,105 +1,27 @@
-export const GET_STORE_REQUEST = 'GET_STORE_REQUEST'
-export const GET_STORE_SUCCESS = 'GET_STORE_SUCCESS'
-export const GET_STORE_FAILURE = 'GET_STORE_FAILURE'
+import { buildAction, typeReq } from '../config'
 
-export const CREATE_STORE_REQUEST = 'CREATE_STORE_REQUEST'
-export const CREATE_STORE_SUCCESS = 'CREATE_STORE_SUCCESS'
-export const CREATE_STORE_FAILURE = 'CREATE_STORE_FAILURE'
-
-export const STORE_EXPEDITIONLIST_REQUEST = 'STORE_EXPEDITIONLIST_REQUEST'
-export const STORE_EXPEDITIONLIST_SUCCESS = 'STORE_EXPEDITIONLIST_SUCCESS'
-export const STORE_EXPEDITIONLIST_FAILURE = 'STORE_EXPEDITIONLIST_FAILURE'
-
-export const STORE_EXPEDITIONMANAGE_REQUEST = 'STORE_EXPEDITIONMANAGE_REQUEST'
-export const STORE_EXPEDITIONMANAGE_SUCCESS = 'STORE_EXPEDITIONMANAGE_SUCCESS'
-export const STORE_EXPEDITIONMANAGE_FAILURE = 'STORE_EXPEDITIONMANAGE_FAILURE'
-
-export const STOREEXPEDITION_UPDATE_REQUEST = 'STOREEXPEDITION_UPDATE_REQUEST'
-export const STOREEXPEDITION_UPDATE_SUCCESS = 'STOREEXPEDITION_UPDATE_SUCCESS'
-export const STOREEXPEDITION_UPDATE_FAILURE = 'STOREEXPEDITION_UPDATE_FAILURE'
-
-export const PHOTO_UPLOAD_REQUEST = 'PHOTO_UPLOAD_REQUEST'
-export const PHOTO_UPLOAD_SUCCESS = 'PHOTO_UPLOAD_SUCCESS'
-export const PHOTO_UPLOAD_FAILURE = 'PHOTO_UPLOAD_FAILURE'
-
-export const VERIFY_STORE_REQUEST = 'VERIFY_STORE_REQUEST'
-export const VERIFY_STORE_SUCCESS = 'VERIFY_STORE_SUCCESS'
-export const VERIFY_STORE_FAILURE = 'VERIFY_STORE_FAILURE'
-
-export const MESSAGE_STORE_REQUEST = 'MESSAGE_STORE_REQUEST'
-export const MESSAGE_STORE_SUCCESS = 'MESSAGE_STORE_SUCCESS'
-export const MESSAGE_STORE_FAILURE = 'MESSAGE_STORE_FAILURE'
+export const GET_STORE = 'GET_STORE'
+export const CREATE_STORE = 'CREATE_STORE'
+export const STORE_EXPEDITION_LIST = 'STORE_EXPEDITION_LIST'
+export const STORE_EXPEDITION_MANAGE = 'STORE_EXPEDITION_MANAGE'
+export const STORE_EXPEDITION_UPDATE = 'STORE_EXPEDITION_UPDATE'
+export const PHOTO_UPLOAD = 'PHOTO_UPLOAD'
+export const VERIFY_STORE = 'VERIFY_STORE'
+export const MESSAGE_STORE = 'MESSAGE_STORE'
 export const MESSAGE_STORE_RESET = 'MESSAGE_STORE_RESET'
+export const GET_OWN_STORE = 'GET_OWN_STORE'
+export const GET_STORE_PRODUCTS = 'GET_STORE_PRODUCTS'
+export const GET_STORE_CATALOG_PRODUCTS = 'GET_STORE_CATALOG_PRODUCTS'
 
-function getStores (params) {
-  return {
-    type: GET_STORE_REQUEST,
-    ...params
-  }
-}
-
-function photoUpload (params) {
-  return {
-    type: PHOTO_UPLOAD_REQUEST,
-    ...params
-  }
-}
-
-function createStore (params) {
-  return {
-    type: CREATE_STORE_REQUEST,
-    ...params
-  }
-}
-
-function storeExpeditionList () {
-  return {
-    type: STORE_EXPEDITIONLIST_REQUEST
-  }
-}
-
-function storeExpeditionManage () {
-  return {
-    type: STORE_EXPEDITIONMANAGE_REQUEST
-  }
-}
-
-function storeUpdateExpedition (params) {
-  return {
-    type: STOREEXPEDITION_UPDATE_REQUEST,
-    ...params
-  }
-}
-
-function verifyStore (params) {
-  return {
-    type: VERIFY_STORE_REQUEST,
-    ...params
-  }
-}
-
-function sendMessageStore (params) {
-  return {
-    type: MESSAGE_STORE_REQUEST,
-    ...params
-  }
-}
-
-function sendMessageStoreReset () {
-  return {
-    type: MESSAGE_STORE_RESET
-  }
-}
-
-export {
-  getStores,
-  createStore,
-  photoUpload,
-  storeExpeditionList,
-  storeExpeditionManage,
-  storeUpdateExpedition,
-  verifyStore,
-  sendMessageStore,
-  sendMessageStoreReset
-
-}
+export const getStores = params => buildAction(typeReq(GET_STORE), params)
+export const photoUpload = params => buildAction(typeReq(PHOTO_UPLOAD), params)
+export const createStore = params => buildAction(typeReq(CREATE_STORE), params)
+export const storeExpeditionList = () => buildAction(typeReq(STORE_EXPEDITION_LIST))
+export const storeExpeditionManage = () => buildAction(typeReq(STORE_EXPEDITION_MANAGE))
+export const storeUpdateExpedition = params => buildAction(typeReq(STORE_EXPEDITION_UPDATE), params)
+export const verifyStore = params => buildAction(typeReq(VERIFY_STORE), params)
+export const sendMessageStore = params => buildAction(typeReq(MESSAGE_STORE), params)
+export const sendMessageStoreReset = () => buildAction(MESSAGE_STORE_RESET)
+export const getOwnStore = () => buildAction(typeReq(GET_OWN_STORE))
+export const getStoreProducts = params => buildAction(typeReq(GET_STORE_PRODUCTS), params)
+export const getStoreCatalogProducts = params => buildAction(typeReq(GET_STORE_CATALOG_PRODUCTS), params)

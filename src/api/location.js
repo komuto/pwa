@@ -1,78 +1,25 @@
 import { publicApiKomuto } from './api'
+import { buildQuery } from '../config'
 
-function getProvince (action) {
-  let axios = publicApiKomuto()
-  return axios.get('locations/provinces', {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+export const getProvince = (action) => {
+  const axios = publicApiKomuto()
+  return axios.get('locations/provinces').catch((err) => { throw err })
 }
 
-function getDistrict (action) {
-  let axios = publicApiKomuto()
-  let params
-  if (action.province_id === undefined) {
-    params = ''
-  } else {
-    params = '?province_id=' + action.province_id
-  }
-  return axios.get('locations/districts' + params, {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+export const getDistrict = (action) => {
+  const axios = publicApiKomuto()
+  const query = buildQuery(action)
+  return axios.get(`locations/districts?${query}`).catch((err) => { throw err })
 }
 
-function getSubDistrict (action) {
-  let axios = publicApiKomuto()
-  let params
-  if (action.district_id === undefined) {
-    params = ''
-  } else {
-    params = '?district_id=' + action.district_id
-  }
-  return axios.get('locations/sub-districts' + params, {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
+export const getSubDistrict = (action) => {
+  const axios = publicApiKomuto()
+  const query = buildQuery(action)
+  return axios.get(`locations/sub-districts?${query}`).catch((err) => { throw err })
 }
 
-function getVillage (action) {
-  let axios = publicApiKomuto()
-  let params
-  if (action.sub_district_id === undefined) {
-    params = ''
-  } else {
-    params = '?sub_district_id=' + action.sub_district_id
-  }
-  return axios.get('locations/villages' + params, {
-    ...action
-  })
-  .then(function (data) {
-    return data
-  })
-  .catch(function (err) {
-    throw (err)
-  })
-}
-
-export {
-  getProvince,
-  getDistrict,
-  getSubDistrict,
-  getVillage
+export const getVillage = (action) => {
+  const axios = publicApiKomuto()
+  const query = buildQuery(action)
+  return axios.get(`locations/villages?${query}`).catch((err) => { throw err })
 }

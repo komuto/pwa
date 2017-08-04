@@ -1,112 +1,38 @@
 import * as actions from '../actions/user'
+import { reqState, succState, failState, typeReq, typeSucc, typeFail, buildReducer, buildType, initState } from '../config'
 
 const initUser = {
   email: '',
   token: '',
-  uid: '',
+  uid: 0,
   user: {},
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initDiscussion = {
-  discussions: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initFavoriteStore = {
-  stores: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initUpdate = {
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
-}
-
-const initBucket = {
-  count: 0,
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
-}
-
-const initGetBucket = {
-  buckets: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initGetBalance = {
   balance: 0,
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initGetPhone = {
   phone: '',
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
-}
-
-const initValidate = {
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initProfile = {
-  message: '',
-  status: 0,
   verifyStatus: '',
   user: {},
-  isLoading: false,
-  isOnline: true,
-  isFound: false
+  ...initState()
 }
 
 const initForgetPass = {
   email: '',
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
+  ...initState()
 }
 
-const initVerify = {
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+const initWishlist = {
+  wishlist: [],
+  ...initState()
 }
 
 const initLogin = {
@@ -114,88 +40,57 @@ const initLogin = {
 }
 
 function auth (state = initUser, action) {
-  console.log(action.type)
   switch (action.type) {
-    case actions.USER_LOGIN_REQUEST:
+    case typeReq(actions.USER_LOGIN):
       return {
-        ...state,
+        ...initUser,
         email: action.email,
-        token: '',
-        uid: 0,
-        user: {},
-        message: action.message,
-        status: action.code,
         isLoading: true
       }
-    case actions.USER_LOGIN_SUCCESS:
+    case typeSucc(actions.USER_LOGIN):
       return {
-        ...state,
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
         user: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case actions.USER_LOGIN_FAILURE:
+    case typeFail(actions.USER_LOGIN):
       return {
-        ...state,
         email: '',
         token: '',
         uid: 0,
         user: {},
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
+        ...failState(action)
       }
-    case actions.LOGIN_SOCIAL_REQUEST:
+    case typeReq(actions.LOGIN_SOCIAL):
       return {
-        ...state,
+        ...initUser,
         email: action.email,
-        token: '',
-        uid: 0,
-        user: {},
-        message: action.message,
-        status: action.code,
         isLoading: true
       }
-    case actions.LOGIN_SOCIAL_SUCCESS:
+    case typeSucc(actions.LOGIN_SOCIAL):
       return {
-        ...state,
         email: action.data.email,
         token: action.data.token,
         uid: action.data.id,
         user: action.data,
-        message: action.message,
-        status: action.code,
         is_required_password: action.data.is_required_password,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case actions.LOGIN_SOCIAL_FAILURE:
+    case typeFail(actions.LOGIN_SOCIAL):
       return {
-        ...state,
         email: '',
         token: '',
         uid: 0,
         user: {},
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...failState(action)
       }
-    case actions.USER_LOGOUT_SUCCESS:
+    case actions.USER_LOGOUT:
       return {
-        ...state,
+        ...initUser,
         message: action.message,
         status: action.code,
-        isLoading: false,
         isFound: true
       }
     default:
@@ -203,59 +98,21 @@ function auth (state = initUser, action) {
   }
 }
 
-function newPassword (state = initVerify, action) {
-  switch (action.type) {
-    case actions.USER_NEWPASSWORD_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.USER_NEWPASSWORD_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case actions.USER_NEWPASSWORD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function newPassword (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.USER_NEW_PASSWORD:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
-function verify (state = initVerify, action) {
-  switch (action.type) {
-    case actions.USER_VERIFICATION_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.USER_VERIFICATION_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case actions.USER_VERIFICATION_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function verify (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.USER_VERIFICATION:
+      return buildReducer(state, action, type)
     default:
       return state
   }
@@ -263,84 +120,42 @@ function verify (state = initVerify, action) {
 
 function getProfile (state = initProfile, action) {
   switch (action.type) {
-    case actions.GET_PROFILE_REQUEST:
+    case typeReq(actions.GET_PROFILE):
+      return reqState(state)
+    case typeSucc(actions.GET_PROFILE):
       return {
-        ...state,
-        isLoading: true
-      }
-    case actions.GET_PROFILEMANAGE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.GET_PROFILE_SUCCESS:
-      return {
-        ...state,
         verifyStatus: action.data.user.status,
         user: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case actions.GET_PROFILEMANAGE_SUCCESS:
+    case typeFail(actions.GET_PROFILE):
       return {
-        ...state,
+        ...initProfile,
+        ...failState(action)
+      }
+    case typeReq(actions.GET_PROFILE_MANAGE):
+      return reqState(state)
+    case typeSucc(actions.GET_PROFILE_MANAGE):
+      return {
         verifyStatus: action.data.user.status,
         user: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        ...succState(action)
       }
-    case actions.GET_PROFILE_FAILURE:
+    case typeFail(actions.GET_PROFILE_MANAGE):
       return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
-    case actions.GET_PROFILEMANAGE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...initProfile,
+        ...failState(action)
       }
     default:
       return state
   }
 }
 
-function updateProfile (state = initUpdate, action) {
-  switch (action.type) {
-    case actions.UPDATE_PROFILE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.UPDATE_PROFILE_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.FORGET_PASSWORD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function updateProfile (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.UPDATE_PROFILE:
+      return buildReducer(state, action, type)
     default:
       return state
   }
@@ -348,71 +163,35 @@ function updateProfile (state = initUpdate, action) {
 
 function register (state = initUser, action) {
   switch (action.type) {
-    case actions.USER_REGISTER_REQUEST:
+    case typeReq(actions.USER_REGISTER):
       return {
-        ...state,
+        ...initUser,
         email: action.email,
-        token: '',
-        uid: 0,
-        user: {},
-        message: '',
-        status: 0,
-        isLoading: false
+        isLoading: true
       }
-    case actions.USER_REGISTER_SUCCESS:
+    case typeSucc(actions.USER_REGISTER):
       return {
-        ...state,
         email: action.data.email,
         uid: action.data.id,
         user: action.data,
         token: action.data.token,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
+        ...succState(action)
       }
-    case actions.USER_REGISTER_FAILURE:
+    case typeFail(actions.GET_PROFILE):
       return {
-        ...state,
-        email: '',
-        token: '',
-        uid: 0,
-        user: {},
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        ...initUser,
+        ...failState(action)
       }
     default:
       return state
   }
 }
 
-function validateToken (state = initValidate, action) {
-  switch (action.type) {
-    case actions.VALIDATE_TOKENFORGETPASSWORD_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.VALIDATE_TOKENFORGETPASSWORD_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case actions.VALIDATE_TOKENFORGETPASSWORD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function validateToken (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.VALIDATE_TOKEN_FORGET_PASSWORD:
+      return buildReducer(state, action, type)
     default:
       return state
   }
@@ -420,30 +199,21 @@ function validateToken (state = initValidate, action) {
 
 function forgetPassword (state = initForgetPass, action) {
   switch (action.type) {
-    case actions.FORGET_PASSWORD_REQUEST:
+    case typeReq(actions.FORGET_PASSWORD):
       return {
-        ...state,
+        ...initForgetPass,
         email: action.email,
-        message: '',
-        status: '',
         isLoading: true
       }
-    case actions.FORGET_PASSWORD_SUCCESS:
+    case typeSucc(actions.FORGET_PASSWORD):
       return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
+        email: state.email,
+        ...succState(action)
       }
-    case actions.FORGET_PASSWORD_FAILURE:
+    case typeFail(actions.FORGET_PASSWORD):
       return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
+        email: state.email,
+        ...failState(action)
       }
     default:
       return state
@@ -463,152 +233,30 @@ function isLogin (state = initLogin, action) {
 }
 
 function getBalance (state = initGetBalance, action) {
-  switch (action.type) {
-    case actions.USER_BALANCE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.USER_BALANCE_SUCCESS:
-      return {
-        ...state,
-        balance: action.data.user_balance,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.USER_BALANCE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.USER_BALANCE:
+      return buildReducer(state, action, type, 'balance')
     default:
       return state
   }
 }
 
-function changePassword (state = initUpdate, action) {
-  switch (action.type) {
-    case actions.CHANGE_PASSWORD_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.CHANGE_PASSWORD_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.CHANGE_PASSWORD_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function changePassword (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.CHANGE_PASSWORD:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
-function favoriteStore (state = initUpdate, action) {
-  switch (action.type) {
-    case actions.FAVORITE_STORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.FAVORITE_STORE_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.FAVORITE_STORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
-    default:
-      return state
-  }
-}
-
-function addToBucket (state = initUpdate, action) {
-  switch (action.type) {
-    case actions.ADDTO_BUCKET_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.ADDTO_BUCKET_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.ADDTO_BUCKET_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
-    default:
-      return state
-  }
-}
-
-function countBucket (state = initBucket, action) {
-  switch (action.type) {
-    case actions.COUNT_BUCKET_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.COUNT_BUCKET_SUCCESS:
-      return {
-        ...state,
-        count: action.data.count,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.COUNT_BUCKET_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function favoriteStore (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.FAVORITE_STORE:
+      return buildReducer(state, action, type)
     default:
       return state
   }
@@ -616,214 +264,88 @@ function countBucket (state = initBucket, action) {
 
 function getPhone (state = initGetPhone, action) {
   switch (action.type) {
-    case actions.GET_PHONE_REQUEST:
+    case typeReq(actions.GET_PHONE):
+      return reqState(state)
+    case typeSucc(actions.GET_PHONE):
       return {
-        ...state,
-        isLoading: true
+        count: action.data.phone_number,
+        ...succState(action)
       }
-    case actions.GET_PHONE_SUCCESS:
+    case typeFail(actions.COUNT_BUCKET):
       return {
         ...state,
-        phone: action.data.phone_number,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.GET_PHONE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
+        ...failState(action)
       }
     default:
       return state
   }
 }
 
-function getBucket (state = initGetBucket, action) {
-  switch (action.type) {
-    case actions.GET_BUCKET_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.GET_BUCKET_SUCCESS:
-      return {
-        ...state,
-        bukcets: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.GET_BUCKET_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function updatePhone (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.UPDATE_PHONE:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
-function updatePhone (state = initUpdate, action) {
-  switch (action.type) {
-    case actions.UPDATE_PHONE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.UPDATE_PHONE_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.UPDATE_PHONE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function getDiscussion (state = initState({ discussions: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_USER_DISCUSSION:
+      return buildReducer(state, action, type, 'discussions', false, true)
     default:
       return state
   }
 }
 
-function getDiscussion (state = initDiscussion, action) {
-  switch (action.type) {
-    case actions.GET_USERDISCUSSION_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.GET_USERDISCUSSION_SUCCESS:
-      return {
-        ...state,
-        discussions: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.GET_USERDISCUSSION_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function sendOTPPhone (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.SEND_PHONE_OTP:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
-function sendOTPPhone (state = initValidate, action) {
-  switch (action.type) {
-    case actions.SEND_PHONEOTP_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.SEND_PHONEOTP_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.SEND_PHONEOTP_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function verifyPhone (state = initState(), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.VERIFIY_PHONE:
+      return buildReducer(state, action, type)
     default:
       return state
   }
 }
 
-function verifyPhone (state = initValidate, action) {
-  switch (action.type) {
-    case actions.VERIFIY_PHONE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.VERIFIY_PHONE_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.VERIFIY_PHONE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function wishlist (state = initWishlist, action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_WISHLIST:
+      return buildReducer(state, action, type, 'wishlist')
     default:
       return state
   }
 }
 
-function listFavoriteStore (state = initFavoriteStore, action) {
-  console.log(action.type)
-  switch (action.type) {
-    case actions.LIST_FAVORITSTORE_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.LIST_FAVORITSTORE_SUCCESS:
-      return {
-        ...state,
-        stores: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.LIST_FAVORITSTORE_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+export const sendOTPBank = (state = initState(), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.SEND_BANK_OTP:
+      return buildReducer(state, action, type)
+    default:
+      return state
+  }
+}
+
+function listFavoriteStore (state = initState({ stores: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.LIST_FAVORIT_STORE:
+      return buildReducer(state, action, type, 'stores', false, true)
     default:
       return state
   }
@@ -842,13 +364,11 @@ export {
   getBalance,
   updateProfile,
   favoriteStore,
-  addToBucket,
-  countBucket,
-  getBucket,
   getPhone,
   updatePhone,
   getDiscussion,
   listFavoriteStore,
   sendOTPPhone,
-  verifyPhone
+  verifyPhone,
+  wishlist
 }

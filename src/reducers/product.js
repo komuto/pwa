@@ -1,425 +1,167 @@
-import * as productActions from '../actions/product'
+import * as actions from '../actions/product'
+import { buildReducer, initState, buildType } from '../config'
 
 const initDetailProduct = {
   detail: {},
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initNewDiscussion = {
   discussion: {},
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initComment = {
   comments: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initNewComment = {
   comment: {},
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
-const initProduct = {
-  products: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initDiscussion = {
-  discussions: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
-}
+// const initDiscussion = {
+//   discussions: [],
+//   ...initState()
+// }
 
 const initAddWishlist = {
   wishlist: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initReport = {
   report: {},
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
+}
+
+const initAlterProduct = {
+  product: {},
+  ...initState()
 }
 
 function getProduct (state = initDetailProduct, action) {
-  switch (action.type) {
-    case productActions.GET_PRODUCT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case productActions.GET_PRODUCT_SUCCESS:
-      return {
-        ...state,
-        detail: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case productActions.GET_PRODUCT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
-      }
-    case productActions.GET_PRODUCT_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_PRODUCT:
+      return buildReducer(state, action, type, 'detail')
+    case actions.GET_PRODUCT_RESET:
+      return { ...state, status: 0 }
     default:
       return state
   }
 }
 
-function productByCategory (state = initProduct, action) {
-  switch (action.type) {
-    case productActions.LIST_PRODUCTBYCATEGORY_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case productActions.LIST_PRODUCTBYCATEGORY_SUCCESS:
-      return {
-        ...state,
-        products: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case productActions.LIST_PRODUCTBYCATEGORY_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function productByCategory (state = initState({ products: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.LIST_PRODUCT_BY_CATEGORY:
+      return buildReducer(state, action, type, 'products', false, true)
     default:
       return state
   }
 }
 
-function productBySearch (state = initProduct, action) {
-  switch (action.type) {
-    case productActions.LIST_PRODUCTBYSEARCH_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case productActions.LIST_PRODUCTBYSEARCH_SUCCESS:
-      return {
-        ...state,
-        products: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case productActions.LIST_PRODUCTBYSEARCH_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function productBySearch (state = initState({ products: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.LIST_PRODUCT_BY_SEARCH:
+      return buildReducer(state, action, type, 'products', false, true)
     default:
       return state
   }
 }
 
 function addToWishlist (state = initAddWishlist, action) {
-  switch (action.type) {
-    case productActions.ADDTO_WISHLIST_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case productActions.ADDTO_WISHLIST_SUCCESS:
-      return {
-        ...state,
-        wishlist: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case productActions.ADDTO_WISHLIST_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
-    case productActions.ADDTO_WISHLIST_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_TO_WISHLIST:
+      return buildReducer(state, action, type, 'wishlist')
+    case actions.ADD_TO_WISHLIST_RESET:
+      return initAddWishlist
     default:
       return state
   }
 }
 
 function addToWishlistHome (state = initAddWishlist, action) {
-  switch (action.type) {
-    case productActions.ADDTO_WISHLISTHOME_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case productActions.ADDTO_WISHLISTHOME_SUCCESS:
-      return {
-        ...state,
-        wishlist: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case productActions.ADDTO_WISHLISTHOME_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
-    case productActions.ADDTO_WISHLISTHOME_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_TO_WISHLIST_HOME:
+      return buildReducer(state, action, type, 'wishlist')
+    case actions.ADD_TO_WISHLIST_HOME_RESET:
+      return initAddWishlist
     default:
       return state
   }
 }
 
-function getDiscussion (state = initDiscussion, action) {
-  switch (action.type) {
-    case productActions.GET_DISCUSSION_REQUEST:
-      return {
-        ...state,
-        discussions: [],
-        isLoading: true
-      }
-    case productActions.GET_DISCUSSION_SUCCESS:
-      return {
-        ...state,
-        discussions: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case productActions.GET_DISCUSSION_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function getDiscussion (state = initState({ discussions: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_DISCUSSION:
+      return buildReducer(state, action, type, 'discussions', false, true)
     default:
       return state
   }
 }
 
 function newDiscussion (state = initNewDiscussion, action) {
-  switch (action.type) {
-    case productActions.NEW_DISCUSSION_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case productActions.NEW_DISCUSSION_SUCCESS:
-      return {
-        ...state,
-        discussion: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case productActions.NEW_DISCUSSION_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
-      }
-    case productActions.NEW_DISCUSSION_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.NEW_DISCUSSION:
+      return buildReducer(state, action, type, 'discussion')
+    case actions.NEW_DISCUSSION_RESET:
+      return initNewDiscussion
     default:
       return state
   }
 }
 
 function getComment (state = initComment, action) {
-  switch (action.type) {
-    case productActions.GET_COMMENT_REQUEST:
-      return {
-        ...state,
-        comments: [],
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case productActions.GET_COMMENT_SUCCESS:
-      return {
-        ...state,
-        comments: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case productActions.GET_COMMENT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_COMMENT:
+      return buildReducer(state, action, type, 'comments', false, true)
     default:
       return state
   }
 }
 
 function newComment (state = initNewComment, action) {
-  switch (action.type) {
-    case productActions.NEW_COMMENT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case productActions.NEW_COMMENT_SUCCESS:
-      return {
-        ...state,
-        comment: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case productActions.NEW_COMMENT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
-      }
-    case productActions.NEW_COMMENT_RESET:
-      return {
-        ...state,
-        status: 0
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.NEW_COMMENT:
+      return buildReducer(state, action, type, 'comment')
+    case actions.NEW_COMMENT_RESET:
+      return initNewComment
     default:
       return state
   }
 }
 
 function reportProduct (state = initReport, action) {
-  console.log(action.type)
-  switch (action.type) {
-    case productActions.REPORT_PRODUCT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case productActions.REPORT_PRODUCT_SUCCESS:
-      return {
-        ...state,
-        report: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: true,
-        isFound: true
-      }
-    case productActions.REPORT_PRODUCT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline,
-        isFound: false
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.REPORT_PRODUCT:
+      return buildReducer(state, action, type, 'report')
+    default:
+      return state
+  }
+}
+
+export const alterProducts = (state = initAlterProduct, action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.CREATE_PRODUCT:
+      return buildReducer(state, action, type, 'product')
+    case actions.HIDE_PRODUCTS:
+      return buildReducer(state, action, type)
+    case actions.DELETE_PRODUCTS:
+      return buildReducer(state, action, type)
+    case actions.CHANGE_CATALOG:
+      return buildReducer(state, action, type)
     default:
       return state
   }

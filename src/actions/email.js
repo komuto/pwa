@@ -1,14 +1,5 @@
-export const CHECK_EMAILVALIDITY_REQUEST = 'CHECK_EMAILVALIDITY_REQUEST'
-export const CHECK_EMAILVALIDITY_SUCCESS = 'CHECK_EMAILVALIDITY_SUCCESS'
-export const CHECK_EMAILVALIDITY_FAILURE = 'CHECK_EMAILVALIDITY_FAILURE'
+import { buildAction, typeReq } from '../config'
 
-function checkEmail (params) {
-  return {
-    type: CHECK_EMAILVALIDITY_REQUEST,
-    ...params
-  }
-}
+export const CHECK_EMAIL_VALIDITY = 'CHECK_EMAIL_VALIDITY'
 
-export {
-  checkEmail
-}
+export const checkEmail = params => buildAction(typeReq(CHECK_EMAIL_VALIDITY), params)

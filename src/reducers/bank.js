@@ -1,80 +1,65 @@
 import * as actions from '../actions/bank'
+import { buildReducer, buildType, initState } from '../config'
 
 const initListBank = {
   banks: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
 const initBank = {
   bank: '',
-  message: '',
-  status: 0,
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
+}
+
+const initBankAccount = {
+  bankAccount: {},
+  ...initState()
+}
+
+const initBankAccounts = {
+  listBankAccounts: [],
+  ...initState()
 }
 
 function listBank (state = initListBank, action) {
-  switch (action.type) {
-    case actions.LIST_BANK_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.LIST_BANK_SUCCESS:
-      return {
-        ...state,
-        banks: action.data,
-        message: action.message,
-        status: action.status,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.LIST_BANK_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.LIST_BANK:
+      return buildReducer(state, action, type, 'banks')
     default:
       return state
   }
 }
 
 function getBank (state = initBank, action) {
-  switch (action.type) {
-    case actions.GET_BANK_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case actions.GET_BANK_SUCCESS:
-      return {
-        ...state,
-        bank: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case actions.GET_BANK_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: actions.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_BANK:
+      return buildReducer(state, action, type, 'bank')
+    default:
+      return state
+  }
+}
+
+export const bankAccount = (state = initBankAccount, action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_BANK_ACCOUNT:
+      return { ...buildReducer(state, action, type, 'bankAccount'), type: 'add' }
+    case actions.UPDATE_BANK_ACCOUNT:
+      return { ...buildReducer(state, action, type, 'bankAccount'), type: 'update' }
+    case actions.DELETE_BANK_ACCOUNT:
+      return { ...buildReducer(state, action, type), type: 'delete' }
+    default:
+      return state
+  }
+}
+
+export const getBankAccounts = (state = initBankAccounts, action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_BANK_ACCOUNTS:
+      return buildReducer(state, action, type, 'listBankAccounts')
     default:
       return state
   }

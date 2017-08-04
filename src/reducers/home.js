@@ -1,239 +1,73 @@
-import * as homeActions from '../actions/home'
+import * as actions from '../actions/home'
+import { buildReducer, buildType, initState } from '../config'
 
 const initCategory = {
   categories: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initSearch = {
-  products: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-const initFilter = {
-  products: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
+  ...initState()
 }
 
 const initAllCategory = {
   allCategory: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isOnline: true,
-  isFound: false
+  ...initState()
 }
 
-const initProduct = {
-  products: [],
-  message: '',
-  status: 0,
-  isLoading: false,
-  isOnline: true,
-  isFound: false
-}
-
-function product (state = initProduct, action) {
-  switch (action.type) {
-    case homeActions.HOME_PRODUCT_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case homeActions.HOME_PRODUCT_SUCCESS:
-      return {
-        ...state,
-        products: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case homeActions.HOME_PRODUCT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function product (state = initState({ products: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.HOME_PRODUCT:
+      return buildReducer(state, action, type, 'products', false, true)
     default:
       return state
   }
 }
 
-function searchProduct (state = initSearch, action) {
-  switch (action.type) {
-    case homeActions.SEARCH_PRODUCT_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case homeActions.SEARCH_PRODUCT_SUCCESS:
-      return {
-        ...state,
-        products: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case homeActions.SEARCH_PRODUCT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function searchProduct (state = initState({ products: [] }), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.SEARCH_PRODUCT:
+      return buildReducer(state, action, type, 'products')
     default:
       return state
   }
 }
 
-function filterProduct (state = initFilter, action) {
-  switch (action.type) {
-    case homeActions.FILTER_PRODUCT_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case homeActions.FILTER_PRODUCT_SUCCESS:
-      return {
-        ...state,
-        products: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true
-      }
-    case homeActions.FILTER_PRODUCT_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+function filterProduct (state = initState({ products: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.FILTER_PRODUCT:
+      return buildReducer(state, action, type, 'products', false, true)
     default:
       return state
   }
 }
 
 function allCategory (state = initAllCategory, action) {
-  switch (action.type) {
-    case homeActions.ALL_CATEGORY_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0,
-        isFound: false,
-        isOnline: true
-      }
-    case homeActions.ALL_CATEGORY_SUCCESS:
-      return {
-        ...state,
-        allCategory: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case homeActions.ALL_CATEGORY_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ALL_CATEGORY:
+      return buildReducer(state, action, type, 'allCategory')
     default:
       return state
   }
 }
 
 function categoryList (state = initCategory, action) {
-  switch (action.type) {
-    case homeActions.HOME_CATEGORY_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case homeActions.HOME_CATEGORY_SUCCESS:
-      return {
-        ...state,
-        categories: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case homeActions.HOME_CATEGORY_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.HOME_CATEGORY:
+      return buildReducer(state, action, type, 'categories')
     default:
       return state
   }
 }
 
 function subCategory (state = initCategory, action) {
-  switch (action.type) {
-    case homeActions.RESET_STATUS_SUBCATEGORY:
-      return {
-        ...state,
-        categories: [],
-        message: '',
-        status: 0,
-        isLoading: false,
-        isFound: false,
-        isOnline: true
-      }
-    case homeActions.HOME_SUBCATEGORY_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case homeActions.HOME_SUBCATEGORY_SUCCESS:
-      return {
-        ...state,
-        categories: action.data,
-        message: action.message,
-        status: action.code,
-        isOnline: true,
-        isLoading: false,
-        isFound: true
-      }
-    case homeActions.HOME_SUBCATEGORY_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isOnline: action.isOnline
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.STATUS_SUBCATEGORY_RESET:
+      return initCategory
+    case actions.HOME_SUBCATEGORY:
+      return buildReducer(state, action, type, 'categories')
     default:
       return state
   }

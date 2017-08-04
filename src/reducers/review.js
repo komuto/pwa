@@ -1,129 +1,33 @@
-import * as reviewActions from '../actions/review'
-
-const initReview = {
-  reviews: [],
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
-}
+import * as actions from '../actions/review'
+import { buildReducer, buildType, initState } from '../config'
 
 const initAdd = {
-  message: '',
-  status: '',
-  isLoading: false,
-  isFound: false,
-  isOnline: true
+  ...initState()
 }
 
-function getReview (state = initReview, action) {
-  switch (action.type) {
-    case reviewActions.GET_REVIEW_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0
-      }
-    case reviewActions.GET_REVIEW_SUCCESS:
-      return {
-        ...state,
-        reviews: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case reviewActions.GET_REVIEW_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
-    default:
-      return state
-  }
-}
-
-function listReviewPagination (state = initReview, action) {
-  switch (action.type) {
-    case reviewActions.LIST_REVIEW_REQUEST:
-      return {
-        ...state,
-        isLoading: true
-      }
-    case reviewActions.LIST_REVIEW_SUCCESS:
-      return {
-        ...state,
-        reviews: action.data,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case reviewActions.LIST_REVIEW_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
+function getReviews (state = initState({ reviews: [] }, true), action) {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_REVIEWS:
+      return buildReducer(state, action, type, 'reviews', false, true)
     default:
       return state
   }
 }
 
 function addReview (state = initAdd, action) {
-  switch (action.type) {
-    case reviewActions.ADD_REVIEW_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        message: '',
-        status: 0
-      }
-    case reviewActions.ADD_REVIEW_SUCCESS:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: true,
-        isOnline: true
-      }
-    case reviewActions.ADD_REVIEW_FAILURE:
-      return {
-        ...state,
-        message: action.message,
-        status: action.code,
-        isLoading: false,
-        isFound: false,
-        isOnline: action.isOnline
-      }
-    case reviewActions.ADD_REVIEW_RESET:
-      return {
-        ...state,
-        message: '',
-        status: 0,
-        isLoading: false,
-        isFound: false,
-        isOnline: true
-      }
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_REVIEW:
+      return buildReducer(state, action, type)
+    case actions.ADD_REVIEW_RESET:
+      return initAdd
     default:
       return state
   }
 }
 
 export {
-    getReview,
-    listReviewPagination,
+    getReviews,
     addReview
 }

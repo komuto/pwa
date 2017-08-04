@@ -1,47 +1,8 @@
-import { put } from 'redux-saga/effects'
-import * as locationActions from '../actions/location'
-import * as locationApi from '../api/location'
-import { errorHandling } from '../config'
+import * as actions from '../actions/location'
+import * as apis from '../api/location'
+import { buildSaga } from '../config'
 
-function * getProvince (action) {
-  try {
-    const {data} = yield locationApi.getProvince(action)
-    yield put({ type: locationActions.GET_PROVINCE_SUCCESS, ...data })
-  } catch (e) {
-    yield errorHandling(locationActions.GET_PROVINCE_FAILURE, e)
-  }
-}
-
-function * getDistrict (action) {
-  try {
-    const {data} = yield locationApi.getDistrict(action)
-    yield put({ type: locationActions.GET_DISTRICT_SUCCESS, ...data })
-  } catch (e) {
-    yield errorHandling(locationActions.GET_DISTRICT_FAILURE, e)
-  }
-}
-
-function * getSubDistrict (action) {
-  try {
-    const {data} = yield locationApi.getSubDistrict(action)
-    yield put({ type: locationActions.GET_SUBDISTRICT_SUCCESS, ...data })
-  } catch (e) {
-    yield errorHandling(locationActions.GET_SUBDISTRICT_FAILURE, e)
-  }
-}
-
-function * getVillage (action) {
-  try {
-    const {data} = yield locationApi.getVillage(action)
-    yield put({ type: locationActions.GET_VILLAGE_SUCCESS, ...data })
-  } catch (e) {
-    yield errorHandling(locationActions.GET_VILLAGE_FAILURE, e)
-  }
-}
-
-export {
-  getProvince,
-  getDistrict,
-  getSubDistrict,
-  getVillage
-}
+export const getProvince = buildSaga([], apis.getProvince, actions.GET_PROVINCE)
+export const getDistrict = buildSaga(['province_id', 'q'], apis.getDistrict, actions.GET_DISTRICT)
+export const getSubDistrict = buildSaga(['district_id'], apis.getSubDistrict, actions.GET_SUBDISTRICT)
+export const getVillage = buildSaga(['sub_district_id'], apis.getVillage, actions.GET_VILLAGE)

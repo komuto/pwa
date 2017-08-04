@@ -1,9 +1,17 @@
 export const AMOUNT_PRODUCT = 'AMOUNT_PRODUCT'
+export const ADDRESS_SELECTED = 'ADDRESS_SELECTED'
 export const SHIPPING_INFORMATION = 'SHIPPING_INFORMATION'
 export const COURIER_EXPEDITION = 'COURIER_EXPEDITION'
 export const PACKAGE_EXPEDITION = 'PACKAGE_EXPEDITION'
 export const INSURANCE = 'INSURANCE'
 export const NOTED = 'NOTED'
+
+function addressSelected (params) {
+  return {
+    type: ADDRESS_SELECTED,
+    ...params
+  }
+}
 
 function amountProduct (params) {
   return {
@@ -48,6 +56,7 @@ function noted (params) {
 }
 
 export {
+  addressSelected,
   amountProduct,
   shippingInformation,
   courierExpedition,
