@@ -5,7 +5,7 @@ const OptionsInsurance = (props) => {
         <p><strong>Pilih Provinsi</strong></p>
         <form action='#' className='form'>
           <div className='field'>
-            <div className='control popup-option' style={{ height: '500px', overflow: 'scroll' }}>
+            <div className='control popup-option' style={{ height: '100px', overflow: 'scroll' }}>
               {
                 props.data.map((data) => {
                   return (
