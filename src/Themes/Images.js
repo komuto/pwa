@@ -10,7 +10,14 @@ const images = {
   loading: '../../static/images/loading.png',
   loadingFailed: '../../static/images/loading-failed.png',
   startDisabled: '../../static/images/komuto-icon/050_star-grey.svg',
-  startEnabled: '../../static/images/komuto-icon/051_star_yellow.svg'
+  startEnabled: '../../static/images/komuto-icon/051_star_yellow.svg',
+  unverifiedPhone: '../../static/images/ilustrasi-no-hp-belum-verifikasi.png',
+  verifiedPhone: '../../static/images/ilustrasi-no-hp-sudah-verifikasi.png',
+  iconCamera: '../../static/images/icon-kamera.svg',
+  tiki: '../../static/images/tiki.png',
+  jne: '../../static/images/jne.png',
+  pos: '../../static/images/pos.png',
+  hasOpenedStore: '../../static/images/icon-berhasil-membuka-toko.png'
 }
 
 export default images
