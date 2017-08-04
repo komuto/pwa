@@ -6,7 +6,6 @@ import Link from 'next/link'
 import {Images} from '../Themes'
 
 class HasOpenedStore extends React.Component {
-
   render () {
     return (
       <section className='content'>

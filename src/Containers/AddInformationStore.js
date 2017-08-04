@@ -6,7 +6,6 @@ import Link from 'next/link'
 import {Images} from '../Themes'
 
 class AddInformationStore extends React.Component {
-
   render () {
     return (
       <div>

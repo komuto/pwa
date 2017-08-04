@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import Link from 'next/link'
 
 class OwnerInformation extends React.Component {
-
   render () {
     return (
       <div>
