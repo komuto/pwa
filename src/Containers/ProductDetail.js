@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // import swal from 'sweetalert2'
 // components
 import Content from '../Components/Content'
@@ -27,6 +28,8 @@ class ProductDetail extends Component {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
       token: null,
+      submiting: false,
+      submitingDiscussion: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -86,10 +89,21 @@ class ProductDetail extends Component {
       this.setState({notification: {status: true, message: 'Anda harus login'}})
     }
   }
+
   notification = (message) => this.setState({notification: {status: true, message: message}})
 
+  purchaseNow () {
+    this.setState({ submiting: !this.state.submiting })
+    Router.push(`/purchase?id=${this.state.id}`)
+  }
+
+  discussion () {
+    this.setState({ submitingDiscussion: !this.state.submitingDiscussion })
+    Router.push(`/discussion?id=${this.state.id}`)
+  }
+
   render () {
-    const { productDetail, notification, token } = this.state
+    const { productDetail, notification, token, submiting, submitingDiscussion } = this.state
     const { detail } = productDetail
     const navbar = {
       searchBoox: false,
@@ -131,7 +145,12 @@ class ProductDetail extends Component {
                 products={detail.other_products}
                 store={detail.store}
                 wishlistPress={(id) => this.wishlistPress(id)} />
-              <ProductDetailNavBottom {...detail.product} />
+              <ProductDetailNavBottom
+                {...detail.product}
+                purchaseNow={() => this.purchaseNow()}
+                discussion={() => this.discussion()}
+                submitingDiscussion={submitingDiscussion}
+                submiting={submiting} />
               </Content>
           }
 
