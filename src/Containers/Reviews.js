@@ -8,7 +8,7 @@ import Section from '../Components/Section'
 import Notification from '../Components/Notification'
 import MyImage from '../Components/MyImage'
 import ReviewItem from '../Components/ReviewItem'
-import LoadMoreLoading from '../Components/LoadMoreLoading'
+import Loading from '../Components/Loading'
 // actions
 import * as reviewActions from '../actions/review'
 import * as productActions from '../actions/product'
@@ -44,20 +44,21 @@ class Reviews extends Component {
       NProgress.start()
       await this.props.dispatch(productActions.getProduct({ id }))
     }
-    await this.props.dispatch(reviewActions.getReview({ id, ...this.state.pagination }))
+    await this.props.dispatch(reviewActions.listReviews({ id, ...this.state.pagination }))
   }
 
   async handleLoadMore () {
     let { id, pagination, fetching } = this.state
     if (!fetching) {
       pagination.page += 1
-      await this.props.dispatch(reviewActions.getReview({ id, ...this.state.pagination }))
+      await this.props.dispatch(reviewActions.listReviews({ id, ...this.state.pagination }))
       this.setState({ pagination, fetching: true })
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { reviews, productDetail } = nextProps
+    const stateReviews = this.state.reviews
 
     if (!productDetail.isLoading) {
       NProgress.done()
@@ -82,6 +83,12 @@ class Reviews extends Component {
         case Status.SUCCESS :
           if (reviews.isFound) {
             let hasMore = reviews.reviews.length > 0
+            // jika page di state kurang dari page di props maka data reviews di tambahkan
+            if ((stateReviews.meta.page < reviews.meta.page) && reviews.reviews.length > 0) {
+              reviews.reviews = stateReviews.reviews.concat(reviews.reviews)
+            } else {
+              reviews.reviews = stateReviews.reviews
+            }
             // reviews.reviews = this.state.reviews.reviews.concat(reviews.reviews)
             this.setState({ fetching: false, hasMore, reviews })
           } else {
@@ -113,7 +120,7 @@ class Reviews extends Component {
         {
             productDetail.isFound &&
             <div className='discuss'>
-              <ul className='product-discuss'>
+              <ul className='product-discuss' style={{ backgroundColor: '#fff' }}>
                 <li>
                   <div className='box is-paddingless'>
                     <article className='media'>
@@ -143,8 +150,8 @@ class Reviews extends Component {
               pageStart={0}
               loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
               hasMore={this.state.hasMore}
-              loader={<LoadMoreLoading text='Loading...' />}>
-                { reviews.reviews.map((review, index) => { return <ReviewItem {...review} key={index} /> }) }
+              loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+                { reviews.reviews.map((review, index) => { return <ReviewItem {...review} key={review.id} /> }) }
               </InfiniteScroll>
           }
       </Section>
@@ -155,7 +162,7 @@ class Reviews extends Component {
 const mapStateToProps = (state) => {
   return {
     productDetail: state.productDetail,
-    reviews: state.review
+    reviews: state.productReview
   }
 }
 
