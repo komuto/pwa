@@ -7,7 +7,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import Reviews from '../src/Containers/Reviews'
 
 const params = {
-  style: 'main user bg-white',
+  style: 'main user bg-grey',
   header: {
     title: 'Ulasan'
   },
