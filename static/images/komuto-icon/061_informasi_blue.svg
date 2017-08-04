@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+    <g fill="none" fill-rule="evenodd">
+        <circle cx="15" cy="15" r="14" fill="#6CA2E8"/>
+        <text fill="#FFF" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" letter-spacing=".233">
+            <tspan x="13" y="21">i</tspan>
+        </text>
+    </g>
+</svg>

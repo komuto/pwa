@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <g fill="none" fill-rule="evenodd">
+        <text fill="#404852" font-family="NunitoSans-Bold, Nunito Sans" font-size="10" font-weight="bold" letter-spacing=".167">
+            <tspan x="10" y="15">!</tspan>
+        </text>
+        <path stroke="#404852" stroke-width="1.3" d="M11.473 19.945c1.261 0 2.459-.275 3.535-.77.523-.24 3.419 1.108 3.878.77.46-.338-1.445-2.427-1.039-2.89a8.473 8.473 0 1 0-6.375 2.891z"/>
+    </g>
+</svg>
