@@ -10,7 +10,7 @@ import Section from '../Components/Section'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import Notification from '../Components/Notification'
-import LoadMoreLoading from '../Components/LoadMoreLoading'
+import Loading from '../Components/Loading'
 // containers
 import TabbarCategories from './TabbarCategories'
 import Sort from './Sort'
@@ -49,9 +49,9 @@ class MyProduct extends Component {
         page: 1,
         limit: 10
       },
-      productBySearch: props.productBySearch || null,
+      productBySearch: props.productBySearch,
       categories: props.subCategory || [],
-      expeditions: props.expeditions || null,
+      expeditionServices: props.expeditionServices || null,
       provinces: props.provinces || null,
       districts: props.districts || null,
       brands: props.brands || null,
@@ -148,7 +148,7 @@ class MyProduct extends Component {
 
   async componentDidMount () {
     const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
-    const { expeditions } = this.state.expeditions
+    const { expeditionServices } = this.state.expeditionServices
     const { provinces } = this.state.provinces
     const myBrands = this.state.brands
     // generate params
@@ -167,8 +167,8 @@ class MyProduct extends Component {
     if (id) await this.props.dispatch(homeActions.subCategory({ id }))
     await this.props.dispatch(productActions.listProductBySearch(this.params))
     // fetch init data when data in redux empty
-    // fetch expeditions
-    if (expeditions.length < 1) await this.props.dispatch(expeditionActions.getServices())
+    // fetch expeditionServices
+    if (expeditionServices.length < 1) await this.props.dispatch(expeditionActions.getServices())
     // fetch provieces
     if (provinces.length < 1) await this.props.dispatch(locationActions.getProvince())
     // fetch brands
@@ -189,8 +189,8 @@ class MyProduct extends Component {
             // when selectedAll is checked so condition is ''
           if (filter.selectedAll) this.params.condition = ''
           break
-        case 'expeditions':
-            // set params expeditions services
+        case 'expeditionServices':
+            // set params expeditionServices services
             // get id service when selected is true
           const idServicesTrue = _.map(filter.options.filter((option) => { return option.selected }), 'id')
           this.params.services = (idServicesTrue.length > 0) ? idServicesTrue : []
@@ -227,15 +227,14 @@ class MyProduct extends Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { productBySearch, subCategory, expeditions, provinces, brands, districts, addWishlist } = nextProps
+    const { productBySearch, subCategory, expeditionServices, provinces, brands, districts, addWishlist } = nextProps
     const { q } = nextProps.query
     let { notification, categories } = this.state
+    let stateProductBySearch = this.state.productBySearch
     // reset notification
     notification = {status: false, message: 'Error, default message.'}
 
     if (q) this.setState({ q })
-
-    // console.log(productBySearch)
 
     // product data
     if (!productBySearch.isLoading) {
@@ -255,7 +254,16 @@ class MyProduct extends Component {
         default:
           break
       }
-      let products = productBySearch.products.length > 0 ? this.state.productBySearch.products.concat(productBySearch.products) : this.state.productBySearch.products
+
+      let products = []
+
+      // jika page di state kurang dari page di props maka data products di tambahkan
+      if ((stateProductBySearch.meta.page < productBySearch.meta.page) && productBySearch.products.length > 0) {
+        products = stateProductBySearch.products.concat(productBySearch.products)
+      } else {
+        products = this.state.productBySearch.products
+      }
+
       this.setState({ fetching: false, hasMore: (productBySearch.products.length > 0), productBySearch: { ...productBySearch, products }, notification })
     }
 
@@ -275,20 +283,20 @@ class MyProduct extends Component {
       this.setState({ categories, notification })
     }
 
-    // expeditions data
-    if (!expeditions.isLoading) {
-      switch (expeditions.status) {
+    // expeditionServices data
+    if (!expeditionServices.isLoading) {
+      switch (expeditionServices.status) {
         case Status.SUCCESS :
-          if (!expeditions.isFound) notification = {status: true, message: 'Data ekpedisi tidak ditemukan'}
+          if (!expeditionServices.isFound) notification = {status: true, message: 'Data ekpedisi tidak ditemukan'}
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          notification = {status: true, message: expeditions.message}
+          notification = {status: true, message: expeditionServices.message}
           break
         default:
           break
       }
-      this.setState({ expeditions, notification })
+      this.setState({ expeditionServices, notification })
     }
 
     // provinces data
@@ -311,7 +319,7 @@ class MyProduct extends Component {
     if (!districts.isLoading) {
       switch (districts.status) {
         case Status.SUCCESS :
-          if (!districts.isFound) notification = {status: true, message: 'Data provinsi tidak ditemukan'}
+          if (!districts.isFound) notification = {status: true, message: 'Data kabupaten tidak ditemukan'}
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -402,16 +410,17 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { q, categories, expeditions, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
-    const { products } = this.state.productBySearch
+    const { productBySearch, q, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive } = this.state
+    const { products } = productBySearch
     const navbar = {
       searchBoox: false,
       path: '/',
       textPath: categories.name || this.titleNavbar || q,
       searchActive: !!q
     }
+
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
-    console.log(products)
+
     return (
       <Content>
         <Navbar params={navbar} />
@@ -427,9 +436,9 @@ class MyProduct extends Component {
             ? null
             : <InfiniteScroll
               pageStart={0}
-              loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
+              loadMore={_.debounce(this.handleLoadMore.bind(this), 250)}
               hasMore={this.state.hasMore}
-              loader={<LoadMoreLoading text='Loading...' />}>
+              loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
               { listProducts }
             </InfiniteScroll>
           }
@@ -451,7 +460,7 @@ class MyProduct extends Component {
           filterClose={() => this.filterClose()}
           filterRealization={(params) => this.filterRealization(params)}
           onChangeProvinces={(id) => this.onChangeProvinces(id)}
-          expeditions={expeditions.expeditions}
+          expeditionServices={expeditionServices.expeditionServices}
           provinces={provinces.provinces}
           brands={brands.brands}
           districts={districts.districts} />
@@ -463,7 +472,7 @@ const mapStateToProps = (state) => {
   return {
     productBySearch: state.productBySearch,
     subCategory: state.subCategory,
-    expeditions: state.expeditionServices,
+    expeditionServices: state.expeditionServices,
     provinces: state.provinces,
     districts: state.districts,
     brands: state.brands,
