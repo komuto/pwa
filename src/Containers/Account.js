@@ -7,12 +7,23 @@ import NProgress from 'nprogress'
 import Content from '../Components/Content'
 import Section from '../Components/Section'
 // import { ButtonFullWidth } from '../Components/Button'
-// import Link from 'next/link'
+import Link from 'next/link'
 import {Images} from '../Themes'
 // actions
 import * as loginAction from '../actions/user'
 
 class Account extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      verify: false
+    }
+  }
+
+  handleVerify () {
+    this.setState({verify: !this.state.verify})
+  }
+
   handleSignOutClick () {
     NProgress.start()
     this.props.dispatch(loginAction.logout())
@@ -25,6 +36,7 @@ class Account extends Component {
 
   render () {
     const { user } = this.props
+    const { verify } = this.state
     return (
       <Content>
         <Section className='bg-white'>
@@ -122,7 +134,7 @@ class Account extends Component {
           <div className='profile-wrapp'>
             <ul>
               <li>
-                <div className='box is-paddingless'>
+                <div className='box is-paddingless' onClick={() => this.handleVerify()}>
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image'>
@@ -144,6 +156,17 @@ class Account extends Component {
             </ul>
           </div>
         </Section>
+        <div className='sort-option' style={{display: verify && 'block'}}>
+          <div className='notif-report'>
+            <img src={Images.unverifiedPhone} alt='' />
+            <h3>Anda Belum Memverifikasi Nomor Telepon</h3>
+            <p>Verifikasi Nomor Telepon Anda terlebih dahulu untuk melanjutkan proses membuka toko</p>
+            <Link href='verify-no-telp' as='v'>
+              <button className='button is-primary is-large is-fullwidth'>Verifikasi Sekarang</button>
+            </Link>
+            <strong className='cancel' onClick={() => this.handleVerify()} style={{color: '#56aaef', padding: '20px', display: 'block', marginTop: '10px'}}>Batal</strong>
+          </div>
+        </div>
       </Content>
     )
   }

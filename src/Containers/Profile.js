@@ -59,8 +59,6 @@ class Profile extends Component {
 
   render () {
     let { user, notification } = this.state
-
-    console.log(user.user)
     return (
       <Content>
         <Notification
