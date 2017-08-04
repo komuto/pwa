@@ -38,15 +38,15 @@
   font-family: 'nunitolight', sans-serif;
   font-weight: 300; }
 
-.nunito-regular, .button.is-thick, .field .label, .see-all .link .kurir, .sort-option .sort-list p strong, .search-form .dropdown-search .main-search h3, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .add-discussion .field label, .detail .detail-product .purchase .price, .detail .detail-product .purchase .detail-qty, .detail .detail-address .label, .edit-data-delivery .field .control .input, .payment-detail ul li .columns .column .step-val {
+.nunito-regular, .button.is-thick, .field .label, .see-all .link .kurir, .sort-option .sort-list p strong, .search-form .dropdown-search .main-search h3, .filter-option .sort-list .checkbox .label, .add-discussion .field label, .detail .detail-product .purchase .price, .detail .detail-product .purchase .detail-qty, .detail .detail-address .label, .edit-data-delivery .field .control .input, .payment-detail ul li .columns .column .step-val, .form-seller .field label, .form-seller .field .control > span {
   font-family: 'nunitoregular', sans-serif;
   font-weight: 400; }
 
-.nunito-semibold, .button.is-medium, .input, .title, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .title-content h3, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .modal-filter .modal-card .modal-card-body .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .code-voucher p, .edit .noted p strong, .box.notif-payment .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .level.nav-bottom .level-item {
+.nunito-semibold, .button.is-medium, .input, .title, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .code-voucher p, .edit .noted p strong, .box.notif-payment .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .level.nav-bottom .level-item {
   font-family: 'nunitosemibold', sans-serif;
   font-weight: 600; }
 
-.nunito-bold, .button, .view-all p, .view-all span, .pin span, .box .media .media-content .content .detail .price, .sort-option .sort-list > p strong, .sort-option .notif-report.add-voucher .header-notif h3, .sort-option .notif-report h3, .level.header .nav-left .level-item > span, .modal-filter .modal-card .modal-card-head .modal-card-title, .detail .detail-product .price, .detail .detail-product .remove-item, .summary.at-cart .detail-result .btn-change, .detail .detail-result.detail-price h3, .total-pay .price-pay, .cancel-voucher .cancel, .photo-content a, .edit .text-ask a, .price-unique {
+.nunito-bold, .button, .view-all p, .view-all span, .pin span, .box .media .media-content .content .detail .price, .sort-option .sort-list > p strong, .sort-option .notif-report.add-voucher .header-notif h3, .sort-option .notif-report h3, .sort-option .notif-report .cancel, .level.header .nav-left .level-item > span, .modal-filter .modal-card .modal-card-head .modal-card-title, .detail .detail-product .price, .detail .detail-product .remove-item, .summary.at-cart .detail-result .btn-change, .detail .detail-result.detail-price h3, .total-pay .price-pay, .cancel-voucher .cancel, .photo-content a, .edit .text-ask a, .price-unique, .form-seller .btn-address, .eks-name span, .verify-wrapp h4, .user-info p {
   font-family: 'nunitobold', sans-serif;
   font-weight: 700; }
 
@@ -175,6 +175,8 @@
   vertical-align: middle; }
   .icon-wishlist.wishlisted {
     background-image: url("../../images/komuto-icon/022_wishlisted.svg"); }
+  .icon-wishlist.solid {
+    background-image: url("../../images/komuto-icon/070_solid_wishlist.svg"); }
 
 .icon-sort {
   display: inline-block;
@@ -221,6 +223,8 @@
   vertical-align: middle; }
   .icon-bag.active {
     background-image: url("../../images/komuto-icon/025_bag_active.svg"); }
+  .icon-bag.bag2 {
+    background-image: url("../../images/komuto-icon/065_icon_bag2.svg"); }
 
 .icon-bell {
   display: inline-block;
@@ -483,6 +487,86 @@
   width: 30px;
   height: 30px;
   background-image: url("../../images/komuto-icon/061_informasi_blue.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-gear {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/063_icon_gear.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-register {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/064_icon_daftar_produk.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-chat {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/066_icon_chat.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-discuss {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/067_icon_discuss.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-review {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/068_icon_direview.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-help {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/069_icon_help.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-upload-product {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url("../../images/komuto-icon/071_upload_produk_baru.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-upload-dropshipper {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url("../../images/komuto-icon/072_upload_dropshipper.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-cross-circle {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/073_icon_cross_circle.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-add-big {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url("../../images/komuto-icon/074_add_big_white.svg");
   background-repeat: no-repeat;
   vertical-align: middle; }
 
@@ -5790,6 +5874,10 @@ body {
       line-height: 1.38;
       letter-spacing: 0.2px;
       color: #404852; }
+      .box .media .media-content .content h4 a {
+        color: #404852; }
+        .box .media .media-content .content h4 a:hover, .box .media .media-content .content h4 a:focus {
+          color: #56aaef; }
     .box .media .media-content .content .detail {
       position: relative; }
       .box .media .media-content .content .detail p, .box .media .media-content .content .detail .discount {
@@ -5967,6 +6055,10 @@ body {
       letter-spacing: 0.2px;
       color: #666666;
       margin-bottom: 30px; }
+    .sort-option .notif-report .cancel {
+      padding: 20px;
+      display: block;
+      margin-top: 10px; }
 
 .back {
   position: absolute;
@@ -6133,6 +6225,13 @@ body {
       transform: translateY(-50%);
       background-color: transparent;
       background-image: url("../../images/komuto-icon/031_selected_sign.svg"); }
+    .popup-option .radio .opt-title {
+      letter-spacing: 0.2px;
+      display: block; }
+    .popup-option .radio .address-value {
+      line-height: 1.77;
+      letter-spacing: 0.2px;
+      color: #666666; }
 
 .other-option li {
   border-bottom: 1px solid #dedede; }
@@ -6252,6 +6351,31 @@ body {
     width: 100%;
     max-width: 80px; }
 
+.modal {
+  z-index: 999; }
+
+.is-loading.self {
+  position: absolute;
+  border: none;
+  width: 25px;
+  height: 25px;
+  padding: 0; }
+  .is-loading.self.center {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); }
+  .is-loading.self.left {
+    top: 50%;
+    left: 20px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
+  .is-loading.self.right {
+    top: 50%;
+    right: 20px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
+
 @media handheld, only screen and (max-width: 320px) {
   .notif-report .button {
     font-size: 12px; } }
@@ -6262,7 +6386,7 @@ body {
   left: 0;
   width: 100%;
   background-color: #ef5656;
-  z-index: 99;
+  z-index: 999;
   padding: 0 15px;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
@@ -6354,6 +6478,9 @@ body {
 
 .home .level.header {
   height: auto; }
+
+.header-search .control {
+  position: inherit; }
 
 @media screen and (max-width: 768px) {
   .nav-menu {
@@ -6793,85 +6920,86 @@ body {
               letter-spacing: 0.2px;
               color: #404852;
               padding: 20px; }
-    .modal-filter .modal-card .modal-card-body .filter-option {
-      position: absolute;
-      top: 0;
-      right: 0;
-      padding-left: 30px;
-      width: 100%;
-      height: 100%;
-      display: none;
-      overflow: auto; }
-      .modal-filter .modal-card .modal-card-body .filter-option.active {
-        display: block; }
-      .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
-        background-color: #ffffff;
-        width: 100%;
-        min-height: 450px; }
-        .modal-filter .modal-card .modal-card-body .filter-option .sort-list p {
-          padding: 20px; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list p strong {
-            color: #41475e;
-            font-size: 14px; }
-        .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
-          padding: 20px;
-          position: relative;
-          display: block;
-          border-bottom: 1px solid #e9e9e9; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .input-wrapper {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            border: 1px solid #e9e9e9;
-            border-radius: 3px; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .input-wrapper.checked {
-              background-image: url("../../images/komuto-icon/031_selected_sign.svg");
-              background-position: 1px; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .input-wrapper input {
-              visibility: hidden; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label {
-            font-size: 13px;
-            letter-spacing: 0.2px;
-            color: #41475e;
-            opacity: 0.5;
-            display: block; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
-            font-size: 13px;
-            color: #41475e; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text.active {
-              color: #56aaef; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .control {
-            padding: 0; }
-          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select {
-            width: 100%;
-            position: relative; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select select {
-              background: transparent;
-              width: 100%;
-              height: auto;
-              border: none;
-              padding-left: 0;
-              font-size: 13px; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select:before {
-              content: "";
-              width: 24px;
-              height: 24px;
-              background-image: url("../../images/komuto-icon/035_arrow_down.svg");
-              position: absolute;
-              top: 0;
-              right: 0; }
-            .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select:after {
-              display: none; }
 
 .modal-filter.categories .modal-card .modal-card-body {
   margin-left: 0;
   background-color: #f4f5f6; }
   .modal-filter.categories .modal-card .modal-card-body .section .title {
     padding-top: 20px; }
+
+.filter-option {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-left: 30px;
+  width: 100%;
+  height: 100%;
+  display: none;
+  overflow: auto; }
+  .filter-option.active {
+    display: block; }
+  .filter-option .sort-list {
+    background-color: #ffffff;
+    width: 100%;
+    min-height: 450px; }
+    .filter-option .sort-list p {
+      padding: 20px; }
+      .filter-option .sort-list p strong {
+        color: #41475e;
+        font-size: 14px; }
+    .filter-option .sort-list .checkbox {
+      padding: 20px;
+      position: relative;
+      display: block;
+      border-bottom: 1px solid #e9e9e9; }
+      .filter-option .sort-list .checkbox .input-wrapper {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        border: 1px solid #e9e9e9;
+        border-radius: 3px; }
+        .filter-option .sort-list .checkbox .input-wrapper.checked {
+          background-image: url("../../images/komuto-icon/031_selected_sign.svg");
+          background-position: 1px; }
+        .filter-option .sort-list .checkbox .input-wrapper input {
+          visibility: hidden; }
+      .filter-option .sort-list .checkbox .label {
+        font-size: 13px;
+        letter-spacing: 0.2px;
+        color: #41475e;
+        opacity: 0.5;
+        display: block; }
+      .filter-option .sort-list .checkbox .sort-text {
+        font-size: 13px;
+        color: #41475e; }
+        .filter-option .sort-list .checkbox .sort-text.active {
+          color: #56aaef; }
+      .filter-option .sort-list .checkbox .field .control {
+        padding: 0; }
+      .filter-option .sort-list .checkbox .field .select {
+        width: 100%;
+        position: relative; }
+        .filter-option .sort-list .checkbox .field .select select {
+          background: transparent;
+          width: 100%;
+          height: auto;
+          border: none;
+          padding-left: 0;
+          font-size: 13px; }
+        .filter-option .sort-list .checkbox .field .select:before {
+          content: "";
+          width: 24px;
+          height: 24px;
+          background-image: url("../../images/komuto-icon/035_arrow_down.svg");
+          position: absolute;
+          top: 0;
+          right: 0; }
+        .filter-option .sort-list .checkbox .field .select:after {
+          display: none; }
 
 @media handheld, only screen and (max-width: 480px) {
   .modal-filter .modal-card .modal-card-body {
@@ -7455,6 +7583,13 @@ body {
   border-bottom: none; }
   .detail .info-purchase .detail-rate .columns.detail-rating {
     padding: 0; }
+  .detail .info-purchase .detail-rate .columns.total-items {
+    padding: 0;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center; }
+    .detail .info-purchase .detail-rate .columns.total-items .column {
+      padding: 0; }
 
 .edit-data-delivery {
   padding: 20px; }
@@ -7564,14 +7699,17 @@ body {
 .edit .text-ask {
   margin-top: 20px; }
 
-.edit .rek .field.is-grouped {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center; }
-  .edit .rek .field.is-grouped > .control {
-    width: 35px; }
-    .edit .rek .field.is-grouped > .control:not(:last-child) {
-      margin-right: 20px; }
+.edit .number-account {
+  align-item: center; }
+  .edit .number-account .field.is-grouped {
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    margin: 0 auto; }
+    .edit .number-account .field.is-grouped > .control {
+      width: 35px; }
+      .edit .number-account .field.is-grouped > .control:not(:last-child) {
+        margin-right: 20px; }
 
 .box.notif-payment {
   padding: 15px;
@@ -7889,6 +8027,329 @@ body {
     max-width: 29%; }
   .list-bank .img-method img {
     max-width: 50%; } }
+
+.seller .seller-bar {
+  background-color: #ffffff;
+  border-bottom: 0.5px solid #dedede;
+  padding: 20px 0; }
+  .seller .seller-bar .seller-step {
+    text-align: center;
+    font-size: 0; }
+    .seller .seller-bar .seller-step div {
+      display: inline-block;
+      background-color: #ffffff;
+      font-size: 13px;
+      width: 30px;
+      height: 30px;
+      vertical-align: middle;
+      margin-right: 20px;
+      position: relative;
+      z-index: 2; }
+      .seller .seller-bar .seller-step div:after {
+        content: "";
+        width: 30px;
+        height: 1px;
+        background-color: #dedede;
+        position: absolute;
+        top: 50%;
+        right: -30px;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        z-index: 1; }
+      .seller .seller-bar .seller-step div:last-child {
+        margin-right: 0; }
+        .seller .seller-bar .seller-step div:last-child:after {
+          display: none; }
+      .seller .seller-bar .seller-step div span {
+        width: 25px;
+        height: 25px;
+        border-radius: 700px;
+        display: block;
+        margin: 2px auto;
+        border: 0.5px solid #dedede;
+        color: #cccccc;
+        text-align: center;
+        line-height: 25px; }
+    .seller .seller-bar .seller-step.active1 div.step1 span {
+      background-color: #ef5656;
+      border: 0.5px solid #ef5656;
+      color: #ffffff; }
+    .seller .seller-bar .seller-step.active2 div.step1 span, .seller .seller-bar .seller-step.active2 div.step2 span {
+      background-color: #ef5656;
+      border: 0.5px solid #ef5656;
+      color: #ffffff; }
+    .seller .seller-bar .seller-step.active3 div.step1 span, .seller .seller-bar .seller-step.active3 div.step2 span, .seller .seller-bar .seller-step.active3 div.step3 span {
+      background-color: #ef5656;
+      border: 0.5px solid #ef5656;
+      color: #ffffff; }
+    .seller .seller-bar .seller-step.active4 div.step1 span, .seller .seller-bar .seller-step.active4 div.step2 span, .seller .seller-bar .seller-step.active4 div.step3 span, .seller .seller-bar .seller-step.active4 div.step4 span {
+      background-color: #ef5656;
+      border: 0.5px solid #ef5656;
+      color: #ffffff; }
+
+.filter-option {
+  position: relative;
+  top: inherit;
+  left: inherit;
+  padding-left: 0; }
+  .filter-option .sort-list {
+    min-height: inherit;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative; }
+    .filter-option .sort-list.check-list {
+      padding-top: 10px;
+      padding-bottom: 10px; }
+      .filter-option .sort-list.check-list .checkbox {
+        border-bottom: none;
+        padding-top: 12px;
+        padding-bottom: 12px; }
+    .filter-option .sort-list .checkbox {
+      padding-left: 40px;
+      padding-right: 0; }
+      .filter-option .sort-list .checkbox .input-wrapper {
+        left: 0;
+        right: inherit;
+        width: 25px;
+        height: 25px; }
+
+.note {
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.62;
+  letter-spacing: 0.2px;
+  color: #404852;
+  margin-top: -1px; }
+
+.upload-pict {
+  padding: 45px 0; }
+  .upload-pict .pict-wrapper {
+    width: 105px;
+    height: 105px;
+    border-radius: 800px;
+    margin: 0 auto 20px auto;
+    position: relative;
+    background-color: #f4f5f6; }
+    .upload-pict .pict-wrapper img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); }
+
+.form-seller {
+  padding: 0 20px; }
+  .form-seller .field {
+    margin-bottom: 30px; }
+    .form-seller .field label {
+      letter-spacing: 0.2px;
+      color: #a0a3ae;
+      margin-bottom: 8px;
+      display: block; }
+    .form-seller .field .control > span {
+      letter-spacing: 0.2px;
+      font-size: 12px;
+      color: #a0a3ae; }
+      .form-seller .field .control > span.reg {
+        color: #404852; }
+    .form-seller .field .control .textarea {
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid #dedede;
+      font-size: 13px;
+      padding: 0;
+      min-height: 67px; }
+    .form-seller .field .control strong {
+      font-size: 13px; }
+  .form-seller .btn-address {
+    padding: 10px;
+    background-color: #f4f5f6;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    display: block;
+    position: relative;
+    margin-bottom: 20px;
+    color: #56aaef; }
+    .form-seller .btn-address > span {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%); }
+
+.eks-name {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%); }
+  .eks-name span {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px; }
+    .eks-name span img {
+      max-width: 50px;
+      margin-bottom: -4px; }
+
+.form-seller.info {
+  padding-top: 20px; }
+
+.verify-wrapp {
+  padding: 20px; }
+  .verify-wrapp h4 {
+    font-size: 14px;
+    line-height: 1.36;
+    letter-spacing: 0.2px;
+    margin-bottom: 8px; }
+  .verify-wrapp p {
+    line-height: 1.46;
+    letter-spacing: 0.2px;
+    color: #666666;
+    margin-bottom: 10px; }
+
+.seller-akun .profile-wrapp {
+  background-color: #ffffff; }
+  .seller-akun .profile-wrapp ul li {
+    border-bottom: none;
+    position: relative; }
+    .seller-akun .profile-wrapp ul li:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: -40px;
+      width: 100%;
+      height: 1px;
+      background-color: #dedede; }
+
+.seller-akun .title {
+  margin-top: 30px; }
+
+.user-info {
+  padding: 20px;
+  background-color: #ebf2fc; }
+  .user-info p {
+    font-size: 13px;
+    line-height: 1.69;
+    letter-spacing: 0.2px;
+    color: #56aaef; }
+
+.add-product {
+  padding-top: 30px; }
+  .add-product .add-option li {
+    position: relative; }
+    .add-product .add-option li .box {
+      padding: 20px;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px 0 #ebeff3;
+      margin-bottom: 10px;
+      cursor: pointer; }
+      .add-product .add-option li .box .media .media-content .content p {
+        font-size: 13px;
+        line-height: 1.54;
+        letter-spacing: 0.2px;
+        color: #666666; }
+        .add-product .add-option li .box .media .media-content .content p strong {
+          letter-spacing: 0.2px;
+          color: #41475e; }
+    .add-product .add-option li > span {
+      position: absolute;
+      top: 20px;
+      right: 20px; }
+  .add-product .add-photo-list {
+    margin-top: 30px;
+    margin-bottom: 130px; }
+    .add-product .add-photo-list li {
+      margin-right: 20px;
+      display: inline-block; }
+      .add-product .add-photo-list li:last-child {
+        margin-right: 0; }
+      .add-product .add-photo-list li .add-photo {
+        border-radius: 3px;
+        width: 100px;
+        height: 100px;
+        background-color: #e3e7ea;
+        position: relative;
+        display: block; }
+        .add-product .add-photo-list li .add-photo > span {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%); }
+      .add-product .add-photo-list li .photo-product {
+        position: relative;
+        border-radius: 3px;
+        width: 100px;
+        height: 100px; }
+        .add-product .add-photo-list li .photo-product .del-photo {
+          display: inline-block;
+          position: absolute;
+          top: -12px;
+          right: -12px; }
+        .add-product .add-photo-list li .photo-product .photo-wrapp {
+          border-radius: 3px;
+          width: 100px;
+          height: 100px;
+          overflow: hidden; }
+
+.product-view li {
+  padding: 20px; }
+  .product-view li .products-name {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    color: #ef5656; }
+    .product-view li .products-name strong {
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      color: #41475e; }
+    .product-view li .products-name span {
+      line-height: 1.33;
+      color: #47bf7e; }
+
+.form-product {
+  padding: 0 20px; }
+  .form-product .field {
+    margin-bottom: 15px; }
+    .form-product .field lebel {
+      color: #404852;
+      margin-bottom: 0; }
+    .form-product .field .input {
+      color: #41475e; }
+    .form-product .field .select select {
+      color: #41475e; }
+    .form-product .field .textarea {
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid #dedede;
+      box-shadow: none;
+      min-height: 80px; }
+  .form-product .filter-option .sort-list {
+    padding: 0;
+    margin-top: -13px; }
+    .form-product .filter-option .sort-list .checkbox {
+      border-bottom: none;
+      padding-bottom: 18px; }
+      .form-product .filter-option .sort-list .checkbox .sort-text.active {
+        color: #41475e; }
+      .form-product .filter-option .sort-list .checkbox .input-wrapper.checked {
+        background-position: 0px;
+        background-color: #56aaef; }
+
+.catalog-option {
+  background-color: #ffffff; }
+  .catalog-option .add-discussion {
+    padding-top: 10px;
+    padding-bottom: 10px; }
+
+.add-catalog {
+  padding: 20px 20px 20px 0;
+  color: #56aaef;
+  border-bottom: 1px solid #dedede;
+  margin-left: 20px;
+  display: block; }
 
 .level.nav-bottom {
   position: fixed;
