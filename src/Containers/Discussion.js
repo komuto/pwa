@@ -10,7 +10,7 @@ import Section from '../Components/Section'
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
-import LoadMoreLoading from '../Components/LoadMoreLoading'
+import Loading from '../Components/Loading'
 // actions
 import * as productActions from '../actions/product'
 // services
@@ -63,12 +63,18 @@ class Discussion extends Component {
     const beforeDiscuss = this.props.newDiscussion
     const nextDiscuss = nextProps.newDiscussion
     let { notification } = this.state
+    let stateDiscussions = this.state.discussions
+
+    // console.log(stateDiscussions)
+    console.log(discussions)
 
     notification = {status: false, message: 'Error, default message.'}
 
     if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
-      discussions.discussions.splice(0, 0, nextDiscuss.discussion)
-      this.setState({ discussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
+      console.log(stateDiscussions)
+      console.log(discussions)
+      // discussions.discussions = stateDiscussions.discussions.splice(0, 0, nextDiscuss.discussion)
+      // this.setState({ discussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
     } else if (nextDiscuss.status === Status.OFFLINE || nextDiscuss.status === Status.FAILED) {
       this.setState({ notification: {type: 'is-danger', status: true, message: nextDiscuss.message} })
     }
@@ -96,7 +102,12 @@ class Discussion extends Component {
         case Status.SUCCESS :
           if (discussions.isFound) {
             hasMore = discussions.discussions.length > 0
-            discussions.discussions = this.state.discussions.discussions.concat(discussions.discussions)
+            // jika page di state kurang dari page di props maka data discussion di tambahkan
+            // if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
+            //   discussions.discussions = stateDiscussions.discussions.concat(discussions.discussions)
+            // } else {
+            //   discussions.discussions = stateDiscussions.discussions
+            // }
           } else {
             notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
           }
@@ -156,7 +167,7 @@ class Discussion extends Component {
                   pageStart={0}
                   loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
                   hasMore={this.state.hasMore}
-                  loader={<LoadMoreLoading text='Loading...' />}>
+                  loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
                   {
                       discussions.discussions.map((discussion, index) => {
                         moment.locale('id')
