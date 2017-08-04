@@ -5,6 +5,7 @@ import Section from '../Components/Section'
 import OptionsProvince from '../Components/OptionsProvince'
 import OptionsDistritcs from '../Components/OptionsDistritcs'
 import OptionsSubDistritcs from '../Components/OptionsSubDistritcs'
+import Loading from '../Components/Loading'
 // actions
 import * as locationActions from '../actions/location'
 import * as expeditionActions from '../actions/expedition'
@@ -15,8 +16,7 @@ class ProductDetailServices extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      estimatedCharges: props.estimatedCharges || null,
-      countProduct: 0,
+      countProduct: 1,
       totWeight: 0,
       formActive: false,
       provinces: {
@@ -30,6 +30,7 @@ class ProductDetailServices extends Component {
       districts: {
         data: null,
         show: false,
+        isFetching: false,
         selected: {
           id: null,
           name: null
@@ -38,10 +39,15 @@ class ProductDetailServices extends Component {
       subDistricts: {
         data: null,
         show: false,
+        isFetching: false,
         selected: {
           id: null,
           name: null
         }
+      },
+      estimatedCharges: {
+        data: props.estimatedCharges || null,
+        isFetching: false
       }
     }
   }
@@ -66,7 +72,8 @@ class ProductDetailServices extends Component {
     await this.props.dispatch(locationActions.getDistrict({province_id: selected.id}))
     this.setState({
       provinces: { ...this.state.provinces, selected, show: false },
-      districts: { ...this.state.districts, selected: { id: null, name: null } }
+      districts: { ...this.state.districts, selected: { id: null, name: null, isFetching: true } },
+      subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null }, isFetching: false }
     })
   }
 
@@ -75,7 +82,7 @@ class ProductDetailServices extends Component {
     await this.props.dispatch(locationActions.getSubDistrict({district_id: selected.id}))
     this.setState({
       districts: { ...this.state.districts, selected, show: false },
-      subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null } }
+      subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null }, isFetching: true }
     })
   }
 
@@ -90,7 +97,7 @@ class ProductDetailServices extends Component {
       weight: countProduct * product.weight
     }
     await this.props.dispatch(expeditionActions.estimatedShipping(params))
-    this.setState({ subDistricts: { ...this.state.subDistricts, selected, show: false } })
+    this.setState({ subDistricts: { ...this.state.subDistricts, selected, show: false }, estimatedCharges: { ...this.state.estimatedCharges, isFetching: true } })
   }
 
   // load any data
@@ -105,16 +112,16 @@ class ProductDetailServices extends Component {
 
     !provinces.isLoading && this.setState({ provinces: { ...this.state.provinces, data: provinces } })
 
-    !districts.isLoading && this.setState({ districts: { ...this.state.districts, data: districts } })
+    !districts.isLoading && this.setState({ districts: { ...this.state.districts, data: districts, isFetching: false } })
 
-    !subDistricts.isLoading && this.setState({ subDistricts: { ...this.state.subDistricts, data: subDistricts } })
+    !subDistricts.isLoading && this.setState({ subDistricts: { ...this.state.subDistricts, data: subDistricts, isFetching: false } })
 
     if (!estimatedCharges.isLoading) {
       switch (estimatedCharges.status) {
         case Status.SUCCESS :
           // (estimatedCharges.isFound)
           // ?
-          this.setState({ estimatedCharges })
+          this.setState({ estimatedCharges: { data: estimatedCharges, isFetching: false } })
           // : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
           break
         case Status.OFFLINE :
@@ -163,7 +170,7 @@ class ProductDetailServices extends Component {
                 </div>
                 <div className='column is-half'>
                   <div className='rating-content is-left has-text-centered'>
-                    <a><span className='icon-qty-min' onClick={() => (countProduct > 0) && this.minPress()} /></a>
+                    <a><span className='icon-qty-min' onClick={() => (countProduct > 1) && this.minPress()} /></a>
                     <span className='qty'>{ countProduct }</span>
                     <a><span className='icon-qty-plus' onClick={() => (countProduct < product.stock) && this.plussPress()} /></a>
                   </div>
@@ -181,34 +188,37 @@ class ProductDetailServices extends Component {
                   <li>
                     <div className='detail-address'>
                       <span className='label'>Kabupaten:</span>
-                      <span onClick={() => this.districtShow()} className='location-label js-option' data-target='#district'>{ districts.selected.name || 'Pilih Kabupaten' }</span>
+                      <span onClick={() => !districts.isFetching && this.districtShow()} className='location-label js-option' data-target='#district'>{ districts.isFetching ? 'Loading...' : districts.selected.name || 'Pilih Kabupaten' }</span>
                     </div>
                   </li>
                   <li>
                     <div className='detail-address'>
                       <span className='label'>Kecamatan:</span>
-                      <span onClick={() => this.subDistrictShow()} className='location-label js-option' data-target='#districts'>{ subDistricts.selected.name || 'Pilih Kecamatan' }</span>
+                      <span onClick={() => !subDistricts.isFetching && this.subDistrictShow()} className='location-label js-option' data-target='#districts'>{ subDistricts.isFetching ? 'Loading...' : subDistricts.selected.name || 'Pilih Kecamatan' }</span>
                     </div>
                   </li>
                 </ul>
               </div>
               {
-                  estimatedCharges.isFound &&
-                  <div className='detail-result white'>
-                    <ul>
-                      {
-                          estimatedCharges.charges.map((charge, index) => {
-                            return <li key={index}>
-                              <div className='columns custom is-mobile'>
-                                <div className='column'><span>{ charge.full_name }</span></div>
-                                <div className='column has-text-right'><span>{ charge.cost }</span></div>
-                                <div className='column has-text-right'><span>{ charge.etd } hari</span></div>
-                              </div>
-                            </li>
-                          })
-                        }
-                    </ul>
-                    </div>
+                estimatedCharges.isFetching && <Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />
+              }
+              {
+                !estimatedCharges.isFetching && estimatedCharges.data.isFound &&
+                <div className='detail-result white'>
+                  <ul>
+                    {
+                        estimatedCharges.data.charges.map((charge, index) => {
+                          return <li key={index}>
+                            <div className='columns custom is-mobile'>
+                              <div className='column'><span>{ charge.full_name }</span></div>
+                              <div className='column has-text-right'><span>{ charge.cost }</span></div>
+                              <div className='column has-text-right'><span>{ charge.etd } hari</span></div>
+                            </div>
+                          </li>
+                        })
+                      }
+                  </ul>
+                  </div>
                 }
             </div>
           </div>
