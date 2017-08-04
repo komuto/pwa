@@ -57,7 +57,7 @@ class ProductDetailSuggestions extends Component {
                             { priceBeforeDiscount }
                             <span className='price' style={{ marginRight: 10 }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                             <span className='wish'>
-                              <span className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`}
+                              <span className={`icon-wishlist ${product.is_liked ? 'solid' : ''}`}
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   props.wishlistPress(product.id)
