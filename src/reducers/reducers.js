@@ -13,6 +13,7 @@ import * as addressReducers from './address'
 import * as bankReducers from './bank'
 import * as catalogReducers from './catalog'
 import * as cartReducers from './cart'
+import * as purchaseReducers from './purchase'
 
 const user = {
   emailCheck: emailReducers.checkEmail,
@@ -44,7 +45,14 @@ const home = {
   filterProduct: homeReducers.filterProduct,
   allCategory: homeReducers.allCategory,
   category: homeReducers.categoryList,
-  subCategory: homeReducers.subCategory
+  subCategory: homeReducers.subCategory,
+  shippingInformation: purchaseReducers.shippingInformation,
+  courierExpedition: purchaseReducers.courierExpedition,
+  amountProduct: purchaseReducers.amountProduct,
+  packageExpedition: purchaseReducers.packageExpedition,
+  noted: purchaseReducers.noted,
+  insurance: purchaseReducers.insurance
+
 }
 
 const product = {
