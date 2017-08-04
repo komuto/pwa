@@ -13,6 +13,7 @@ import OptionsSubDistritcs from '../Components/OptionsSubDistritcs'
 import OptionsVillages from '../Components/OptionsVillages'
 // actions
 import * as productActions from '../actions/product'
+import * as addressActions from '../actions/address'
 import * as purchaseActions from '../actions/purchase'
 import * as locationActions from '../actions/location'
 import * as expeditionActions from '../actions/expedition'
@@ -27,6 +28,7 @@ class ShippingInformation extends Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
+      addAddress: props.addAddress || null,
       formData: {
         ...props.shippingInformation
       },
@@ -68,23 +70,23 @@ class ShippingInformation extends Component {
     }
   }
 
-  onChangeAlias = (e) => this.setState({ formData: { ...this.state.formData, alias: inputValidations.inputNormal(e.target.value) } })
+  // alias event
+  onChangeAlias = (e) => this.setState({ formData: { ...this.state.formData, alias: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'alias') && null })
 
-  onChangeRecipient = (e) => this.setState({ formData: { ...this.state.formData, recipient: inputValidations.inputNormal(e.target.value) } })
+  // name event
+  onChangeRecipient = (e) => this.setState({ formData: { ...this.state.formData, recipient: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'recipient') && null })
 
-  onChangeHandphone = (e) => this.setState({ formData: { ...this.state.formData, handphone: inputValidations.inputNumber(e.target.value) } })
+  // phone number event
+  onChangeHandphone = (e) => this.setState({ formData: { ...this.state.formData, handphone: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'handphone') && null })
 
-  onChangeAddress = (e) => this.setState({ formData: { ...this.state.formData, address: inputValidations.inputNormal(e.target.value) } })
+  // adress event
+  onChangeAddress = (e) => this.setState({ formData: { ...this.state.formData, address: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'address') && null })
 
+  // postal code event
+  onChangePostalCode = (e) => this.setState({ formData: { ...this.state.formData, postalCode: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'postalCode') && null })
+
+  // provinces event
   onClickProvince = () => this.setState({ provinces: { ...this.state.provinces, show: true } })
-
-  onClickDistrict = () => this.setState({ districts: { ...this.state.districts, show: true } })
-
-  onClickSubDistrict = () => this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
-
-  onClickVillage = () => this.setState({ villages: { ...this.state.villages, show: true } })
-
-  onChangePostalCode = (e) => this.setState({ formData: { ...this.state.formData, postalCode: inputValidations.inputNumber(e.target.value) } })
 
   async provinceSelected (selected) {
     await this.props.dispatch(locationActions.getDistrict({province_id: selected.id}))
@@ -93,47 +95,59 @@ class ShippingInformation extends Component {
       districts: { ...this.state.districts, selected: { id: null, name: null } },
       subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null } },
       villages: { ...this.state.villages, selected: { id: null, name: null } },
-      formData: { ...this.state.formData, provinces: selected }
+      error: (this.state.error === 'provinces') && null
     })
   }
 
+  // district event
+  onClickDistrict = () => this.setState({ districts: { ...this.state.districts, show: true } })
+
   async districtSelected (selected) {
-    const { id, districts, productDetail } = this.state
+    const { id, productDetail } = this.state
     const params = {
       id,
       origin_id: productDetail.detail.store.district.id,
-      destination_id: districts.selected.id,
+      destination_id: selected.id,
       weight: 1
     }
+
     await this.props.dispatch(expeditionActions.estimatedShipping(params))
+
     await this.props.dispatch(locationActions.getSubDistrict({district_id: selected.id}))
     this.setState({
       districts: { ...this.state.districts, selected, show: false },
       subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null } },
-      village: { ...this.state.village, selected: { id: null, name: null } },
-      formData: { ...this.state.formData, districts: selected }
+      villages: { ...this.state.villages, selected: { id: null, name: null } },
+      error: (this.state.error === 'districts') && null
     })
   }
+
+  // sub districs event
+  onClickSubDistrict = () => this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
 
   async subDistrictSelected (selected) {
     await this.props.dispatch(locationActions.getVillage({sub_district_id: selected.id}))
     this.setState({
       subDistricts: { ...this.state.subDistricts, selected, show: false },
-      village: { ...this.state.village, selected: { id: null, name: null } },
-      formData: { ...this.state.formData, subDistricts: selected }
+      villages: { ...this.state.villages, selected: { id: null, name: null } },
+      error: (this.state.error === 'subDistricts') && null
     })
   }
+
+  // village event
+  onClickVillage = () => this.setState({ villages: { ...this.state.villages, show: true } })
 
   villageSelected (selected) {
     this.setState({
       villages: { ...this.state.villages, selected, show: false },
-      formData: { ...this.state.formData, villages: selected }
+      error: (this.state.error === 'villages') && null
     })
   }
 
+  // submit event
   async onSubmit (e) {
     e.preventDefault()
-    const { formData } = this.state
+    const { formData, provinces, districts, subDistricts, villages } = this.state
 
     if (formData.alias === '') {
       this.setState({ error: 'alias' })
@@ -155,14 +169,45 @@ class ShippingInformation extends Component {
       return
     }
 
-    if (!formData.provinces.id) {
+    if (!provinces.selected.id) {
       this.setState({ error: 'provinces' })
       return
     }
 
-    await this.props.dispatch(purchaseActions.shippingInformation({ ...this.state.formData, isFound: true }))
-    await this.setState({ submiting: true })
-    Router.back()
+    if (!districts.selected.id) {
+      this.setState({ error: 'districts' })
+      return
+    }
+
+    if (!subDistricts.selected.id) {
+      this.setState({ error: 'subDistricts' })
+      return
+    }
+
+    if (!villages.selected.id) {
+      this.setState({ error: 'villages' })
+      return
+    }
+
+    if (formData.postalCode === '') {
+      this.setState({ error: 'postalCode' })
+      return
+    }
+
+    await this.props.dispatch(addressActions.addAddress({
+      'province_id': provinces.selected.id,
+      'district_id': districts.selected.id,
+      'sub_district_id': subDistricts.selected.id,
+      'village_id': villages.selected.id,
+      'name': formData.recipient,
+      'phone_number': formData.handphone,
+      'postal_code': formData.postalCode,
+      'address': formData.address,
+      'alias_address': formData.alias,
+      'is_primary': true
+    }))
+
+    this.setState({ submiting: true })
   }
 
   async componentDidMount () {
@@ -178,7 +223,7 @@ class ShippingInformation extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, provinces, districts, subDistricts, villages } = nextProps
+    const { productDetail, provinces, districts, subDistricts, villages, addAddress, addressSelected } = nextProps
 
     let { notification } = this.state
 
@@ -207,11 +252,33 @@ class ShippingInformation extends Component {
       }
       this.setState({ productDetail, notification })
     }
+
+    if (!addAddress.isLoading) {
+      switch (addAddress.status) {
+        case Status.SUCCESS :
+          if (!addAddress.isFound) notification = {type: 'is-danger', status: true, message: 'Gagal menambah data informasi pengiriman'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          break
+        default:
+          break
+      }
+      if (addAddress.address.id !== addressSelected.id) {
+        this.props.dispatch(purchaseActions.addressSelected({...addAddress.address, status: true}))
+        Router.back()
+      }
+      this.setState({ notification })
+    }
   }
 
   render () {
     const { formData, provinces, districts, subDistricts, villages, submiting, error, notification } = this.state
-
+    const errorStyle = {
+      borderBottomColor: 'red',
+      color: 'red'
+    }
     return (
       <Content style={{paddingBottom: 0}}>
         <Notification
@@ -262,22 +329,22 @@ class ShippingInformation extends Component {
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => this.onClickProvince()} style={{ borderBottomColor: error === 'provinces' && 'red' }} className='location-label' data-target='#province'>{ formData.provinces.name || 'Pilih Provinsi' }</span>
+                  <span onClick={() => provinces.data.isFound && this.onClickProvince()} style={error === 'provinces' ? errorStyle : {}} className='location-label disabled' data-target='#province'>{ provinces.selected.name || 'Pilih Provinsi' }</span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => this.onClickDistrict()} style={{ borderBottomColor: error === 'districts' && 'red' }} className='location-label' data-target='#district'>{ formData.districts.name || 'Pilih Kota/Kabupaten' }</span>
+                  <span onClick={() => districts.data.isFound && this.onClickDistrict()} style={error === 'districts' ? errorStyle : {}} className='location-label' data-target='#district'>{ districts.selected.name || 'Pilih Kota/Kabupaten' }</span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => this.onClickSubDistrict()} style={{ borderBottomColor: error === 'subDistricts' && 'red' }} className='location-label' data-target='#districts'>{ formData.subDistricts.name || 'Pilih Kecamatan' }</span>
+                  <span onClick={() => subDistricts.data.isFound && this.onClickSubDistrict()} style={error === 'subDistricts' ? errorStyle : {}} className='location-label' data-target='#districts'>{ subDistricts.selected.name || 'Pilih Kecamatan' }</span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => this.onClickVillage()} style={{ borderBottomColor: error === 'villages' && 'red' }} className='location-label' data-target='#village'>{ formData.villages.name || 'Pilih Kelurahan' }</span>
+                  <span onClick={() => villages.data.isFound && this.onClickVillage()} style={error === 'villages' ? errorStyle : {}} className='location-label' data-target='#village'>{ villages.selected.name || 'Pilih Kelurahan' }</span>
                 </p>
               </div>
               <div className='field'>
@@ -320,7 +387,9 @@ const mapStateToProps = (state) => {
     subDistricts: state.subdistricts,
     villages: state.villages,
     productDetail: state.productDetail,
-    shippingInformation: state.shippingInformation
+    shippingInformation: state.shippingInformation,
+    addAddress: state.addAddress,
+    addressSelected: state.addressSelected
   }
 }
 
