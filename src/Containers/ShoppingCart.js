@@ -61,6 +61,71 @@ class ShoppingCart extends Component {
     console.log(itemSelected)
     return (
       <Section>
+        <section className='section is-paddingless has-shadow'>
+          <div className='detail-product'>
+            <div className='purchase'>
+              <figure className='img-item'>
+                <img src='../images/pict.jpg' alt='pict' />
+              </figure>
+              <h3>Blue Training Kit Machester United</h3>
+              <span className='price'>Sport Station Shop</span>
+            </div>
+            <a className='remove-item'>Hapus</a>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Harga Satuan</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span>Rp 135.000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half is-paddingless'>
+                  <div className='rating-content is-left'>
+                    <strong>Jumlah</strong>
+                  </div>
+                </div>
+                <div className='column is-half is-paddingless'>
+                  <div className='rating-content item-qty'>
+                    <a><span className='icon-qty-min' /></a>
+                    <span className='qty'>1</span>
+                    <a><span className='icon-qty-plus' /></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='see-all'>
+            <span className='link'>Detail Pengiriman <span className='icon-arrow-right' /></span>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Subtotal</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span>Rp 270.000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         {
           cart.cart.items.map((item) => {
             let selected = itemSelected === item.id
