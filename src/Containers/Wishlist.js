@@ -13,7 +13,7 @@ import TabbarCategories from './TabbarCategories'
 import Sort from './Sort'
 import { Navbar } from './Navbar'
 // actions
-import * as wishlistActions from '../actions/wishlist'
+import * as userActions from '../actions/user'
 import * as productActions from '../actions/product'
 // services
 import { Status } from '../Services/Status'
@@ -87,7 +87,7 @@ class Wishlist extends Component {
 
   async componentDidMount () {
     NProgress.start()
-    await this.props.dispatch(wishlistActions.wishlist())
+    await this.props.dispatch(userActions.wishlist())
     this.setState({ token: await GET_TOKEN.getToken() })
   }
 
