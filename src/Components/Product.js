@@ -57,7 +57,7 @@ class Product extends Component {
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                   <span className='wish'>
-                    <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`} onClick={(e) => this.wishlistPress(e, product.id)} />
+                    <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => this.wishlistPress(e, product.id)} />
                     { product.count_like }
                   </span>
                 </div>
