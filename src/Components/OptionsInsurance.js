@@ -9,7 +9,7 @@ const OptionsInsurance = (props) => {
               {
                 props.data.map((data) => {
                   return (
-                    <label key={data} className={`radio ${props.selected === data && 'checked'}`} onClick={() => props.insuranceSelected(data)}>
+                    <label key={data} className={`radio ${props.selected === data && 'checked'}`} onClick={(e) => props.insuranceSelected(e, data)}>
                       <input type='radio' name='insurance' />
                       { data }
                     </label>
