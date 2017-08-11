@@ -1,36 +1,38 @@
 import * as actions from '../actions/cart'
-import { buildReducer, buildType, initState } from '../config'
+import { buildReducer, buildType, initState, typeSucc } from '../config'
 
-const initCart = {
-  cart: [],
-  ...initState()
-}
-
-const initCartCount = {
-  cartCount: 0,
-  ...initState()
-}
-
-const initPromo = {
-  promo: {},
-  ...initState()
-}
-
-export const cart = (state = initCart, action) => {
+export const cart = (state = initState({ cart: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
-    case actions.ADD_TO_CART:
-      return buildReducer(state, action, type, 'cart', true)
-    case actions.ADD_TO_CART_RESET:
-      return { ...initCart, cart: state.cart }
     case actions.GET_CART:
-      return buildReducer(state, action, type, 'cart')
+      return { ...buildReducer(state, action, type, 'cart'), type: 'get' }
+    case actions.GET_CART_RESET:
+      return { ...initState(), cart: state.cart, type: 'reset' }
+    case actions.CHECKOUT:
+      return { ...buildReducer(state, action, type), cart: state.cart, type: 'checkout' }
+    case actions.DELETE_ITEM:
+      if (action.type === typeSucc(actions.DELETE_ITEM)) {
+        state.cart.items = state.cart.items.filter(item => item.id !== action.id)
+      }
+      return { ...buildReducer(state, action, type), cart: state.cart, type: 'delete' }
     default:
       return state
   }
 }
 
-export const countCart = (state = initCartCount, action) => {
+export const addToCart = (state = initState({ addToCart: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_TO_CART:
+      return buildReducer(state, action, type, 'cart')
+    case actions.ADD_TO_CART_RESET:
+      return { ...initState(), addToCart: state.addToCart, type: 'reset' }
+    default:
+      return state
+  }
+}
+
+export const countCart = (state = initState({ cartCount: 0 }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.COUNT_CART:
@@ -40,7 +42,7 @@ export const countCart = (state = initCartCount, action) => {
   }
 }
 
-export const getPromo = (state = initPromo, action) => {
+export const getPromo = (state = initState({ promo: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_PROMO:
@@ -55,6 +57,16 @@ export const cancelPromo = (state = initState(), action) => {
   switch (type) {
     case actions.CANCEL_PROMO:
       return buildReducer(state, action, type)
+    default:
+      return state
+  }
+}
+
+export const getItem = (state = initState({ item: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_ITEM:
+      return buildReducer(state, action, type, 'item')
     default:
       return state
   }

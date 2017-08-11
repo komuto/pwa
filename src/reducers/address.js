@@ -26,6 +26,8 @@ export const primaryAddress = (state = initAddress, action) => {
   switch (type) {
     case actions.GET_PRIMARY_ADDRESS:
       return buildReducer(state, action, type, 'address')
+    case actions.PRIMARY_ADDRESS_RESET:
+      return initAddress
     default:
       return state
   }

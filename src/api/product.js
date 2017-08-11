@@ -22,17 +22,12 @@ export const getProductBy = (action) => {
       return price
     }, '')
   }
-  const take = ['q', 'page', 'limit', 'sort', 'price', 'condition', 'other', 'brands', 'services', 'address', 'category_id']
+  const take = ['q', 'page', 'limit', 'sort', 'price', 'condition', 'other', 'brands', 'services', 'address', 'category_id', 'is_dropship']
   const query = buildQuery(action, take)
   return axios.get(`products?${query}`).catch((err) => { throw err })
 }
 
 export const addToWishlist = ({ id }) => {
-  const axios = authApiKomuto()
-  return axios.get(`products/${id}/wishlist`).catch((err) => { throw err })
-}
-
-export const addToWishlistHome = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`products/${id}/wishlist`).catch((err) => { throw err })
 }
@@ -43,9 +38,9 @@ export const getDiscussion = ({ id, page, limit }) => {
   return axios.get(`products/${id}/discussions?${query}`).catch((err) => { throw err })
 }
 
-export const newDiscussion = (action) => {
+export const newDiscussion = ({ id, ...action }) => {
   const axios = authApiKomuto()
-  return axios.post(`products/${action.id}/discussions`, action).catch((err) => { throw err })
+  return axios.post(`products/${id}/discussions`, action).catch((err) => { throw err })
 }
 
 export const getComment = ({ productId, id, page, limit }) => {
@@ -54,14 +49,14 @@ export const getComment = ({ productId, id, page, limit }) => {
   return axios.get(`products/${productId}/discussions/${id}/comments?${query}`).catch((err) => { throw err })
 }
 
-export const newComment = (action) => {
+export const newComment = ({ productId, id, ...action }) => {
   const axios = authApiKomuto()
-  return axios.post(`products/${action.productId}/discussions/${action.id}/comments`, action).catch((err) => { throw err })
+  return axios.post(`products/${productId}/discussions/${id}/comments`, action).catch((err) => { throw err })
 }
 
-export const reportProduct = (action) => {
+export const reportProduct = ({ id, ...action }) => {
   const axios = authApiKomuto()
-  return axios.post(`products/${action.id}/report`, action).catch((err) => { throw err })
+  return axios.post(`products/${id}/report`, action).catch((err) => { throw err })
 }
 
 export const createProduct = (action) => {

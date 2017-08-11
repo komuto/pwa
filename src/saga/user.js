@@ -1,235 +1,59 @@
 import { put } from 'redux-saga/effects'
-import * as userActions from '../actions/user'
-import * as userApi from '../api/user'
+import * as actions from '../actions/user'
+import * as apis from '../api/user'
 import localforage from 'localforage'
-import { errorHandling, typeSucc, typeFail } from '../config'
+import { errorHandling, typeSucc, typeFail, buildSaga } from '../config'
 
-function * register (action) {
+export const register = function * (action) {
   try {
-    const {data} = yield userApi.register(action)
+    const {data} = yield apis.register(action)
     yield localforage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(userActions.USER_REGISTER), ...data })
+    yield put({ type: typeSucc(actions.USER_REGISTER), ...data })
   } catch (e) {
-    yield errorHandling(typeFail(userActions.USER_REGISTER), e)
+    yield errorHandling(typeFail(actions.USER_REGISTER), e)
   }
 }
 
-function * login (action) {
+export const login = function * login (action) {
   try {
-    const {data} = yield userApi.login(action)
+    const {data} = yield apis.login(action)
     yield localforage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(userActions.USER_LOGIN), ...data })
+    yield put({ type: typeSucc(actions.USER_LOGIN), ...data })
   } catch (e) {
-    yield errorHandling(typeFail(userActions.USER_LOGIN), e)
+    yield errorHandling(typeFail(actions.USER_LOGIN), e)
   }
 }
 
-function * validateToken (action) {
+export const logout = function * (action) {
   try {
-    const {data} = yield userApi.validateToken(action)
-    yield put({ type: typeSucc(userActions.VALIDATE_TOKEN_FORGET_PASSWORD), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.VALIDATE_TOKEN_FORGET_PASSWORD), e)
-  }
-}
-
-function * logout (action) {
-  try {
-    const data = yield userApi.logout(action)
+    const data = yield apis.logout(action)
     yield localforage.removeItem('token')
-    yield put({ type: typeSucc(userActions.USER_LOGOUT), ...data })
+    yield put({ type: typeSucc(actions.USER_LOGOUT), ...data })
   } catch (e) {
     const data = {
       message: 'USER LOGOUT FAILED',
       code: 400
     }
-    yield put({ type: typeFail(userActions.USER_LOGOUT), ...data })
+    yield put({ type: typeFail(actions.USER_LOGOUT), ...data })
   }
 }
 
-function * verify (action) {
-  try {
-    const {data} = yield userApi.verification(action)
-    yield put({ type: typeSucc(userActions.USER_VERIFICATION), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.USER_VERIFICATION), e)
-  }
-}
-
-function * forgetPassword (action) {
-  try {
-    const {data} = yield userApi.forgetPassword(action)
-    yield put({ type: typeSucc(userActions.FORGET_PASSWORD), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.FORGET_PASSWORD), e)
-  }
-}
-
-function * loginSocial (action) {
-  try {
-    const {data} = yield userApi.loginSocial(action)
-    yield localforage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(userActions.LOGIN_SOCIAL), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.LOGIN_SOCIAL), e)
-  }
-}
-
-function * newPassword (action) {
-  try {
-    const {data} = yield userApi.newPassword(action)
-    yield put({ type: typeSucc(userActions.USER_NEW_PASSWORD), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.USER_NEW_PASSWORD), e)
-  }
-}
-
-function * changePassword (action) {
-  try {
-    const {data} = yield userApi.changePassword(action)
-    yield put({ type: typeSucc(userActions.CHANGE_PASSWORD), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.CHANGE_PASSWORD), e)
-  }
-}
-
-function * getProfile (action) {
-  try {
-    const {data} = yield userApi.getProfile(action)
-    yield put({ type: typeSucc(userActions.GET_PROFILE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.GET_PROFILE), e)
-  }
-}
-
-function * getProfileManage (action) {
-  try {
-    const {data} = yield userApi.getProfileManage(action)
-    yield put({ type: typeSucc(userActions.GET_PROFILE_MANAGE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.GET_PROFILE_MANAGE), e)
-  }
-}
-
-function * getPhone (action) {
-  try {
-    const {data} = yield userApi.getPhone(action)
-    yield put({ type: typeSucc(userActions.GET_PHONE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.GET_PHONE), e)
-  }
-}
-
-function * updatePhone (action) {
-  try {
-    const {data} = yield userApi.updatePhone(action)
-    yield put({ type: typeSucc(userActions.UPDATE_PHONE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.UPDATE_PHONE), e)
-  }
-}
-
-function * updateProfile (action) {
-  try {
-    const {data} = yield userApi.updateProfile(action)
-    yield put({ type: typeSucc(userActions.UPDATE_PROFILE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.UPDATE_PROFILE), e)
-  }
-}
-
-function * getBalance (action) {
-  try {
-    const {data} = yield userApi.getBalance(action)
-    yield put({ type: typeSucc(userActions.USER_BALANCE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.USER_BALANCE), e)
-  }
-}
-
-function * favoriteStore (action) {
-  try {
-    const {data} = yield userApi.favoriteStore(action)
-    yield put({ type: typeSucc(userActions.FAVORITE_STORE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.FAVORITE_STORE), e)
-  }
-}
-
-function * getDiscussion (action) {
-  try {
-    const {data} = yield userApi.getDiscussion(action)
-    yield put({ type: typeSucc(userActions.GET_USER_DISCUSSION), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.GET_USER_DISCUSSION), e)
-  }
-}
-
-function * listFavoriteStore (action) {
-  try {
-    const {data} = yield userApi.listFavoriteStore(action)
-    yield put({ type: typeSucc(userActions.LIST_FAVORIT_STORE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.LIST_FAVORIT_STORE), e)
-  }
-}
-
-function * sendOTPPhone (action) {
-  try {
-    const {data} = yield userApi.sendOTPPhone(action)
-    yield put({ type: typeSucc(userActions.SEND_PHONE_OTP), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.SEND_PHONE_OTP), e)
-  }
-}
-
-function * verifyPhone (action) {
-  try {
-    const {data} = yield userApi.verifyPhone(action)
-    yield put({ type: typeSucc(userActions.VERIFIY_PHONE), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.VERIFIY_PHONE), e)
-  }
-}
-
-function * wishlist (action) {
-  try {
-    const {data} = yield userApi.wishlist(action)
-    yield put({ type: typeSucc(userActions.GET_WISHLIST), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.GET_WISHLIST), e)
-  }
-}
-
-export const sendOTPBank = function * () {
-  try {
-    const { data } = yield userApi.sendOTPBank()
-    yield put({ type: typeSucc(userActions.SEND_BANK_OTP), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(userActions.SEND_BANK_OTP), e)
-  }
-}
-
-export {
-  login,
-  logout,
-  register,
-  verify,
-  validateToken,
-  forgetPassword,
-  loginSocial,
-  newPassword,
-  changePassword,
-  getProfile,
-  getProfileManage,
-  getBalance,
-  getPhone,
-  updatePhone,
-  updateProfile,
-  favoriteStore,
-  getDiscussion,
-  listFavoriteStore,
-  verifyPhone,
-  sendOTPPhone,
-  wishlist
-}
+export const validateToken = buildSaga(['token'], apis.validateToken, actions.VALIDATE_TOKEN_FORGET_PASSWORD)
+export const verify = buildSaga(['token'], apis.verification, actions.USER_VERIFICATION)
+export const forgetPassword = buildSaga(['email'], apis.forgetPassword, actions.FORGET_PASSWORD)
+export const loginSocial = buildSaga([], apis.loginSocial, actions.LOGIN_SOCIAL)
+export const newPassword = buildSaga(['token', 'password'], apis.newPassword, actions.USER_NEW_PASSWORD)
+export const changePassword = buildSaga([], apis.changePassword, actions.CHANGE_PASSWORD)
+export const getProfile = buildSaga([], apis.getProfile, actions.GET_PROFILE)
+export const getProfileManage = buildSaga([], apis.getProfileManage, actions.GET_PROFILE_MANAGE)
+export const getPhone = buildSaga([], apis.getPhone, actions.GET_PHONE)
+export const updatePhone = buildSaga(['phone_number'], apis.updatePhone, actions.UPDATE_PHONE)
+export const updateProfile = buildSaga([], apis.updateProfile, actions.UPDATE_PROFILE)
+export const getBalance = buildSaga([], apis.getBalance, actions.USER_BALANCE)
+export const favoriteStore = buildSaga(['id'], apis.favoriteStore, actions.FAVORITE_STORE)
+export const getDiscussion = buildSaga(['page', 'limit'], apis.getDiscussion, actions.GET_USER_DISCUSSION)
+export const listFavoriteStore = buildSaga(['page', 'limit'], apis.listFavoriteStore, actions.LIST_FAVORIT_STORE)
+export const sendOTPPhone = buildSaga([], apis.sendOTPPhone, actions.SEND_PHONE_OTP)
+export const verifyPhone = buildSaga(['code'], apis.verifyPhone, actions.VERIFIY_PHONE)
+export const wishlist = buildSaga([], apis.wishlist, actions.GET_WISHLIST)
+export const sendOTPBank = buildSaga([], apis.sendOTPBank, actions.SEND_BANK_OTP)

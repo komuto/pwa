@@ -10,14 +10,14 @@ export const updateCatalog = (action) => {
   return axios.put('users/store/catalogs/' + action.id, action).catch((err) => { throw err })
 }
 
-export const getCatalog = (action) => {
+export const getCatalog = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.get('users/store/catalogs/' + action.id, action).catch((err) => { throw err })
+  return axios.get('users/store/catalogs/' + id).catch((err) => { throw err })
 }
 
-export const getListCatalog = (action) => {
+export const getListCatalog = () => {
   const axios = authApiKomuto()
-  return axios.get('users/store/catalogs/', action).catch((err) => { throw err })
+  return axios.get('users/store/catalogs/').catch((err) => { throw err })
 }
 
 export const deleteCatalog = ({ id }) => {

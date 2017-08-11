@@ -1,27 +1,6 @@
-import { put } from 'redux-saga/effects'
-import * as brandApi from '../api/brand'
-import * as brandActions from '../actions/brand'
-import { errorHandling, typeSucc, typeFail } from '../config'
+import * as apis from '../api/brand'
+import * as actions from '../actions/brand'
+import { buildSaga } from '../config'
 
-function * getBrand (action) {
-  try {
-    const {data} = yield brandApi.getBrand(action)
-    yield put({ type: typeSucc(brandActions.GET_BRAND), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(brandActions.GET_BRAND), e)
-  }
-}
-
-function * getBrandByCategory (action) {
-  try {
-    const {data} = yield brandApi.getBrandByCategory(action)
-    yield put({ type: typeSucc(brandActions.BRAND_BY_CATEGORY), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(brandActions.BRAND_BY_CATEGORY), e)
-  }
-}
-
-export {
-  getBrand,
-  getBrandByCategory
-}
+export const getBrand = buildSaga([], apis.getBrand, actions.GET_BRAND)
+export const getBrandByCategory = buildSaga([], apis.getBrandByCategory, actions.BRAND_BY_CATEGORY)
