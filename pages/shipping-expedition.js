@@ -6,7 +6,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ShippingExpedition from '../src/Containers/ShippingExpedition'
 // utils
-import { PROFILE } from '../src/Utils/Constant'
+// import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   style: 'main seller',
@@ -15,11 +15,8 @@ const params = {
   },
   navbar: {
     searchBoox: false,
+    path: '/',
     textPath: 'Ekspedisi Pengiriman'
-  },
-  tabbar: {
-    active: PROFILE,
-    isShow: true
   }
 }
 
