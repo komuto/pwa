@@ -14,10 +14,27 @@ const images = {
   unverifiedPhone: '../../static/images/ilustrasi-no-hp-belum-verifikasi.png',
   verifiedPhone: '../../static/images/ilustrasi-no-hp-sudah-verifikasi.png',
   iconCamera: '../../static/images/icon-kamera.svg',
-  tiki: '../../static/images/tiki.png',
   jne: '../../static/images/jne.png',
   pos: '../../static/images/pos.png',
-  hasOpenedStore: '../../static/images/icon-berhasil-membuka-toko.png'
+  hasOpenedStore: '../../static/images/icon-berhasil-membuka-toko.png',
+  alfamart: '../../static/images/alfamart.png',
+  alfamidi: '../../static/images/alfamidi.png',
+  alto: '../../static/images/alto.png',
+  atmBersama: '../../static/images/atmbersama.png',
+  bca: '../../static/images/bca.png',
+  bri: '../../static/images/bri.png',
+  bni: '../../static/images/bni.png',
+  dokuWallet: '../../static/images/doku-wallet.png',
+  epayBri: '../../static/images/epay-bri.png',
+  mandiriClickpay: '../../static/images/mandiri-clickpay.png',
+  mandiri: '../../static/images/mandiri.png',
+  masterCard: '../../static/images/mastercard.png',
+  mcSc: '../../static/images/mc-sc.png',
+  norton: '../../static/images/norton.png',
+  prima: '../../static/images/prima.png',
+  tiki: '../../static/images/tiki.png',
+  vByVisa: '../../static/images/v-by-visa.png',
+  visa: '../../static/images/visa.png'
 }
 
 export default images
