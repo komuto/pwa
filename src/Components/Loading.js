@@ -19,7 +19,8 @@ const Loading = (props) => {
   }
 
   return (
-    <div className={className} style={{ style, paddingBottom: 10, paddingTop: 10 }}>
+    // paddingBottom: 10, paddingTop: 10
+    <div className={className} style={style}>
       {comp}
     </div>
   )
