@@ -11,7 +11,7 @@ const OptionsAdresess = (props) => {
               {
                 props.data.map((data) => {
                   return (
-                    <label className={`radio ${data.id === props.selected.id && 'checked'}`} key={data.id} onClick={() => props.addressSelected(data)}>
+                    <label className={`radio ${data.id === props.selected.id && 'checked'}`} key={data.id} onClick={(e) => props.addressSelected(e, data)}>
                       <input type='radio' name='address' />
                       <strong>{ data.alias_address }</strong>
                       <p>{data.address} , {data.village.name}, {data.subDistrict.name}, {data.district.name}, {data.province.name}, Indonesia {data.postal_code}</p>
