@@ -10,7 +10,7 @@ const OptionsExpeditions = (props) => {
               {
                 props.data.map((expedition) => {
                   return (
-                    <label key={expedition.id} className={`radio ${props.selected.id === expedition.id && 'checked'}`} onClick={() => props.expeditionSelected(expedition)}>
+                    <label key={expedition.id} className={`radio ${props.selected.id === expedition.id && 'checked'}`} onClick={(e) => props.expeditionSelected(e, expedition)}>
                       <input type='radio' name='expedisi' />
                       <MyImage src={expedition.logo} />
                       { expedition.name }
