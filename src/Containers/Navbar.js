@@ -51,7 +51,7 @@ export class Navbar extends PureComponent {
             searchBoox
             ? <div className='nav-right'>
               <span className='icon-love' onClick={() => Router.push('/wishlist')} />
-              <span className='icon-cart'><span className='notif-cart'>4</span></span>
+              <span className='icon-cart' onClick={() => Router.push('/shopping-cart')}><span className='notif-cart'>4</span></span>
             </div>
             : null
           }
