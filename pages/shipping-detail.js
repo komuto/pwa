@@ -7,7 +7,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import ShippingDetail from '../src/Containers/ShippingDetail'
 
 const params = {
-  style: 'main seller',
+  style: 'main detail bg-grey',
   header: {
     title: 'Detail Pengiriman'
   },
@@ -18,9 +18,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <ShippingDetail />
+    <ShippingDetail query={props.query} />
   </DefaultLayout>
 )
 
