@@ -1,5 +1,6 @@
 # MAC
 #
+.gitignore
 .DS_Store
 .next/
 .env
@@ -13,5 +14,6 @@ npm-debug.log
 
 # yarn
 *.log
+catatan.txt
 
 yarn.lock
