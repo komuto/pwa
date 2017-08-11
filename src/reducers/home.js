@@ -15,7 +15,7 @@ function product (state = initState({ products: [] }, true), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.HOME_PRODUCT:
-      return buildReducer(state, action, type, 'products', false, true)
+      return buildReducer(state, action, type, 'products', true)
     default:
       return state
   }
@@ -35,7 +35,7 @@ function filterProduct (state = initState({ products: [] }, true), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.FILTER_PRODUCT:
-      return buildReducer(state, action, type, 'products', false, true)
+      return buildReducer(state, action, type, 'products', true)
     default:
       return state
   }

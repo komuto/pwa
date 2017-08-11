@@ -12,7 +12,7 @@ const OptionsExpeditionPackages = (props) => {
               {
                 props.data.map((data) => {
                   return (
-                    <label className={`radio ${props.selected.id === data.id && 'checked'}`} key={data.id} onClick={() => props.expeditionsPackageSelected(data)}>
+                    <label className={`radio ${props.selected.id === data.id && 'checked'}`} key={data.id} onClick={(e) => props.expeditionsPackageSelected(e, data)}>
                       <input type='radio' name='reguler' />
                       <span className='service-name'>{ data.full_name }</span>
                       <span>{data.etd} Hari</span>

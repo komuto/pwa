@@ -7,7 +7,7 @@ export const getReviews = ({ id, page, limit }) => {
   return axios.get(`products/${id}/reviews?${query}`).catch((err) => { throw err })
 }
 
-export const addReview = (action) => {
+export const addReview = ({ id, ...action }) => {
   let axios = authApiKomuto()
-  return axios.post('products/' + action.id + '/reviews', action).catch((err) => { throw err })
+  return axios.post(`products/${id}/reviews`, action).catch((err) => { throw err })
 }

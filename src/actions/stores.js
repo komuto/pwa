@@ -17,7 +17,11 @@ export const INFO_STORE = 'INFO_STORE'
 export const SHIPPING_EXPEDITION = 'SHIPPING_EXPEDITION'
 export const OWNER_INFO = 'OWNER_INFO'
 export const ADDRESS_INFO = 'ADDRESS_INFO'
-
+// =======
+export const UPDATE_INFORMATION = 'UPDATE_INFORMATION'
+export const UPDATE_TERM = 'UPDATE_TERM'
+export const GET_ADDRESS = 'GET_ADDRESS'
+export const UPDATE_STORE_ADDRESS = 'UPDATE_STORE_ADDRESS'
 export const getStores = params => buildAction(typeReq(GET_STORE), params)
 export const photoUpload = params => buildAction(typeReq(PHOTO_UPLOAD), params)
 export const createStore = params => buildAction(typeReq(CREATE_STORE), params)
@@ -35,3 +39,8 @@ export const infoStore = params => ({ type: INFO_STORE, params })
 export const shippingExpedition = params => ({ type: SHIPPING_EXPEDITION, params })
 export const OwnerInfo = params => ({ type: OWNER_INFO, params })
 export const AddressInfo = params => ({ type: ADDRESS_INFO, params })
+// =======
+export const updateInformation = params => buildAction(typeReq(UPDATE_INFORMATION), params)
+export const updateTerm = params => buildAction(typeReq(UPDATE_TERM), params)
+export const getStoreAddress = () => buildAction(typeReq(GET_ADDRESS))
+export const updateStoreAddress = params => buildAction(typeReq(UPDATE_STORE_ADDRESS), params)

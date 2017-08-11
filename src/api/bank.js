@@ -1,13 +1,13 @@
 import { publicApiKomuto, authApiKomuto } from './api'
 
-export const listBank = (action) => {
+export const listBank = () => {
   let axios = publicApiKomuto()
-  return axios.get('banks', action).catch((err) => { throw err })
+  return axios.get('banks').catch((err) => { throw err })
 }
 
-export const getBank = (action) => {
+export const getBank = ({ id }) => {
   let axios = publicApiKomuto()
-  return axios.get('banks/' + action.id, action).catch((err) => { throw err })
+  return axios.get('banks/' + id).catch((err) => { throw err })
 }
 
 export const addBankAccount = (action) => {
@@ -28,4 +28,9 @@ export const updateBankAccount = ({ id, ...data }) => {
 export const deleteBankAccount = ({ id, ...code }) => {
   const axios = authApiKomuto()
   return axios.delete(`accounts/banks/${id}`, { data: code }).catch((err) => { throw err })
+}
+
+export const getKomutoBankAccounts = () => {
+  const axios = authApiKomuto()
+  return axios.get('banks/komuto').catch((err) => { throw err })
 }

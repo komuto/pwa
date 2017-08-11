@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
+import * as purchaseReducers from './purchase'
 import * as storage from 'redux-storage'
 import * as userReducers from './user'
-import * as emailReducers from './email'
 import * as homeReducers from './home'
 import * as brandReducers from './brand'
 import * as productReducers from './product'
@@ -13,9 +13,20 @@ import * as addressReducers from './address'
 import * as bankReducers from './bank'
 import * as catalogReducers from './catalog'
 import * as cartReducers from './cart'
+import * as paymentReducers from './payment'
+import * as transactionReducers from './transaction'
+
+const purchase = {
+  addressSelected: purchaseReducers.addressSelected,
+  shippingInformation: purchaseReducers.shippingInformation,
+  courierExpedition: purchaseReducers.courierExpedition,
+  amountProduct: purchaseReducers.amountProduct,
+  packageExpedition: purchaseReducers.packageExpedition,
+  noted: purchaseReducers.noted,
+  insurance: purchaseReducers.insurance
+}
 
 const user = {
-  emailCheck: emailReducers.checkEmail,
   user: userReducers.auth,
   verification: userReducers.verify,
   validation: userReducers.validateToken,
@@ -73,6 +84,9 @@ const store = {
   storeProducts: storeReducers.getStoreProducts,
   storeCatalogProducts: storeReducers.getStoreCatalogProducts,
   processCreateStore: storeReducers.processCreateStore
+  updateStore: storeReducers.updateStore,
+  storeAddress: storeReducers.getStoreAddress,
+  updateStoreAddress: storeReducers.updateStoreAddress
 }
 
 const address = {
@@ -88,7 +102,8 @@ const bank = {
   bank: bankReducers.getBank,
   banks: bankReducers.listBank,
   bankAccount: bankReducers.bankAccount,
-  listBankAccounts: bankReducers.getBankAccounts
+  listBankAccounts: bankReducers.getBankAccounts,
+  komutoAccounts: bankReducers.getKomutoBankAccounts
 }
 
 const brand = {
@@ -106,9 +121,11 @@ const catalog = {
 
 const cart = {
   cart: cartReducers.cart,
+  addToCart: cartReducers.addToCart,
   promo: cartReducers.getPromo,
   cancelPromo: cartReducers.cancelPromo,
-  countCart: cartReducers.countCart
+  countCart: cartReducers.countCart,
+  item: cartReducers.getItem
 }
 
 const expedition = {
@@ -117,7 +134,8 @@ const expedition = {
   estimatedCharges: expeditionReducers.estimatedShipping,
   shippingCharges: expeditionReducers.shippingCharge,
   updateExpedition: expeditionReducers.updateExpediton,
-  storeExpeditions: expeditionReducers.getStoreExpeditions
+  storeExpeditions: expeditionReducers.getStoreExpeditions,
+  manageExpeditions: expeditionReducers.manageStoreExpeditions
 }
 
 const location = {
@@ -127,12 +145,24 @@ const location = {
   villages: locationReducers.village
 }
 
+const payment = {
+  paymentMethods: paymentReducers.getPaymentMethods,
+  choosePayment: paymentReducers.choosePaymentMethod,
+  confirmation: paymentReducers.confirmTransfer
+}
+
 const review = {
   productReview: reviewReducers.getReviews,
   addReview: reviewReducers.addReview
 }
 
+const transaction = {
+  listTransactions: transactionReducers.listTransactions,
+  transaction: transactionReducers.getTransaction
+}
+
 const komutoApps = storage.reducer(combineReducers({
+  ...purchase,
   ...user,
   ...home,
   ...product,
@@ -144,7 +174,9 @@ const komutoApps = storage.reducer(combineReducers({
   ...cart,
   ...expedition,
   ...location,
-  ...review
+  ...review,
+  ...payment,
+  ...transaction
 }))
 
 export default komutoApps

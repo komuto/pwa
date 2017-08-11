@@ -59,14 +59,14 @@ export const storeUpdateExpedition = (action) => {
   return axios.put('users/store/expeditions', action).catch((err) => { throw err })
 }
 
-export const verifyStore = (action) => {
+export const verifyStore = ({ code }) => {
   const axios = authApiKomuto()
-  return axios.post('users/store/verify', action).catch((err) => { throw err })
+  return axios.post('users/store/verify', { code }).catch((err) => { throw err })
 }
 
-export const sendMessageStore = (action) => {
+export const sendMessageStore = ({ id, ...action }) => {
   const axios = authApiKomuto()
-  return axios.post('stores/' + action.id + '/message', action).catch((err) => { throw err })
+  return axios.post(`stores/${id}/message`, action).catch((err) => { throw err })
 }
 
 export const getOwnStore = () => {
@@ -82,4 +82,24 @@ export const getStoreProducts = ({ hidden = false } = {}) => {
 export const getStoreCatalogProducts = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`users/store/products/catalogs/${id}`).catch((err) => { throw err })
+}
+
+export const updateInformation = (data) => {
+  const axios = authApiKomuto()
+  return axios.put('users/store', data).catch((err) => { throw err })
+}
+
+export const updateTerm = (data) => {
+  const axios = authApiKomuto()
+  return axios.put('users/store/term-condition', data).catch((err) => { throw err })
+}
+
+export const getStoreAddress = () => {
+  const axios = authApiKomuto()
+  return axios.get('users/store/address').catch((err) => { throw err })
+}
+
+export const updateStoreAddress = (data) => {
+  const axios = authApiKomuto()
+  return axios.put('users/store/address', data).catch((err) => { throw err })
 }

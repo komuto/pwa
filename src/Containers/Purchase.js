@@ -33,6 +33,7 @@ class Purchase extends Component {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
       listAddress: props.listAddress || null,
+      addToCart: props.addToCart || null,
       shippingInformation: props.shippingInformation,
       amountProduct: props.amountProduct.amountProduct,
       address: {
@@ -92,13 +93,14 @@ class Purchase extends Component {
   // address event
   onClickAddress = () => this.setState({ address: { ...this.state.address, show: true } })
 
-  async addressSelected (selected) {
+  async addressSelected (e, selected) {
+    e.preventDefault()
     const { id, productDetail } = this.state
     await this.props.dispatch(expeditionActions.estimatedShipping({
       id,
-      origin_id: productDetail.detail.store.district.id,
-      destination_id: selected.district.id,
-      weight: 1
+      origin_id: productDetail.detail.store.district.ro_id,
+      destination_id: selected.district.ro_id,
+      weight: 1000
     }))
     await this.props.dispatch(purchaseActions.addressSelected({ ...selected, status: true }))
     this.setState({ address: {...this.state.address, show: false, selected: { ...selected, status: true }}, error: this.state.error === 'addressSelected' && null })
@@ -107,15 +109,28 @@ class Purchase extends Component {
   // expedition event
   onClickExpedition = () => this.setState({ expeditions: { ...this.state.expeditions, show: true } })
 
-  async expeditionSelected (selected) {
+  async expeditionSelected (e, selected) {
+    e.preventDefault()
     await this.props.dispatch(purchaseActions.courierExpedition(selected))
-    this.setState({ expeditions: { ...this.state.expeditions, show: false, selected }, error: this.state.error === 'expeditions' && null })
+    this.setState({ expeditions: { ...this.state.expeditions, show: false, selected },
+      expeditionsPackage: {
+        ...this.state.expeditionsPackage,
+        selected: {
+          id: null,
+          insurance_fee: 0,
+          is_checked: false,
+          logo: null,
+          name: ''
+        }
+      },
+      error: this.state.error === 'expeditions' && null })
   }
 
   // expedition package event
   onClickExpeditionPackage = () => this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: true } })
 
-  async expeditionsPackageSelected (selected) {
+  async expeditionsPackageSelected (e, selected) {
+    e.preventDefault()
     await this.props.dispatch(purchaseActions.packageExpedition(selected))
     this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, selected, show: false }, error: this.state.error === 'expeditionsPackage' && null })
   }
@@ -123,13 +138,15 @@ class Purchase extends Component {
   // insurance event
   onClickInsurance = () => this.setState({ insurance: { ...this.state.insurance, show: true } })
 
-  async insuranceSelected (selected) {
+  async insuranceSelected (e, selected) {
+    e.preventDefault()
     await this.props.dispatch(purchaseActions.insurance({ insurance: selected }))
     this.setState({ insurance: { ...this.state.insurance, selected, show: false }, error: this.state.error === 'insurance' && null })
   }
 
   // noted event
   async onChangeNoted (e) {
+    e.preventDefault()
     let { noted } = this.state
     noted = inputValidations.inputNormal(e.target.value)
     await this.props.dispatch(purchaseActions.noted({ noted }))
@@ -161,21 +178,20 @@ class Purchase extends Component {
       return
     }
 
-    // ((qty * weight) * price expeditions gram) / 1000 kg
-
     this.setState({ submiting: true })
     this.props.dispatch(cartActions.addToCart({
+      'destination_ro_id': address.selected.district.ro_id,
+      'origin_ro_id': productDetail.detail.store.district.ro_id,
+      'service': expeditionsPackage.selected.name,
       'product_id': Number(id),
       'expedition_id': expeditions.selected.id,
       'expedition_service_id': expeditionsPackage.selected.id,
       'qty': amountProduct,
       'note': noted,
       'address_id': address.selected.id,
-      'is_insurance': insurance === 'Ya',
-      'delivery_cost': (((amountProduct * productDetail.detail.product.weight) * expeditionsPackage.selected.cost) / 1000)
+      'is_insurance': insurance === 'Ya'
     }))
   }
-
   async componentDidMount () {
     const { id, productDetail, listAddress } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
@@ -190,10 +206,9 @@ class Purchase extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, listAddress, cart, estimatedCharges } = nextProps
+    const { productDetail, listAddress, addToCart, estimatedCharges } = nextProps
     let { notification, submiting } = this.state
     notification = {status: false, message: 'Error, default message.'}
-
     if (!listAddress.isLoading) {
       switch (listAddress.status) {
         case Status.SUCCESS :
@@ -201,7 +216,7 @@ class Purchase extends Component {
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          notification = {type: 'is-danger', status: true, message: listAddress.message}
           break
         default:
           break
@@ -216,7 +231,7 @@ class Purchase extends Component {
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          notification = {type: 'is-danger', status: true, message: estimatedCharges.message}
           break
         default:
           break
@@ -224,19 +239,19 @@ class Purchase extends Component {
       this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges }, notification })
     }
 
-    if (!cart.isLoading) {
-      switch (cart.status) {
+    if (!addToCart.isLoading) {
+      switch (addToCart.status) {
         case Status.SUCCESS :
-          if (!cart.status === 200) notification = {type: 'is-danger', status: true, message: 'Gagal menambahkan data keranjang belanja'}
+          if (!addToCart.status === 200) notification = {type: 'is-danger', status: true, message: 'Gagal menambahkan data keranjang belanja'}
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
+          notification = {type: 'is-danger', status: true, message: addToCart.message}
           break
         default:
           break
       }
-      submiting && this.setState({ submiting: false, cart, notification, cartNotification: cart.status === 200 })
+      submiting && this.setState({ submiting: false, addToCart, notification, cartNotification: addToCart.status === 200 })
     }
 
     if (!productDetail.isLoading) {
@@ -259,9 +274,13 @@ class Purchase extends Component {
 
   render () {
     const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
+
+    console.log(address)
+    console.log(expeditions)
+    console.log(expeditionsPackage)
     if (!productDetail.isFound) return null
-    const { product, images } = productDetail.detail
-    const insurancePrice = (product.insurance * product.price * amountProduct) / 100
+    const { product, images, store } = productDetail.detail
+    const insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
     return (
       <Content style={{paddingBottom: 0}}>
         <Notification
@@ -277,7 +296,7 @@ class Purchase extends Component {
                 <MyImage src={images[0].file} alt='pict' />
               </figure>
               <h3>{ product.name }</h3>
-              <span className='price'>Rp { RupiahFormat(product.price) }</span>
+              <span className='price'>{ store.name }</span>
             </div>
           </div>
         </Section>
@@ -364,14 +383,14 @@ class Purchase extends Component {
             </section>
           }
         <Section className='section is-paddingless has-shadow'>
-          <div className={`column is-paddingless ${error === 'expeditions' && 'is-error'}`} onClick={() => this.onClickExpedition()}>
+          <div className={`column is-paddingless ${error === 'expeditions' && 'is-error'}`} onClick={() => address.selected.id ? this.onClickExpedition() : this.onClickAddress()}>
             <div className='see-all'>
               <span className={`link ${expeditions.selected.id && 'black'}`}> { expeditions.selected.id ? 'Kurir Pengiriman' : 'Pilih Kurir Pengiriman' } <span className='kurir'>{ expeditions.selected.name }</span>
                 <span className='icon-arrow-down' /></span>
             </div>
             <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
           </div>
-          <div className={`column is-paddingless ${error === 'expeditionsPackage' && 'is-error'}`} onClick={() => this.onClickExpeditionPackage()}>
+          <div className={`column is-paddingless ${error === 'expeditionsPackage' && 'is-error'}`} onClick={() => expeditions.selected.id ? this.onClickExpeditionPackage() : this.onClickExpedition()}>
             <div className='see-all'>
               <span className={`link ${expeditionsPackage.selected.id && 'black'}`}> { expeditionsPackage.selected.id ? 'Pilih Paket Pengiriman' : 'Paket Pengiriman' }
                 <span className='kurir'> { expeditionsPackage.selected.name }</span>
@@ -422,7 +441,7 @@ class Purchase extends Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><span>Biaya Asuransi</span></div>
-                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(insurancePrice) }</span></div>
+                      <div className='column is-half has-text-right'><span> { insurance.selected === 'Ya' ? `Rp ${RupiahFormat(insurancePrice)}` : '-' }</span></div>
                     </div>
                   </li>
                 </ul>
@@ -444,16 +463,16 @@ class Purchase extends Component {
         <OptionsAdresess
           {...address}
           id={id}
-          addressSelected={(selected) => this.addressSelected(selected)} />
+          addressSelected={(e, selected) => this.addressSelected(e, selected)} />
         <OptionsExpeditions
           {...expeditions}
-          expeditionSelected={(selected) => this.expeditionSelected(selected)} />
+          expeditionSelected={(e, selected) => this.expeditionSelected(e, selected)} />
         <OptionsExpeditionPackages
           {...expeditionsPackage}
-          expeditionsPackageSelected={(selected) => this.expeditionsPackageSelected(selected)} />
+          expeditionsPackageSelected={(e, selected) => this.expeditionsPackageSelected(e, selected)} />
         <OptionsInsurance
           {...insurance}
-          insuranceSelected={(selected) => this.insuranceSelected(selected)} />
+          insuranceSelected={(e, selected) => this.insuranceSelected(e, selected)} />
         <div className='sort-option' id='addCartNotif' style={{ display: cartNotification && 'block' }}>
           <div className='notif-report add-cart-notif'>
             <MyImage src={Images.phoneAccount} />
@@ -479,7 +498,7 @@ const mapStateToProps = (state) => {
     estimatedCharges: state.estimatedCharges,
     insurance: state.insurance,
     noted: state.noted,
-    cart: state.cart
+    addToCart: state.addToCart
   }
 }
 
