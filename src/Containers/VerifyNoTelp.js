@@ -4,66 +4,204 @@ import { connect } from 'react-redux'
 // components
 import Link from 'next/link'
 import {Images} from '../Themes'
+import Notification from '../Components/Notification'
+// actions
+import * as actionTypes from '../actions/user'
+// services
+import { Status } from '../Services/Status'
+// validation
+import { inputNumber } from '../Validations/Input'
 
 class VerifyNoTelp extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      verify: false
+      verify: false,
+      formVerify: {
+        digit1: '',
+        digit2: '',
+        digit3: '',
+        digit4: '',
+        digit5: ''
+      },
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
+    }
+  }
+
+  handleInput (e) {
+    const { name, value } = e.target
+    const { formVerify } = this.state
+    const newState = { formVerify }
+    newState.formVerify[name] = inputNumber(value)
+    this.setState(newState)
+
+    switch (name) {
+      case 'digit1':
+        if (value !== '') {
+          this.digit2.focus()
+        }
+        break
+      case 'digit2':
+        if (value !== '') {
+          this.digit3.focus()
+        }
+        break
+      case 'digit3':
+        if (value !== '') {
+          this.digit4.focus()
+        }
+        break
+      case 'digit4':
+        if (value !== '') {
+          this.digit5.focus()
+        }
+        break
+      default:
+        this.digit5.focus()
     }
   }
 
   handleVerify () {
-    this.setState({verify: !this.state.verify})
+    const { formVerify } = this.state
+    const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
+    this.props.verifyPhone({ code })
+  }
+
+  modalVerificationSuccess () {
+    return (
+      <div className='sort-option' style={{display: 'block'}}>
+        <div className='notif-report'>
+          <img src={Images.verifiedPhone} alt='' />
+          <h3>Nomor Telepon Telah Terverifikasi</h3>
+          <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
+          <Link href='add-information-store' as='ais'>
+            <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { stateVerifyPhone } = nextProps
+    let { notification, verify } = this.state
+    notification = {status: false, message: 'Error, default message.'}
+    if (!stateVerifyPhone.isLoading) {
+      switch (stateVerifyPhone.status) {
+        case Status.SUCCESS:
+          this.setState({verify: !verify})
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {status: true, message: stateVerifyPhone.message}
+          break
+        default:
+          break
+      }
+      this.setState({ notification })
+    }
   }
 
   render () {
-    const { verify } = this.state
+    const { formVerify, verify, notification } = this.state
     return (
-      <section className='content'>
-        <div className='container is-fluid'>
-          <form action='#' className='form edit'>
-            <div className='has-text-centered noted'>
-              <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor 082113101585a</p>
-            </div>
-            <div className='field is-horizontal number-account'>
-              <div className='field-body'>
-                <div className='field is-grouped'>
-                  <p className='control'>
-                    <input className='input' type='text' />
-                  </p>
-                  <p className='control'>
-                    <input className='input' type='text' />
-                  </p>
-                  <p className='control'>
-                    <input className='input' type='text' />
-                  </p>
-                  <p className='control'>
-                    <input className='input' type='text' />
-                  </p>
-                  <p className='control'>
-                    <input className='input' type='text' />
-                  </p>
+      <div>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message}
+          />
+        <section className='content'>
+          <div className='container is-fluid'>
+            <form action='#' className='form edit'>
+              <div className='has-text-centered noted'>
+                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor 082113101585</p>
+              </div>
+              <div className='field is-horizontal number-account'>
+                <div className='field-body'>
+                  <div className='field is-grouped'>
+                    <p className='control'>
+                      <input
+                        className='input'
+                        style={{textAlign: 'center'}}
+                        ref={(input) => { this.digit2 = input }}
+                        type='text'
+                        name='digit1'
+                        maxLength={1}
+                        value={formVerify.digit1}
+                        onChange={(e) => this.handleInput(e)} />
+                    </p>
+                    <p className='control'>
+                      <input
+                        className='input'
+                        style={{textAlign: 'center'}}
+                        ref={(input) => { this.digit2 = input }}
+                        type='text'
+                        name='digit2'
+                        maxLength={1}
+                        value={formVerify.digit2}
+                        onChange={(e) => this.handleInput(e)} />
+                    </p>
+                    <p className='control'>
+                      <input
+                        className='input'
+                        style={{textAlign: 'center'}}
+                        ref={(input) => { this.digit3 = input }}
+                        type='text'
+                        name='digit3'
+                        maxLength={1}
+                        value={formVerify.digit3}
+                        onChange={(e) => this.handleInput(e)} />
+                    </p>
+                    <p className='control'>
+                      <input
+                        className='input'
+                        style={{textAlign: 'center'}}
+                        ref={(input) => { this.digit4 = input }}
+                        type='text'
+                        name='digit4'
+                        maxLength={1}
+                        value={formVerify.digit4}
+                        onChange={(e) => this.handleInput(e)} />
+                    </p>
+                    <p className='control'>
+                      <input
+                        className='input'
+                        style={{textAlign: 'center'}}
+                        ref={(input) => { this.digit5 = input }}
+                        type='text'
+                        name='digit5'
+                        maxLength={1}
+                        value={formVerify.digit5}
+                        onChange={(e) => this.handleInput(e)} />
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <a className='button is-primary is-large is-fullwidth js-sort' onClick={() => this.handleVerify()}>Verifikasi Nomor Telepon</a>
-            <p className='text-ask has-text-centered'>Belum menerima kode aktivasi? <a>Klik Disini</a></p>
-          </form>
-        </div>
-        <div className='sort-option' style={{display: verify && 'block'}}>
-          <div className='notif-report'>
-            <img src={Images.verifiedPhone} alt='' />
-            <h3>Nomor Telepon Telah Terverifikasi</h3>
-            <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
-            <Link href='add-information-store' as='ais'>
-              <button className='button is-primary is-large is-fullwidth' onClick={() => this.handleVerify()}>Ke Daftar Transaksi</button>
-            </Link>
+              <a className='button is-primary is-large is-fullwidth js-sort' onClick={() => this.handleVerify()}>Verifikasi Nomor Telepon</a>
+              <p className='text-ask has-text-centered'>Belum menerima kode aktivasi? <a>Klik Disini</a></p>
+            </form>
           </div>
-        </div>
-      </section>
+          { verify && this.modalVerificationSuccess()}
+        </section>
+      </div>
     )
   }
 }
 
-export default connect()(VerifyNoTelp)
+const mapStateToProps = (state) => {
+  return {
+    stateVerifyPhone: state.verifyPhone
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  verifyPhone: (code) => dispatch(actionTypes.verifyPhone(code))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyNoTelp)
