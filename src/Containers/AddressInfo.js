@@ -474,7 +474,8 @@ class AddressInfo extends React.Component {
                   size={12}
                   color='#ef5656'
                   type=''
-                  className='is-fullwidth has-text-centered' /> */}
+                  className='is-fullwidth has-text-centered' />
+                */}
               </p>
             </div>
           </div>
