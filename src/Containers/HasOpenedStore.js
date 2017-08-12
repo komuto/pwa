@@ -20,7 +20,8 @@ class HasOpenedStore extends React.Component {
             <div className='column'>
               <Link href='/profile'>
                 <a
-                  className='button is-primary is-large is-fullwidth'>
+                  className='button is-primary is-large is-fullwidth'
+                  >
                   Kembali Ke Halaman Profil
                 </a>
               </Link>
