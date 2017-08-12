@@ -83,7 +83,7 @@ const store = {
   ownStore: storeReducers.getOwnStore,
   storeProducts: storeReducers.getStoreProducts,
   storeCatalogProducts: storeReducers.getStoreCatalogProducts,
-  processCreateStore: storeReducers.processCreateStore
+  processCreateStore: storeReducers.processCreateStore,
   updateStore: storeReducers.updateStore,
   storeAddress: storeReducers.getStoreAddress,
   updateStoreAddress: storeReducers.updateStoreAddress
