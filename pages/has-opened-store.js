@@ -6,7 +6,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import HasOpenedStore from '../src/Containers/HasOpenedStore'
 // utils
-// import {PROFILE} from '../src/Utils/Constant'
+// import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   style: 'main user user-success',
