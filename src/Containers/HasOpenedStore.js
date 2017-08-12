@@ -20,7 +20,10 @@ class HasOpenedStore extends React.Component {
           <div className='columns is-mobile'>
             <div className='column'>
               <Link href='/profile'>
-                <a className='button is-primary is-large is-fullwidth'>Kembali Ke Halaman Profil</a>
+                <a
+                  className='button is-primary is-large is-fullwidth'>
+                  Kembali Ke Halaman Profil
+                </a>
               </Link>
             </div>
           </div>
