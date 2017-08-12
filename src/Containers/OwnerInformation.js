@@ -9,6 +9,7 @@ import * as actionTypes from '../actions/stores'
 import { inputNumber } from '../Validations/Input'
 
 class OwnerInformation extends React.Component {
+
   constructor (props) {
     super(props)
     this.state = {

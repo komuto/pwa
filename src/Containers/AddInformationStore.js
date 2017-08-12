@@ -10,6 +10,7 @@ import {Images} from '../Themes'
 import * as actionTypes from '../actions/stores'
 
 class AddInformationStore extends React.Component {
+
   constructor (props) {
     super(props)
     this.state = {

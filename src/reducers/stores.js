@@ -15,11 +15,6 @@ const initVerify = {
   ...initState()
 }
 
-const initUpload = {
-  payload: [],
-  ...initState()
-}
-
 const initOwnStore = {
   ownStore: {},
   ...initState()
@@ -99,7 +94,7 @@ function expeditionStore (state = initExpedition, action) {
   }
 }
 
-function photoUpload (state = initUpload, action) {
+function photoUpload (state = initState({ payload: {} }), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.PHOTO_UPLOAD:
@@ -187,6 +182,34 @@ const processCreateStore = (state = initProcessCreateStore, action) => {
         address: action.params
       }
     }
+
+export const updateStore = (state = initState({ updateStore: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.UPDATE_INFORMATION:
+      return { ...buildReducer(state, action, type, 'updateStore'), type: 'information' }
+    case actions.UPDATE_TERM:
+      return { ...buildReducer(state, action, type, 'updateStore'), type: 'term' }
+    default:
+      return state
+  }
+}
+
+export const getStoreAddress = (state = initState({ storeAddress: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_ADDRESS:
+      return buildReducer(state, action, type, 'storeAddress')
+    default:
+      return state
+  }
+}
+
+export const updateStoreAddress = (state = initState({ updateStoreAddress: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.UPDATE_STORE_ADDRESS:
+      return buildReducer(state, action, type, 'updateStoreAddress')
     default:
       return state
   }

@@ -1,27 +1,6 @@
-import { put } from 'redux-saga/effects'
-import * as reviewActions from '../actions/review'
-import * as reviewApi from '../api/review'
-import { errorHandling, typeSucc, typeFail } from '../config'
+import * as actions from '../actions/review'
+import * as apis from '../api/review'
+import { buildSaga } from '../config'
 
-function * getReviews (action) {
-  try {
-    const {data} = yield reviewApi.getReviews(action)
-    yield put({ type: typeSucc(reviewActions.GET_REVIEWS), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(reviewActions.GET_REVIEWS), e)
-  }
-}
-
-function * addReview (action) {
-  try {
-    const {data} = yield reviewApi.addReview(action)
-    yield put({ type: typeSucc(reviewActions.ADD_REVIEW), ...data })
-  } catch (e) {
-    yield errorHandling(typeFail(reviewActions.ADD_REVIEW), e)
-  }
-}
-
-export {
-  getReviews,
-  addReview
-}
+export const getReviews = buildSaga([], apis.getReviews, actions.GET_REVIEWS)
+export const addReview = buildSaga([], apis.addReview, actions.ADD_REVIEW)

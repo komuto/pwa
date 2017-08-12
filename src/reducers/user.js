@@ -295,7 +295,7 @@ function getDiscussion (state = initState({ discussions: [] }, true), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_USER_DISCUSSION:
-      return buildReducer(state, action, type, 'discussions', false, true)
+      return buildReducer(state, action, type, 'discussions', true)
     default:
       return state
   }
@@ -345,7 +345,7 @@ function listFavoriteStore (state = initState({ stores: [] }, true), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.LIST_FAVORIT_STORE:
-      return buildReducer(state, action, type, 'stores', false, true)
+      return buildReducer(state, action, type, 'stores', true)
     default:
       return state
   }

@@ -9,7 +9,7 @@ function getReviews (state = initState({ reviews: [] }, true), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_REVIEWS:
-      return buildReducer(state, action, type, 'reviews', false, true)
+      return buildReducer(state, action, type, 'reviews', true)
     default:
       return state
   }

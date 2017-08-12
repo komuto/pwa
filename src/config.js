@@ -1,4 +1,5 @@
-import { put } from 'redux-saga/effects'
+import { delay } from 'redux-saga'
+import { put, call } from 'redux-saga/effects'
 
 export const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
 export const apiKomuto = 'https://api.komuto.skyshi.com'
@@ -57,7 +58,8 @@ export const reqState = (state, meta) => {
   const res = {
     ...state,
     status: 0,
-    isLoading: true
+    isLoading: true,
+    isFound: false
   }
   if (meta) res['meta'] = { page: 0, limit: 10 }
   return res
@@ -79,19 +81,6 @@ export const succState = (action, data) => {
   if (action.meta) state.meta = action.meta
   if (data) state[data] = action.data
   return state
-}
-
-/**
- * Build success state by keeping previous data
- * @param action {object}
- * @param data {string} Prop name
- * @param value {array} previous data
- */
-export const succKeepState = (action, data, value) => {
-  return {
-    ...succState(action),
-    [data]: [action.data, ...value]
-  }
 }
 
 /**
@@ -128,15 +117,14 @@ export const buildAction = (type, params = false) => {
  * @param action {object}
  * @param type {string}
  * @param name {string} additional field name
- * @param keep {boolean} Keep previous state
  * @param meta {boolean}
  */
-export const buildReducer = (state, action, type, name, keep = false, meta = false) => {
+export const buildReducer = (state, action, type, name, meta = false) => {
   switch (action.type) {
     case typeReq(type):
       return reqState(state, meta)
     case typeSucc(type):
-      return !keep ? succState(action, name) : succKeepState(action, name, state[name])
+      return succState(action, name)
     case typeFail(type):
       return failState(action, name, state[name])
     default:
@@ -163,7 +151,7 @@ export const typeFail = type => `${type}_FAILURE`
 /**
  * Build query string
  * @param params {object}
- * @param take {array} optional ===> array of prop names to take
+ * @param take {[string]} optional ===> array of prop names to take
  */
 export const buildQuery = (params, take) => Object.keys(params)
   .reduce((query, prop) => {
@@ -173,7 +161,7 @@ export const buildQuery = (params, take) => Object.keys(params)
       // Change from array to string -> [1,2] -> '1,2'
       params[prop] = String(params[prop])
     }
-    if (params[prop]) query.push(`${prop}=${params[prop]}`)
+    if (params[prop] !== undefined) query.push(`${prop}=${params[prop]}`)
     return query
   }, []).join('&')
 
@@ -185,16 +173,36 @@ export const buildQuery = (params, take) => Object.keys(params)
  * @param actionType {string}
  * @param props {[string]} take specific prop for data from api
  * ['user', 'province', 'id'] only take data.user.province.id for data
+ * @param keep {[string]} keep action data
  */
-export const buildSaga = (args, callApi, actionType, props = false) => function * (action) {
+export const buildSaga = (args, callApi, actionType, props = [], keep = []) => function * (action) {
   try {
     const params = !args.length > 0 ? action
       : args.reduce((params, prop) => ({ ...params, [prop]: action[prop] }), {})
+    const keepAction = !keep.length > 0 ? {}
+      : keep.reduce((keeps, prop) => ({ ...keeps, [prop]: action[prop] }), {})
     const { data } = yield callApi(params)
     if (props) {
       data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
     }
-    yield put({ type: typeSucc(actionType), ...data })
+    yield put({ type: typeSucc(actionType), ...data, ...keepAction })
+  } catch (e) {
+    yield errorHandling(typeFail(actionType), e)
+  }
+}
+
+export const buildSagaDelay = (args, callApi, actionType, delayCount = 200, props = [], keep = []) => function * (action) {
+  try {
+    const params = !args.length > 0 ? action
+      : args.reduce((params, prop) => ({ ...params, [prop]: action[prop] }), {})
+    const keepAction = !keep.length > 0 ? {}
+      : keep.reduce((keeps, prop) => ({ ...keeps, [prop]: action[prop] }), {})
+    yield call(delay, delayCount)
+    const { data } = yield callApi(params)
+    if (props !== undefined) {
+      data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
+    }
+    yield put({ type: typeSucc(actionType), ...data, ...keepAction })
   } catch (e) {
     yield errorHandling(typeFail(actionType), e)
   }

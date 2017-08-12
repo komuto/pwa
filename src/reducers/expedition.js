@@ -80,6 +80,16 @@ export const getStoreExpeditions = (state = initState({ storeExpeditions: [] }),
   }
 }
 
+export const manageStoreExpeditions = (state = initState({ manageExpeditions: [] }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.MANAGE_STORE_EXPEDITIONS:
+      return buildReducer(state, action, type, 'manageExpeditions')
+    default:
+      return state
+  }
+}
+
 export {
   expedition,
   expeditionServices,

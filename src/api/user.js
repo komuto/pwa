@@ -21,9 +21,9 @@ export const loginSocial = (action) => {
   return axios.post('users/social-login', action).catch((err) => { throw err })
 }
 
-export const forgetPassword = (action) => {
+export const forgetPassword = (email) => {
   const axios = publicApiKomuto()
-  return axios.post('passwords/forgot', action).catch((err) => { throw err })
+  return axios.post('passwords/forgot', email).catch((err) => { throw err })
 }
 
 export const newPassword = (action) => {
@@ -61,9 +61,9 @@ export const updateProfile = (action) => {
   return axios.put('accounts/profile', action).catch((err) => { throw err })
 }
 
-export const favoriteStore = (action) => {
+export const favoriteStore = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.post(`stores/${action.id}/favorite`, action).catch((err) => { throw err })
+  return axios.post(`stores/${id}/favorite`).catch((err) => { throw err })
 }
 
 export const getPhone = () => {
@@ -76,9 +76,10 @@ export const updatePhone = (action) => {
   return axios.put('accounts/phone', action).catch((err) => { throw err })
 }
 
-export const getDiscussion = () => {
+export const getDiscussion = ({ page, limit }) => {
   const axios = authApiKomuto()
-  return axios.get('users/discussions').catch((err) => { throw err })
+  const query = buildQuery({ page, limit })
+  return axios.get(`users/discussions?${query}`).catch((err) => { throw err })
 }
 
 export const listFavoriteStore = ({ page, limit }) => {
@@ -87,9 +88,9 @@ export const listFavoriteStore = ({ page, limit }) => {
   return axios.get(`users/store/favorites?${query}`).catch((err) => { throw err })
 }
 
-export const sendOTPPhone = (action) => {
+export const sendOTPPhone = () => {
   const axios = authApiKomuto()
-  return axios.post('accounts/otp/phone', action).catch((err) => { throw err })
+  return axios.post('accounts/otp/phone', {}).catch((err) => { throw err })
 }
 
 export const verifyPhone = (action) => {
