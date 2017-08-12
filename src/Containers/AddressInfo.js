@@ -470,7 +470,11 @@ class AddressInfo extends React.Component {
                   className='button is-primary is-large is-fullwidth'
                   onClick={(e) => this.submitAddressInfo(e)}>Lanjutkan
                 </button>
-                {/* <Loading size={12} color='#ef5656' type='' className='is-fullwidth has-text-centered' /> */}
+                {/* <Loading
+                  size={12}
+                  color='#ef5656'
+                  type=''
+                  className='is-fullwidth has-text-centered' /> */}
               </p>
             </div>
           </div>
