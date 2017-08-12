@@ -163,49 +163,6 @@ class ShippingExpedition extends React.Component {
             </section>
           )
         })}
-          <div className='filter-option active'>
-            <div className='sort-list check-all'>
-              <label className='checkbox'>
-                <span className='sort-text'>Pilih Semua</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' />
-                </span>
-              </label>
-              <div className='eks-name'>
-                <span>TIKI</span>
-                <span><img src={Images.tiki} alt='' /></span>
-              </div>
-            </div>
-            <div className='sort-list check-list'>
-              <label className='checkbox' >
-                <span className='sort-text'>TIKI ONS (Over Night Service)</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' />
-                </span>
-              </label>
-              <label className='checkbox'>
-                <span className='sort-text'>TIKI Reguler</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' />
-                </span>
-              </label>
-              <label className='checkbox'>
-                <span className='sort-text'>TIKI Ekonomi</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' />
-                </span>
-              </label>
-              <label className='checkbox'>
-                <span className='sort-text'>TIKI HDS</span>
-                <span className='input-wrapper'>
-                  <input type='checkbox' />
-                </span>
-              </label>
-            </div>
-          </div>
-        </section>
-
->>>>>>> src/Containers/ShippingExpedition.js
         <section className='section is-paddingless'>
           <div className='payment-detail action'>
             <ul>
