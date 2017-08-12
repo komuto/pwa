@@ -182,6 +182,10 @@ const processCreateStore = (state = initProcessCreateStore, action) => {
         address: action.params
       }
     }
+    default:
+      return state
+  }
+}
 
 export const updateStore = (state = initState({ updateStore: {} }), action) => {
   const type = buildType(action.type)
