@@ -256,7 +256,6 @@ class ShippingDetail extends Component {
     if (!item.isFound) return null
 
     // cost service / 1000 gram
-    console.log(expeditionsPackage)
     let estimatedCost = 0
     if (expeditionsPackage.data.length > 0) {
       let filterEstimatedCost = expeditionsPackage.data.filter((data) => {
@@ -264,14 +263,15 @@ class ShippingDetail extends Component {
       })
       estimatedCost = filterEstimatedCost.length > 0 ? filterEstimatedCost[0].cost : 0
     }
-    const price = product.price
-    const weight = product.weight
-    const qty = item.item.qty
-    const isInsurance = shipping.is_insurance
-    const insuranceFee = shipping.expedition_service.expedition.insurance_fee
-    const insurancePrice = isInsurance ? (insuranceFee * price * qty) / 100 : 0
-    const shippingCost = Math.ceil(((qty * weight) / 1000)) * estimatedCost
-    const totalPrice = (price * qty) + shippingCost + insurancePrice
+
+    let price = product.price
+    let weight = product.weight
+    let qty = item.item.qty
+    let isInsurance = shipping.is_insurance
+    let insuranceFee = shipping.expedition_service.expedition.insurance_fee
+    let insurancePrice = isInsurance ? (insuranceFee * price * qty) / 100 : 0
+    let shippingCost = Math.ceil(((qty * weight) / 1000)) * estimatedCost
+    let totalPrice = (price * qty) + shippingCost + insurancePrice
 
     return (
       <Content>
