@@ -16,7 +16,9 @@ class Account extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      verify: false
+      verify: false,
+      profile: props.profie,
+      users: props.users
     }
   }
 
@@ -32,6 +34,10 @@ class Account extends Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.sendOTPPhone.status === 200) {
       Router.push('/verify-no-telp')
+    }
+    if (nextProps.profile.status === 200) {
+      this.props.getProfile()
+      this.setState({ profile: nextProps.profile })
     }
   }
 
@@ -53,74 +59,66 @@ class Account extends Component {
             className='button is-primary is-large is-fullwidth'>
             Verifikasi Sekarang
           </button>
-          <strong className='cancel' onClick={() => this.handleVerify()} style={{color: '#56aaef', padding: '20px', display: 'block', marginTop: '10px'}}>Batal</strong>
+          <strong
+            className='cancel'
+            onClick={() => this.handleVerify()}
+            style={{color: '#56aaef', padding: '20px', display: 'block', marginTop: '10px'}}>
+            Batal
+          </strong>
         </div>
       </div>
     )
   }
 
-  renderStore () {
-    const { user, profile } = this.props
+  handleOnClick (e) {
+    e.preventDefault()
+    const { profile, user } = this.props
     if (profile.user.store.hasOwnProperty('name')) {
-      return (
-        <Section className='bg-white'>
-          <div className='profile-wrapp'>
-            <ul>
-              <li>
-                <div className='box is-paddingless'>
-                  <article className='media'>
-                    <div className='media-left'>
-                      <figure className='image'>
-                        <img src={profile.user.store.logo} />
-                      </figure>
-                    </div>
-                    <div className='media-content'>
-                      <div className='content'>
-                        <p>
-                          <strong>{profile.user.store.name}</strong><br />
-                          Kelola Toko Anda
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-                <span className='icon-arrow-right' />
-              </li>
-            </ul>
-          </div>
-        </Section>
-      )
+      Router.push('/store-seller')
     } else {
-      return (
-        <Section className='bg-white'>
-          <div className='profile-wrapp'>
-            <ul>
-              <li
-                onClick={() => user.is_phone_verified ? Router.push('/add-information-store') : this.handleVerify()}>
-                <div className='box is-paddingless'>
-                  <article className='media'>
-                    <div className='media-left'>
-                      <figure className='image'>
-                        <span className='icon-toko' />
-                      </figure>
-                    </div>
-                    <div className='media-content'>
-                      <div className='content'>
-                        <p>
-                          <strong>Anda belum memiliki Toko</strong><br />
-                          Buat Sekarang
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-                <span className='icon-arrow-right' />
-              </li>
-            </ul>
-          </div>
-        </Section>
-      )
+      if (user.is_phone_verified) {
+        Router.push('/add-information-store')
+      } else {
+        this.handleVerify()
+      }
     }
+  }
+
+  componentDidMount () {
+    this.props.getProfile()
+  }
+
+  renderStore () {
+    const { profile } = this.props
+    const isHasStoreprofile = profile.user.store.hasOwnProperty('name')
+    return (
+      <Section className='bg-white'>
+        <div className='profile-wrapp'>
+          <ul>
+            <li onClick={(e) => this.handleOnClick(e)}>
+              <div className='box is-paddingless'>
+                <article className='media'>
+                  <div className='media-left'>
+                    <figure className='image'>
+                      { isHasStoreprofile ? <img src={profile.user.store.logo} /> : <span className='icon-toko' /> }
+                    </figure>
+                  </div>
+                  <div className='media-content'>
+                    <div className='content'>
+                      <p>
+                        <strong>{ isHasStoreprofile ? profile.user.store.name : 'Anda belum memiliki Toko'}</strong><br />
+                        { isHasStoreprofile ? 'Kelola Toko Anda' : 'Buat Sekarang'}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <span className='icon-arrow-right' />
+            </li>
+          </ul>
+        </div>
+      </Section>
+    )
   }
 
   render () {
