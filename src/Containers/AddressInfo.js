@@ -102,10 +102,10 @@ class AddressInfo extends React.Component {
     const { formAdress, provinces, districts, subdistricts, villages } = this.state
     const newAddress = { formAdress }
     newAddress.formAdress['address'] = address.address
-    newAddress.formAdress['province_id'] = address.province.id
-    newAddress.formAdress['district_id'] = address.district.id
-    newAddress.formAdress['sub_district_id'] = address.subDistrict.id
-    newAddress.formAdress['village_id'] = address.village.id
+    newAddress.formAdress['province_id'] = address.province.id.toString()
+    newAddress.formAdress['district_id'] = address.district.id.toString()
+    newAddress.formAdress['sub_district_id'] = address.subDistrict.id.toString()
+    newAddress.formAdress['village_id'] = address.village.id.toString()
     newAddress.formAdress['postal_code'] = address.postal_code
     this.setState(newAddress)
     const newProvince = { provinces }
@@ -143,7 +143,11 @@ class AddressInfo extends React.Component {
     let postalCodeRequired = name === 'postal_code' && postalCode.length > 0
     let result = provinceIdRequired || districtIdRequired || subDistrictIdRequired || villageIdRequired || addressRequired || postalCodeRequired
     return (
-      <span style={{color: result ? 'green' : 'red', display: validation ? 'block' : 'none'}} >{result ? '' : textFailed}</span>
+      <span style={{color: result ? '#23d160' : '#ef5656',
+        display: validation ? 'block' : 'none',
+        letterSpacing: '0.2px'}} >
+        {result ? '' : textFailed}
+      </span>
     )
   }
 
@@ -167,7 +171,7 @@ class AddressInfo extends React.Component {
 
   submitAddressInfo (e) {
     e.preventDefault()
-    const { formAdress } = this.state
+    const { formAdress, submitting } = this.state
     let provinceId = formAdress.province_id
     let districtId = formAdress.district_id
     let subDistrictId = formAdress.sub_district_id
@@ -180,14 +184,15 @@ class AddressInfo extends React.Component {
     let villageIdRequired = villageId.length > 0
     let addressRequired = address.length > 0
     let postalCodeRequired = postalCode.length > 0
-    let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired || postalCodeRequired
-    this.setState({ submitting: true })
+    let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired
     if (isValid) {
+      const newSubmitting = { submitting }
+      newSubmitting.submitting = true
+      this.setState(newSubmitting)
       this.setState({ validation: false })
       this.proccessCreateStore()
     } else {
       this.setState({ validation: true })
-      this.setState({ submitting: false })
     }
   }
 
@@ -279,11 +284,13 @@ class AddressInfo extends React.Component {
       notification = {status: false, message: 'Error, default message.'}
       switch (store.status) {
         case Status.SUCCESS:
+          this.setState({ submitting: false })
           Router.push('/has-opened-store')
           break
         case Status.OFFLINE :
         case Status.FAILED :
           notification = {status: true, message: store.message}
+          this.setState({ submitting: false })
           break
         default:
           break
@@ -297,7 +304,10 @@ class AddressInfo extends React.Component {
     return (
       <div className='sort-option' style={{ display: showAddress && 'block' }} >
         <div className='sort-list'>
-          <p><strong>Pilih Alamat</strong><strong onClick={() => this.handleGetAddress()} style={{float: 'right'}}>X</strong></p>
+          <p>
+            <strong>Pilih Alamat</strong>
+            <strong onClick={() => this.handleGetAddress()} style={{float: 'right'}}>X</strong>
+          </p>
           <form action='#' className='form'>
             <div className='field'>
               <div className='control popup-option'>
@@ -321,7 +331,7 @@ class AddressInfo extends React.Component {
   }
 
   render () {
-    const { formAdress, provinces, districts, subdistricts, villages, notification } = this.state
+    const { formAdress, provinces, districts, subdistricts, villages, notification, submitting } = this.state
     return (
       <div>
         <Notification
@@ -357,7 +367,7 @@ class AddressInfo extends React.Component {
                   className='input'
                   value={formAdress.address}
                   onChange={(e) => this.handleAddress(e)} />
-                <br />{this.renderValidation('address', 'Alamat harus di isi !')}
+                <br />{this.renderValidation('address', 'Mohon isi alamat lengkap anda')}
               </p>
             </div>
             <div className='field'>
@@ -380,7 +390,7 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('province_id', 'Provinsi harus di isi !')}
+                <br />{this.renderValidation('province_id', 'Mohon isi provinsi anda')}
               </p>
             </div>
             <div className='field'>
@@ -403,7 +413,7 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('district_id', 'Kota/Kabupaten harus di isi !')}
+                <br />{this.renderValidation('district_id', 'Mohon isi kota / kabupaten anda')}
               </p>
             </div>
             <div className='field'>
@@ -426,7 +436,7 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('sub_district_id', 'Kecamatan harus di isi !')}
+                <br />{this.renderValidation('sub_district_id', 'Mohon isi kecamatan anda')}
               </p>
             </div>
             <div className='field'>
@@ -449,7 +459,7 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('village_id', 'Kelurahan harus di isi !')}
+                <br />{this.renderValidation('village_id', 'Mohon isi kelurahan anda')}
               </p>
             </div>
             <div className='field'>
@@ -461,13 +471,13 @@ class AddressInfo extends React.Component {
                   className='input'
                   value={formAdress.postal_code}
                   onChange={(e) => this.handleAddress(e)} />
-                <br />{this.renderValidation('postal_code', 'Kode Pos harus di isi !')}
+                <br />{this.renderValidation('postal_code', 'Mohon isi kode pos anda')}
               </p>
             </div>
             <div className='field'>
               <p className='control'>
                 <button
-                  className='button is-primary is-large is-fullwidth'
+                  className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
                   onClick={(e) => this.submitAddressInfo(e)}>Lanjutkan
                 </button>
                 {/* <Loading
