@@ -27,7 +27,8 @@ class VerifyNoTelp extends React.Component {
       notification: {
         status: false,
         message: 'Error, default message.'
-      }
+      },
+      submitting: false
     }
   }
 
@@ -66,6 +67,7 @@ class VerifyNoTelp extends React.Component {
 
   handleVerify () {
     const { formVerify } = this.state
+    this.setState({ submitting: true })
     const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
     this.props.verifyPhone({ code })
   }
@@ -92,10 +94,12 @@ class VerifyNoTelp extends React.Component {
     if (!stateVerifyPhone.isLoading) {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
+          this.setState({ submitting: false })
           this.setState({verify: !verify})
           break
         case Status.OFFLINE :
         case Status.FAILED :
+          this.setState({ submitting: false })
           notification = {status: true, message: stateVerifyPhone.message}
           break
         default:
@@ -106,7 +110,7 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, notification } = this.state
+    const { formVerify, verify, notification, submitting } = this.state
     return (
       <div>
         <Notification
@@ -120,7 +124,8 @@ class VerifyNoTelp extends React.Component {
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
               <div className='has-text-centered noted'>
-                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor 082113101585</p>
+                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor {this.props.profile.user.user.phone_number}
+                </p>
               </div>
               <div className='field is-horizontal number-account'>
                 <div className='field-body'>
@@ -183,7 +188,11 @@ class VerifyNoTelp extends React.Component {
                   </div>
                 </div>
               </div>
-              <a className='button is-primary is-large is-fullwidth js-sort' onClick={() => this.handleVerify()}>Verifikasi Nomor Telepon</a>
+              <a
+                className={`button is-primary is-large is-fullwidth js-sort ${submitting ? 'is-loading' : ''}`}
+                onClick={() => this.handleVerify()}>
+                Verifikasi Nomor Telepon
+              </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi? <a>Klik Disini</a></p>
             </form>
           </div>
@@ -196,7 +205,8 @@ class VerifyNoTelp extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    stateVerifyPhone: state.verifyPhone
+    stateVerifyPhone: state.verifyPhone,
+    profile: state.profile
   }
 }
 
