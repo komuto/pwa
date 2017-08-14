@@ -275,9 +275,6 @@ class Purchase extends Component {
   render () {
     const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
 
-    console.log(address)
-    console.log(expeditions)
-    console.log(expeditionsPackage)
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
     const insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
@@ -299,21 +296,51 @@ class Purchase extends Component {
               <span className='price'>{ store.name }</span>
             </div>
           </div>
-        </Section>
-        <Section className='section is-paddingless has-shadow'>
           <div className='info-purchase'>
             <div className='detail-rate is-purchase'>
-              <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Harga Satuan</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span>Rp {RupiahFormat(product.price)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
                 <div className='column is-half'>
                   <div className='rating-content is-left'>
                     <strong>Jumlah Barang</strong>
                   </div>
                 </div>
                 <div className='column is-half'>
-                  <div className='rating-content item-qty'>
+                  <div className='rating-content item-qty has-text-right'>
                     <a onClick={() => (amountProduct > 1) && this.minPress()}><span className='icon-qty-min' /></a>
                     <span className='qty' style={{maxWidth: 50}}> { amountProduct } </span>
                     <a onClick={() => (amountProduct < product.stock) && this.plussPress()}><span className='icon-qty-plus' /></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Subtotal Harga Barang</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span>Rp {RupiahFormat(product.price * amountProduct)}</span>
                   </div>
                 </div>
               </div>
@@ -468,7 +495,8 @@ class Purchase extends Component {
           {...expeditions}
           expeditionSelected={(e, selected) => this.expeditionSelected(e, selected)} />
         <OptionsExpeditionPackages
-          {...expeditionsPackage}
+          expeditions={expeditions}
+          expeditionsPackage={expeditionsPackage}
           expeditionsPackageSelected={(e, selected) => this.expeditionsPackageSelected(e, selected)} />
         <OptionsInsurance
           {...insurance}
