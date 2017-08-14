@@ -124,8 +124,7 @@ class Account extends Component {
   }
 
   render () {
-    const { user, profile } = this.props
-    console.log('profile ', profile)
+    const { user } = this.props
     return (
       <Content>
         <Section className='bg-white'>
