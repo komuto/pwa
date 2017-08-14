@@ -65,10 +65,20 @@ export const getBankAccounts = (state = initBankAccounts, action) => {
   }
 }
 
+export const getBankAccountDetail = (state = initState({ bankAccountDetail: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_BANK_ACCOUNT_DETAIL:
+      return buildReducer(state, action, type, 'bankAccountDetail')
+    default:
+      return state
+  }
+}
+
 export const getKomutoBankAccounts = (state = initState({ komutoAccounts: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
-    case actions.GET_BANK_ACCOUNTS:
+    case actions.GET_KOMUTO_BANK_ACCOUNTS:
       return buildReducer(state, action, type, 'komutoAccounts')
     default:
       return state

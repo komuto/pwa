@@ -131,6 +131,7 @@ const bank = function * () {
   yield takeEvery(typeReq(bankActions.UPDATE_BANK_ACCOUNT), bankSaga.updateBankAccount)
   yield takeEvery(typeReq(bankActions.DELETE_BANK_ACCOUNT), bankSaga.deleteBankAccount)
   yield takeEvery(typeReq(bankActions.GET_KOMUTO_BANK_ACCOUNTS), bankSaga.getKomutoBankAccounts)
+  yield takeEvery(typeReq(bankActions.GET_BANK_ACCOUNT_DETAIL), bankSaga.getBankAccountDetail)
 }
 
 const brand = function * () {

@@ -103,6 +103,7 @@ const bank = {
   banks: bankReducers.listBank,
   bankAccount: bankReducers.bankAccount,
   listBankAccounts: bankReducers.getBankAccounts,
+  bankAccountDetail: bankReducers.getBankAccountDetail,
   komutoAccounts: bankReducers.getKomutoBankAccounts
 }
 
@@ -126,7 +127,8 @@ const cart = {
   promo: cartReducers.getPromo,
   cancelPromo: cartReducers.cancelPromo,
   countCart: cartReducers.countCart,
-  item: cartReducers.getItem
+  item: cartReducers.getItem,
+  deleteItem: cartReducers.deleteItem
 }
 
 const expedition = {

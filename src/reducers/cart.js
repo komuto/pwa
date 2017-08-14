@@ -1,5 +1,5 @@
 import * as actions from '../actions/cart'
-import { buildReducer, buildType, initState, typeSucc } from '../config'
+import { buildReducer, buildType, initState } from '../config'
 
 export const cart = (state = initState({ cart: [] }), action) => {
   const type = buildType(action.type)
@@ -8,11 +8,6 @@ export const cart = (state = initState({ cart: [] }), action) => {
       return { ...buildReducer(state, action, type, 'cart'), type: 'get' }
     case actions.GET_CART_RESET:
       return { ...initState(), cart: state.cart, type: 'reset' }
-    case actions.DELETE_ITEM:
-      if (action.type === typeSucc(actions.DELETE_ITEM)) {
-        state.cart.items = state.cart.items.filter(item => item.id !== action.id)
-      }
-      return { ...buildReducer(state, action, type), cart: state.cart, type: 'delete' }
     default:
       return state
   }
@@ -45,6 +40,16 @@ export const countCart = (state = initState({ cartCount: 0 }), action) => {
   switch (type) {
     case actions.COUNT_CART:
       return buildReducer(state, action, type, 'cartCount')
+    default:
+      return state
+  }
+}
+
+export const deleteItem = (state = initState({ deleteItem: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.DELETE_ITEM:
+      return buildReducer(state, action, type, 'deleteItem')
     default:
       return state
   }
