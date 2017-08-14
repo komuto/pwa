@@ -38,10 +38,19 @@ export const logout = function * (action) {
   }
 }
 
+export const loginSocial = function * login (action) {
+  try {
+    const {data} = yield apis.loginSocial(action)
+    yield localforage.setItem('token', data.data.token)
+    yield put({ type: typeSucc(actions.LOGIN_SOCIAL), ...data })
+  } catch (e) {
+    yield errorHandling(typeFail(actions.LOGIN_SOCIAL), e)
+  }
+}
+
 export const validateToken = buildSaga(['token'], apis.validateToken, actions.VALIDATE_TOKEN_FORGET_PASSWORD)
 export const verify = buildSaga(['token'], apis.verification, actions.USER_VERIFICATION)
 export const forgetPassword = buildSaga(['email'], apis.forgetPassword, actions.FORGET_PASSWORD)
-export const loginSocial = buildSaga([], apis.loginSocial, actions.LOGIN_SOCIAL)
 export const newPassword = buildSaga(['token', 'password'], apis.newPassword, actions.USER_NEW_PASSWORD)
 export const changePassword = buildSaga([], apis.changePassword, actions.CHANGE_PASSWORD)
 export const getProfile = buildSaga([], apis.getProfile, actions.GET_PROFILE)

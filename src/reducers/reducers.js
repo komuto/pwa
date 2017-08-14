@@ -121,6 +121,7 @@ const catalog = {
 
 const cart = {
   cart: cartReducers.cart,
+  checkout: cartReducers.checkout,
   addToCart: cartReducers.addToCart,
   promo: cartReducers.getPromo,
   cancelPromo: cartReducers.cancelPromo,

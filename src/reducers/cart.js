@@ -8,13 +8,21 @@ export const cart = (state = initState({ cart: [] }), action) => {
       return { ...buildReducer(state, action, type, 'cart'), type: 'get' }
     case actions.GET_CART_RESET:
       return { ...initState(), cart: state.cart, type: 'reset' }
-    case actions.CHECKOUT:
-      return { ...buildReducer(state, action, type), cart: state.cart, type: 'checkout' }
     case actions.DELETE_ITEM:
       if (action.type === typeSucc(actions.DELETE_ITEM)) {
         state.cart.items = state.cart.items.filter(item => item.id !== action.id)
       }
       return { ...buildReducer(state, action, type), cart: state.cart, type: 'delete' }
+    default:
+      return state
+  }
+}
+
+export const checkout = (state = initState({ checkout: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.CHECKOUT:
+      return buildReducer(state, action, type, 'checkout')
     default:
       return state
   }

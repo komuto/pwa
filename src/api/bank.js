@@ -15,7 +15,7 @@ export const addBankAccount = (action) => {
   return axios.post('accounts/banks', { ...action }).catch((err) => { throw err })
 }
 
-export const getBankAccounts = (id = '') => {
+export const getBankAccounts = ({ id = '' } = {}) => {
   const axios = authApiKomuto()
   return axios.get(`accounts/banks/${id}`).catch((err) => { throw err })
 }
