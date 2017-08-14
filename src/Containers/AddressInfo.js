@@ -180,7 +180,7 @@ class AddressInfo extends React.Component {
     let villageIdRequired = villageId.length > 0
     let addressRequired = address.length > 0
     let postalCodeRequired = postalCode.length > 0
-    let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired || postalCodeRequired
+    let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired
     this.setState({ submitting: true })
     if (isValid) {
       this.setState({ validation: false })
