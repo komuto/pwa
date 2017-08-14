@@ -23,6 +23,11 @@ class ShoppingCart extends Component {
     this.state = {
       cart: props.cart || null,
       promo: props.promo || null,
+      deleteItem: {
+        data: props.deleteItem || null,
+        submitting: false,
+        productClick: null
+      },
       rsCheckout: {
         data: props.rsCheckout || null,
         submitting: false
@@ -84,9 +89,8 @@ class ShoppingCart extends Component {
   }
 
   async deleteProductPress (item) {
-    this.cancelPromoPress = true
     await this.props.deleteCart({ id: item.id })
-    this.setState({ deleteCartId: item.id })
+    this.setState({ deleteItem: { ...this.state.deleteItem, productClick: item.id, submitting: true } })
   }
 
   voucherShow = () => this.setState({ voucher: { ...this.state.voucher, show: !this.state.voucher.show } })
@@ -105,7 +109,7 @@ class ShoppingCart extends Component {
   }
 
   checkout () {
-    this.props.checkout()
+    this.props.checkout({ items: [] })
   }
 
   async componentDidMount () {
@@ -114,15 +118,52 @@ class ShoppingCart extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    let { cart, promo, cancelPromo, rsAddToCart, rsCheckout } = nextProps
+    let { cart, promo, cancelPromo, rsAddToCart, rsCheckout, deleteItem } = nextProps
     let { notification, voucher } = this.state
     let stateRsAddToCart = this.state.rsAddToCart
     // let statesCheckout = this.state.rsCheckout
+    let statesDeleteItem = this.state.deleteItem
     notification = {status: false, message: 'Error, default message.'}
 
     voucher.message = ''
 
-    console.log(rsCheckout)
+    if (!deleteItem.isLoading) {
+      switch (cart.status) {
+        case Status.SUCCESS :
+          if (statesDeleteItem.productClick) {
+            console.log('cart', cart)
+            let tam = cart.cart.items.filter((item) => {
+              return item.id !== statesDeleteItem.productClick
+            })
+            cart.cart.items = tam
+            statesDeleteItem.productClick = null
+            statesDeleteItem.submitting = false
+          }
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: cart.message}
+          break
+        default:
+          break
+      }
+      this.setState({ deleteItem: statesDeleteItem, cart, notification })
+    }
+
+    if (!rsCheckout.isLoading) {
+      switch (cart.status) {
+        case Status.SUCCESS :
+          console.log(rsCheckout)
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: cart.message}
+          break
+        default:
+          break
+      }
+      this.setState({ rsCheckout, notification })
+    }
 
     if (!rsAddToCart.isLoading) {
       switch (rsAddToCart.status) {
@@ -212,7 +253,7 @@ class ShoppingCart extends Component {
   }
 
   render () {
-    const { cart, voucher, notification, rsAddToCart, cancelPromo, deleteCartId } = this.state
+    const { cart, voucher, notification, rsAddToCart, cancelPromo, deleteItem } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
 
@@ -256,7 +297,7 @@ class ShoppingCart extends Component {
                     <span className='price'>{item.product.store.name}</span>
                   </div>
                   {
-                    cart.isLoading && cart.type === 'delete' && deleteCartId === item.id
+                    deleteItem.submitting && deleteItem.productClick === item.id
                     ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' />
                     : <a onClick={() => this.deleteProductPress(item)} className='remove-item'>Hapus</a>
                   }
@@ -389,9 +430,9 @@ class ShoppingCart extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.checkout)
   return {
     rsAddToCart: state.addToCart,
+    deleteItem: state.deleteItem,
     rsCheckout: state.checkout,
     cart: state.cart,
     promo: state.promo,
@@ -407,7 +448,7 @@ const mapDispatchToProps = (dispatch) => {
     deleteCart: (id) => dispatch(cartActions.deleteItem(id)),
     getPromo: (code) => dispatch(cartActions.getPromo(code)),
     cancelPromoPress: () => dispatch(cartActions.cancelPromo()),
-    checkout: () => dispatch(cartActions.checkout())
+    checkout: (params) => dispatch(cartActions.checkout(params))
   }
 }
 
