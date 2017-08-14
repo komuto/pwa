@@ -23,6 +23,10 @@ class ShoppingCart extends Component {
     this.state = {
       cart: props.cart || null,
       promo: props.promo || null,
+      rsCheckout: {
+        data: props.rsCheckout || null,
+        submitting: false
+      },
       rsAddToCart: {
         data: props.rsAddToCart || null,
         submitting: false,
@@ -100,18 +104,25 @@ class ShoppingCart extends Component {
     this.setState({ cancelPromo: { ...this.state.cancelPromo, submitting: true } })
   }
 
+  checkout () {
+    this.props.checkout()
+  }
+
   async componentDidMount () {
     NProgress.start()
     await this.props.getCart()
   }
 
   componentWillReceiveProps (nextProps) {
-    let { cart, promo, cancelPromo, rsAddToCart } = nextProps
+    let { cart, promo, cancelPromo, rsAddToCart, rsCheckout } = nextProps
     let { notification, voucher } = this.state
     let stateRsAddToCart = this.state.rsAddToCart
+    // let statesCheckout = this.state.rsCheckout
     notification = {status: false, message: 'Error, default message.'}
 
     voucher.message = ''
+
+    console.log(rsCheckout)
 
     if (!rsAddToCart.isLoading) {
       switch (rsAddToCart.status) {
@@ -348,7 +359,7 @@ class ShoppingCart extends Component {
                   <p className='price-pay'>Rp { RupiahFormat(totalPayment) }</p>
                 </div>
                 <div className='column is-half is-paddingless has-text-right'>
-                  <button className='button is-primary is-large is-fullwidth'>Bayar Sekarang</button>
+                  <button onClick={() => this.checkout()} className='button is-primary is-large is-fullwidth'>Bayar Sekarang</button>
                 </div>
               </div>
             </div>
@@ -378,8 +389,10 @@ class ShoppingCart extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state.checkout)
   return {
     rsAddToCart: state.addToCart,
+    rsCheckout: state.checkout,
     cart: state.cart,
     promo: state.promo,
     cancelPromo: state.cancelPromo,
@@ -393,7 +406,8 @@ const mapDispatchToProps = (dispatch) => {
     getCart: () => dispatch(cartActions.getCart()),
     deleteCart: (id) => dispatch(cartActions.deleteItem(id)),
     getPromo: (code) => dispatch(cartActions.getPromo(code)),
-    cancelPromoPress: () => dispatch(cartActions.cancelPromo())
+    cancelPromoPress: () => dispatch(cartActions.cancelPromo()),
+    checkout: () => dispatch(cartActions.checkout())
   }
 }
 
