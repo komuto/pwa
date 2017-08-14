@@ -388,7 +388,8 @@ class ShippingDetail extends Component {
           {...expeditions}
           expeditionSelected={(e, selected) => this.expeditionSelected(e, selected)} />
         <OptionsExpeditionPackages
-          {...expeditionsPackage}
+          expeditions={expeditions}
+          expeditionsPackage={expeditionsPackage}
           expeditionsPackageSelected={(e, selected) => this.expeditionsPackageSelected(e, selected)} />
         <OptionsInsurance
           {...insurance}

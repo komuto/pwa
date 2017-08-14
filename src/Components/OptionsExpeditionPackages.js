@@ -2,11 +2,9 @@
 import RupiahFormat from '../Lib/RupiahFormat'
 
 const OptionsExpeditionPackages = (props) => {
-  console.log('props', props)
   let epFilterByExpeditions = props.expeditionsPackage.data.filter((data) => {
     return data.expedition_id === props.expeditions.selected.id
   })
-  console.log('epFilterByExpeditions', epFilterByExpeditions)
   return (
     <div className='sort-option' id='deliveryPackage' style={{display: props.expeditionsPackage.show && 'block'}}>
       <div className='sort-list'>
