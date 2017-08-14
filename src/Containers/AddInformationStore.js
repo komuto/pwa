@@ -14,7 +14,9 @@ class AddInformationStore extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      files: {},
+      files: {
+        preview: props.formInfo.store.logo
+      },
       formInfo: {
         ...props.formInfo.store
       },
@@ -57,17 +59,21 @@ class AddInformationStore extends React.Component {
 
   renderValidation (name, textFailed) {
     const { formInfo, files, validation } = this.state
-    let logo = files
+    let logo = files.preview !== '' || formInfo.logo !== ''
     let nameStore = formInfo.name
     let slogan = formInfo.slogan
     let description = formInfo.description
+    let logoRequired = name === 'image' && logo
     let nameRequired = name === 'name' && nameStore.length > 0
-    let logoRequired = name === 'image' && logo.hasOwnProperty('preview')
     let sloganLength = name === 'slogan' && slogan.length > 24
     let descRequired = name === 'description' && description.length > 0
     let result = logoRequired || nameRequired || sloganLength || descRequired
     return (
-      <span style={{color: result ? 'green' : 'red', display: validation ? 'block' : 'none'}} >{result ? '' : textFailed}</span>
+      <span style={{color: result ? '#23d160' : '#ef5656',
+        display: validation ? 'block' : 'none',
+        letterSpacing: '0.2px'}} >
+        {result ? '' : textFailed}
+      </span>
     )
   }
 
@@ -77,15 +83,21 @@ class AddInformationStore extends React.Component {
     let nameStore = formInfo.name
     let slogan = formInfo.slogan
     let description = formInfo.description
-
-    let logoRequired = logo.hasOwnProperty('preview')
+    let logoRequired = logo.preview !== '' || formInfo.logo !== ''
     let nameRequired = nameStore.length > 0
     let sloganLength = slogan.length > 24
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
+      this.setState({ submitting: true })
       this.setState({ validation: false })
-      this.handleUploadImage()
+      if (files.preview !== formInfo.logo) {
+        this.handleUploadImage()
+      } else {
+        this.props.infoStore(formInfo)
+        this.setState({ submitting: true })
+        Router.push('/shipping-expedition')
+      }
     } else {
       this.setState({ validation: true })
     }
@@ -98,7 +110,6 @@ class AddInformationStore extends React.Component {
     images.append('type', 'store')
     if (images) {
       this.props.photoUpload(images)
-      this.setState({submitting: true})
     }
   }
 
@@ -118,7 +129,7 @@ class AddInformationStore extends React.Component {
   }
 
   render () {
-    const { files, formInfo, overSlogan } = this.state
+    const { files, formInfo, overSlogan, submitting } = this.state
     let logoOnRedux = formInfo.path + formInfo.logo
     let logoImages
     if (formInfo.path) {
@@ -144,16 +155,15 @@ class AddInformationStore extends React.Component {
               onDrop={this.onDrop.bind(this)}>
               <div className='pict-wrapper'>
                 {
-                  <img src={(files.hasOwnProperty('preview')) ? files.preview : logoImages} alt='' />
+                  <img src={files.preview !== '' ? files.preview : logoImages} alt='' />
                 }
               </div>
               <p className='has-text-centered'>
                 <a>{ (!files) ? 'Upload Foto Profil Toko' : 'Ganti Foto Profil Toko'}</a>
-                <br />{this.renderValidation('image', 'Foto harus di upload !')}
+                {this.renderValidation('image', 'Foto harus di upload')}
               </p>
             </Dropzone>
           </div>
-
           <div className='form-seller'>
             <div className='field'>
               <label>Nama Toko</label>
@@ -166,7 +176,7 @@ class AddInformationStore extends React.Component {
                   value={formInfo.name}
                   onChange={(e) => this.handleInput(e)} />
                 <span>Nama toko tidak dapat diubah</span>
-                <br />{this.renderValidation('name', 'Nama toko harus di isi !')}
+                {this.renderValidation('name', 'Mohon isi nama toko')}
               </p>
             </div>
             <div className='field'>
@@ -182,7 +192,7 @@ class AddInformationStore extends React.Component {
                 <span className='reg'>
                   {overSlogan} sisa karakter
                 </span>
-                <br />{this.renderValidation('slogan', 'Isi slogan minimal 25 karakter !')}
+                <br />{this.renderValidation('slogan', 'Isi slogan minimal 25 karakter')}
               </p>
             </div>
             <div className='field'>
@@ -195,13 +205,13 @@ class AddInformationStore extends React.Component {
                   rows='1'
                   value={formInfo.description}
                   onChange={(e) => this.handleInput(e)} />
-                <br />{this.renderValidation('description', 'Deskripsi harus di isi !')}
+                <br />{this.renderValidation('description', 'Mohon isi deskripsi toko')}
               </p>
             </div>
             <div className='field'>
               <p className='control'>
                 <button
-                  className='button is-primary is-large is-fullwidth'
+                  className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
                   onClick={(e) => this.postInfoStore(e)} >Lanjutkan
                 </button>
               </p>
