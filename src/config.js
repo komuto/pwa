@@ -2,7 +2,7 @@ import { delay } from 'redux-saga'
 import { put, call } from 'redux-saga/effects'
 
 export const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
-export const apiKomuto = 'https://api.komuto.skyshi.com'
+export const apiKomuto = 'https://api.komuto.skyshi.com/4690fa4c3d68f93b'
 
 export function errorHandling (actionType, res) {
   const errorOffline = {
