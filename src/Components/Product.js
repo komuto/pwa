@@ -6,12 +6,15 @@ import url from 'url'
 import RupiahFormat from '../Lib/RupiahFormat'
 // component
 import MyImage from '../Components/MyImage'
+// import Loader from 'react-loader-advanced'
+// import Loading from './Loading'
 
 class Product extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      wishlistStatus: false
+      wishlistStatus: false,
+      pressId: null
     }
   }
 
@@ -20,8 +23,22 @@ class Product extends Component {
     this.props.wishlistPress(id)
   }
 
+  productPress (product) {
+    Router.push(
+      url.format({
+        pathname: '/product-detail',
+        query: {id: product.id}
+      }),
+      `/product-detail?id=${product.id}`
+    )
+    this.setState({ pressId: product.id })
+  }
+
   render () {
     const { product, store, viewActive } = this.props
+    const { pressId } = this.state
+
+    // <Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />
 
     // set pin
     let pin = null
@@ -34,14 +51,10 @@ class Product extends Component {
     return (
       <div
         className={`column ${viewActive === 'grid' ? 'is-half' : ''}`}
-        onClick={() => Router.push(
-          url.format({
-            pathname: '/product-detail',
-            query: {id: product.id}
-          }),
-          `/product-detail?id=${product.id}`
-        )}>
-        <div className={`box ${viewActive}`} >
+        onClick={() => this.productPress(product)}
+        style={{ opacity: pressId === product.id ? 0.5 : 1 }}
+        >
+        <div className={`box ${viewActive} effect-display`} >
           <div className='media'>
             <div className='media-left'>
               <figure className='image' style={{width: '150px'}}>
