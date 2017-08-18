@@ -245,7 +245,7 @@ export class Filter extends Component {
       })
     }
     return (
-      <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter' style={{ zIndex: 100 }}>
+      <div className={`modal modal-filter ${isShow ? 'is-active' : ''}`} id='modal-filter' style={{ zIndex: 1000 }}>
         <div className='modal-background' />
         <div className='modal-card'>
           <header className='modal-card-head'>
