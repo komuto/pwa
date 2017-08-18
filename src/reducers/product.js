@@ -145,13 +145,25 @@ export const alterProducts = (state = initAlterProduct, action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.CREATE_PRODUCT:
-      return buildReducer(state, action, type, 'product')
+      return { ...buildReducer(state, action, type, 'product'), type: 'create' }
     case actions.HIDE_PRODUCTS:
-      return buildReducer(state, action, type)
+      return { ...buildReducer(state, action, type), type: 'hide' }
     case actions.DELETE_PRODUCTS:
-      return buildReducer(state, action, type)
+      return { ...buildReducer(state, action, type), type: 'delete' }
     case actions.CHANGE_CATALOG:
-      return buildReducer(state, action, type)
+      return { ...buildReducer(state, action, type), type: 'change' }
+    case actions.UPDATE_PRODUCT:
+      return { ...buildReducer(state, action, type, 'product'), type: 'update' }
+    default:
+      return state
+  }
+}
+
+export const getProductExpeditions = (state = initState({ productExpeditions: [] }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_PRODUCT_EXPEDITIONS:
+      return buildReducer(state, action, type, 'productExpeditions')
     default:
       return state
   }

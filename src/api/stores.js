@@ -79,9 +79,9 @@ export const getStoreProducts = ({ hidden = false } = {}) => {
   return axios.get(`users/store/products?hidden=${hidden}`).catch((err) => { throw err })
 }
 
-export const getStoreCatalogProducts = ({ id }) => {
+export const getStoreCatalogProducts = ({ id = '', hidden = false }) => {
   const axios = authApiKomuto()
-  return axios.get(`users/store/products/catalogs/${id}`).catch((err) => { throw err })
+  return axios.get(`users/store/products/catalogs/${id}?hidden=${hidden}`).catch((err) => { throw err })
 }
 
 export const updateInformation = (data) => {

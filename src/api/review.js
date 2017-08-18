@@ -1,9 +1,9 @@
 import { authApiKomuto, publicApiKomuto } from './api'
 import { buildQuery } from '../config'
 
-export const getReviews = ({ id, page, limit }) => {
+export const getReviews = ({ id, ...action }) => {
   const axios = publicApiKomuto()
-  const query = buildQuery({ page, limit })
+  const query = buildQuery(action)
   return axios.get(`products/${id}/reviews?${query}`).catch((err) => { throw err })
 }
 

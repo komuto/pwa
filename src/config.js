@@ -151,11 +151,9 @@ export const typeFail = type => `${type}_FAILURE`
 /**
  * Build query string
  * @param params {object}
- * @param take {[string]} optional ===> array of prop names to take
  */
-export const buildQuery = (params, take) => Object.keys(params)
+export const buildQuery = (params) => Object.keys(params)
   .reduce((query, prop) => {
-    if (take && !take.includes(prop)) return query
     if (Array.isArray(params[prop])) {
       if (params[prop].length === 0) params[prop] = ''
       // Change from array to string -> [1,2] -> '1,2'

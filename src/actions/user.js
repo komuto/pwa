@@ -24,26 +24,131 @@ export const SEND_BANK_OTP = 'SEND_BANK_OTP'
 export const IS_LOGIN = 'IS_LOGIN'
 export const GET_WISHLIST = 'GET_WISHLIST'
 
+/**
+ * @param params are the same as the api
+ * @state register
+ */
 export const register = params => buildAction(typeReq(USER_REGISTER), params)
+
+/**
+ * @params token {string}
+ * @state verification
+ */
 export const verification = params => buildAction(typeReq(USER_VERIFICATION), params)
+
+/**
+ * @param params are the same as the api
+ * @state newPassword
+ */
 export const newPassword = params => buildAction(typeReq(USER_NEW_PASSWORD), params)
+
+/**
+ * @param params are the same as the api
+ * @state changePassword
+ */
 export const changePassword = params => buildAction(typeReq(CHANGE_PASSWORD), params)
-export const getProfile = params => buildAction(typeReq(GET_PROFILE), params)
+
+/**
+ * @state profile
+ */
+export const getProfile = () => buildAction(typeReq(GET_PROFILE))
+
+/**
+ * @state profile
+ */
 export const getProfileManage = () => buildAction(typeReq(GET_PROFILE_MANAGE))
+
+/**
+ * @param params are the same as the api
+ * @state user
+ */
 export const login = params => buildAction(typeReq(USER_LOGIN), params)
+
+/**
+ * @state user
+ */
 export const logout = () => buildAction(typeReq(USER_LOGOUT))
+
+/**
+ * @param params are the same as the api
+ * @state user
+ */
 export const loginSocial = params => buildAction(typeReq(LOGIN_SOCIAL), params)
+
+/**
+ * @params email {string}
+ * @state forgetPassword
+ */
 export const forgetPassword = params => buildAction(typeReq(FORGET_PASSWORD), params)
+
+/**
+ * @params login {boolean}
+ * @state isLogin
+ */
 export const stateLogin = params => buildAction(IS_LOGIN, params)
+
+/**
+ * @params token {string}
+ * @state validation
+ */
 export const validateToken = params => buildAction(typeReq(VALIDATE_TOKEN_FORGET_PASSWORD), params)
+
+/**
+ * @state balance
+ */
 export const getBalance = () => buildAction(typeReq(USER_BALANCE))
+
+/**
+ * @param params are the same as the api
+ * @state updateProfile
+ */
 export const updateProfile = params => buildAction(typeReq(UPDATE_PROFILE), params)
+
+/**
+ * @params id {int} store id
+ * @state favorite
+ */
 export const favoriteStore = params => buildAction(typeReq(FAVORITE_STORE), params)
+
+/**
+ * @state phone
+ */
 export const getPhone = () => buildAction(typeReq(GET_PHONE))
+
+/**
+ * @param params are the same as the api
+ * @state updatePhone
+ */
 export const updatePhone = params => buildAction(typeReq(UPDATE_PHONE), params)
+
+/**
+ * @state userDiscussion
+ */
 export const getDiscussion = () => buildAction(typeReq(GET_USER_DISCUSSION))
+
+/**
+ * @param params are the same as the api query
+ * @state listFavoriteStore
+ */
 export const listFavorite = params => buildAction(typeReq(LIST_FAVORIT_STORE), params)
-export const sendOTPPhone = params => buildAction(typeReq(SEND_PHONE_OTP), params)
+
+/**
+ * @state sendOTPPhone
+ */
+export const sendOTPPhone = () => buildAction(typeReq(SEND_PHONE_OTP))
+
+/**
+ * @param params are the same as the api
+ * @state verifyPhone
+ */
 export const verifyPhone = params => buildAction(typeReq(VERIFIY_PHONE), params)
+
+/**
+ * @state sendOTPBank
+ */
 export const sendOTPBank = () => buildAction(typeReq(SEND_BANK_OTP))
+
+/**
+ * @state wishlist
+ */
 export const wishlist = () => buildAction(typeReq(GET_WISHLIST))

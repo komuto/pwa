@@ -22,8 +22,7 @@ export const getProductBy = (action) => {
       return price
     }, '')
   }
-  const take = ['q', 'page', 'limit', 'sort', 'price', 'condition', 'other', 'brands', 'services', 'address', 'category_id', 'is_dropship']
-  const query = buildQuery(action, take)
+  const query = buildQuery(action)
   return axios.get(`products?${query}`).catch((err) => { throw err })
 }
 
@@ -77,4 +76,14 @@ export const deleteProducts = ({ product_ids }) => {
 export const changeCatalogProducts = (action) => {
   const axios = authApiKomuto()
   return axios.post('users/store/products/move-catalog', action).catch((err) => { throw err })
+}
+
+export const updateProduct = ({ id, ...data }) => {
+  const axios = authApiKomuto()
+  return axios.put(`users/store/products/${id}`, data)
+}
+
+export const getProductExpeditions = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.get(`users/store/products/${id}/expeditions/manage`)
 }

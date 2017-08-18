@@ -15,17 +15,17 @@ export const deleteAddress = ({ id }) => {
   return axios.delete(`users/addresses/${id}`, { data: {} }).catch((err) => { throw err })
 }
 
-export const getAddressDetail = (action) => {
+export const getAddressDetail = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.get('users/addresses/' + action.id, action).catch((err) => { throw err })
+  return axios.get('users/addresses/' + id).catch((err) => { throw err })
 }
 
-export const getListAddress = (action) => {
+export const getListAddress = () => {
   const axios = authApiKomuto()
-  return axios.get('users/addresses', action).catch((err) => { throw err })
+  return axios.get('users/addresses').catch((err) => { throw err })
 }
 
-export const getPrimaryAddress = (action) => {
+export const getPrimaryAddress = () => {
   const axios = authApiKomuto()
-  return axios.get('users/address', {}).catch((err) => { throw err })
+  return axios.get('users/address').catch((err) => { throw err })
 }

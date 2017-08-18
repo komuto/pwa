@@ -12,7 +12,7 @@ export const getBank = ({ id }) => {
 
 export const addBankAccount = (action) => {
   const axios = authApiKomuto()
-  return axios.post('accounts/banks', { ...action }).catch((err) => { throw err })
+  return axios.post('accounts/banks', action).catch((err) => { throw err })
 }
 
 export const getBankAccounts = ({ id = '' } = {}) => {

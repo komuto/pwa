@@ -1,7 +1,7 @@
 import { publicApiKomuto } from './api'
 import { buildQuery } from '../config'
 
-export const getProvince = (action) => {
+export const getProvince = () => {
   const axios = publicApiKomuto()
   return axios.get('locations/provinces').catch((err) => { throw err })
 }

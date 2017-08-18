@@ -9,11 +9,39 @@ export const GET_LIST_ADDRESS = 'GET_LIST_ADDRESS'
 export const GET_PRIMARY_ADDRESS = 'GET_PRIMARY_ADDRESS'
 export const PRIMARY_ADDRESS_RESET = 'PRIMARY_ADDRESS_RESET'
 
+/**
+ * @param params are the same as the api
+ * @state addAddress
+ */
 export const addAddress = params => buildAction(typeReq(ADD_ADDRESS), params)
-export const addAddressReset = params => buildAction(ADD_ADDRESS_RESET)
+export const addAddressReset = () => buildAction(ADD_ADDRESS_RESET)
+
+/**
+ * @param id {int} address id
+ * @param params are the same as the api
+ * @state updateAddress
+ */
 export const updateAddress = params => buildAction(typeReq(UPDATE_ADDRESS), params)
+
+/**
+ * @params id {int} address id
+ * @state deleteAddress
+ */
 export const deleteAddress = params => buildAction(typeReq(DELETE_ADDRESS), params)
+
+/**
+ * @paramr id {int} address id
+ * @state address
+ */
 export const getAddressDetail = params => buildAction(typeReq(GET_ADDRESS_DETAIL), params)
+
+/**
+ * @state listAddress
+ */
 export const getListAddress = () => buildAction(typeReq(GET_LIST_ADDRESS))
+
+/**
+ * @state primaryAddress
+ */
+export const getPrimaryAddress = () => buildAction(typeReq(GET_PRIMARY_ADDRESS))
 export const resetPrimaryAddress = () => buildAction(PRIMARY_ADDRESS_RESET)
-export const getPrimaryAddress = params => buildAction(typeReq(GET_PRIMARY_ADDRESS), params)

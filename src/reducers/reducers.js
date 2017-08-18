@@ -69,7 +69,8 @@ const product = {
   comments: productReducers.getComment,
   newComment: productReducers.newComment,
   report: productReducers.reportProduct,
-  alterProducts: productReducers.alterProducts
+  alterProducts: productReducers.alterProducts,
+  productExpeditions: productReducers.getProductExpeditions
 }
 
 const store = {
@@ -149,9 +150,12 @@ const location = {
 }
 
 const payment = {
+  dokuPayment: paymentReducers.payDoku,
+  invoice: paymentReducers.getDokuInvoice,
   paymentMethods: paymentReducers.getPaymentMethods,
-  choosePayment: paymentReducers.choosePaymentMethod,
-  confirmation: paymentReducers.confirmTransfer
+  confirmation: paymentReducers.confirmTransfer,
+  confirmationPaymentMethod: paymentReducers.confirmPaymentMethod,
+  withdrawal: paymentReducers.withdraw
 }
 
 const review = {
