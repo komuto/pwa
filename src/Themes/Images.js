@@ -34,7 +34,8 @@ const images = {
   prima: '../../static/images/prima.png',
   tiki: '../../static/images/tiki.png',
   vByVisa: '../../static/images/v-by-visa.png',
-  visa: '../../static/images/visa.png'
+  visa: '../../static/images/visa.png',
+  transaksiDetail: '../../static/images/transaksi-detail.png'
 }
 
 export default images
