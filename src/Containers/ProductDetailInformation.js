@@ -65,7 +65,9 @@ class ProductDetailInformation extends Component {
                       { product.decription }
                     </span>
                   </div>
-                  <a className={`js-desc open-desc has-text-centered ${openDescription ? 'close' : ''}`} onClick={() => this.openDescription()}><span className='icon-arrow-down' /></a>
+                  <a className={`js-desc open-desc has-text-centered ${openDescription ? 'close' : ''}`} onClick={() => this.openDescription()}>
+                    <span className='icon-arrow-down' />
+                  </a>
                 </div>
               </div>
             </div>
