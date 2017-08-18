@@ -5,7 +5,7 @@ const Sort = (props) => {
   const { isShow, selected } = props
   return (
     <div className='sort-option' style={{display: isShow ? 'block' : 'none'}}>
-      <div className='sort-list'>
+      <div className='sort-list effect-slide-bottom-up'>
         <p><strong>Urutkan Berdasarkan</strong></p>
         <label className='checkbox' htmlFor='#terbaru' onClick={() => props.sortSelected('terbaru')}>
           <span className={`sort-text ${selected === 'terbaru' ? 'active' : ''}`}>Terbaru</span>
