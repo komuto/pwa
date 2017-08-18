@@ -82,7 +82,8 @@
       "console.tron.log",
       "$",
       "ON_DEV",
-      "APP_VER"
+      "APP_VER",
+      "getForm"
     ]
   }
 }

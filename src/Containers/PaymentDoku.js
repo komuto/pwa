@@ -74,21 +74,21 @@ class PaymentDoku extends Component {
   }
 
   render () {
-    // const { invoice } = this.state
-    // if (typeof getForm !== 'undefined') {
-    //   let data = {
-    //     req_merchant_code: '4533', // mall id or merchant id
-    //     req_chain_merchant: invoice.invoice.chain_merchant, // chain merchant id
-    //     req_payment_channel: '04', // payment channel
-    //     req_transaction_id: invoice.invoice.invoice, // invoice no
-    //     req_amount: invoice.invoice.amount,
-    //     req_currency: invoice.invoice.currency, // 360 for IDR
-    //     req_words: invoice.invoice.words, // your merchant unique key
-    //     req_session_id: new Date().getTime(), // your server timestamp
-    //     req_form_type: 'full'
-    //   }
-    //   getForm(data)
-    // }
+    const { invoice } = this.state
+    if (typeof getForm !== 'undefined') {
+      let data = {
+        req_merchant_code: '4533', // mall id or merchant id
+        req_chain_merchant: invoice.invoice.chain_merchant, // chain merchant id
+        req_payment_channel: '04', // payment channel
+        req_transaction_id: invoice.invoice.invoice, // invoice no
+        req_amount: invoice.invoice.amount,
+        req_currency: invoice.invoice.currency, // 360 for IDR
+        req_words: invoice.invoice.words, // your merchant unique key
+        req_session_id: new Date().getTime(), // your server timestamp
+        req_form_type: 'full'
+      }
+      getForm(data)
+    }
 
     return (
       <Content>
