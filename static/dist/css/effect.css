@@ -1,0 +1,75 @@
+.effect-fadein {
+  animation: fadein 2s;
+  -moz-animation: fadein 2s; /* Firefox */
+  -webkit-animation: fadein 2s; /* Safari and Chrome */
+  -o-animation: fadein 2s; /* Opera */
+}
+
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+.effect-slide-down {
+    animation: slide-down 2s;
+    -moz-animation: slide-down 2s; /* Firefox */
+    -webkit-animation: slide-down 2s; /* Safari and Chrome */
+    -o-animation: slide-down 2s; /* Opera */
+}
+
+@keyframes slide-down {
+    from {
+        height: 0px;
+    }
+    to {
+         height: 133px;
+    }
+}
+
+.effect-slide-bottom-up {
+    bottom: 0;
+    animation: bottom-up 1s;
+    -moz-animation: bottom-up 1s; /* Firefox */
+    -webkit-animation: bottom-up 1s; /* Safari and Chrome */
+    -o-animation: bottom-up 1s; /* Opera */
+}
+
+@keyframes bottom-up {
+    from {
+        height: 0px;
+    }
+    to {
+         height: 273px;
+    }
+}
+
+.effect-background {
+    animation: e-background 2s;
+}
+
+@keyframes e-background {
+    from {
+         background-color: #E30F0F; 
+    }
+    to {
+         background-color: #fff; 
+    }
+}
+
+.effect-display {
+    animation: e-display 1s;
+}
+
+@keyframes e-display {
+    from {
+        opacity: 0.5
+    }
+    to {
+        opacity: 1
+    }
+}
+
