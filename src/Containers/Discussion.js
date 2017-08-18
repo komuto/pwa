@@ -25,7 +25,6 @@ class Discussion extends Component {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
       discussions: props.discussions || null,
-      newDiscussion: props.newDiscussion || null,
       fetching: false,
       hasMore: true,
       pagination: {
@@ -38,6 +37,7 @@ class Discussion extends Component {
         message: 'Error, default message.'
       }
     }
+    this.isAddNewDiscussion = false
   }
 
   async componentDidMount () {
@@ -65,19 +65,7 @@ class Discussion extends Component {
     let { notification } = this.state
     let stateDiscussions = this.state.discussions
 
-    // console.log(stateDiscussions)
-    console.log(discussions)
-
-    notification = {status: false, message: 'Error, default message.'}
-
-    if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
-      console.log(stateDiscussions)
-      console.log(discussions)
-      // discussions.discussions = stateDiscussions.discussions.splice(0, 0, nextDiscuss.discussion)
-      // this.setState({ discussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
-    } else if (nextDiscuss.status === Status.OFFLINE || nextDiscuss.status === Status.FAILED) {
-      this.setState({ notification: {type: 'is-danger', status: true, message: nextDiscuss.message} })
-    }
+    notification = {type: 'is-danger', status: false, message: 'Error, default message.'}
 
     if (!productDetail.isLoading) {
       NProgress.done()
@@ -95,7 +83,11 @@ class Discussion extends Component {
       this.setState({ productDetail, notification })
     }
 
-    if (!discussions.isLoading) {
+    if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
+      this.isAddNewDiscussion = true
+      stateDiscussions.discussions.unshift(nextDiscuss.discussion)
+      this.setState({ discussions: stateDiscussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
+    } else if (!discussions.isLoading) {
       NProgress.done()
       let hasMore = false
       switch (discussions.status) {
@@ -103,11 +95,12 @@ class Discussion extends Component {
           if (discussions.isFound) {
             hasMore = discussions.discussions.length > 0
             // jika page di state kurang dari page di props maka data discussion di tambahkan
-            // if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
-            //   discussions.discussions = stateDiscussions.discussions.concat(discussions.discussions)
-            // } else {
-            //   discussions.discussions = stateDiscussions.discussions
-            // }
+            if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
+              discussions.discussions = _.uniqBy(stateDiscussions.discussions.concat(discussions.discussions), 'id')
+              this.isAddNewDiscussion = false
+            } else {
+              discussions.discussions = stateDiscussions.discussions
+            }
           } else {
             notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
           }
@@ -120,12 +113,15 @@ class Discussion extends Component {
           break
       }
       this.setState({ fetching: false, hasMore, discussions, notification })
+    } else if (nextDiscuss.status === Status.OFFLINE || nextDiscuss.status === Status.FAILED) {
+      this.setState({ notification: {type: 'is-danger', status: true, message: nextDiscuss.message} })
     }
   }
 
   render () {
     const { productDetail, discussions, notification } = this.state
     const { product, images } = productDetail.detail
+    console.log(notification)
     if (!productDetail.isFound) return null
     return (
       <Content style={{paddingBottom: 0}}>
@@ -170,16 +166,17 @@ class Discussion extends Component {
                   loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
                   {
                       discussions.discussions.map((discussion, index) => {
-                        moment.locale('id')
                         let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
+                        let sttNewDisscussion = this.isAddNewDiscussion && index === 0
                         return (
                           <li
+                            className={` ${sttNewDisscussion && ''}`}
                             key={discussion.id}
                             onClick={() => {
                               Router.push(`/discussion-detail?id=${product.id}&idd=${discussion.id}`)
                             }}>
-                            <div className='box is-paddingless'>
-                              <article className='media'>
+                            <div className={`box is-paddingless ${sttNewDisscussion && 'effect-slide-down'}`}>
+                              <article className={`media`}>
                                 <div className='media-left'>
                                   <figure className='image user-pict'>
                                     <MyImage src={discussion.user.photo} alt='pict' />
@@ -188,7 +185,7 @@ class Discussion extends Component {
                                 <div className='media-content'>
                                   <div className='content'>
                                     <p className='user-name'>
-                                      <strong>{discussion.user.name}</strong>
+                                      <strong>{discussion.user.name} {discussion.id} </strong>
                                       <span className='date-discuss'>{ createDate }</span>
                                       { discussion.question}
                                     </p>
