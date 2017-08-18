@@ -38,6 +38,11 @@ class Payment extends Component {
     await this.props.getCart()
   }
 
+  paymentRedirect (pm) {
+    pm.id === 1 && Router.push(`/payment-bank-transfer?type=${pm.id}`)
+    pm.id === 13 && Router.push(`/payment-doku?type=${pm.id}`)
+  }
+
   componentWillReceiveProps (nextProps) {
     const { balance, paymentMethods, cart } = nextProps
     let { notification } = this.state
@@ -96,6 +101,7 @@ class Payment extends Component {
     let totalPayment = 0
 
     console.log(paymentMethods)
+
     if (!paymentMethods.isFound) return null
 
     if (cart.cart.items) {
@@ -137,7 +143,7 @@ class Payment extends Component {
         {
           paymentMethods.paymentMethods.map((pm) => {
             return (
-              <div className='box-rounded' key={pm.id}>
+              <div className='box-rounded' key={pm.id} onClick={() => this.paymentRedirect(pm)}>
                 <div className='payment-method'>
                   { pm.name }
                   <span className='icon-arrow-right' />
@@ -149,83 +155,6 @@ class Payment extends Component {
             )
           })
         }
-
-        {/* <div className="box-rounded">
-          <div className="payment-method">
-            Transfer Bank
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.mandiri} alt="" /></a></li>
-            <li><a><MyImage src={Images.bca} alt="" /></a></li>
-            <li><a><MyImage src={Images.bni} alt="" /></a></li>
-            <li><a><MyImage src={Images.bri} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            Kartu Kredit
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.visa} alt="" /></a></li>
-            <li><a><MyImage src={Images.mcSc} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            Virtual Account (ATM)
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.atmBersama} alt="" /></a></li>
-            <li><a><MyImage src={Images.prima} alt="" /></a></li>
-            <li><a><MyImage src={Images.alto} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            VMandiri ClickPay
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.mandiriClickpay} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            E-Pay BRI
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.epayBri} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            DOKU Wallet
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.dokuWallet} alt="" /></a></li>
-          </ul>
-        </div>
-
-        <div className="box-rounded">
-          <div className="payment-method">
-            AlfaMart
-            <span className="icon-arrow-right"></span>
-          </div>
-          <ul className="list-inline pay-method-option">
-            <li><a><MyImage src={Images.alfamart} alt="" /></a></li>
-            <li><a><MyImage src={Images.alfamidi} alt="" /></a></li>
-          </ul>
-        </div> */}
       </section>
     )
   }
