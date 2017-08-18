@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PayWithBalance from '../src/Containers/PayWithBalance'
+import PaymentBalance from '../src/Containers/PaymentBalance'
 // style custom
 const params = {
   style: 'main no-padding-bottom bg-grey',
@@ -20,7 +20,7 @@ const params = {
 
 const Index = () => (
   <DefaultLayout params={params}>
-    <PayWithBalance />
+    <PaymentBalance />
   </DefaultLayout>
 )
 

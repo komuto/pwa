@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 // Component
 import Content from '../Components/Content'
 
-class PayWithBalance extends Component {
+class PaymentBalance extends Component {
   // constructor (props) {
   //   super(props)
   // }
@@ -104,4 +104,4 @@ class PayWithBalance extends Component {
   }
 }
 
-export default PayWithBalance
+export default PaymentBalance
