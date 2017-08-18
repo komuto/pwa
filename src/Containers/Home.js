@@ -175,7 +175,7 @@ class Home extends Component {
               categories.map(category => {
                 return (
                   <div
-                    className='column is-one-third'
+                    className={`column is-one-third effect-display`}
                     key={category.id}
                     onClick={() => {
                       Router.push(
