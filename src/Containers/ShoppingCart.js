@@ -50,6 +50,7 @@ class ShoppingCart extends Component {
         code: '',
         submitting: false
       },
+      submitting: false,
       notification: {
         type: 'is-danger',
         status: false,
@@ -108,8 +109,9 @@ class ShoppingCart extends Component {
     this.setState({ cancelPromo: { ...this.state.cancelPromo, submitting: true } })
   }
 
-  checkout () {
-    this.props.checkout({ items: [] })
+  payNow () {
+    Router.push('/payment')
+    this.setState({ submitting: true })
   }
 
   async componentDidMount () {
@@ -253,7 +255,7 @@ class ShoppingCart extends Component {
   }
 
   render () {
-    const { cart, voucher, notification, rsAddToCart, cancelPromo, deleteItem } = this.state
+    const { cart, voucher, notification, rsAddToCart, cancelPromo, deleteItem, submitting } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
 
@@ -400,7 +402,7 @@ class ShoppingCart extends Component {
                   <p className='price-pay'>Rp { RupiahFormat(totalPayment) }</p>
                 </div>
                 <div className='column is-half is-paddingless has-text-right'>
-                  <button onClick={() => this.checkout()} className='button is-primary is-large is-fullwidth'>Bayar Sekarang</button>
+                  <button onClick={() => !submitting && this.payNow()} className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}>Bayar Sekarang</button>
                 </div>
               </div>
             </div>
