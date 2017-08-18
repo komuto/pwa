@@ -26,7 +26,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { searchBoox, path, textPath, searchActive, moreButton, productId } = this.props.params
+    const { searchBoox, path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
     // const { activeSearch, activeMoreOptions } = this.state
     const { activeMoreOptions } = this.state
     return (
@@ -35,7 +35,13 @@ export class Navbar extends PureComponent {
           <div className='nav-left'>
             <a className='level-item'>
               <span className={(path) ? '' : 'is-paddingless'}>
-                {(path) ? <span className='back' onClick={() => Router.back()}><span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} /></span> : null}
+                {
+                  (path)
+                  ? <span className='back' onClick={() => callBack ? callBack() : Router.back()}>
+                    <span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} />
+                  </span>
+                    : null
+                }
                 {textPath}
               </span>
             </a>
