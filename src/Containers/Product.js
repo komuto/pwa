@@ -84,7 +84,10 @@ class MyProduct extends Component {
   }
 
   // sort button event
-  sortOnClick = () => this.setState({ sortActive: true })
+  sortOnClick = (e) => {
+    if (!e.target.className.includes('sortButton')) return
+    this.setState({ sortActive: !this.state.sortActive })
+  }
   // filter button event
   filterOnClick = () => this.setState({ filterActive: true })
   // filter view close
@@ -116,6 +119,7 @@ class MyProduct extends Component {
 
   async handleLoadMore () {
     let { pagination, fetching } = this.state
+    console.log('handleLoadMore', fetching)
     if (!fetching) {
       pagination.page += 1
       this.params.page = pagination.page
@@ -447,13 +451,14 @@ class MyProduct extends Component {
           sortButton
           filterButton
           viewButton
-          sortOnClick={() => this.sortOnClick()}
+          sortOnClick={(e) => this.sortOnClick(e)}
           filterOnClick={() => this.filterOnClick()}
           viewOnClick={() => this.viewOnClick()}
           viewActive={viewActive} />
         <Sort
           isShow={sortActive}
           selected={selectedSort}
+          sortOnClick={(e) => this.sortOnClick(e)}
           sortSelected={(data) => this.sortSelected(data)} />
         <Filter
           isShow={filterActive}
