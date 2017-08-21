@@ -106,9 +106,9 @@ class ShippingInformation extends Component {
     const { id, productDetail } = this.state
     const params = {
       id,
-      origin_id: productDetail.detail.store.district.id,
-      destination_id: selected.id,
-      weight: 1
+      origin_id: productDetail.detail.store.district.ro_id,
+      destination_id: selected.ro_id,
+      weight: 1000
     }
 
     await this.props.dispatch(expeditionActions.estimatedShipping(params))
