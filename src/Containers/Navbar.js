@@ -21,7 +21,8 @@ export class Navbar extends PureComponent {
     this.setState({ activeSearch })
   }
 
-  moreButtonPress () {
+  moreButtonPress (e) {
+    if (!e.target.className.includes('moreButton')) return
     this.setState({ activeMoreOptions: !this.state.activeMoreOptions })
   }
 
@@ -63,9 +64,11 @@ export class Navbar extends PureComponent {
           }
           {
             moreButton &&
-            <div className='button-search js-option' onClick={() => this.moreButtonPress()}>
-              <span className='icon-dots' />
-            </div>
+            <a onClick={(e) => this.moreButtonPress(e)}>
+              <div className='button-search js-option moreButton' >
+                <span className='icon-dots moreButton' />
+              </div>
+            </a>
           }
         </nav>
         {/* <Search
@@ -74,6 +77,7 @@ export class Navbar extends PureComponent {
           backPress={() => this.backPress()} /> */}
         <MoreOptions
           productId={productId}
+          onClick={(e) => this.moreButtonPress(e)}
           active={activeMoreOptions} />
       </div>
     )
@@ -126,7 +130,7 @@ export class MoreOptions extends PureComponent {
   render () {
     const { active, productId } = this.props
     return (
-      <div className='sort-option' style={{ display: active && 'block' }}>
+      <div className='sort-option moreButton' style={{ display: active ? 'block' : 'none' }} onClick={(e) => this.props.onClick(e)}>
         <div className='sort-list'>
           <ul className='other-option'>
             <li><a><span className='icon-share' />Bagikan</a></li>
