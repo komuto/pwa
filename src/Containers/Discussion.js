@@ -50,7 +50,9 @@ class Discussion extends Component {
   }
 
   async handleLoadMore () {
-    let { id, pagination, fetching } = this.state
+    let { id, pagination, fetching, hasMore } = this.state
+    console.log('fetching', fetching)
+    console.log('hasMore', hasMore)
     if (!fetching) {
       pagination.page += 1
       await this.props.dispatch(productActions.getDiscussion({ id, ...this.state.pagination }))
@@ -62,7 +64,7 @@ class Discussion extends Component {
     const { productDetail, discussions } = nextProps
     const beforeDiscuss = this.props.newDiscussion
     const nextDiscuss = nextProps.newDiscussion
-    let { notification } = this.state
+    let { notification, pagination } = this.state
     let stateDiscussions = this.state.discussions
 
     notification = {type: 'is-danger', status: false, message: 'Error, default message.'}
@@ -93,7 +95,7 @@ class Discussion extends Component {
       switch (discussions.status) {
         case Status.SUCCESS :
           if (discussions.isFound) {
-            hasMore = discussions.discussions.length > 0
+            hasMore = discussions.discussions.length >= pagination.limit
             // jika page di state kurang dari page di props maka data discussion di tambahkan
             if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
               discussions.discussions = _.uniqBy(stateDiscussions.discussions.concat(discussions.discussions), 'id')
@@ -119,9 +121,9 @@ class Discussion extends Component {
   }
 
   render () {
-    const { productDetail, discussions, notification } = this.state
+    const { productDetail, discussions, notification, hasMore } = this.state
     const { product, images } = productDetail.detail
-    console.log(notification)
+
     if (!productDetail.isFound) return null
     return (
       <Content style={{paddingBottom: 0}}>
@@ -162,7 +164,7 @@ class Discussion extends Component {
                 : <InfiniteScroll
                   pageStart={0}
                   loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
-                  hasMore={this.state.hasMore}
+                  hasMore={hasMore}
                   loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
                   {
                       discussions.discussions.map((discussion, index) => {
