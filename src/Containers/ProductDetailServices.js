@@ -69,7 +69,7 @@ class ProductDetailServices extends Component {
 
   // options province selected
   async provinceSelected (selected) {
-    await this.props.dispatch(locationActions.getDistrict({province_id: selected.id}))
+    await this.props.getDistrict({province_id: selected.id})
     this.setState({
       provinces: { ...this.state.provinces, selected, show: false },
       districts: { ...this.state.districts, selected: { id: null, name: null, isFetching: true } },
@@ -79,7 +79,7 @@ class ProductDetailServices extends Component {
 
   // options districts selected
   async districtSelected (selected) {
-    await this.props.dispatch(locationActions.getSubDistrict({district_id: selected.id}))
+    await this.props.getSubDistrict({district_id: selected.id})
     this.setState({
       districts: { ...this.state.districts, selected, show: false },
       subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null }, isFetching: true }
@@ -92,19 +92,22 @@ class ProductDetailServices extends Component {
     const { districts, countProduct } = this.state
     const params = {
       id: product.id,
-      origin_id: storeData.district.id,
-      destination_id: districts.selected.id,
+      origin_id: storeData.district.ro_id,
+      destination_id: districts.selected.ro_id,
       weight: countProduct * product.weight
     }
-    await this.props.dispatch(expeditionActions.estimatedShipping(params))
-    this.setState({ subDistricts: { ...this.state.subDistricts, selected, show: false }, estimatedCharges: { ...this.state.estimatedCharges, isFetching: true } })
+    await this.props.estimatedShipping(params)
+    this.setState({
+      subDistricts: { ...this.state.subDistricts, selected, show: false },
+      estimatedCharges: { ...this.state.estimatedCharges, isFetching: true }
+    })
   }
 
   // load any data
   async componentDidMount () {
     const { provinces } = this.state.provinces.data
     // fetch provinces
-    provinces.length < 1 && await this.props.dispatch(locationActions.getProvince())
+    provinces.length < 1 && await this.props.getProvince()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -240,13 +243,18 @@ class ProductDetailServices extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    provinces: state.provinces,
-    districts: state.districts,
-    subDistricts: state.subdistricts,
-    estimatedCharges: state.estimatedCharges
-  }
-}
+const mapStateToProps = (state) => ({
+  provinces: state.provinces,
+  districts: state.districts,
+  subDistricts: state.subdistricts,
+  estimatedCharges: state.estimatedCharges
+})
 
-export default connect(mapStateToProps)(ProductDetailServices)
+const mapDispatchToProps = (dispatch) => ({
+  getDistrict: (params) => dispatch(locationActions.getDistrict(params)),
+  getSubDistrict: (params) => dispatch(locationActions.getSubDistrict(params)),
+  estimatedShipping: (params) => dispatch(expeditionActions.estimatedShipping(params)),
+  getProvince: (params) => dispatch(locationActions.getProvince())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailServices)
