@@ -1,29 +1,19 @@
 import * as actions from '../actions/catalog'
 import { buildReducer, buildType, initState } from '../config'
 
-const initCatalog = {
-  catalog: {},
-  ...initState()
-}
-
-const initListCatalog = {
-  catalogs: [],
-  ...initState()
-}
-
-function createCatalog (state = initCatalog, action) {
+export const createCatalog = (state = initState({ catalog: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.CREATE_CATALOG:
       return buildReducer(state, action, type, 'catalog')
     case actions.CREATE_CATALOG_RESET:
-      return initCatalog
+      return initState({ catalog: {} })
     default:
       return state
   }
 }
 
-function updateCatalog (state = initCatalog, action) {
+export const updateCatalog = (state = initState({ catalog: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.UPDATE_CATALOG:
@@ -33,7 +23,7 @@ function updateCatalog (state = initCatalog, action) {
   }
 }
 
-function getDetailCatalog (state = initCatalog, action) {
+export const getDetailCatalog = (state = initState({ catalog: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_CATALOG:
@@ -43,7 +33,7 @@ function getDetailCatalog (state = initCatalog, action) {
   }
 }
 
-function getListCatalog (state = initListCatalog, action) {
+export const getListCatalog = (state = initState({ catalogs: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_LIST_CATALOG:
@@ -53,7 +43,7 @@ function getListCatalog (state = initListCatalog, action) {
   }
 }
 
-function deleteCatalog (state = initCatalog, action) {
+export const deleteCatalog = (state = initState({ catalog: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.DELETE_CATALOG:
@@ -61,12 +51,4 @@ function deleteCatalog (state = initCatalog, action) {
     default:
       return state
   }
-}
-
-export {
-  createCatalog,
-  updateCatalog,
-  getDetailCatalog,
-  getListCatalog,
-  deleteCatalog
 }

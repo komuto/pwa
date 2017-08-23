@@ -1,4 +1,5 @@
 import { publicApiKomuto, authApiKomuto } from './api'
+import { buildQuery } from '../config'
 
 export const getStores = ({ id }) => {
   const axios = publicApiKomuto()
@@ -74,14 +75,16 @@ export const getOwnStore = () => {
   return axios.get('users/profile').catch((err) => { throw err })
 }
 
-export const getStoreProducts = ({ hidden = false } = {}) => {
+export const getStoreProducts = (params) => {
   const axios = authApiKomuto()
-  return axios.get(`users/store/products?hidden=${hidden}`).catch((err) => { throw err })
+  const query = buildQuery(params)
+  return axios.get(`users/store/products?${query}`).catch((err) => { throw err })
 }
 
-export const getStoreCatalogProducts = ({ id = '', hidden = false }) => {
+export const getStoreCatalogProducts = ({ id = '', ...params }) => {
   const axios = authApiKomuto()
-  return axios.get(`users/store/products/catalogs/${id}?hidden=${hidden}`).catch((err) => { throw err })
+  const query = buildQuery(params)
+  return axios.get(`users/store/products/catalogs/${id}?${query}`).catch((err) => { throw err })
 }
 
 export const updateInformation = (data) => {
@@ -102,4 +105,9 @@ export const getStoreAddress = () => {
 export const updateStoreAddress = (data) => {
   const axios = authApiKomuto()
   return axios.put('users/store/address', data).catch((err) => { throw err })
+}
+
+export const getHiddenStoreProducts = () => {
+  const axios = authApiKomuto()
+  return axios.get('users/store/products?hidden=true')
 }

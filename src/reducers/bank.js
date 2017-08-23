@@ -1,27 +1,7 @@
 import * as actions from '../actions/bank'
 import { buildReducer, buildType, initState } from '../config'
 
-const initListBank = {
-  banks: [],
-  ...initState()
-}
-
-const initBank = {
-  bank: '',
-  ...initState()
-}
-
-const initBankAccount = {
-  bankAccount: {},
-  ...initState()
-}
-
-const initBankAccounts = {
-  listBankAccounts: [],
-  ...initState()
-}
-
-export const listBank = (state = initListBank, action) => {
+export const listBank = (state = initState({ banks: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.LIST_BANK:
@@ -31,7 +11,7 @@ export const listBank = (state = initListBank, action) => {
   }
 }
 
-export const getBank = (state = initBank, action) => {
+export const getBank = (state = initState({ bank: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_BANK:
@@ -41,7 +21,7 @@ export const getBank = (state = initBank, action) => {
   }
 }
 
-export const bankAccount = (state = initBankAccount, action) => {
+export const bankAccount = (state = initState({ bankAccount: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.ADD_BANK_ACCOUNT:
@@ -55,7 +35,7 @@ export const bankAccount = (state = initBankAccount, action) => {
   }
 }
 
-export const getBankAccounts = (state = initBankAccounts, action) => {
+export const getBankAccounts = (state = initState({ listBankAccounts: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_BANK_ACCOUNTS:

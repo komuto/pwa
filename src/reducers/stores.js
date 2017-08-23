@@ -1,30 +1,6 @@
 import * as actions from '../actions/stores'
 import { buildReducer, buildType, initState } from '../config'
 
-const initStore = {
-  store: {},
-  ...initState()
-}
-
-const initExpedition = {
-  expeditions: [],
-  ...initState()
-}
-
-const initVerify = {
-  ...initState()
-}
-
-const initOwnStore = {
-  ownStore: {},
-  ...initState()
-}
-
-const initStoreProducts = {
-  storeProducts: {},
-  ...initState()
-}
-
 const initProcessCreateStore = {
   store: {
     name: '',
@@ -42,10 +18,10 @@ const initProcessCreateStore = {
     mother_name: ''
   },
   address: {
-    province_id: null,
-    district_id: null,
-    sub_district_id: null,
-    village_id: null,
+    province_id: 0,
+    district_id: 0,
+    sub_district_id: 0,
+    village_id: 0,
     name: '',
     email: '',
     phone_number: '',
@@ -54,7 +30,7 @@ const initProcessCreateStore = {
   }
 }
 
-function stores (state = initStore, action) {
+export const stores = (state = initState({ store: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_STORE:
@@ -64,7 +40,7 @@ function stores (state = initStore, action) {
   }
 }
 
-function createStore (state = initStore, action) {
+export const createStore = (state = initState({ store: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.CREATE_STORE:
@@ -74,7 +50,7 @@ function createStore (state = initStore, action) {
   }
 }
 
-function expeditionListStore (state = initExpedition, action) {
+export const expeditionListStore = (state = initState({ expeditions: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.STORE_EXPEDITION_LIST:
@@ -84,7 +60,7 @@ function expeditionListStore (state = initExpedition, action) {
   }
 }
 
-function expeditionStore (state = initExpedition, action) {
+export const expeditionStore = (state = initState({ expeditions: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.STORE_EXPEDITION_MANAGE:
@@ -94,7 +70,7 @@ function expeditionStore (state = initExpedition, action) {
   }
 }
 
-function photoUpload (state = initState({ payload: {} }), action) {
+export const photoUpload = (state = initState({ payload: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.PHOTO_UPLOAD:
@@ -104,7 +80,7 @@ function photoUpload (state = initState({ payload: {} }), action) {
   }
 }
 
-function verifyStore (state = initVerify, action) {
+export const verifyStore = (state = initState(), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.VERIFY_STORE:
@@ -114,19 +90,19 @@ function verifyStore (state = initVerify, action) {
   }
 }
 
-function sendMessageStore (state = initStore, action) {
+export const sendMessageStore = (state = initState({ store: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.MESSAGE_STORE:
       return buildReducer(state, action, type, 'store')
     case actions.MESSAGE_STORE_RESET:
-      return initStore
+      return initState({ store: {} })
     default:
       return state
   }
 }
 
-export const getOwnStore = (state = initOwnStore, action) => {
+export const getOwnStore = (state = initState({ ownStore: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_OWN_STORE:
@@ -136,7 +112,7 @@ export const getOwnStore = (state = initOwnStore, action) => {
   }
 }
 
-export const getStoreProducts = (state = initStoreProducts, action) => {
+export const getStoreProducts = (state = initState({ storeProducts: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_STORE_PRODUCTS:
@@ -151,37 +127,6 @@ export const getStoreCatalogProducts = (state = initState({ storeCatalogProducts
   switch (type) {
     case actions.GET_STORE_CATALOG_PRODUCTS:
       return buildReducer(state, action, type, 'storeCatalogProducts')
-    default:
-      return state
-  }
-}
-
-const processCreateStore = (state = initProcessCreateStore, action) => {
-  switch (action.type) {
-    case actions.INFO_STORE: {
-      return {
-        ...state,
-        store: action.params
-      }
-    }
-    case actions.SHIPPING_EXPEDITION: {
-      return {
-        ...state,
-        expedition_services: action.params
-      }
-    }
-    case actions.OWNER_INFO: {
-      return {
-        ...state,
-        user: action.params
-      }
-    }
-    case actions.ADDRESS_INFO: {
-      return {
-        ...state,
-        address: action.params
-      }
-    }
     default:
       return state
   }
@@ -219,13 +164,21 @@ export const updateStoreAddress = (state = initState({ updateStoreAddress: {} })
   }
 }
 
-export {
-    processCreateStore,
-    stores,
-    photoUpload,
-    createStore,
-    expeditionListStore,
-    expeditionStore,
-    verifyStore,
-    sendMessageStore
+export const getHiddenStoreProducts = (state = initState({ hiddenStoreProducts: [] }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_HIDDEN_STORE_PRODUCTS:
+      return buildReducer(state, action, type, 'hiddenStoreProducts')
+    default:
+      return state
+  }
+}
+
+export const processCreateStore = (state = initProcessCreateStore, { type, ...temp }) => {
+  switch (type) {
+    case actions.CREATE_STORE_TEMP:
+      return { ...state, ...temp }
+    default:
+      return state
+  }
 }

@@ -84,10 +84,11 @@ const store = {
   ownStore: storeReducers.getOwnStore,
   storeProducts: storeReducers.getStoreProducts,
   storeCatalogProducts: storeReducers.getStoreCatalogProducts,
-  processCreateStore: storeReducers.processCreateStore,
+  createStoreTemp: storeReducers.processCreateStore,
   updateStore: storeReducers.updateStore,
   storeAddress: storeReducers.getStoreAddress,
-  updateStoreAddress: storeReducers.updateStoreAddress
+  updateStoreAddress: storeReducers.updateStoreAddress,
+  hiddenStoreProducts: storeReducers.getHiddenStoreProducts
 }
 
 const address = {
@@ -129,7 +130,8 @@ const cart = {
   cancelPromo: cartReducers.cancelPromo,
   countCart: cartReducers.countCart,
   item: cartReducers.getItem,
-  deleteItem: cartReducers.deleteItem
+  deleteItem: cartReducers.deleteItem,
+  updateCart: cartReducers.updateCart
 }
 
 const expedition = {
@@ -154,7 +156,6 @@ const payment = {
   invoice: paymentReducers.getDokuInvoice,
   paymentMethods: paymentReducers.getPaymentMethods,
   confirmation: paymentReducers.confirmTransfer,
-  confirmationPaymentMethod: paymentReducers.confirmPaymentMethod,
   withdrawal: paymentReducers.withdraw
 }
 

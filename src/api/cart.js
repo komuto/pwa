@@ -39,3 +39,8 @@ export const getItem = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`users/bucket/items/${id}`).catch((err) => { throw err })
 }
+
+export const updateCart = (data) => {
+  const axios = authApiKomuto()
+  return axios.put('buckets', data)
+}

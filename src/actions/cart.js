@@ -10,6 +10,8 @@ export const GET_CART_RESET = 'GET_CART_RESET'
 export const CHECKOUT = 'CHECKOUT'
 export const DELETE_ITEM = 'DELETE_ITEM'
 export const GET_ITEM = 'GET_ITEM'
+export const UPDATE_CART = 'UPDATE_CART'
+export const RESET_UPDATE_CART = 'RESET_UPDATE_CART'
 
 /**
  * @param params are the same as the api
@@ -57,3 +59,10 @@ export const deleteItem = params => buildAction(typeReq(DELETE_ITEM), params)
  * @state item
  */
 export const getItem = params => buildAction(typeReq(GET_ITEM), params)
+
+/**
+ * @params params are the same as the api
+ * @state updateCart
+ */
+export const updateCart = params => buildAction(typeReq(UPDATE_CART), params)
+export const resetUpdateCart = () => buildAction(RESET_UPDATE_CART)

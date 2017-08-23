@@ -3,9 +3,9 @@ import * as apis from '../api/home'
 import { getProductBy } from '../api/product'
 import { buildSaga, buildSagaDelay } from '../config'
 
-export const product = buildSagaDelay([], getProductBy, actions.HOME_PRODUCT)
-export const filterProduct = buildSagaDelay([], getProductBy, actions.FILTER_PRODUCT)
-export const search = buildSagaDelay(['query'], apis.search, actions.SEARCH_PRODUCT)
-export const allCategory = buildSaga([], apis.allCategory, actions.ALL_CATEGORY)
-export const categoryList = buildSaga([], apis.categoryList, actions.HOME_CATEGORY)
-export const subCategory = buildSaga(['id'], apis.subCategory, actions.HOME_SUBCATEGORY)
+export const product = buildSagaDelay(getProductBy, actions.HOME_PRODUCT)
+export const filterProduct = buildSagaDelay(getProductBy, actions.FILTER_PRODUCT)
+export const search = buildSagaDelay(apis.search, actions.SEARCH_PRODUCT)
+export const allCategory = buildSaga(apis.allCategory, actions.ALL_CATEGORY)
+export const categoryList = buildSaga(apis.categoryList, actions.HOME_CATEGORY)
+export const subCategory = buildSaga(apis.subCategory, actions.HOME_SUBCATEGORY)

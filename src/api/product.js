@@ -31,9 +31,9 @@ export const addToWishlist = ({ id }) => {
   return axios.get(`products/${id}/wishlist`).catch((err) => { throw err })
 }
 
-export const getDiscussion = ({ id, page, limit }) => {
+export const getDiscussion = ({ id, ...params }) => {
   const axios = publicApiKomuto()
-  const query = buildQuery({ page, limit })
+  const query = buildQuery(params)
   return axios.get(`products/${id}/discussions?${query}`).catch((err) => { throw err })
 }
 
@@ -42,9 +42,9 @@ export const newDiscussion = ({ id, ...action }) => {
   return axios.post(`products/${id}/discussions`, action).catch((err) => { throw err })
 }
 
-export const getComment = ({ productId, id, page, limit }) => {
+export const getComment = ({ productId, id, ...params }) => {
   const axios = publicApiKomuto()
-  const query = buildQuery({ page, limit })
+  const query = buildQuery(params)
   return axios.get(`products/${productId}/discussions/${id}/comments?${query}`).catch((err) => { throw err })
 }
 

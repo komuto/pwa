@@ -1,26 +1,7 @@
 import * as actions from '../actions/expedition'
 import { buildReducer, buildType, initState } from '../config'
 
-const initExpedition = {
-  expeditions: [],
-  ...initState()
-}
-
-const initExpeditionServices = {
-  expeditionServices: [],
-  ...initState()
-}
-
-const initCharge = {
-  charges: [],
-  ...initState()
-}
-
-const initUpdate = {
-  ...initState()
-}
-
-function expedition (state = initExpedition, action) {
+export const expedition = (state = initState({ expeditions: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_EXPEDITION:
@@ -30,7 +11,7 @@ function expedition (state = initExpedition, action) {
   }
 }
 
-function expeditionServices (state = initExpeditionServices, action) {
+export const expeditionServices = (state = initState({ expeditionServices: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_EXPEDITION_SERVICES:
@@ -40,7 +21,7 @@ function expeditionServices (state = initExpeditionServices, action) {
   }
 }
 
-function estimatedShipping (state = initCharge, action) {
+export const estimatedShipping = (state = initState({ charges: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.ESTIMATED_SHIPPING:
@@ -50,7 +31,7 @@ function estimatedShipping (state = initCharge, action) {
   }
 }
 
-function shippingCharge (state = initCharge, action) {
+export const shippingCharge = (state = initState({ charges: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_SHIPPING_CHARGE:
@@ -60,7 +41,7 @@ function shippingCharge (state = initCharge, action) {
   }
 }
 
-function updateExpediton (state = initUpdate, action) {
+export const updateExpediton = (state = initState(), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.UPDATE_EXPEDITION:
@@ -88,12 +69,4 @@ export const manageStoreExpeditions = (state = initState({ manageExpeditions: []
     default:
       return state
   }
-}
-
-export {
-  expedition,
-  expeditionServices,
-  estimatedShipping,
-  shippingCharge,
-  updateExpediton
 }
