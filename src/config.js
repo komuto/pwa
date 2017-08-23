@@ -117,7 +117,7 @@ export const buildAction = (type, params = false) => {
  * @param action {object}
  * @param type {string}
  * @param name {string} additional field name
- * @param meta {boolean}
+ * @param meta {boolean} add meta init on req state
  */
 export const buildReducer = (state, action, type, name, meta = false) => {
   switch (action.type) {
@@ -165,42 +165,31 @@ export const buildQuery = (params) => Object.keys(params)
 
 /**
  * Build sagas
- * @param args {[string]} arguments to api
- * ['id', 'code'] take only action.id and action.id as arguments
  * @param callApi {function}
  * @param actionType {string}
  * @param props {[string]} take specific prop for data from api
  * ['user', 'province', 'id'] only take data.user.province.id for data
- * @param keep {[string]} keep action data
  */
-export const buildSaga = (args, callApi, actionType, props = [], keep = []) => function * (action) {
+export const buildSaga = (callApi, actionType, props = []) => function * ({ type, ...params }) {
   try {
-    const params = !args.length > 0 ? action
-      : args.reduce((params, prop) => ({ ...params, [prop]: action[prop] }), {})
-    const keepAction = !keep.length > 0 ? {}
-      : keep.reduce((keeps, prop) => ({ ...keeps, [prop]: action[prop] }), {})
     const { data } = yield callApi(params)
     if (props) {
       data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
     }
-    yield put({ type: typeSucc(actionType), ...data, ...keepAction })
+    yield put({ type: typeSucc(actionType), ...data })
   } catch (e) {
     yield errorHandling(typeFail(actionType), e)
   }
 }
 
-export const buildSagaDelay = (args, callApi, actionType, delayCount = 200, props = [], keep = []) => function * (action) {
+export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function * ({ type, ...params }) {
   try {
-    const params = !args.length > 0 ? action
-      : args.reduce((params, prop) => ({ ...params, [prop]: action[prop] }), {})
-    const keepAction = !keep.length > 0 ? {}
-      : keep.reduce((keeps, prop) => ({ ...keeps, [prop]: action[prop] }), {})
     yield call(delay, delayCount)
     const { data } = yield callApi(params)
     if (props !== undefined) {
       data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
     }
-    yield put({ type: typeSucc(actionType), ...data, ...keepAction })
+    yield put({ type: typeSucc(actionType), ...data })
   } catch (e) {
     yield errorHandling(typeFail(actionType), e)
   }

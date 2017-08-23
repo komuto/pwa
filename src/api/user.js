@@ -76,15 +76,15 @@ export const updatePhone = (action) => {
   return axios.put('accounts/phone', action).catch((err) => { throw err })
 }
 
-export const getDiscussion = ({ page, limit }) => {
+export const getDiscussion = (params) => {
   const axios = authApiKomuto()
-  const query = buildQuery({ page, limit })
+  const query = buildQuery(params)
   return axios.get(`users/discussions?${query}`).catch((err) => { throw err })
 }
 
-export const listFavoriteStore = ({ page, limit }) => {
+export const listFavoriteStore = (params) => {
   const axios = authApiKomuto()
-  const query = buildQuery({ page, limit })
+  const query = buildQuery(params)
   return axios.get(`users/store/favorites?${query}`).catch((err) => { throw err })
 }
 
@@ -93,9 +93,9 @@ export const sendOTPPhone = () => {
   return axios.post('accounts/otp/phone', {}).catch((err) => { throw err })
 }
 
-export const verifyPhone = (action) => {
+export const verifyPhone = ({ code }) => {
   const axios = authApiKomuto()
-  return axios.post('accounts/phone/verify', action).catch((err) => { throw err })
+  return axios.post('accounts/phone/verify', { code }).catch((err) => { throw err })
 }
 
 export const wishlist = () => {

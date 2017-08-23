@@ -114,6 +114,7 @@ const store = function * () {
   yield takeEvery(typeReq(storeActions.UPDATE_TERM), storeSaga.updateTerm)
   yield takeEvery(typeReq(storeActions.GET_ADDRESS), storeSaga.getStoreAddress)
   yield takeEvery(typeReq(storeActions.UPDATE_STORE_ADDRESS), storeSaga.updateStoreAddress)
+  yield takeEvery(typeReq(storeActions.GET_HIDDEN_STORE_PRODUCTS), storeSaga.getHiddenStoreProducts)
 }
 
 const address = function * () {
@@ -158,6 +159,7 @@ const cart = function * () {
   yield takeEvery(typeReq(cartActions.CHECKOUT), cartSaga.checkout)
   yield takeEvery(typeReq(cartActions.DELETE_ITEM), cartSaga.deleteItem)
   yield takeEvery(typeReq(cartActions.GET_ITEM), cartSaga.getItem)
+  yield takeEvery(typeReq(cartActions.UPDATE_CART), cartSaga.updateCart)
 }
 
 const expedition = function * () {
@@ -181,7 +183,6 @@ const payment = function * () {
   yield takeEvery(typeReq(paymentActions.PAY_DOKU), paymentSaga.payDoku)
   yield takeEvery(typeReq(paymentActions.GET_DOKU_INVOICE), paymentSaga.getDokuInvoice)
   yield takeEvery(typeReq(paymentActions.GET_PAYMENT_METHODS), paymentSaga.getPaymentMethods)
-  yield takeEvery(typeReq(paymentActions.CONFIRM_PAYMENT_METHOD), paymentSaga.confirmPaymentMethod)
   yield takeEvery(typeReq(paymentActions.CONFIRM_TRANSFER), paymentSaga.confirmTransfer)
   yield takeEvery(typeReq(paymentActions.WITHDRAW), paymentSaga.withdraw)
 }

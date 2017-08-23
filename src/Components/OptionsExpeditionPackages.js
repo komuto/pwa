@@ -6,7 +6,7 @@ const OptionsExpeditionPackages = (props) => {
     return data.expedition_id === props.expeditions.selected.id
   })
   return (
-    <div className='sort-option' id='deliveryPackage' style={{display: props.expeditionsPackage.show && 'block'}}>
+    <div className='sort-option expeditionPackageButton' style={{display: props.expeditionsPackage.show && 'block'}} onClick={(e) => props.onClick(e)}>
       <div className='sort-list'>
         <p><strong>Pilih Paket Pengiriman dari {props.expeditions.selected.name} </strong></p>
         <form action='#' className='form'>

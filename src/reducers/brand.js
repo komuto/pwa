@@ -1,12 +1,7 @@
 import * as actions from '../actions/brand'
 import { buildReducer, buildType, initState } from '../config'
 
-const initBrand = {
-  brands: [],
-  ...initState()
-}
-
-function brand (state = initBrand, action) {
+export const brand = (state = initState({ brands: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_BRAND:
@@ -16,7 +11,7 @@ function brand (state = initBrand, action) {
   }
 }
 
-function brandByCategory (state = initBrand, action) {
+export const brandByCategory = (state = initState({ brands: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.BRAND_BY_CATEGORY:
@@ -24,9 +19,4 @@ function brandByCategory (state = initBrand, action) {
     default:
       return state
   }
-}
-
-export {
-  brand,
-  brandByCategory
 }

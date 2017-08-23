@@ -1,37 +1,7 @@
 import * as actions from '../actions/product'
 import { buildReducer, initState, buildType } from '../config'
 
-const initDetailProduct = {
-  detail: {},
-  ...initState()
-}
-
-const initNewDiscussion = {
-  discussion: {},
-  ...initState()
-}
-
-const initNewComment = {
-  comment: {},
-  ...initState()
-}
-
-const initAddWishlist = {
-  wishlist: [],
-  ...initState()
-}
-
-const initReport = {
-  report: {},
-  ...initState()
-}
-
-const initAlterProduct = {
-  product: {},
-  ...initState()
-}
-
-function getProduct (state = initDetailProduct, action) {
+export const getProduct = (state = initState({ detail: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_PRODUCT:
@@ -43,7 +13,7 @@ function getProduct (state = initDetailProduct, action) {
   }
 }
 
-function productByCategory (state = initState({ products: [] }, true), action) {
+export const productByCategory = (state = initState({ products: [] }, true), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.LIST_PRODUCT_BY_CATEGORY:
@@ -53,7 +23,7 @@ function productByCategory (state = initState({ products: [] }, true), action) {
   }
 }
 
-function productBySearch (state = initState({ products: [] }, true), action) {
+export const productBySearch = (state = initState({ products: [] }, true), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.LIST_PRODUCT_BY_SEARCH:
@@ -63,31 +33,31 @@ function productBySearch (state = initState({ products: [] }, true), action) {
   }
 }
 
-function addToWishlist (state = initAddWishlist, action) {
+export const addToWishlist = (state = initState({ wishlist: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.ADD_TO_WISHLIST:
       return buildReducer(state, action, type, 'wishlist')
     case actions.ADD_TO_WISHLIST_RESET:
-      return initAddWishlist
+      return initState({ wishlist: [] })
     default:
       return state
   }
 }
 
-function addToWishlistHome (state = initAddWishlist, action) {
+export const addToWishlistHome = (state = initState({ wishlist: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.ADD_TO_WISHLIST_HOME:
       return buildReducer(state, action, type, 'wishlist')
     case actions.ADD_TO_WISHLIST_HOME_RESET:
-      return initAddWishlist
+      return initState({ wishlist: [] })
     default:
       return state
   }
 }
 
-function getDiscussion (state = initState({ discussions: [] }, true), action) {
+export const getDiscussion = (state = initState({ discussions: [] }, true), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_DISCUSSION:
@@ -97,19 +67,19 @@ function getDiscussion (state = initState({ discussions: [] }, true), action) {
   }
 }
 
-function newDiscussion (state = initNewDiscussion, action) {
+export const newDiscussion = (state = initState({ discussion: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.NEW_DISCUSSION:
       return buildReducer(state, action, type, 'discussion')
     case actions.NEW_DISCUSSION_RESET:
-      return initNewDiscussion
+      return initState({ discussion: {} })
     default:
       return state
   }
 }
 
-function getComment (state = initState({ comments: [] }, true), action) {
+export const getComment = (state = initState({ comments: [] }, true), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_COMMENT:
@@ -119,19 +89,19 @@ function getComment (state = initState({ comments: [] }, true), action) {
   }
 }
 
-function newComment (state = initNewComment, action) {
+export const newComment = (state = initState({ comment: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.NEW_COMMENT:
       return buildReducer(state, action, type, 'comment')
     case actions.NEW_COMMENT_RESET:
-      return initNewComment
+      return initState({ comment: {} })
     default:
       return state
   }
 }
 
-function reportProduct (state = initReport, action) {
+export const reportProduct = (state = initState({ report: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.REPORT_PRODUCT:
@@ -141,7 +111,7 @@ function reportProduct (state = initReport, action) {
   }
 }
 
-export const alterProducts = (state = initAlterProduct, action) => {
+export const alterProducts = (state = initState({ product: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.CREATE_PRODUCT:
@@ -167,17 +137,4 @@ export const getProductExpeditions = (state = initState({ productExpeditions: []
     default:
       return state
   }
-}
-
-export {
-    getProduct,
-    productByCategory,
-    productBySearch,
-    addToWishlist,
-    addToWishlistHome,
-    getDiscussion,
-    newDiscussion,
-    getComment,
-    newComment,
-    reportProduct
 }

@@ -193,7 +193,7 @@ export class Filter extends Component {
     const tabsNav = tabs.map((tab) => { return <li key={tab.id} className={`${tabActive === tab.id ? 'is-active' : ''}`}><a onClick={() => this.setTabActive(tab.id)}>{ tab.name }</a></li> })
     const checkAllButton = filterTabResults.viewCheckAll
           ? <label className='checkbox'>
-            <span className='sort-text'>Pilih Semua</span>
+            <span className='sort-text active'>Pilih Semua</span>
             <span className={`input-wrapper ${filterTabResults.selectedAll ? 'checked' : ''}`}>
               <input type='checkbox' checked={filterTabResults.selectedAll} onChange={(event) => this.viewCheckAll(event, tabActive)} />
             </span>

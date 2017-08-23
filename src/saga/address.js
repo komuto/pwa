@@ -2,9 +2,9 @@ import * as actions from '../actions/address'
 import * as apis from '../api/address'
 import { buildSaga } from '../config'
 
-export const addAddress = buildSaga([], apis.addAddress, actions.ADD_ADDRESS)
-export const updateAddress = buildSaga([], apis.updateAddress, actions.UPDATE_ADDRESS)
-export const deleteAddress = buildSaga(['id'], apis.deleteAddress, actions.DELETE_ADDRESS)
-export const getAddressDetail = buildSaga(['id'], apis.getAddressDetail, actions.GET_ADDRESS_DETAIL)
-export const getListAddress = buildSaga([], apis.getListAddress, actions.GET_LIST_ADDRESS)
-export const getPrimaryAddress = buildSaga([], apis.getPrimaryAddress, actions.GET_PRIMARY_ADDRESS)
+export const addAddress = buildSaga(apis.addAddress, actions.ADD_ADDRESS)
+export const updateAddress = buildSaga(apis.updateAddress, actions.UPDATE_ADDRESS)
+export const deleteAddress = buildSaga(apis.deleteAddress, actions.DELETE_ADDRESS)
+export const getAddressDetail = buildSaga(apis.getAddressDetail, actions.GET_ADDRESS_DETAIL)
+export const getListAddress = buildSaga(apis.getListAddress, actions.GET_LIST_ADDRESS)
+export const getPrimaryAddress = buildSaga(apis.getPrimaryAddress, actions.GET_PRIMARY_ADDRESS)

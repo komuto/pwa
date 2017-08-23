@@ -1,17 +1,7 @@
 import * as actions from '../actions/address'
 import { buildReducer, buildType, initState } from '../config'
 
-const initAddress = {
-  address: {},
-  ...initState()
-}
-
-const initListAddress = {
-  address: [],
-  ...initState()
-}
-
-export const address = (state = initAddress, action) => {
+export const address = (state = initState({ address: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_ADDRESS_DETAIL:
@@ -21,31 +11,31 @@ export const address = (state = initAddress, action) => {
   }
 }
 
-export const primaryAddress = (state = initAddress, action) => {
+export const primaryAddress = (state = initState({ address: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_PRIMARY_ADDRESS:
       return buildReducer(state, action, type, 'address')
     case actions.PRIMARY_ADDRESS_RESET:
-      return initAddress
+      return initState({ address: {} })
     default:
       return state
   }
 }
 
-export const addAddress = (state = initAddress, action) => {
+export const addAddress = (state = initState({ address: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.ADD_ADDRESS:
       return buildReducer(state, action, type, 'address')
     case actions.ADD_ADDRESS_RESET:
-      return initAddress
+      return initState({ address: {} })
     default:
       return state
   }
 }
 
-export const updateAddress = (state = initAddress, action) => {
+export const updateAddress = (state = initState({ address: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.UPDATE_ADDRESS:
@@ -55,7 +45,7 @@ export const updateAddress = (state = initAddress, action) => {
   }
 }
 
-export const deleteAddress = (state = initAddress, action) => {
+export const deleteAddress = (state = initState({ address: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.DELETE_ADDRESS:
@@ -65,7 +55,7 @@ export const deleteAddress = (state = initAddress, action) => {
   }
 }
 
-export const listAddress = (state = initListAddress, action) => {
+export const listAddress = (state = initState({ address: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_LIST_ADDRESS:
