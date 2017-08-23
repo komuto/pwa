@@ -22,7 +22,7 @@ class ProductDetailItem extends Component {
   }
 
   async wishlistPress (id) {
-    (this.props.token) && await this.props.dispatch(productActions.addToWishlist({ id }))
+    (this.props.token) && await this.props.addToWishlist({ id })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -109,10 +109,12 @@ class ProductDetailItem extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    wishlist: state.addWishlist
-  }
-}
+const mapStateToProps = (state) => ({
+  wishlist: state.addWishlist
+})
 
-export default connect(mapStateToProps)(ProductDetailItem)
+const mapDispatchToProps = (dispatch) => ({
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailItem)
