@@ -5,7 +5,7 @@ function getForm(e) {
   var r = $("#formPayment").html();
   doku_timeout = setTimeout(function() {
       $("#formPayment").html("<br><center><span id='doku-loader-text'>TIMEOUT</span><br><br><a id='doku-retry-button' href='#' onclick='getForm(" + JSON.stringify(e) + ")'>Try again</a></center><br>"), doku_ajax.abort()
-  }, 65e3), doku_ajax = $.ajax({
+  }, 5000), doku_ajax = $.ajax({
       url: requestURL + "getRequestCode",
       data: {
           data: JSON.stringify(t)
