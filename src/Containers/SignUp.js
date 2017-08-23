@@ -220,7 +220,8 @@ class SignUp extends Component {
         phone_number: handphone.value,
         email: email.value,
         gender: genderGroup.selected,
-        password: password.value
+        password: password.value,
+        reg_token: 'FCM_REGISTRATION_TOKEN'
       }))
     }
   }
@@ -339,6 +340,7 @@ class SignUp extends Component {
   }
 }
 const mapStateToProps = (state) => {
+  console.log(state.register)
   return {
     register: state.register,
     user: state.user
