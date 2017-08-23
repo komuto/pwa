@@ -2,7 +2,7 @@ import Router from 'next/router'
 
 const OptionsAdresess = (props) => {
   return (
-    <div className='sort-option' style={{display: props.show && 'block'}}>
+    <div className='sort-option addressButton' style={{display: props.show && 'block'}} onClick={(e) => props.onClick(e)}>
       <div className='sort-list'>
         <p><strong>Pilih Alamat Pengiriman</strong></p>
         <form action='#' className='form'>
