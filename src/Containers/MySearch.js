@@ -7,10 +7,13 @@ import url from 'url'
 import * as homeActions from '../actions/home'
 // components
 import Notification from '../Components/Notification'
+import MyImage from '../Components/MyImage'
 // utils
 import { Status } from '../Services/Status'
 // validations
 import * as inputValidations from '../Validations/Input'
+// themes
+import Images from '../Themes/Images'
 
 class MySearch extends Component {
   constructor (props) {
@@ -18,6 +21,7 @@ class MySearch extends Component {
     this.state = {
       searchProduct: props.searchProduct || [],
       submitting: false,
+      notFound: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -27,26 +31,34 @@ class MySearch extends Component {
 
   doSearch (evt) {
     var searchText = inputValidations.inputNormal(evt.target.value) // this is the search text
-    // _.debounce(() => {
-    //    console.log(searchText)
-    // }, 500)
     if (this.timeout) clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
-      searchText && this.props.dispatch(homeActions.search({query: searchText})) && this.setState({ submitting: true })
+      searchText && this.props.search({query: searchText}) && this.setState({ submitting: true })
     }, 1000)
+  }
+
+  changeSearchPress () {
+    this.searchInput.focus()
+  }
+
+  componentDidMount () {
+    this.searchInput.focus()
+  }
+
+  refInput (input) {
+    this.searchInput = input
   }
 
   componentWillReceiveProps (nextProps) {
     const { searchProduct } = nextProps
-    let { notification } = this.state
-
+    let { notification, notFound } = this.state
     // reset notification
     notification = { status: false, message: 'Error, default message.' }
 
     if (!searchProduct.isLoading) {
       switch (searchProduct.status) {
         case Status.SUCCESS :
-          if (!searchProduct.isFound || searchProduct.products.length < 1) notification = {status: true, message: 'Data produk tidak ditemukan'}
+          notFound = (!searchProduct.isFound || searchProduct.products.length < 1)
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -57,11 +69,11 @@ class MySearch extends Component {
       }
     }
 
-    this.setState({ searchProduct, submitting: false, notification })
+    this.setState({ searchProduct, submitting: false, notification, notFound })
   }
 
   render () {
-    const { submitting, searchProduct, notification } = this.state
+    const { submitting, searchProduct, notification, notFound } = this.state
     let key = 0
     return (
       <div className='on-search slide'>
@@ -69,8 +81,10 @@ class MySearch extends Component {
           <a className='back back-on-seacrh' onClick={() => Router.back()}><span className='icon-arrow-left black' /></a>
           <div className='field'>
             <p className={`control has-icons-left`}>
-              <span className={`${!submitting && 'button self is-loading right'}`} />
-              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onChange={evt => this.doSearch(evt)} />
+              <span className={`${submitting && 'button self is-loading right'}`} />
+              <input
+                onChange={e => this.doSearch(e)}
+                ref={(input) => this.refInput(input)} className='input is-medium' type='text' placeholder='Cari barang atau toko' />
             </p>
           </div>
         </div>
@@ -82,6 +96,9 @@ class MySearch extends Component {
           message={notification.message} />
         <div className='body-search' style={{height: '100%', overflowY: 'auto'}}>
           <div className='search-list'>
+            {
+              notFound && <EmptySearch changeSearchPress={() => this.changeSearchPress()} />
+            }
             <ul>
               {
                 searchProduct.products
@@ -94,9 +111,9 @@ class MySearch extends Component {
                         Router.push(
                             url.format({
                               pathname: '/product',
-                              query: {q: product.name.replace(/\s+/g, '-').toLowerCase()}
+                              query: {q: product.name}
                             }),
-                            `/p?q=${product.name.replace(/\s+/g, '-').toLowerCase()}`
+                            `/p?q=${product.name}`
                         )
                       }} >{ product.name }</li>
                   )
@@ -111,10 +128,29 @@ class MySearch extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    searchProduct: state.searchProduct
-  }
+// .replace(/\s+/g, '-').toLowerCase()
+
+const EmptySearch = (props) => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='komuto' />
+          <p><strong>Hasil Pencarian tidak ditemukan</strong></p>
+          <p>Kami tidak bisa menemukan barang dari kata kunci yang Anda masukkan</p>
+        </div>
+        <a onClick={() => props.changeSearchPress()} className='button is-primary is-large is-fullwidth'>Ubah Pencarian</a>
+      </div>
+    </section>
+  )
 }
 
-export default connect(mapStateToProps)(MySearch)
+const mapStateToProps = (state) => ({
+  searchProduct: state.searchProduct
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  search: (params) => dispatch(homeActions.search(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MySearch)
