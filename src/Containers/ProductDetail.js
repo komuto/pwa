@@ -41,7 +41,7 @@ class ProductDetail extends Component {
     const { id, productDetail } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+      await this.props.getProduct({ id })
     }
     this.setState({ token: await GET_TOKEN.getToken() })
   }
@@ -60,7 +60,7 @@ class ProductDetail extends Component {
 
           if (String(productDetail.detail.product.id) !== String(nextId)) {
             NProgress.start()
-            await this.props.dispatch(productActions.getProduct({ id: nextId }))
+            await this.props.getProduct({ id: nextId })
           }
 
           break
@@ -83,7 +83,7 @@ class ProductDetail extends Component {
           product.is_liked = !product.is_liked
         }
       })
-      await this.props.dispatch(productActions.addToWishlist({ id }))
+      await this.props.addToWishlist({ id })
       this.setState({ productDetail })
     } else {
       this.setState({notification: {status: true, message: 'Anda harus login'}})
@@ -159,10 +159,13 @@ class ProductDetail extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail
+})
 
-export default connect(mapStateToProps)(ProductDetail)
+const mapDispatchToProps = (dispatch) => ({
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail)
