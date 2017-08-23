@@ -6,8 +6,8 @@ import NProgress from 'nprogress'
 import Section from '../Components/Section'
 import Loading from '../Components/Loading'
 import Notification from '../Components/Notification'
-// import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
+// import Content from '../Components/Content'
 // actions
 import * as cartActions from '../actions/cart'
 // lib
@@ -16,6 +16,8 @@ import RupiahFormat from '../Lib/RupiahFormat'
 import { Status } from '../Services/Status'
 // validations
 import * as inputValidations from '../Validations/Input'
+// themes
+import Images from '../Themes/Images'
 
 class ShoppingCart extends Component {
   constructor (props) {
@@ -266,7 +268,7 @@ class ShoppingCart extends Component {
 
     if (!cart.isFound) return null
 
-    if (cart.cart.items && cart.cart.items.length < 1) { return <h1>Tidak ada barang di keranjang belanja!</h1> }
+    if (cart.cart.items && cart.cart.items.length < 1) { return <EmptyCart /> }
 
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
@@ -429,6 +431,21 @@ class ShoppingCart extends Component {
       </Section>
     )
   }
+}
+
+const EmptyCart = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='komuto' />
+          <p><strong>Belum ada barang di Keranjang Belanja</strong></p>
+          <p>Anda belum memasukkan barang ke keranjang belanja Anda</p>
+        </div>
+        <a onClick={() => Router.push('/p')} className='button is-primary is-large is-fullwidth'>Belanja Sekarang</a>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {
