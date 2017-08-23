@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="173" height="162" viewBox="0 0 173 162">
+    <g fill="none" fill-rule="evenodd" transform="translate(0 -1)">
+        <rect width="173" height="4" y="158" fill="#EEE" rx="2"/>
+        <g transform="translate(15 69)">
+            <rect width="44" height="74" fill="#FAFAFA" rx="2"/>
+            <rect width="18" height="3" x="9" y="10" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="9" y="23" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="9" y="31" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="9" y="39" fill="#EDEDED" rx="1.5"/>
+            <rect width="10" height="3" x="9" y="60" fill="#EDEDED" rx="1.5"/>
+        </g>
+        <g transform="translate(110 81)">
+            <rect width="44" height="77" fill="#FAFAFA" rx="2"/>
+            <rect width="18" height="3" x="14" y="12" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="14" y="25" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="14" y="33" fill="#EDEDED" rx="1.5"/>
+            <rect width="18" height="3" x="14" y="41" fill="#EDEDED" rx="1.5"/>
+            <rect width="10" height="3" x="14" y="62" fill="#EDEDED" rx="1.5"/>
+        </g>
+        <g transform="translate(49 60)">
+            <path fill="#FAFAFA" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M70 16.92V94.27a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3h52.079L70 16.92z"/>
+            <text fill="#FF9292" font-family="AvenirNext-Bold, Avenir Next" font-size="18" font-weight="bold" letter-spacing=".1">
+                <tspan x="17" y="41">40</tspan> <tspan x="40.456" y="41">4</tspan>
+            </text>
+            <rect width="34" height="2" x="18" y="55" fill="#D8D8D8" rx="1"/>
+            <rect width="25" height="2" x="22" y="63" fill="#D8D8D8" rx="1"/>
+            <path fill="#E0E0E0" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M55.036.798v12.686a3 3 0 0 0 3 3h11.808L55.036.798z"/>
+        </g>
+        <g transform="translate(48)">
+            <path fill="#D5D5D5" d="M17.55 33.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V35.55h1.402a1.05 1.05 0 0 0 0-2.1H17.55z"/>
+            <path fill="#FFDEDE" d="M46.9 36.1v-1.202A.894.894 0 0 0 46 34c-.5 0-.9.402-.9.898V36.1h-1.202A.894.894 0 0 0 43 37c0 .5.402.9.898.9H45.1v1.202c0 .504.403.898.9.898.5 0 .9-.402.9-.898V37.9h1.202A.894.894 0 0 0 49 37c0-.5-.402-.9-.898-.9H46.9z"/>
+            <path fill="#51D881" d="M7.526 7.474l2.003-.035a1.5 1.5 0 0 0 1.47-1.526 1.495 1.495 0 0 0-1.523-1.474l-2.002.035-.035-2.003a1.5 1.5 0 0 0-1.526-1.47 1.495 1.495 0 0 0-1.474 1.523l.035 2.002-2.003.035a1.5 1.5 0 0 0-1.47 1.526 1.495 1.495 0 0 0 1.523 1.474l2.002-.035.035 2.003a1.5 1.5 0 0 0 1.526 1.47 1.495 1.495 0 0 0 1.474-1.523l-.035-2.002z"/>
+            <path fill="#FF9292" d="M66.55 14.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V16.55h1.402a1.05 1.05 0 0 0 0-2.1H66.55z"/>
+            <circle cx="32" cy="18" r="2" stroke="#89CAFF" stroke-width="2"/>
+        </g>
+        <g stroke-width="2" transform="translate(83 121)">
+            <g stroke="#606E81" transform="rotate(3 -417.667 459.667)">
+                <rect width="3.063" height="8.648" x="3.343" y=".571" fill="#FFD783" rx="1.532" transform="rotate(-50 4.875 4.895)"/>
+                <rect width="5.741" height="15.472" x="9.739" y="3.558" fill="#67BAFF" rx="2.87" transform="rotate(-50 12.61 11.294)"/>
+            </g>
+            <circle cx="15.5" cy="15.5" r="15.5" fill="#67BAFF" stroke="#606E81"/>
+            <circle cx="15.5" cy="15.5" r="11.474" fill="#DAEEFF" stroke="#606E81"/>
+            <path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" d="M15.5 8.36a7.14 7.14 0 0 0-7.14 7.14"/>
+        </g>
+    </g>
+</svg>
