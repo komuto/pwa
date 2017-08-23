@@ -1,7 +1,7 @@
 import MyImage from './MyImage'
 const OptionsExpeditions = (props) => {
   return (
-    <div className='sort-option' id='expedition' style={{display: props.show && 'block'}}>
+    <div className='sort-option expeditionButton' id='expedition' style={{display: props.show && 'block'}} onClick={(e) => props.onClick(e)}>
       <div className='sort-list'>
         <p><strong>Pilih Expedisi Pengiriman</strong></p>
         <form action='#' className='form'>
