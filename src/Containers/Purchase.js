@@ -11,6 +11,7 @@ import OptionsAdresess from '../Components/OptionsAdresess'
 import OptionsExpeditions from '../Components/OptionsExpeditions'
 import OptionsExpeditionPackages from '../Components/OptionsExpeditionPackages'
 import OptionsInsurance from '../Components/OptionsInsurance'
+import Loading from '../Components/Loading'
 // actions
 import * as productActions from '../actions/product'
 import * as addressActions from '../actions/address'
@@ -39,6 +40,7 @@ class Purchase extends Component {
       address: {
         data: (props.listAddress.isFound && props.listAddress.address) || [],
         show: false,
+        submiting: false,
         selected: {
           ...props.addressSelected
         }
@@ -72,6 +74,8 @@ class Purchase extends Component {
       submiting: false,
       cartNotification: false
     }
+
+    this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
   }
 
   // min button press
@@ -91,7 +95,10 @@ class Purchase extends Component {
   }
 
   // address event
-  onClickAddress = () => this.setState({ address: { ...this.state.address, show: true } })
+  onClickAddress = (e) => {
+    if (!e.target.className.includes('addressButton')) return
+    this.setState({ address: { ...this.state.address, show: !this.state.address.show } })
+  }
 
   async addressSelected (e, selected) {
     e.preventDefault()
@@ -103,31 +110,33 @@ class Purchase extends Component {
       weight: 1000
     }))
     await this.props.dispatch(purchaseActions.addressSelected({ ...selected, status: true }))
-    this.setState({ address: {...this.state.address, show: false, selected: { ...selected, status: true }}, error: this.state.error === 'addressSelected' && null })
+    this.setState({
+      address: {...this.state.address, show: false, selected: { ...selected, status: true }, submiting: true},
+      expeditions: { ...this.state.expeditions, selected: { id: null, name: null } },
+      expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
+      error: this.state.error === 'addressSelected' && null })
   }
 
   // expedition event
-  onClickExpedition = () => this.setState({ expeditions: { ...this.state.expeditions, show: true } })
+  onClickExpedition = (e) => {
+    if (!e.target.className.includes('expeditionButton')) return
+    this.setState({ expeditions: { ...this.state.expeditions, show: !this.state.expeditions.show } })
+  }
 
   async expeditionSelected (e, selected) {
     e.preventDefault()
     await this.props.dispatch(purchaseActions.courierExpedition(selected))
-    this.setState({ expeditions: { ...this.state.expeditions, show: false, selected },
-      expeditionsPackage: {
-        ...this.state.expeditionsPackage,
-        selected: {
-          id: null,
-          insurance_fee: 0,
-          is_checked: false,
-          logo: null,
-          name: ''
-        }
-      },
+    this.setState({
+      expeditions: { ...this.state.expeditions, show: false, selected },
+      expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
       error: this.state.error === 'expeditions' && null })
   }
 
   // expedition package event
-  onClickExpeditionPackage = () => this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: true } })
+  onClickExpeditionPackage = (e) => {
+    if (!e.target.className.includes('expeditionPackageButton')) return
+    this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: !this.state.expeditionsPackage.show } })
+  }
 
   async expeditionsPackageSelected (e, selected) {
     e.preventDefault()
@@ -136,7 +145,10 @@ class Purchase extends Component {
   }
 
   // insurance event
-  onClickInsurance = () => this.setState({ insurance: { ...this.state.insurance, show: true } })
+  onClickInsurance = (e) => {
+    if (!e.target.className.includes('insuranceButton')) return
+    this.setState({ insurance: { ...this.state.insurance, show: !this.state.insurance.show } })
+  }
 
   async insuranceSelected (e, selected) {
     e.preventDefault()
@@ -221,7 +233,11 @@ class Purchase extends Component {
         default:
           break
       }
-      this.setState({ listAddress, address: { ...this.state.address, data: listAddress.address }, notification })
+      this.setState({
+        listAddress,
+        address: { ...this.state.address, data: listAddress.address },
+        notification
+      })
     }
 
     if (!estimatedCharges.isLoading) {
@@ -236,7 +252,13 @@ class Purchase extends Component {
         default:
           break
       }
-      this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges }, notification })
+
+      console.log(estimatedCharges)
+      this.setState({
+        expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
+        address: { ...this.state.address, data: listAddress.address, submiting: false },
+        notification
+      })
     }
 
     if (!addToCart.isLoading) {
@@ -251,7 +273,13 @@ class Purchase extends Component {
         default:
           break
       }
-      submiting && this.setState({ submiting: false, addToCart, notification, cartNotification: addToCart.status === 200 })
+      submiting &&
+      this.setState({
+        submiting: false,
+        addToCart,
+        notification,
+        cartNotification: addToCart.status === 200
+      })
     }
 
     if (!productDetail.isLoading) {
@@ -266,7 +294,11 @@ class Purchase extends Component {
         default:
           break
       }
-      this.setState({ productDetail, expeditions: { ...this.state.expeditions, data: productDetail.detail.expeditions }, notification })
+      this.setState({
+        productDetail,
+        expeditions: { ...this.state.expeditions, data: productDetail.detail.expeditions },
+        notification
+      })
     }
 
     if (!listAddress.isLoading && !productDetail.isLoading) NProgress.done()
@@ -350,11 +382,13 @@ class Purchase extends Component {
         {
             !address.selected.status
             ? <section
-              className={`section is-paddingless has-shadow ${error === 'addressSelected' && 'is-error'}`}
-              onClick={() => this.onClickAddress()}>
+              className={`section is-paddingless has-shadow addressButton ${error === 'addressSelected' && 'is-error'}`}
+              onClick={(e) => this.onClickAddress(e)}>
               <div className={`column is-paddingless ${error === 'addressSelected' && 'is-error'}`}>
-                <div className='see-all'>
-                  <span className='link'>Isi Informasi Data Pengiriman<span className='icon-arrow-right' /></span>
+                <div className='see-all addressButton'>
+                  <span className='link addressButton'>Isi Informasi Data Pengiriman
+                  <span className='icon-arrow-right' />
+                  </span>
                 </div>
               </div>
               <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
@@ -363,7 +397,7 @@ class Purchase extends Component {
               <div className='info-purchase'>
                 <div className='detail-purchase summary'>
                   <h3>Informasi Data Pengiriman</h3>
-                  <a className='btn-change' onClick={() => this.onClickAddress()}>Ganti</a>
+                  <a className='btn-change addressButton' onClick={(e) => this.onClickAddress(e)}>Ganti</a>
                   <div className='detail-result white'>
                     <ul className='data-delivery'>
                       <li>
@@ -410,30 +444,43 @@ class Purchase extends Component {
             </section>
           }
         <Section className='section is-paddingless has-shadow'>
-          <div className={`column is-paddingless ${error === 'expeditions' && 'is-error'}`} onClick={() => address.selected.id ? this.onClickExpedition() : this.onClickAddress()}>
-            <div className='see-all'>
-              <span className={`link ${expeditions.selected.id && 'black'}`}> { expeditions.selected.id ? 'Kurir Pengiriman' : 'Pilih Kurir Pengiriman' } <span className='kurir'>{ expeditions.selected.name }</span>
-                <span className='icon-arrow-down' /></span>
+          <a className={`column is-paddingless expeditionButton ${error === 'expeditions' && 'is-error'}`} onClick={(e) => !address.submiting && this.onClickExpedition(e)}>
+            <div className='see-all expeditionButton'>
+              <span className={`link expeditionButton ${expeditions.selected.id && 'black'}`}> { expeditions.selected.id ? 'Kurir Pengiriman' : 'Pilih Kurir Pengiriman' }
+                <span className='kurir expeditionButton'>{ expeditions.selected.name }</span>
+                {
+                    address.submiting
+                    ? this.loadingSpan
+                    : <span className='icon-arrow-down expeditionButton' />
+                }
+              </span>
             </div>
             <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
-          </div>
-          <div className={`column is-paddingless ${error === 'expeditionsPackage' && 'is-error'}`} onClick={() => expeditions.selected.id ? this.onClickExpeditionPackage() : this.onClickExpedition()}>
-            <div className='see-all'>
-              <span className={`link ${expeditionsPackage.selected.id && 'black'}`}> { expeditionsPackage.selected.id ? 'Pilih Paket Pengiriman' : 'Paket Pengiriman' }
-                <span className='kurir'> { expeditionsPackage.selected.name }</span>
-                <span className='icon-arrow-down' /></span>
+          </a>
+
+          <a className={`column is-paddingless expeditionPackageButton ${error === 'expeditionsPackage' && 'is-error'}`} onClick={(e) => !address.submiting && this.onClickExpeditionPackage(e)}>
+            <div className='see-all expeditionPackageButton'>
+              <span className={`link  expeditionPackageButton ${expeditionsPackage.selected.id && 'black'}`}> { expeditionsPackage.selected.id ? 'Paket Pengiriman' : 'Pilih Paket Pengiriman' }
+                <span className='kurir expeditionPackageButton'> { expeditionsPackage.selected.name }</span>
+                {
+                    address.submiting
+                    ? this.loadingSpan
+                    : <span className='icon-arrow-down expeditionPackageButton' />
+                }
+
+              </span>
             </div>
             <p className='error-msg'>Mohon Pilih Paket Pengiriman terlebih dahulu</p>
-          </div>
-          <div className={`column is-paddingless ${error === 'insurance' && 'is-error'}`} onClick={() => this.onClickInsurance()}>
-            <div className='see-all'>
-              <span className={`link ${insurance.selected && 'black'}`}> { insurance.selected ? 'Pilih Asuransi' : 'Asuransi'}
-                <span className='kurir'> {insurance.selected}</span>
-                <span className='icon-arrow-down' />
+          </a>
+          <a className={`column is-paddingless insuranceButton ${error === 'insurance' && 'is-error'}`} onClick={(e) => this.onClickInsurance(e)}>
+            <div className='see-all insuranceButton'>
+              <span className={`link insuranceButton ${insurance.selected && 'black'}`}> { insurance.selected ? 'Pilih Asuransi' : 'Asuransi'}
+                <span className='kurir insuranceButton'> {insurance.selected}</span>
+                <span className='icon-arrow-down insuranceButton' />
               </span>
             </div>
             <p className='error-msg'>Mohon Pilih Asuransi terlebih dahulu</p>
-          </div>
+          </a>
         </Section>
         <Section>
           <div className='info-purchase'>
@@ -490,16 +537,20 @@ class Purchase extends Component {
         <OptionsAdresess
           {...address}
           id={id}
+          onClick={(e) => this.onClickAddress(e)}
           addressSelected={(e, selected) => this.addressSelected(e, selected)} />
         <OptionsExpeditions
           {...expeditions}
+          onClick={(e) => this.onClickExpedition(e)}
           expeditionSelected={(e, selected) => this.expeditionSelected(e, selected)} />
         <OptionsExpeditionPackages
           expeditions={expeditions}
           expeditionsPackage={expeditionsPackage}
+          onClick={(e) => this.onClickExpeditionPackage(e)}
           expeditionsPackageSelected={(e, selected) => this.expeditionsPackageSelected(e, selected)} />
         <OptionsInsurance
           {...insurance}
+          onClick={(e) => this.onClickInsurance(e)}
           insuranceSelected={(e, selected) => this.insuranceSelected(e, selected)} />
         <div className='sort-option' id='addCartNotif' style={{ display: cartNotification && 'block' }}>
           <div className='notif-report add-cart-notif'>
