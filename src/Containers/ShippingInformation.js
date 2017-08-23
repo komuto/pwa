@@ -329,22 +329,30 @@ class ShippingInformation extends Component {
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => provinces.data.isFound && this.onClickProvince()} style={error === 'provinces' ? errorStyle : {}} className='location-label disabled' data-target='#province'>{ provinces.selected.name || 'Pilih Provinsi' }</span>
+                  <span onClick={() => provinces.data.isFound && this.onClickProvince()} style={error === 'provinces' ? errorStyle : {}} className='location-label disabled'>
+                    { provinces.selected.name || 'Pilih Provinsi' }
+                  </span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => districts.data.isFound && this.onClickDistrict()} style={error === 'districts' ? errorStyle : {}} className='location-label' data-target='#district'>{ districts.selected.name || 'Pilih Kota/Kabupaten' }</span>
+                  <span onClick={() => districts.data.isFound && this.onClickDistrict()} style={error === 'districts' ? errorStyle : {}} className='location-label'>
+                    { districts.selected.name || 'Pilih Kota/Kabupaten' }
+                  </span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => subDistricts.data.isFound && this.onClickSubDistrict()} style={error === 'subDistricts' ? errorStyle : {}} className='location-label' data-target='#districts'>{ subDistricts.selected.name || 'Pilih Kecamatan' }</span>
+                  <span onClick={() => subDistricts.data.isFound && this.onClickSubDistrict()} style={error === 'subDistricts' ? errorStyle : {}} className='location-label'>
+                    { subDistricts.selected.name || 'Pilih Kecamatan' }
+                  </span>
                 </p>
               </div>
               <div className='field'>
                 <p className='control detail-address'>
-                  <span onClick={() => villages.data.isFound && this.onClickVillage()} style={error === 'villages' ? errorStyle : {}} className='location-label' data-target='#village'>{ villages.selected.name || 'Pilih Kelurahan' }</span>
+                  <span onClick={() => villages.data.isFound && this.onClickVillage()} style={error === 'villages' ? errorStyle : {}} className='location-label'>
+                    { villages.selected.name || 'Pilih Kelurahan' }
+                  </span>
                 </p>
               </div>
               <div className='field'>
