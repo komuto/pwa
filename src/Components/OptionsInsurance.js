@@ -1,6 +1,6 @@
 const OptionsInsurance = (props) => {
   return (
-    <div className='sort-option' id='province' style={{display: props.show && 'block'}}>
+    <div className='sort-option insuranceButton' id='province' style={{display: props.show && 'block'}} onClick={(e) => props.onClick(e)}>
       <div className='sort-list'>
         <p><strong>Pilih Provinsi</strong></p>
         <form action='#' className='form'>
