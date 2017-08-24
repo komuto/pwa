@@ -187,6 +187,7 @@ export const buildSaga = (args, callApi, actionType, props = [], keep = []) => f
     }
     yield put({ type: typeSucc(actionType), ...data, ...keepAction })
   } catch (e) {
+    console.log('test', e)
     yield errorHandling(typeFail(actionType), e)
   }
 }
