@@ -17,6 +17,7 @@ class VerifyNoTelp extends React.Component {
     super(props)
     this.state = {
       verify: false,
+      profile: props.profile,
       formVerify: {
         digit1: '',
         digit2: '',
@@ -72,6 +73,11 @@ class VerifyNoTelp extends React.Component {
     this.props.verifyPhone({ code })
   }
 
+  sendOTPPhone (e) {
+    e.preventDefault()
+    this.props.sendOTPToPhone()
+  }
+
   modalVerificationSuccess () {
     return (
       <div className='sort-option' style={{display: 'block'}}>
@@ -79,7 +85,7 @@ class VerifyNoTelp extends React.Component {
           <img src={Images.verifiedPhone} alt='' />
           <h3>Nomor Telepon Telah Terverifikasi</h3>
           <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
-          <Link href='add-information-store' as='ais'>
+          <Link href='add-information-store'>
             <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
           </Link>
         </div>
@@ -87,10 +93,15 @@ class VerifyNoTelp extends React.Component {
     )
   }
 
+  componentWillMount () {
+    this.props.getProfile()
+  }
+
   componentWillReceiveProps (nextProps) {
     const { stateVerifyPhone } = nextProps
     let { notification, verify } = this.state
     notification = {status: false, message: 'Error, default message.'}
+    this.setState({ profile: nextProps.profile })
     if (!stateVerifyPhone.isLoading) {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
@@ -110,7 +121,7 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, notification, submitting } = this.state
+    const { formVerify, verify, profile, notification, submitting } = this.state
     return (
       <div>
         <Notification
@@ -124,7 +135,7 @@ class VerifyNoTelp extends React.Component {
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
               <div className='has-text-centered noted'>
-                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor {this.props.profile.user.user.phone_number}
+                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor {profile.user.hasOwnProperty('user') ? ` ${profile.user.user.phone_number}` : '' }
                 </p>
               </div>
               <div className='field is-horizontal number-account'>
@@ -189,11 +200,13 @@ class VerifyNoTelp extends React.Component {
                 </div>
               </div>
               <a
-                className={`button is-primary is-large is-fullwidth js-sort ${submitting ? 'is-loading' : ''}`}
+                className={`button is-primary is-large is-fullwidth js-sort ${submitting && 'is-loading'}`}
                 onClick={() => this.handleVerify()}>
                 Verifikasi Nomor Telepon
               </a>
-              <p className='text-ask has-text-centered'>Belum menerima kode aktivasi? <a>Klik Disini</a></p>
+              <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
+                <a onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+              </p>
             </form>
           </div>
           { verify && this.modalVerificationSuccess()}
@@ -211,7 +224,9 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  verifyPhone: (code) => dispatch(actionTypes.verifyPhone(code))
+  verifyPhone: (code) => dispatch(actionTypes.verifyPhone(code)),
+  sendOTPToPhone: () => dispatch(actionTypes.sendOTPPhone()),
+  getProfile: () => dispatch(actionTypes.getProfile())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyNoTelp)
