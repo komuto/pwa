@@ -17,7 +17,7 @@ class Account extends Component {
     super(props)
     this.state = {
       verify: false,
-      profile: props.profie,
+      profile: props.profile,
       users: props.users
     }
   }
@@ -84,8 +84,15 @@ class Account extends Component {
     }
   }
 
+  manageAccount (e) {
+    e.preventDefault()
+    Router.push('/manage-account')
+  }
+
   componentDidMount () {
-    this.props.getProfile()
+    if (!this.state.profile) {
+      this.props.getProfile()
+    }
   }
 
   renderStore () {
@@ -152,7 +159,7 @@ class Account extends Component {
         }
           <div className='profile-wrapp'>
             <ul>
-              <li>
+              <li onClick={(e) => this.manageAccount(e)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
