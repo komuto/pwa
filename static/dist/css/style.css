@@ -42,7 +42,7 @@
   font-family: 'nunitoregular', sans-serif;
   font-weight: 400; }
 
-.nunito-semibold, strong, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .level.nav-bottom .level-item {
+.nunito-semibold, strong, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .box.notif-payment-expiry .media .media-content p strong, .box.notif-payment-waiting .media .media-content p strong, .box.notif-payment-success .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .level.nav-bottom .level-item {
   font-family: 'nunitosemibold', sans-serif;
   font-weight: 600; }
 
@@ -6019,10 +6019,18 @@ strong {
           align-self: inherit; }
     .box .media .media-left .image {
       position: relative; }
+      .box .media .media-left .image.list-detail {
+        width: 100%;
+        max-width: 65px;
+        border-radius: 3px; }
+        .box .media .media-left .image.list-detail img {
+          border-radius: 3px; }
       .box .media .media-left .image .pin {
         position: absolute;
         top: -15px;
         left: -15px; }
+  .box .media .media-content.is-right-content .content {
+    padding-right: 100px; }
   .box .media .media-content .content {
     padding-bottom: 0;
     margin-bottom: 0; }
@@ -6030,7 +6038,8 @@ strong {
       font-size: 13px;
       line-height: 1.38;
       letter-spacing: 0.2px;
-      color: #404852; }
+      color: #404852;
+      margin-bottom: 5px; }
       .box .media .media-content .content h4 a {
         color: #404852; }
         .box .media .media-content .content h4 a:hover, .box .media .media-content .content h4 a:focus {
@@ -6758,6 +6767,36 @@ strong.total {
     width: 100%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%); }
+
+.right-top {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+.item-status {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: #a0a3ae; }
+  .item-status:before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 100px;
+    position: absolute;
+    top: 4px;
+    left: 0; }
+  .item-status.reject:before {
+    background-color: #ef5656; }
+  .item-status.waiting:before {
+    background-color: #f4bc50; }
+  .item-status.process:before {
+    background-color: #c36ce8; }
+  .item-status.delivered:before {
+    background-color: #56aaef; }
+  .item-status.accepted:before {
+    background-color: #47bf7e; }
 
 @media handheld, only screen and (max-width: 320px) {
   .notif-report .button {
@@ -8254,9 +8293,50 @@ strong.total {
       font-size: 13px;
       opacity: 1; }
 
+.box.notif-payment-expiry {
+  padding: 15px;
+  background-color: rgba(239, 86, 86, 0.05);
+  margin-bottom: 0; }
+  .box.notif-payment-expiry .media .media-content p {
+    color: #ef5656;
+    letter-spacing: 0.2px;
+    margin-top: 6px; }
+    .box.notif-payment-expiry .media .media-content p strong {
+      color: #ea8c2f;
+      font-size: 13px;
+      opacity: 1; }
+
+.box.notif-payment-waiting {
+  padding: 15px;
+  background-color: #ebf2fc;
+  margin-bottom: 0; }
+  .box.notif-payment-waiting .media .media-content p {
+    color: #6ca2e8;
+    letter-spacing: 0.2px;
+    margin-top: 6px; }
+    .box.notif-payment-waiting .media .media-content p strong {
+      color: #6ca2e8;
+      font-size: 13px;
+      opacity: 1; }
+
+.box.notif-payment-success {
+  padding: 15px;
+  background-color: #e0fae7;
+  margin-bottom: 0; }
+  .box.notif-payment-success .media .media-content p {
+    color: #45a35f;
+    letter-spacing: 0.2px;
+    margin-top: 6px; }
+    .box.notif-payment-success .media .media-content p strong {
+      color: #45a35f;
+      font-size: 13px;
+      opacity: 1; }
+
 .payment-detail {
   background-color: #ffffff;
   padding: 0 20px; }
+  .payment-detail .box {
+    background-color: transparent; }
   .payment-detail ul li {
     padding: 20px 0;
     border-bottom: 1px solid #efefef; }
@@ -8304,6 +8384,18 @@ strong.total {
         color: #666666;
         line-height: 1.62;
         -spacing: 0.2px; }
+    .payment-detail ul li.item-active {
+      position: relative;
+      overflow: hidden;
+      background-color: #f1f5fa; }
+      .payment-detail ul li.item-active:before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        background-color: #56aaef;
+        position: absolute;
+        top: 0;
+        left: 0; }
   .payment-detail.step-pay {
     padding: 0; }
     .payment-detail.step-pay > ul > li {
@@ -8986,6 +9078,11 @@ strong.total {
   position: absolute;
   right: 0;
   bottom: 0; }
+
+.field .add-product {
+  padding-top: 0; }
+  .field .add-product ul {
+    margin-bottom: 0; }
 
 .level.nav-bottom {
   position: fixed;
