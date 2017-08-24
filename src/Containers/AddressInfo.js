@@ -68,7 +68,6 @@ class AddressInfo extends React.Component {
       newState.formAdress[name] = value
     }
     this.setState(newState)
-    console.log('value id => ', value)
     // set location
     switch (name) {
       case 'province_id':
