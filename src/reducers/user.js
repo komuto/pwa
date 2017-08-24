@@ -151,11 +151,11 @@ function getProfile (state = initProfile, action) {
   }
 }
 
-function updateProfile (state = initState(), action) {
+function updateProfile (state = initState({ updateProfile: {} }), action) {
   const type = buildType(action.type)
   switch (type) {
     case actions.UPDATE_PROFILE:
-      return buildReducer(state, action, type)
+      return buildReducer(state, action, type, 'updateProfile')
     default:
       return state
   }
