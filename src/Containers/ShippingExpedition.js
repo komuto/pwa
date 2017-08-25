@@ -59,6 +59,27 @@ class ShippingExpedition extends React.Component {
     }
   }
 
+  submitExpedition (e) {
+    e.preventDefault()
+    const { selectedServices, selectedExpeditions } = this.state
+    const { postExpedition } = this.props
+    const tempExpeditionServices = {
+      selectedExpeditions: selectedExpeditions,
+      selectedServices: selectedServices
+    }
+    let { notification } = this.state
+    if (selectedServices.length !== 0) {
+      this.setState({ submitting: true }, () => {
+        if (this.state.submitting) {
+          postExpedition({ expedition_services: tempExpeditionServices })
+        }
+      })
+    } else {
+      notification = {status: true, message: 'Ekspedisi pengiriman harus di isi !'}
+      this.setState({ notification })
+    }
+  }
+
   componentWillMount () {
     const { expeditions } = this.state
     const { getExpedition } = this.props
@@ -71,28 +92,9 @@ class ShippingExpedition extends React.Component {
     this.setState({ expeditions: nextProps.expeditions })
     this.setState({ selectedExpeditions: nextProps.processCreateStore.expedition_services.selectedExpeditions })
     this.setState({ selectedServices: nextProps.processCreateStore.expedition_services.selectedServices })
-    if (nextProps.processCreateStore.expedition_services.selectedServices.length !== 0) {
+    if (nextProps.processCreateStore.expedition_services.selectedServices.length !== 0 && this.state.submitting) {
       this.setState({ submitting: false })
       Router.push('/owner-information')
-    }
-  }
-
-  submitExpedition (e) {
-    e.preventDefault()
-    const { selectedServices, selectedExpeditions } = this.state
-    const { postExpedition } = this.props
-    const tempExpeditionServices = {
-      selectedExpeditions: selectedExpeditions,
-      selectedServices: selectedServices
-    }
-    let { notification } = this.state
-    this.setState({ submitting: true })
-    if (selectedServices.length !== 0) {
-      postExpedition(tempExpeditionServices)
-    } else {
-      notification = {status: true, message: 'Ekspedisi pengiriman harus di isi !'}
-      this.setState({ notification })
-      this.setState({ submitting: false })
     }
   }
 
@@ -185,13 +187,13 @@ class ShippingExpedition extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    processCreateStore: state.processCreateStore,
+    processCreateStore: state.createStoreTemp,
     expeditions: state.expeditions
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  postExpedition: (params) => dispatch(actionStoreTypes.shippingExpedition(params)),
+  postExpedition: (params) => dispatch(actionStoreTypes.createStoreTemp(params)),
   getExpedition: () => dispatch(actionExpeditionTypes.getExpedition())
 })
 
