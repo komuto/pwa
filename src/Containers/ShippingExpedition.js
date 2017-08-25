@@ -16,11 +16,11 @@ class ShippingExpedition extends React.Component {
       expeditions: props.expeditions,
       selectedExpeditions: props.processCreateStore.expedition_services.selectedExpeditions,
       selectedServices: props.processCreateStore.expedition_services.selectedServices,
-      submitting: false,
       notification: {
         status: false,
         message: 'Error, default message.'
-      }
+      },
+      submitting: false
     }
   }
 
@@ -72,9 +72,9 @@ class ShippingExpedition extends React.Component {
     this.setState({ selectedExpeditions: nextProps.processCreateStore.expedition_services.selectedExpeditions })
     this.setState({ selectedServices: nextProps.processCreateStore.expedition_services.selectedServices })
     if (nextProps.processCreateStore.expedition_services.selectedServices.length !== 0) {
+      this.setState({ submitting: false })
       Router.push('/owner-information')
     }
-    console.log('nextProps : ', nextProps.processCreateStore)
   }
 
   submitExpedition (e) {
@@ -86,16 +86,18 @@ class ShippingExpedition extends React.Component {
       selectedServices: selectedServices
     }
     let { notification } = this.state
+    this.setState({ submitting: true })
     if (selectedServices.length !== 0) {
       postExpedition(tempExpeditionServices)
     } else {
       notification = {status: true, message: 'Ekspedisi pengiriman harus di isi !'}
       this.setState({ notification })
+      this.setState({ submitting: false })
     }
   }
 
   render () {
-    const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
+    const { expeditions, selectedServices, selectedExpeditions, notification, submitting } = this.state
     return (
       <div>
         <Notification
@@ -119,58 +121,56 @@ class ShippingExpedition extends React.Component {
             Pilihlah ekspedisi pengiriman yang digunakan oleh toko Anda untuk mengirim barang
           </div>
         </section>
-        <section>
-          { expeditions.expeditions.map((expedition, index) => {
-            let isSelectedExpedition = selectedExpeditions.filter((id) => {
-              return id === expedition.id
-            }).length > 0
-            return (
-              <section className='section is-paddingless' key={expedition.id}>
-                <div className='filter-option active'>
-                  <div className='sort-list check-all'>
-                    <label
-                      className='checkbox'
-                      onClick={(e) => this.handleSelectAll(e, expedition)}>
-                      <span className={`sort-text ${isSelectedExpedition && 'active'}`}>Pilih Semua</span>
-                      <span className={`input-wrapper ${isSelectedExpedition && 'checked'}`} >
-                        <input type='checkbox' id='diskon' />
-                      </span>
-                    </label>
-                    <div className='eks-name'>
-                      <span>{expedition.name}</span>
-                      <span><img src={expedition.logo} alt='' /></span>
-                    </div>
-                  </div>
-
-                  <div className='sort-list check-list'>
-                    { expedition.services.map((service) => {
-                      let isSelected = selectedServices.filter((id) => {
-                        return id === service.id
-                      }).length > 0
-                      return (
-                        <label
-                          className='checkbox'
-                          key={service.id}
-                          onClick={(e) => this.handleSelectedExpeditions(e, service.id)}>
-                          <span className={`sort-text ${isSelected && 'active'}`}>{service.full_name}</span>
-                          <span className={`input-wrapper ${isSelected && 'checked'}`} >
-                            <input type='checkbox' />
-                          </span>
-                        </label>
-                      )
-                    })}
+        { expeditions.expeditions.map((expedition, index) => {
+          let isSelectedExpedition = selectedExpeditions.filter((id) => {
+            return id === expedition.id
+          }).length > 0
+          return (
+            <section className='section is-paddingless' key={expedition.id}>
+              <div className='filter-option active'>
+                <div className='sort-list check-all top'>
+                  <label
+                    className='checkbox'
+                    onClick={(e) => this.handleSelectAll(e, expedition)}>
+                    <span className={`sort-text ${isSelectedExpedition && 'active'}`}>Pilih Semua</span>
+                    <span className={`input-wrapper ${isSelectedExpedition && 'checked'}`} >
+                      <input type='checkbox' id='diskon' />
+                    </span>
+                  </label>
+                  <div className='eks-name'>
+                    <span>{expedition.name}</span>
+                    <span><img src={expedition.logo} alt='' /></span>
                   </div>
                 </div>
-              </section>
-            )
-          })}
-        </section>
+
+                <div className='sort-list check-list left'>
+                  { expedition.services.map((service) => {
+                    let isSelected = selectedServices.filter((id) => {
+                      return id === service.id
+                    }).length > 0
+                    return (
+                      <label
+                        className='checkbox'
+                        key={service.id}
+                        onClick={(e) => this.handleSelectedExpeditions(e, service.id)}>
+                        <span className={`sort-text ${isSelected && 'active'}`}>{service.full_name}</span>
+                        <span className={`input-wrapper ${isSelected && 'checked'}`} >
+                          <input type='checkbox' />
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+            </section>
+          )
+        })}
         <section className='section is-paddingless'>
           <div className='payment-detail action'>
             <ul>
               <li>
                 <a
-                  className='button is-primary is-large is-fullwidth'
+                  className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
                   onClick={(e) => this.submitExpedition(e)}>
                   Lanjutkan
                 </a>

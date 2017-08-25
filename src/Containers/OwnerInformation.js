@@ -16,7 +16,8 @@ class OwnerInformation extends React.Component {
       formInfo: {
         ...props.formOwnerInfo.user
       },
-      validation: false
+      validation: false,
+      submitting: false
     }
   }
 
@@ -40,7 +41,11 @@ class OwnerInformation extends React.Component {
     let motherNameRequired = name === 'mother_name' && motherName.length > 0
     let result = idNumberRequired || motherNameRequired
     return (
-      <span style={{color: result ? 'green' : 'red', display: validation ? 'block' : 'none'}} >{result ? '' : textFailed}</span>
+      <span style={{color: result ? '#23d160' : '#ef5656',
+        display: validation ? 'block' : 'none',
+        letterSpacing: '0.2px'}} >
+        {result ? '' : textFailed}
+      </span>
     )
   }
 
@@ -64,7 +69,6 @@ class OwnerInformation extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     this.setState({ formInfo: nextProps.formOwnerInfo.user })
-    console.log('nextProps ', nextProps)
   }
 
   render () {
@@ -102,7 +106,7 @@ class OwnerInformation extends React.Component {
                   placeholder='No Identitas (KTP/SIM/Paspor)'
                   value={formInfo.id_number}
                   onChange={(e) => this.handleInput(e)} />
-                <br />{this.renderValidation('id_number', 'No Identitas harus di isi !')}
+                <br />{this.renderValidation('id_number', 'Mohon isi no identitas')}
               </p>
             </div>
             <div className='field'>
@@ -115,7 +119,7 @@ class OwnerInformation extends React.Component {
                   value={formInfo.mother_name}
                   onChange={(e) => this.handleInput(e)}
                   />
-                <br />{this.renderValidation('mother_name', 'Nama Ibu Kandung harus di isi !')}
+                <br />{this.renderValidation('mother_name', 'Mohon isi nama ibu kandung')}
               </p>
             </div>
             <div className='field'>

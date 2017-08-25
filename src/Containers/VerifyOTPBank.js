@@ -2,11 +2,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // components
-import Link from 'next/link'
-import {Images} from '../Themes'
+import Router from 'next/router'
 import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
+import * as actionBankTypes from '../actions/bank'
 // services
 import { Status } from '../Services/Status'
 // validation
@@ -29,7 +29,8 @@ class VerifyNoTelp extends React.Component {
         status: false,
         message: 'Error, default message.'
       },
-      submitting: false
+      submitting: false,
+      submitOTPBank: false
     }
   }
 
@@ -66,52 +67,84 @@ class VerifyNoTelp extends React.Component {
     }
   }
 
-  handleVerify () {
-    const { formVerify } = this.state
-    this.setState({ submitting: true })
-    const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
-    this.props.verifyPhone({ code })
-  }
-
-  sendOTPPhone (e) {
+  handleVerify (e) {
     e.preventDefault()
-    this.props.sendOTPToPhone()
+    const { formVerify } = this.state
+    const { query, addBankAccount, updateBankAccount, deleteBankAccount } = this.props
+    const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
+    switch (query.action) {
+      case 'edit':
+        const newData = {
+          id: query.id,
+          code: code,
+          master_bank_id: query.master_bank_id,
+          holder_name: query.holder_name,
+          holder_account_number: query.holder_account_number,
+          bank_branch_office_name: query.bank_branch_office_name
+        }
+        updateBankAccount(newData)
+        break
+      case 'add':
+        const newState = {
+          code: code,
+          master_bank_id: query.master_bank_id,
+          holder_name: query.holder_name,
+          holder_account_number: query.holder_account_number,
+          bank_branch_office_name: query.bank_branch_office_name
+        }
+        addBankAccount(newState)
+        break
+      case 'delete':
+        deleteBankAccount({id: query.id, code: code})
+        break
+      default:
+        break
+    }
+    this.setState({ submitting: true })
   }
 
-  modalVerificationSuccess () {
-    return (
-      <div className='sort-option' style={{display: 'block'}}>
-        <div className='notif-report'>
-          <img src={Images.verifiedPhone} alt='' />
-          <h3>Nomor Telepon Telah Terverifikasi</h3>
-          <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
-          <Link href='add-information-store'>
-            <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
-          </Link>
-        </div>
-      </div>
-    )
+  sendOTPBank (e) {
+    e.preventDefault()
+    this.setState({ submitOTPBank: true })
+    this.props.sendOTPBank()
   }
 
   componentWillMount () {
-    this.props.getProfile()
+    if (!this.state.profile.isFound) {
+      this.props.getProfile()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { stateVerifyPhone } = nextProps
-    let { notification, verify } = this.state
+    const { bankAccount, statusSendOTPBank } = nextProps
+    let { notification, submitting, submitOTPBank } = this.state
     notification = {status: false, message: 'Error, default message.'}
     this.setState({ profile: nextProps.profile })
-    if (!stateVerifyPhone.isLoading) {
-      switch (stateVerifyPhone.status) {
+    if (!bankAccount.isLoading && submitting) {
+      switch (bankAccount.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          this.setState({verify: !verify})
+          Router.push('/data-rekening')
           break
         case Status.OFFLINE :
         case Status.FAILED :
           this.setState({ submitting: false })
-          notification = {status: true, message: stateVerifyPhone.message}
+          notification = {status: true, message: bankAccount.message}
+          break
+        default:
+          break
+      }
+      this.setState({ notification })
+    }
+    if (!statusSendOTPBank.isLoading && submitOTPBank) {
+      switch (statusSendOTPBank.status) {
+        case Status.SUCCESS:
+          this.setState({ submitOTPBank: false })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ submitOTPBank: false })
+          notification = {status: true, message: statusSendOTPBank.message}
           break
         default:
           break
@@ -121,7 +154,7 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submitting } = this.state
+    const { formVerify, verify, profile, notification, submitting, submitOTPBank } = this.state
     return (
       <div>
         <Notification
@@ -135,7 +168,7 @@ class VerifyNoTelp extends React.Component {
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
               <div className='has-text-centered noted'>
-                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor {profile.user.hasOwnProperty('user') ? ` ${profile.user.user.phone_number}` : '' }
+                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor { profile.user.hasOwnProperty('user') ? ` ${profile.user.user.phone_number}` : '' }
                 </p>
               </div>
               <div className='field is-horizontal number-account'>
@@ -201,11 +234,11 @@ class VerifyNoTelp extends React.Component {
               </div>
               <a
                 className={`button is-primary is-large is-fullwidth js-sort ${submitting && 'is-loading'}`}
-                onClick={() => this.handleVerify()}>
-                Verifikasi Nomor Telepon
+                onClick={(e) => this.handleVerify(e)}>
+                Verifikasi Kode OTP
               </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
-                <a onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+                <a className={submitOTPBank && 'button self is-loading'} onClick={(e) => this.sendOTPBank(e)}> Klik Disini</a>
               </p>
             </form>
           </div>
@@ -218,15 +251,18 @@ class VerifyNoTelp extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    stateVerifyPhone: state.verifyPhone,
-    profile: state.profile
+    profile: state.profile,
+    statusSendOTPBank: state.sendOTPBank,
+    bankAccount: state.bankAccount
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  verifyPhone: (code) => dispatch(actionTypes.verifyPhone(code)),
-  sendOTPToPhone: () => dispatch(actionTypes.sendOTPPhone()),
-  getProfile: () => dispatch(actionTypes.getProfile())
+  sendOTPBank: () => dispatch(actionTypes.sendOTPBank()),
+  getProfile: () => dispatch(actionTypes.getProfile()),
+  addBankAccount: (params) => dispatch(actionBankTypes.addBankAccount(params)),
+  updateBankAccount: (params) => dispatch(actionBankTypes.updateBankAccount(params)),
+  deleteBankAccount: (params) => dispatch(actionBankTypes.deleteBankAccount(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyNoTelp)

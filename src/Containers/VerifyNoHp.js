@@ -2,8 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // components
-import Link from 'next/link'
-import {Images} from '../Themes'
+import Router from 'next/router'
 import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
@@ -29,7 +28,8 @@ class VerifyNoTelp extends React.Component {
         status: false,
         message: 'Error, default message.'
       },
-      submitting: false
+      submitting: false,
+      submitOTPPhone: false
     }
   }
 
@@ -75,38 +75,26 @@ class VerifyNoTelp extends React.Component {
 
   sendOTPPhone (e) {
     e.preventDefault()
+    this.setState({ submitOTPPhone: true })
     this.props.sendOTPToPhone()
   }
 
-  modalVerificationSuccess () {
-    return (
-      <div className='sort-option' style={{display: 'block'}}>
-        <div className='notif-report'>
-          <img src={Images.verifiedPhone} alt='' />
-          <h3>Nomor Telepon Telah Terverifikasi</h3>
-          <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
-          <Link href='add-information-store'>
-            <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   componentWillMount () {
-    this.props.getProfile()
+    if (!this.state.profile.isFound) {
+      this.props.getProfile()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { stateVerifyPhone } = nextProps
-    let { notification, verify } = this.state
+    const { stateVerifyPhone, statusSendOTPPhone } = nextProps
+    let { notification, submitOTPPhone, submitting } = this.state
     notification = {status: false, message: 'Error, default message.'}
     this.setState({ profile: nextProps.profile })
-    if (!stateVerifyPhone.isLoading) {
+    if (!stateVerifyPhone.isLoading && submitting) {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          this.setState({verify: !verify})
+          Router.push('/nomor-handphone')
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -118,10 +106,25 @@ class VerifyNoTelp extends React.Component {
       }
       this.setState({ notification })
     }
+    if (!statusSendOTPPhone.isLoading && submitOTPPhone) {
+      switch (statusSendOTPPhone.status) {
+        case Status.SUCCESS:
+          this.setState({ submitOTPPhone: false })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ submitOTPBank: false })
+          notification = {status: true, message: statusSendOTPPhone.message}
+          break
+        default:
+          break
+      }
+      this.setState({ notification })
+    }
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submitting } = this.state
+    const { formVerify, verify, profile, notification, submitting, submitOTPPhone } = this.state
     return (
       <div>
         <Notification
@@ -135,7 +138,7 @@ class VerifyNoTelp extends React.Component {
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
               <div className='has-text-centered noted'>
-                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor {profile.user.hasOwnProperty('user') ? ` ${profile.user.user.phone_number}` : '' }
+                <p>Silahkan menuliskan kode aktivasi yang telah kami kirim ke nomor { profile.user.hasOwnProperty('user') ? ` ${profile.user.user.phone_number}` : '' }
                 </p>
               </div>
               <div className='field is-horizontal number-account'>
@@ -205,7 +208,7 @@ class VerifyNoTelp extends React.Component {
                 Verifikasi Nomor Telepon
               </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
-                <a onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+                <a className={submitOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
               </p>
             </form>
           </div>
@@ -219,7 +222,8 @@ class VerifyNoTelp extends React.Component {
 const mapStateToProps = (state) => {
   return {
     stateVerifyPhone: state.verifyPhone,
-    profile: state.profile
+    profile: state.profile,
+    statusSendOTPPhone: state.sendOTPPhone
   }
 }
 
