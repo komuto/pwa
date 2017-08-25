@@ -154,12 +154,14 @@ export const typeFail = type => `${type}_FAILURE`
  */
 export const buildQuery = (params) => Object.keys(params)
   .reduce((query, prop) => {
+    if (params[prop] === undefined || (typeof params[prop] !== 'number' && params[prop].length === 0)) {
+      return query
+    }
     if (Array.isArray(params[prop])) {
-      if (params[prop].length === 0) params[prop] = ''
       // Change from array to string -> [1,2] -> '1,2'
       params[prop] = String(params[prop])
     }
-    if (params[prop] !== undefined) query.push(`${prop}=${params[prop]}`)
+    query.push(`${prop}=${params[prop]}`)
     return query
   }, []).join('&')
 
@@ -170,7 +172,7 @@ export const buildQuery = (params) => Object.keys(params)
  * @param props {[string]} take specific prop for data from api
  * ['user', 'province', 'id'] only take data.user.province.id for data
  */
-export const buildSaga = (callApi, actionType, props = []) => function * ({ type, ...params }) {
+export const buildSaga = (callApi, actionType, props = []) => function* ({ type, ...params }) {
   try {
     const { data } = yield callApi(params)
     if (props) {
@@ -182,7 +184,7 @@ export const buildSaga = (callApi, actionType, props = []) => function * ({ type
   }
 }
 
-export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function * ({ type, ...params }) {
+export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function* ({ type, ...params }) {
   try {
     yield call(delay, delayCount)
     const { data } = yield callApi(params)
@@ -194,3 +196,13 @@ export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []
     yield errorHandling(typeFail(actionType), e)
   }
 }
+
+/**
+ * Filter update object, field with the value of '$' will not be updated
+ * @param obj {object}
+ */
+export const filterUpdate = obj => Object.keys(obj).reduce((res, prop) => {
+  if (obj[prop] === '$') return res
+  res[prop] = obj[prop]
+  return res
+}, {})
