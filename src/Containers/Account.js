@@ -31,19 +31,43 @@ class Account extends Component {
     this.props.dispatch(loginAction.logout())
   }
 
+  sendOTPPhone (e) {
+    e.preventDefault()
+    this.props.sendOTPToPhone()
+  }
+
+  handleOnClick (e) {
+    e.preventDefault()
+    const { profile, user } = this.props
+    if (profile.user.store.hasOwnProperty('name')) {
+      Router.push('/store-seller')
+    } else {
+      if (user.is_phone_verified) {
+        Router.push('/add-information-store')
+      } else {
+        this.handleVerify()
+      }
+    }
+  }
+
+  manageAccount (e) {
+    e.preventDefault()
+    Router.push('/manage-account')
+  }
+
+  componentDidMount () {
+    if (!this.state.profile.isFound) {
+      this.props.getProfile()
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
     if (nextProps.sendOTPPhone.status === 200) {
       Router.push('/verify-no-telp')
     }
     if (nextProps.profile.status === 200) {
-      this.props.getProfile()
       this.setState({ profile: nextProps.profile })
     }
-  }
-
-  sendOTPPhone (e) {
-    e.preventDefault()
-    this.props.sendOTPToPhone()
   }
 
   renderModalVerify () {
@@ -70,32 +94,8 @@ class Account extends Component {
     )
   }
 
-  handleOnClick (e) {
-    e.preventDefault()
-    const { profile, user } = this.props
-    if (profile.user.store.hasOwnProperty('name')) {
-      Router.push('/store-seller')
-    } else {
-      if (user.is_phone_verified) {
-        Router.push('/add-information-store')
-      } else {
-        this.handleVerify()
-      }
-    }
-  }
-
-  manageAccount (e) {
-    e.preventDefault()
-    Router.push('/manage-account')
-  }
-
-  componentDidMount () {
-    if (!this.state.profile) {
-      this.props.getProfile()
-    }
-  }
-
   renderStore () {
+    console.log('state ', this.state)
     const { profile } = this.props
     const isHasStoreprofile = profile.user.store.hasOwnProperty('name')
     return (
