@@ -154,20 +154,6 @@ class AddressInfo extends React.Component {
     this.setState({ showAddress: !this.state.showAddress })
   }
 
-  componentWillMount () {
-    const { provinces, listAddress, expeditions } = this.state
-    const { getListAddress, getProvince, getExpedition } = this.props
-    if (provinces.data.provinces.length === 0) {
-      getProvince()
-    }
-    if (listAddress.address.length === 0) {
-      getListAddress()
-    }
-    if (expeditions.expeditions.length === 0) {
-      getExpedition()
-    }
-  }
-
   submitAddressInfo (e) {
     e.preventDefault()
     const { formAdress, submitting } = this.state
@@ -241,8 +227,22 @@ class AddressInfo extends React.Component {
     createStore(dataCreateStore)
   }
 
+  componentWillMount () {
+    const { provinces, listAddress, expeditions } = this.state
+    const { getListAddress, getProvince, getExpedition } = this.props
+    if (provinces.data.provinces.length === 0) {
+      getProvince()
+    }
+    if (listAddress.address.length === 0) {
+      getListAddress()
+    }
+    if (expeditions.expeditions.length === 0) {
+      getExpedition()
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { provinces, districts, subdistricts, villages } = this.state
+    const { provinces, districts, subdistricts, villages, submitting } = this.state
     if (nextProps.provinces.status === 200) {
       const newProvince = { provinces }
       newProvince.provinces['data'] = nextProps.provinces
@@ -278,7 +278,7 @@ class AddressInfo extends React.Component {
     }
     this.setState({ listAddress: nextProps.listAddress })
     const { store } = nextProps
-    if (!store.isLoading) {
+    if (!store.isLoading && submitting) {
       let { notification } = this.state
       notification = {status: false, message: 'Error, default message.'}
       switch (store.status) {
@@ -479,12 +479,6 @@ class AddressInfo extends React.Component {
                   className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
                   onClick={(e) => this.submitAddressInfo(e)}>Lanjutkan
                 </button>
-                {/* <Loading
-                  size={12}
-                  color='#ef5656'
-                  type=''
-                  className='is-fullwidth has-text-centered' />
-                */}
               </p>
             </div>
           </div>
@@ -498,7 +492,7 @@ class AddressInfo extends React.Component {
 const mapStateToProps = (state) => {
   return {
     store: state.createStore,
-    processCreateStore: state.processCreateStore,
+    processCreateStore: state.createStoreTemp,
     profile: state.profile,
     listAddress: state.listAddress,
     // location
@@ -516,8 +510,6 @@ const mapDispatchToProps = dispatch => ({
   getDistrict: (params) => dispatch(actionLocationTypes.getDistrict(params)),
   getSubDistrict: (params) => dispatch(actionLocationTypes.getSubDistrict(params)),
   getVillage: (params) => dispatch(actionLocationTypes.getVillage(params)),
-  AddressInfo: (params) => dispatch(actionStoreTypes.AddressInfo(params)),
-  postExpedition: (params) => dispatch(actionStoreTypes.shippingExpedition(params)),
   createStore: (params) => dispatch(actionStoreTypes.createStore(params)),
   getExpedition: () => dispatch(actionExpeditionTypes.getExpedition())
 })

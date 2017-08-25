@@ -94,7 +94,7 @@ class AddInformationStore extends React.Component {
       if (files.preview !== formInfo.logo) {
         this.handleUploadImage()
       } else {
-        this.props.infoStore(formInfo)
+        this.props.createStoreTemp({ store: formInfo })
         this.setState({ submitting: true })
         Router.push('/shipping-expedition')
       }
@@ -115,7 +115,7 @@ class AddInformationStore extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { formInfo, submitting } = this.state
-    const { infoStore } = this.props
+    const { createStoreTemp } = this.props
     if (nextProps.upload.status === 200 && submitting) {
       const logo = nextProps.upload.payload.images[0].name
       const path = nextProps.upload.payload.path
@@ -123,7 +123,7 @@ class AddInformationStore extends React.Component {
       newState.formInfo['logo'] = logo
       newState.formInfo['path'] = path
       this.setState(newState)
-      infoStore(formInfo)
+      createStoreTemp({ store: formInfo })
       Router.push('/shipping-expedition')
     }
   }
@@ -225,13 +225,13 @@ class AddInformationStore extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    formInfo: state.processCreateStore,
+    formInfo: state.createStoreTemp,
     upload: state.upload
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  infoStore: (params) => dispatch(actionTypes.infoStore(params)),
+  createStoreTemp: (params) => dispatch(actionTypes.createStoreTemp(params)),
   photoUpload: (params) => dispatch(actionTypes.photoUpload({data: params}))
 })
 
