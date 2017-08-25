@@ -32,4 +32,3 @@ export const archiveSellerMessage = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`/users/store/messages/${id}/archive`)
 }
-

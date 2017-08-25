@@ -172,7 +172,7 @@ export const buildQuery = (params) => Object.keys(params)
  * @param props {[string]} take specific prop for data from api
  * ['user', 'province', 'id'] only take data.user.province.id for data
  */
-export const buildSaga = (callApi, actionType, props = []) => function* ({ type, ...params }) {
+export const buildSaga = (callApi, actionType, props = []) => function * ({ type, ...params }) {
   try {
     const { data } = yield callApi(params)
     if (props) {
@@ -184,7 +184,7 @@ export const buildSaga = (callApi, actionType, props = []) => function* ({ type,
   }
 }
 
-export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function* ({ type, ...params }) {
+export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function * ({ type, ...params }) {
   try {
     yield call(delay, delayCount)
     const { data } = yield callApi(params)

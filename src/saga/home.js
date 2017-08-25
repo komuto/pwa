@@ -11,4 +11,3 @@ export const categoryList = buildSaga(apis.getCategories, actions.GET_CATEGORIES
 export const subCategory = buildSaga(apis.getCategories, actions.GET_CATEGORIES_2)
 export const subCategory2 = buildSaga(apis.getCategories, actions.GET_CATEGORIES_3)
 export const subCategory3 = buildSaga(apis.getCategories, actions.GET_CATEGORIES_4)
-

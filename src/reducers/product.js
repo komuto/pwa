@@ -174,4 +174,3 @@ export const tempCreateProduct = (state = initTempCreateProduct, { type, ...temp
       return state
   }
 }
-

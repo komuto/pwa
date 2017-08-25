@@ -42,4 +42,3 @@ export const archiveBuyerMessage = params => buildAction(typeReq(ARCHIVE_BUYER_M
  * @state archiveMessage
  */
 export const archiveSellerMessage = params => buildAction(typeReq(ARCHIVE_SELLER_MESSAGE), params)
-

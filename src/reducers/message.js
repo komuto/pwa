@@ -52,4 +52,3 @@ export const archiveMessage = (state = initState({ archiveMessage: {} }), action
       return state
   }
 }
-

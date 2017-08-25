@@ -143,4 +143,3 @@ export const addDropshipProducts = params => buildAction(typeReq(ADD_DROPSHIP_PR
  * @state tempCreateProduct
  */
 export const tempCreateProduct = params => buildAction(TEMP_CREATE_PRODUCT, params)
-

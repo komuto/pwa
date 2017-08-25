@@ -42,4 +42,3 @@ export const getSellerReview = (state = initState({ sellerReview: [] }, true), a
       return state
   }
 }
-

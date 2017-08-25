@@ -8,4 +8,3 @@ export const getBuyerDetailMessage = buildSaga(apis.getBuyerDetailMessage, actio
 export const getSellerDetailMessage = buildSaga(apis.getSellerDetailMessage, actions.GET_SELLER_DETAIL_MESSAGE)
 export const archiveBuyerMessage = buildSaga(apis.archiveBuyerMessage, actions.ARCHIVE_BUYER_MESSAGE)
 export const archiveSellerMessage = buildSaga(apis.archiveSellerMessage, actions.ARCHIVE_SELLER_MESSAGE)
-
