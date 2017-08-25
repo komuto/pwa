@@ -32,7 +32,7 @@ class Categories2 extends Component {
 
   componentDidMount () {
     const { id } = this.state
-    if (id) NProgress.start() && this.props.dispatch(homeActions.subCategory({ id }))
+    if (id) NProgress.start() && this.props.getSubCategory({ id })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -113,10 +113,12 @@ class Categories2 extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    subCategory: state.subCategory
-  }
-}
+const mapStateToProps = (state) => ({
+  subCategory: state.subCategory
+})
 
-export default connect(mapStateToProps)(Categories2)
+const mapDispatchToProps = (dispatch) => ({
+  getSubCategory: (params) => dispatch(homeActions.subCategory(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Categories2)
