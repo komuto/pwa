@@ -240,13 +240,10 @@ class AddAddress extends React.Component {
           break
       }
     }
-    console.log('nextProps', nextProps)
   }
 
   render () {
     const { formAddress, provinces, districts, subdistricts, villages, notification, submitting } = this.state
-    console.log('props ', this.props)
-    console.log('state ', this.state)
     return (
       <div>
         <Notification
