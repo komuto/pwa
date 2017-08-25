@@ -112,7 +112,7 @@ class MyProduct extends Component {
 
   async handleLoadMore () {
     let { pagination, fetching } = this.state
-    console.log('handleLoadMore', fetching)
+
     if (!fetching) {
       pagination.page += 1
       this.params.page = pagination.page
@@ -438,8 +438,6 @@ class MyProduct extends Component {
       textPath: 'Produk',
       searchActive: !!q
     }
-
-    console.log(sort)
 
     navbar.textPath = (categories.name) && categories.name
     navbar.textPath = (q) && q
