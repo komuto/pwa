@@ -5,6 +5,7 @@ import FlipMove from 'react-flip-move'
 // component
 import MyImage from '../Components/MyImage'
 import Wizard from '../Components/Wizard'
+import Notification from '../Components/Notification'
 
 const styles = {
   display: 'flex',
@@ -20,30 +21,46 @@ class ProductAddStepOne extends Component {
     this.state = {
       pictures: [],
       notAcceptedFileType: [],
-      notAcceptedFileSize: []
+      notAcceptedFileSize: [],
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
   triggerFileUpload () {
-    this.inputElement.click()
+    this.inputElementPress.click()
   }
 
   onDropFile (e) {
-    const { pictures, notAcceptedFileType, notAcceptedFileSize } = this.state
-    const files = e.target.files
+    let files = e.target.files
+    let { pictures, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
+    notification = {
+      status: false,
+      message: 'Error, default message.'
+    }
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
-        this.setState({ notAcceptedFileType })
+        notification = {
+          status: true,
+          message: this.props.fileTypeError + ' ' + this.props.label
+        }
+        this.setState({ notAcceptedFileType, notification })
         continue
       }
       // Check for file size
       if (f.size > this.props.maxFileSize) {
         notAcceptedFileSize.push(f.name)
-        this.setState({ notAcceptedFileSize })
+        notification = {
+          status: true,
+          message: this.props.fileSizeError + ' ' + this.props.label
+        }
+        this.setState({ notAcceptedFileSize, notification })
         continue
       }
       const reader = new FileReader()
@@ -56,8 +73,9 @@ class ProductAddStepOne extends Component {
   }
 
   inputElement (input) {
-    this.inputElement = input
+    this.inputElementPress = input
   }
+
   hasExtension (fileName) {
     return (new RegExp('(' + this.props.imgExtension.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)
   }
@@ -68,9 +86,15 @@ class ProductAddStepOne extends Component {
   }
 
   render () {
-    const { pictures } = this.state
+    const { pictures, notification } = this.state
     return (
       <section className='section is-paddingless'>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <Wizard total={4} active={1} />
         <div className='add-product'>
           <div className='container is-fluid'>
@@ -96,7 +120,7 @@ class ProductAddStepOne extends Component {
                   <input
                     style={{ display: 'none' }}
                     type='file'
-                    ref={input => this.inputElement(input)}
+                    ref={(input) => this.inputElement(input)}
                     name={this.props.name}
                     multiple='multiple'
                     onChange={(e) => this.onDropFile(e)}
@@ -120,8 +144,8 @@ class ProductAddStepOne extends Component {
 ProductAddStepOne.defaultProps = {
   accept: 'accept=image/*',
   withLabel: true,
-  label: 'Max file size: 5mb, accepted: jpg|gif|png|gif',
-  imgExtension: ['.jpg', '.gif', '.png'],
+  label: 'Max file size: 5mb, accepted: jpg|gif|png|JPG',
+  imgExtension: ['.jpg', '.JPG', '.png'],
   maxFileSize: 5242880,
   fileSizeError: ' file size is too big',
   fileTypeError: ' is not supported file extension'
