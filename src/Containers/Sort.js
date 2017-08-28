@@ -4,8 +4,8 @@ import React from 'react'
 const Sort = (props) => {
   const { isShow, selected } = props
   return (
-    <div className='sort-option' style={{display: isShow ? 'block' : 'none'}}>
-      <div className='sort-list effect-slide-bottom-up'>
+    <div className='sort-option sortButton' style={{display: isShow ? 'block' : 'none'}} onClick={(e) => props.sortOnClick(e)}>
+      <div className='sort-list effect-slide-bottom-up sortButton'>
         <p><strong>Urutkan Berdasarkan</strong></p>
         <label className='checkbox' htmlFor='#terbaru' onClick={() => props.sortSelected('terbaru')}>
           <span className={`sort-text ${selected === 'terbaru' ? 'active' : ''}`}>Terbaru</span>

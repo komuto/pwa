@@ -31,6 +31,8 @@ class Profile extends Component {
     const { user } = this.state
     const token = await GET_TOKEN.getToken()
 
+    console.log(token)
+
     if (token && _.isEmpty(user.user)) {
       NProgress.start()
       this.props.dispatch(loginAction.getProfile())

@@ -44,7 +44,7 @@ export const allCategory = (state = initState({ allCategory: [] }), action) => {
 export const categoryList = (state = initState({ categories: [] }), action) => {
   const type = buildType(action.type)
   switch (type) {
-    case actions.HOME_CATEGORY:
+    case actions.GET_CATEGORIES_1:
       return buildReducer(state, action, type, 'categories')
     default:
       return state
@@ -56,7 +56,27 @@ export const subCategory = (state = initState({ categories: [] }), action) => {
   switch (type) {
     case actions.STATUS_SUBCATEGORY_RESET:
       return initState({ categories: [] })
-    case actions.HOME_SUBCATEGORY:
+    case actions.GET_CATEGORIES_2:
+      return buildReducer(state, action, type, 'categories')
+    default:
+      return state
+  }
+}
+
+export const subCategory2 = (state = initState({ categories: [] }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_CATEGORIES_3:
+      return buildReducer(state, action, type, 'categories')
+    default:
+      return state
+  }
+}
+
+export const subCategory3 = (state = initState({ categories: [] }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_CATEGORIES_4:
       return buildReducer(state, action, type, 'categories')
     default:
       return state

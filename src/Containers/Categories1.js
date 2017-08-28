@@ -31,7 +31,7 @@ class Categories1 extends Component {
     const { allCategory } = this.state.allCategory
     if (allCategory.length < 1) {
       NProgress.start()
-      await this.props.dispatch(homeActions.allCategory())
+      await this.props.getCategory()
     }
   }
 
@@ -104,9 +104,12 @@ class Categories1 extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    allCategory: state.allCategory
-  }
-}
-export default connect(mapStateToProps)(Categories1)
+const mapStateToProps = (state) => ({
+  allCategory: state.allCategory
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  getCategory: () => dispatch(homeActions.allCategory())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Categories1)
