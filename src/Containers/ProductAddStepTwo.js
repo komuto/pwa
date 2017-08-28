@@ -6,6 +6,7 @@ import NProgress from 'nprogress'
 import Wizard from '../Components/Wizard'
 // actions
 import * as homeActions from '../actions/home'
+import * as brandActions from '../actions/brand'
 // Utils
 import { Status } from '../Services/Status'
 
@@ -13,8 +14,11 @@ class ProductAddStepTwo extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      allCategory: props.allCategory || null,
+      brands: props.brands || null,
+      category: props.category || null,
       subCategory: props.subCategory || null,
+      subCategory2: props.subCategory2 || null,
+      subCategory3: props.subCategory3 || null,
       form: {},
       error: null
     }
@@ -23,39 +27,66 @@ class ProductAddStepTwo extends Component {
   formHandling (e) {
     const { form } = this.state
     form[e.target.name] = e.target.value
-    // fetch category level 3,4
-    if (e.target.name === 'categoryTwo' || e.target.name === 'categoryThree') {
+    // fetch category level 2
+    if (e.target.name === 'categoryOne') {
       this.props.getSubCategory({ id: e.target.value })
+    }
+    // fetch category level 3
+    if (e.target.name === 'categoryTwo') {
+      this.props.getSubCategory2({ id: e.target.value })
+    }
+    // fetch category level 4
+    if (e.target.name === 'categoryThree') {
+      this.props.getSubCategory3({ id: e.target.value })
     }
     this.setState({ form })
   }
 
   async componentDidMount () {
-    const { allCategory } = this.state.allCategory
-    if (!allCategory.isFound) {
+    const { category, brands } = this.state
+    if (!category.isFound) {
       NProgress.start()
-      // fetch category level 1,2
+      // fetch category level 1
       await this.props.getCategory()
+    }
+    if (!brands.isFound) {
+      NProgress.start()
+      await this.props.getBrand()
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { allCategory, subCategory } = nextProps
-    if (!allCategory.isLoading) {
+    const { category, subCategory, subCategory2, subCategory3, brands } = nextProps
+    if (!category.isLoading) {
       NProgress.done()
-      if (allCategory.status === Status.SUCCESS) this.setState({ allCategory })
-      if (allCategory.status === Status.OFFLINE || allCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: allCategory.message} })
+      if (category.status === Status.SUCCESS) this.setState({ category })
+      if (category.status === Status.OFFLINE || category.status === Status.FAILED) this.setState({ notification: {status: true, message: category.message} })
     }
-
     if (!subCategory.isLoading) {
       NProgress.done()
       if (subCategory.status === Status.SUCCESS) this.setState({ subCategory })
-      if (subCategory.status === Status.OFFLINE || allCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory.message} })
+      if (subCategory.status === Status.OFFLINE || subCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory.message} })
+    }
+    if (!subCategory2.isLoading) {
+      NProgress.done()
+      if (subCategory2.status === Status.SUCCESS) this.setState({ subCategory2 })
+      if (subCategory2.status === Status.OFFLINE || subCategory2.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory2.message} })
+    }
+    if (!subCategory3.isLoading) {
+      NProgress.done()
+      if (subCategory3.status === Status.SUCCESS) this.setState({ subCategory3 })
+      if (subCategory3.status === Status.OFFLINE || subCategory3.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory3.message} })
+    }
+    if (!brands.isLoading) {
+      NProgress.done()
+      if (brands.status === Status.SUCCESS) this.setState({ brands })
+      if (brands.status === Status.OFFLINE || brands.status === Status.FAILED) this.setState({ notification: {status: true, message: brands.message} })
     }
   }
 
   render () {
-    const { form, allCategory, subCategory } = this.state
+    const { form, category, subCategory, subCategory2, subCategory3, brands } = this.state
+    console.log(brands)
     return (
       <section className='section is-paddingless'>
         <Wizard total={4} active={2} />
@@ -74,11 +105,11 @@ class ProductAddStepTwo extends Component {
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne'>
                     <option value='default'> Pilih</option>
                     {
-                      allCategory.isFound &&
-                      allCategory.allCategory.map((category) => {
-                        return <option key={category.id} value={category.id}> {category.name} </option>
-                      })
-                    }
+                        category.isFound &&
+                        category.categories.map((category) => {
+                          return <option key={category.id} value={category.id}> {category.name} </option>
+                        })
+                      }
                   </select>
                 </span>
               </p>
@@ -90,11 +121,9 @@ class ProductAddStepTwo extends Component {
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo'>
                     <option value='default'> Pilih</option>
                     {
-                      allCategory.isFound &&
+                      subCategory.isFound &&
                       form.categoryOne !== undefined &&
-                      allCategory.allCategory.filter((category) => {
-                        return category.id === Number(form.categoryOne)
-                      })[0].sub_categories.map((sc) => {
+                      subCategory.categories.sub_categories.map((sc) => {
                         return <option key={sc.id} value={sc.id}> {sc.name} </option>
                       })
                     }
@@ -107,11 +136,12 @@ class ProductAddStepTwo extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree'>
+                    <option value='default'> Pilih</option>
                     {
-                      subCategory.isFound &&
+                      subCategory2.isFound &&
                       form.categoryTwo !== undefined &&
-                      subCategory.categories.sub_categories.map((sc) => {
-                        return <option key={sc.id} value={sc.id}>{sc.id} { sc.name }</option>
+                      subCategory2.categories.sub_categories.map((sc) => {
+                        return <option key={sc.id} value={sc.id}>{ sc.name }</option>
                       })
                     }
                   </select>
@@ -122,10 +152,16 @@ class ProductAddStepTwo extends Component {
               <label>Sub-Kategori 3</label>
               <p className='control'>
                 <span className='select'>
-                  {/* <select>
-                    <option>Sneakers Pria</option>
-                    <option>With options</option>
-                  </select> */}
+                  <select onChange={(e) => this.formHandling(e)} value={form.category_id !== undefined ? form.category_id : 'default'} name='category_id'>
+                    <option value='default'> Pilih</option>
+                    {
+                      subCategory3.isFound &&
+                      form.categoryThree !== undefined &&
+                      subCategory3.categories.sub_categories.map((sc) => {
+                        return <option key={sc.id} value={sc.id}>{ sc.name }</option>
+                      })
+                    }
+                  </select>
                 </span>
               </p>
             </div>
@@ -143,10 +179,15 @@ class ProductAddStepTwo extends Component {
               <label>Brand</label>
               <p className='control'>
                 <span className='select'>
-                  {/* <select>
-                    <option>Nike</option>
-                    <option>With options</option>
-                  </select> */}
+                  <select onChange={(e) => this.formHandling(e)} value={form.brand_id !== undefined ? form.brand_id : 'default'} name='brand_id'>
+                    <option value='default'> Pilih</option>
+                    {
+                      brands.isFound &&
+                      brands.brands.map((brand) => {
+                        return <option key={brand.id} value={brand.id}>{ brand.name }</option>
+                      })
+                    }
+                  </select>
                 </span>
               </p>
             </div>
@@ -169,13 +210,19 @@ class ProductAddStepTwo extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  allCategory: state.allCategory,
-  subCategory: state.subCategory
+  brands: state.brands,
+  category: state.category,
+  subCategory: state.subCategory,
+  subCategory2: state.subCategory2,
+  subCategory3: state.subCategory3
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getCategory: () => dispatch(homeActions.allCategory()),
-  getSubCategory: (params) => dispatch(homeActions.subCategory(params))
+  getBrand: () => dispatch(brandActions.getBrand()),
+  getCategory: () => dispatch(homeActions.categoryList()),
+  getSubCategory: (params) => dispatch(homeActions.subCategory(params)),
+  getSubCategory2: (params) => dispatch(homeActions.subCategory2(params)),
+  getSubCategory3: (params) => dispatch(homeActions.subCategory3(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAddStepTwo)
