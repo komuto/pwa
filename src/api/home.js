@@ -10,12 +10,7 @@ export const allCategory = () => {
   return axios.get('categories/sub').catch((err) => { throw err })
 }
 
-export const categoryList = () => {
-  const axios = publicApiKomuto()
-  return axios.get('categories').catch((err) => { throw err })
-}
-
-export const subCategory = ({ id }) => {
+export const getCategories = ({ id = '' } = {}) => {
   const axios = publicApiKomuto()
   return axios.get(`categories/${id}`).catch((err) => { throw err })
 }

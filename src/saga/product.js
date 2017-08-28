@@ -17,3 +17,4 @@ export const deleteProducts = buildSaga(apis.deleteProducts, actions.DELETE_PROD
 export const changeCatalogProducts = buildSaga(apis.changeCatalogProducts, actions.CHANGE_CATALOG)
 export const updateProduct = buildSaga(apis.updateProduct, actions.UPDATE_PRODUCT)
 export const getProductExpeditions = buildSaga(apis.getProductExpeditions, actions.GET_PRODUCT_EXPEDITIONS)
+export const addDropshipProducts = buildSaga(apis.addDropshipProducts, actions.ADD_DROPSHIP_PRODUCTS)

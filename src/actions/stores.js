@@ -11,19 +11,15 @@ export const MESSAGE_STORE = 'MESSAGE_STORE'
 export const MESSAGE_STORE_RESET = 'MESSAGE_STORE_RESET'
 export const GET_OWN_STORE = 'GET_OWN_STORE'
 export const GET_STORE_PRODUCTS = 'GET_STORE_PRODUCTS'
+export const GET_STORE_PRODUCT_DETAIL = 'GET_STORE_PRODUCT_DETAIL'
 export const GET_HIDDEN_STORE_PRODUCTS = 'GET_HIDDEN_STORE_PRODUCTS'
 export const GET_STORE_CATALOG_PRODUCTS = 'GET_STORE_CATALOG_PRODUCTS'
 export const UPDATE_INFORMATION = 'UPDATE_INFORMATION'
 export const UPDATE_TERM = 'UPDATE_TERM'
 export const GET_ADDRESS = 'GET_ADDRESS'
 export const UPDATE_STORE_ADDRESS = 'UPDATE_STORE_ADDRESS'
-export const CREATE_STORE_TEMP = 'CREATE_STORE_TEMP'
-// create store
-export const INFO_STORE = 'INFO_STORE'
-export const SHIPPING_EXPEDITION = 'SHIPPING_EXPEDITION'
-export const OWNER_INFO = 'OWNER_INFO'
-export const ADDRESS_INFO = 'ADDRESS_INFO'
-// =======
+export const TEMP_CREATE_STORE = 'TEMP_CREATE_STORE'
+export const GET_STORE_DISCUSSIONS = 'GET_STORE_DISCUSSIONS'
 
 /**
  * @params id {int} store id
@@ -118,12 +114,18 @@ export const updateStoreAddress = params => buildAction(typeReq(UPDATE_STORE_ADD
 export const getHiddenStoreProducts = () => buildAction(typeReq(GET_HIDDEN_STORE_PRODUCTS))
 
 /**
- * @state createStoreTemp
+ * @state tempCreateStore
  */
-export const createStoreTemp = params => buildAction(CREATE_STORE_TEMP, params)
+export const tempCreateStore = params => buildAction(TEMP_CREATE_STORE, params)
 
-// create store
-export const infoStore = params => ({ type: INFO_STORE, params })
-export const shippingExpedition = params => ({ type: SHIPPING_EXPEDITION, params })
-export const OwnerInfo = params => ({ type: OWNER_INFO, params })
-export const AddressInfo = params => ({ type: ADDRESS_INFO, params })
+/**
+ * @params params are the same as the api query
+ * @state storeDiscussions
+ */
+export const getStoreDiscussions = params => buildAction(typeReq(GET_STORE_DISCUSSIONS), params)
+
+/**
+ * @params params are the same as the api query
+ * @state storeProductsDetail
+ */
+export const getStoreProductDetail = params => buildAction(typeReq(GET_STORE_PRODUCT_DETAIL), params)

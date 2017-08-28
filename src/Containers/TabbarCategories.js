@@ -3,7 +3,7 @@ import React from 'react'
 
 const Tabbar = (props) => {
   const { viewActive, sortButton, filterButton, viewButton } = props
-  const sort = sortButton ? <a onClick={props.sortOnClick} className='level-item has-text-centered js-sort'><span className='icon-sort' />Urutkan</a> : null
+  const sort = sortButton ? <a onClick={(e) => props.sortOnClick(e)} className='level-item has-text-centered js-sort sortButton'><span className='icon-sort sortButton' />Urutkan</a> : null
   const filter = filterButton ? <a onClick={props.filterOnClick} className='level-item has-text-centered modal-button' data-target='#modal-filter'><span className='icon-filter' />Filter</a> : null
   const view = viewButton
                 ? <a onClick={props.viewOnClick} className='level-item has-text-centered'>

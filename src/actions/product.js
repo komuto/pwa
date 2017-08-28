@@ -21,6 +21,9 @@ export const DELETE_PRODUCTS = 'DELETE_PRODUCTS'
 export const CHANGE_CATALOG = 'CHANGE_CATALOG'
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT'
 export const GET_PRODUCT_EXPEDITIONS = 'GET_PRODUCT_EXPEDITIONS'
+export const ADD_DROPSHIP_PRODUCTS = 'ADD_DROPSHIP_PRODUCTS'
+export const TEMP_CREATE_PRODUCT = 'TEMP_CREATE_PRODUCT'
+export const ALTER_PRODUCT_RESET = 'ALTER_PRODUCT_RESET'
 
 /**
  * @params id {int} product id
@@ -71,7 +74,6 @@ export const newDiscussion = params => buildAction(typeReq(NEW_DISCUSSION), para
 export const resetDiscussion = () => buildAction(NEW_DISCUSSION_RESET)
 
 /**
- * @params productId {int}
  * @params id {int} discussion id
  * @params params are the same as the api query
  * @state comments
@@ -79,7 +81,6 @@ export const resetDiscussion = () => buildAction(NEW_DISCUSSION_RESET)
 export const getComment = params => buildAction(typeReq(GET_COMMENT), params)
 
 /**
- * @params productId {int}
  * @params id {int} discussion id
  * @params params are the same as the api
  * @state newComment
@@ -124,9 +125,21 @@ export const changeCatalogProducts = params => buildAction(typeReq(CHANGE_CATALO
  * @state alterProducts
  */
 export const updateProduct = params => buildAction(typeReq(UPDATE_PRODUCT), params)
+export const resetAlterProduct = () => buildAction(ALTER_PRODUCT_RESET)
 
 /**
  * @params id {int} product id
  * @state productExpeditions
  */
 export const getProductExpeditions = params => buildAction(typeReq(GET_PRODUCT_EXPEDITIONS), params)
+
+/**
+ * @params id {int} product id
+ * @state addDropshipProducts
+ */
+export const addDropshipProducts = params => buildAction(typeReq(ADD_DROPSHIP_PRODUCTS), params)
+
+/**
+ * @state tempCreateProduct
+ */
+export const tempCreateProduct = params => buildAction(TEMP_CREATE_PRODUCT, params)

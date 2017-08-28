@@ -1,6 +1,21 @@
 import * as actions from '../actions/product'
 import { buildReducer, initState, buildType } from '../config'
 
+const initTempCreateProduct = {
+  stepOne: {
+    isFound: false
+  },
+  stepTwo: {
+    isFound: false
+  },
+  stepThree: {
+    isFound: false
+  },
+  stepFour: {
+    isFound: false
+  }
+}
+
 export const getProduct = (state = initState({ detail: {} }), action) => {
   const type = buildType(action.type)
   switch (type) {
@@ -124,6 +139,8 @@ export const alterProducts = (state = initState({ product: {} }), action) => {
       return { ...buildReducer(state, action, type), type: 'change' }
     case actions.UPDATE_PRODUCT:
       return { ...buildReducer(state, action, type, 'product'), type: 'update' }
+    case actions.ALTER_PRODUCT_RESET:
+      return initState({ product: {} })
     default:
       return state
   }
@@ -134,6 +151,25 @@ export const getProductExpeditions = (state = initState({ productExpeditions: []
   switch (type) {
     case actions.GET_PRODUCT_EXPEDITIONS:
       return buildReducer(state, action, type, 'productExpeditions')
+    default:
+      return state
+  }
+}
+
+export const addDropshipProducts = (state = initState({ addDropshipProducts: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.ADD_DROPSHIP_PRODUCTS:
+      return buildReducer(state, action, type, 'addDropshipProducts')
+    default:
+      return state
+  }
+}
+
+export const tempCreateProduct = (state = initTempCreateProduct, { type, ...temp }) => {
+  switch (type) {
+    case actions.TEMP_CREATE_PRODUCT:
+      return { ...state, ...temp }
     default:
       return state
   }

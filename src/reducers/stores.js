@@ -1,7 +1,7 @@
 import * as actions from '../actions/stores'
 import { buildReducer, buildType, initState } from '../config'
 
-const initProcessCreateStore = {
+const initTempCreateStore = {
   store: {
     name: '',
     slogan: '',
@@ -122,11 +122,11 @@ export const getStoreProducts = (state = initState({ storeProducts: {} }), actio
   }
 }
 
-export const getStoreCatalogProducts = (state = initState({ storeCatalogProducts: {} }), action) => {
+export const getStoreCatalogProducts = (state = initState({ storeCatalogProducts: {} }, true), action) => {
   const type = buildType(action.type)
   switch (type) {
     case actions.GET_STORE_CATALOG_PRODUCTS:
-      return buildReducer(state, action, type, 'storeCatalogProducts')
+      return buildReducer(state, action, type, 'storeCatalogProducts', true)
     default:
       return state
   }
@@ -174,10 +174,30 @@ export const getHiddenStoreProducts = (state = initState({ hiddenStoreProducts: 
   }
 }
 
-export const processCreateStore = (state = initProcessCreateStore, { type, ...temp }) => {
+export const tempCreateStore = (state = initTempCreateStore, { type, ...temp }) => {
   switch (type) {
-    case actions.CREATE_STORE_TEMP:
+    case actions.TEMP_CREATE_STORE:
       return { ...state, ...temp }
+    default:
+      return state
+  }
+}
+
+export const getStoreDiscussions = (state = initState({ storeDiscussions: [] }, true), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_STORE_DISCUSSIONS:
+      return buildReducer(state, action, type, 'storeDiscussions', true)
+    default:
+      return state
+  }
+}
+
+export const getStoreProductDetail = (state = initState({ storeProductDetail: {} }), action) => {
+  const type = buildType(action.type)
+  switch (type) {
+    case actions.GET_STORE_PRODUCT_DETAIL:
+      return buildReducer(state, action, type, 'storeProductDetail')
     default:
       return state
   }
