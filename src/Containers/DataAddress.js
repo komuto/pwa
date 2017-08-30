@@ -58,60 +58,62 @@ class DataAddress extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { notification, listAddress, deleteAddressTemp } = this.state
-    const { addAddress, updateAddress, statusDeleteAddress } = nextProps
+    const { notification, listAddress, deleteAddressTemp, submitting } = this.state
+    const { addAddress, updateAddress, statusDeleteAddress, query } = nextProps
     if (nextProps.listAddress.status === 200) {
       this.setState({ listAddress: nextProps.listAddress })
     }
-    if (!addAddress.isLoading) {
-      switch (addAddress.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = addAddress.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
+    if (query.hasOwnProperty('isSuccess')) {
+      if (!addAddress.isLoading) {
+        switch (addAddress.status) {
+          case Status.SUCCESS: {
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = addAddress.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          }
+          case Status.OFFLINE :
+          case Status.FAILED : {
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = addAddress.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          }
+          default:
+            break
         }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = addAddress.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+        this.setState({ notification })
       }
-      this.setState({ notification })
-    }
-    if (updateAddress.isFound) {
-      switch (updateAddress.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = updateAddress.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
+      if (updateAddress.isFound) {
+        switch (updateAddress.status) {
+          case Status.SUCCESS: {
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = updateAddress.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          }
+          case Status.OFFLINE :
+          case Status.FAILED : {
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = updateAddress.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          }
+          default:
+            break
         }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = updateAddress.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+        this.setState({ notification })
       }
-      this.setState({ notification })
     }
-    if (!statusDeleteAddress.isLoading) {
+    if (!statusDeleteAddress.isLoading && submitting) {
       switch (statusDeleteAddress.status) {
         case Status.SUCCESS: {
           let newData = listAddress.address.filter(data => data.id !== deleteAddressTemp)
