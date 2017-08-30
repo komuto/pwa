@@ -7,6 +7,7 @@ import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../actions/user'
 // services
+import GET_TOKEN from '../Services/GetToken'
 import { Status } from '../Services/Status'
 
 class ManageAccount extends Component {
@@ -19,51 +20,70 @@ class ManageAccount extends Component {
         status: false,
         color: 'is-success',
         message: 'Error, default message.'
-      }
+      },
+      submitSignOut: false
     }
   }
 
   handleNotification (e) {
     const { notification } = this.state
-    const newState = { notification }
+    const newState = { notification, changePassword: {} }
     newState.notification['status'] = !notification.status
     this.setState(newState)
   }
 
   componentDidMount () {
     const { notification, profile } = this.state
-    const { changePassword, getProfile } = this.props
+    const { getProfile, query, changePassword } = this.props
     if (!profile.isFound) {
       getProfile()
     }
-    if (!changePassword.isLoading && changePassword.isFound) {
-      switch (changePassword.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = changePassword.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
+    if (query.hasOwnProperty('isSuccess')) {
+      if (!changePassword.isLoading) {
+        switch (changePassword.status) {
+          case Status.SUCCESS: {
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = changePassword.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          }
+          case Status.OFFLINE :
+          case Status.FAILED : {
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = changePassword.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          }
+          default:
+            break
         }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = changePassword.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+        this.setState({ notification })
       }
-      this.setState({ notification })
     }
   }
 
-  componentWillReceiveProps (nextProps) {
-    this.setState({ profile: nextProps.profile })
+  async componentWillReceiveProps (nextProps) {
+    const { submitSignOut } = this.state
+    const { profile, isLogin } = nextProps
+    if (profile.isFound) {
+      this.setState({ profile })
+    }
+    if (!isLogin.login && submitSignOut) {
+      const token = await GET_TOKEN.getToken()
+      this.setState({ submitSignOut: false })
+      console.log('token ', token)
+      if (token === null) {
+        const href = `/profile?isSignOut`
+        const as = 'profile'
+        Router.push(href, as, { shallow: true })
+        NProgress.done()
+      }
+    }
+    console.log('nextProps', nextProps)
   }
 
   toNomorHandphone (e) {
@@ -103,10 +123,14 @@ class ManageAccount extends Component {
     Router.push('/setting-notification')
   }
 
-  logout (e) {
+  signOut (e) {
+    const { stateLogin, logout } = this.props
     e.preventDefault()
-    this.props.logout()
-    Router.push('/profile')
+    NProgress.start()
+    this.setState({ submitSignOut: true }, () => {
+      stateLogin({ login: false })
+      logout()
+    })
   }
 
   render () {
@@ -250,7 +274,7 @@ class ManageAccount extends Component {
           <div className='seller-akun'>
             <div className='profile-wrapp'>
               <ul>
-                <li onClick={(e) => this.logout(e)}>
+                <li onClick={(e) => this.signOut(e)}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -281,13 +305,16 @@ class ManageAccount extends Component {
 const mapStateToProps = (state) => {
   return {
     profile: state.profile,
-    changePassword: state.changePassword
+    changePassword: state.changePassword,
+    user: state.user,
+    isLogin: state.isLogin
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(actionTypes.getProfile()),
-  logout: () => dispatch(actionTypes.logout())
+  logout: () => dispatch(actionTypes.logout()),
+  stateLogin: (params) => dispatch(actionTypes.stateLogin(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageAccount)
