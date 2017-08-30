@@ -228,13 +228,14 @@ class AddAddress extends React.Component {
       switch (nextProps.statusAddAddress.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          Router.push('/data-address')
+          const href = `/data-address?isSuccess`
+          const as = 'data-address'
+          Router.push(href, as, { shallow: true })
           break
         case Status.OFFLINE :
         case Status.FAILED :
           notification = {status: true, message: nextProps.statusAddAddress.message}
-          this.setState({ submitting: false })
-          this.setState({ notification })
+          this.setState({ submitting: false, notification })
           break
         default:
           break
