@@ -5,8 +5,6 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ShippingExpedition from '../src/Containers/ShippingExpedition'
-// utils
-// import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   style: 'main seller',
@@ -20,9 +18,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <ShippingExpedition />
+    <ShippingExpedition query={props.query} />
   </DefaultLayout>
 )
 
