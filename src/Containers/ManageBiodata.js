@@ -112,8 +112,8 @@ class ManageBiodata extends React.Component {
     let photoRequired = type === 'photo' && (photo.hasOwnProperty('preview') || photo.length > 0)
     let nameRequired = type === 'name' && nameUser.length > 0
     let genderRequired = type === 'gender' && gender.length > 0
-    let pobRequired = type === 'place_of_birth' && placeOfBirth.toString().length > 0
-    let dobRequired = type === 'date_of_birth' && dateOfBirth.toString().length > 0
+    let pobRequired = type === 'place_of_birth' && placeOfBirth !== null
+    let dobRequired = type === 'date_of_birth' && dateOfBirth !== null
     let result = photoRequired || nameRequired || genderRequired || pobRequired || dobRequired
     return (
       <span style={{color: result ? '#23d160' : '#ef5656',
@@ -135,8 +135,8 @@ class ManageBiodata extends React.Component {
     let photoRequired = (photo.hasOwnProperty('preview') || photo.length > 0)
     let nameRequired = nameUser.length > 0
     let genderRequired = gender.length > 0
-    let pobRequired = placeOfBirth.toString().length > 0
-    let dobRequired = dateOfBirth.toString().length > 0
+    let pobRequired = placeOfBirth !== null
+    let dobRequired = dateOfBirth !== null
     let isValid = photoRequired && nameRequired && genderRequired && pobRequired && dobRequired
     if (isValid) {
       this.setState({ submitting: true })
@@ -402,7 +402,7 @@ class ManageBiodata extends React.Component {
               <div className='field'>
                 <p className='control detail-address' onClick={(e) => this.handleModalPOB(e)}>
                   <span className='location-label modal-button'>
-                    {searchDistrict.selected.length > 0 ? searchDistrict.selected : 'Tempat Lahir Anda' }
+                    { searchDistrict.selected !== null && searchDistrict.selected.length > 0 ? searchDistrict.selected : 'Tempat Lahir Anda' }
                   </span>
                 </p>
                 {this.renderValidation('place_of_birth', 'Mohon isi tempat lahir anda')}
