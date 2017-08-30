@@ -4,25 +4,24 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import AddInformationStore from '../src/Containers/AddInformationStore'
+import InformationStore from '../src/Containers/InformationStore'
 // utils
-// import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   style: 'main seller',
   header: {
-    title: 'Isi Informasi Toko'
+    title: 'Informasi Toko'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    textPath: 'Isi Informasi Toko'
+    textPath: 'Informasi Toko'
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <AddInformationStore />
+    <InformationStore query={props.query} />
   </DefaultLayout>
 )
 
