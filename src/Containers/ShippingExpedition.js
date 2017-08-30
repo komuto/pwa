@@ -187,13 +187,13 @@ class ShippingExpedition extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    processCreateStore: state.createStoreTemp,
+    processCreateStore: state.tempCreateStore,
     expeditions: state.expeditions
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  postExpedition: (params) => dispatch(actionStoreTypes.createStoreTemp(params)),
+  postExpedition: (params) => dispatch(actionStoreTypes.tempCreateStore(params)),
   getExpedition: () => dispatch(actionExpeditionTypes.getExpedition())
 })
 
