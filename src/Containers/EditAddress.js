@@ -192,7 +192,7 @@ class EditAddress extends React.Component {
     const { formAddress, convertToForm, provinces, districts, subdistricts, villages, notification, submitting } = this.state
     const { address, statusUpdateAddress } = nextProps
     if (address.status === 200 && convertToForm) {
-      const newState = { formAddress }
+      const newState = { formAddress, convertToForm: false }
       newState.formAddress['id'] = address.address.id
       newState.formAddress['province_id'] = address.address.province.id
       newState.formAddress['district_id'] = address.address.district.id
@@ -205,7 +205,6 @@ class EditAddress extends React.Component {
       newState.formAddress['alias_address'] = address.address.alias_address
       newState.formAddress['is_primary'] = address.address.is_primary_address
       this.setState(newState)
-      this.setState({convertToForm: false})
       if (districts.data.districts.length === 0) {
         this.props.getDistrict({ province_id: formAddress.province_id })
       }
