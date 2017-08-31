@@ -92,9 +92,9 @@ class InformationStore extends React.Component {
   }
 
   postInfoStore () {
-    const { formInfo, files } = this.state
-    const { createStoreTemp, updateInformation, query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'setting'
+    const { formInfo, files, submitting } = this.state
+    const { tempCreateStore, updateInformation, query } = this.props
+    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     let logo = files
     let nameStore = formInfo.name
     let slogan = formInfo.slogan
@@ -105,14 +105,14 @@ class InformationStore extends React.Component {
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
-      this.setState({ submitting: true })
-      this.setState({ validation: false })
+      const newSubmitting = { submitting, validation: false }
+      newSubmitting.submitting = true
+      this.setState(newSubmitting)
       if (files.preview !== '' && files.preview !== formInfo.logo) {
         this.handleUploadImage()
       } else {
-        isSetting ? updateInformation(formInfo) : createStoreTemp({ store: formInfo })
+        isSetting ? updateInformation(formInfo) : tempCreateStore({ store: formInfo })
         !isSetting && Router.push('/shipping-expedition')
-        this.setState({ submitting: true })
       }
     } else {
       this.setState({ validation: true })
@@ -132,7 +132,7 @@ class InformationStore extends React.Component {
   handleButton () {
     const { submitting } = this.state
     const { query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'setting'
+    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     return (
       <button
         className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
@@ -143,12 +143,22 @@ class InformationStore extends React.Component {
   }
 
   componentDidMount () {
-    const { profile } = this.state
+    const { profile, formInfo } = this.state
     const { query, getProfile } = this.props
-    if (this.props.hasOwnProperty('query') && query.type === 'setting') {
+    if (query.type === 'settingStore') {
       if (!profile.isFound) {
         this.setState({ setStateStart: true })
         getProfile()
+      } else {
+        const newState = { formInfo, setStateStart: false }
+        const splitLogo = profile.user.store.logo.split('/')
+        const logo = splitLogo.pop() || splitLogo.pop()
+        newState.formInfo['name'] = profile.user.store.name
+        newState.formInfo['slogan'] = profile.user.store.slogan
+        newState.formInfo['description'] = profile.user.store.description
+        newState.formInfo['logo'] = logo
+        newState.formInfo['path'] = splitLogo.join('/')
+        this.setState(newState)
       }
     }
     NProgress.done()
@@ -156,17 +166,22 @@ class InformationStore extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { formInfo, submitting, notification, setStateStart } = this.state
-    const { createStoreTemp } = this.props
+    const { tempCreateStore, query, updateInformation, getProfile } = this.props
     const { profile, updateStore, upload } = nextProps
-    if (upload.status === 200 && submitting) {
-      const logo = nextProps.upload.payload.images[0].name
-      const path = nextProps.upload.payload.path
+    if (!upload.isLoading && upload.isFound && submitting) {
+      const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+      const logo = upload.payload.images[0].name
+      const path = upload.payload.path
       const newState = { formInfo, submitting: false }
       newState.formInfo['logo'] = logo
       newState.formInfo['path'] = path
       this.setState(newState)
-      createStoreTemp({ store: formInfo })
-      Router.push('/shipping-expedition')
+      if (isSetting) {
+        updateInformation(formInfo)
+      } else {
+        tempCreateStore({ store: formInfo })
+        Router.push('/shipping-expedition')
+      }
     }
     if (!profile.isLoading && profile.isFound && setStateStart) {
       const newState = { formInfo, setStateStart: false }
@@ -180,9 +195,10 @@ class InformationStore extends React.Component {
       this.setState(newState)
       this.setState({ profile })
     }
-    if (updateStore.isFound && submitting) {
+    if (!updateStore.isLoading && updateStore.isFound && submitting) {
       switch (updateStore.status) {
         case Status.SUCCESS: {
+          getProfile()
           const newNotification = { notification, submitting: false }
           newNotification.notification['status'] = true
           newNotification.notification['message'] = updateStore.message
