@@ -1,38 +1,14 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import Router from 'next/router'
 // components
 import NProgress from 'nprogress'
-// actions
-import * as actionTypes from '../actions/user'
-// services
-// import { Status } from '../Services/Status'
 
 class StoreSetting extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      profile: props.profile,
-      notification: {
-        status: false,
-        color: 'is-success',
-        message: 'Error, default message.'
-      }
+      data: ''
     }
-  }
-
-  handleNotification (e) {
-    const { notification } = this.state
-    const newState = { notification }
-    newState.notification['status'] = !notification.status
-    this.setState(newState)
-  }
-
-  componentDidMount () {
-  }
-
-  componentWillReceiveProps (nextProps) {
-    this.setState({ profile: nextProps.profile })
   }
 
   toManageBiodata (e) {
@@ -45,16 +21,30 @@ class StoreSetting extends Component {
   toInformationStore (e) {
     e.preventDefault()
     NProgress.start()
-    Router.push(`/information-store?type=setting`)
+    Router.push(`/information-store?type=settingStore`)
   }
 
   toShippingExpedition (e) {
     e.preventDefault()
-    Router.push(`/shipping-expedition?type=setting`)
+    Router.push(`/shipping-expedition?type=settingStore`)
+  }
+
+  toCatalogList (e) {
+    e.preventDefault()
+    Router.push(`/catalog-list?type=settingStore`)
+  }
+
+  toAddressData (e) {
+    e.preventDefault()
+    Router.push('/address-data')
+  }
+
+  toTermCondition (e) {
+    e.preventDefault()
+    Router.push('/term-condition')
   }
 
   render () {
-    // const { profile, notification } = this.state
     return (
       <div>
         <section className='section is-paddingless has-shadow'>
@@ -99,7 +89,7 @@ class StoreSetting extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={(e) => this.toCatalogList(e)}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -118,7 +108,7 @@ class StoreSetting extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={(e) => this.toAddressData(e)}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -137,7 +127,7 @@ class StoreSetting extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={(e) => this.toTermCondition(e)}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -165,17 +155,5 @@ class StoreSetting extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    profile: state.profile,
-    changePassword: state.changePassword
-  }
-}
-
-const mapDispatchToProps = dispatch => ({
-  getProfile: () => dispatch(actionTypes.getProfile()),
-  logout: () => dispatch(actionTypes.logout())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(StoreSetting)
+export default StoreSetting
 
