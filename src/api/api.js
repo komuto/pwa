@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { serviceUrl, apiKomuto } from '../config'
+import { serviceUrl, apiKomuto, storage } from '../config'
 import {token} from '../store'
-import localforage from 'localforage'
 
 export function authApi () {
   return axios.create({
@@ -33,7 +32,7 @@ export function uploadApi () {
   })
   api.interceptors.request.use(async config => {
     try {
-      const token = await localforage.getItem('token')
+      const token = await storage.getItem('token')
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }
@@ -52,7 +51,7 @@ export function authApiKomuto () {
   })
   api.interceptors.request.use(async config => {
     try {
-      const token = await localforage.getItem('token')
+      const token = await storage.getItem('token')
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }

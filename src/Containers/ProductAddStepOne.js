@@ -2,9 +2,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import FlipMove from 'react-flip-move'
+import winurl from 'winurl'
 // component
 import MyImage from '../Components/MyImage'
 import Wizard from '../Components/Wizard'
+import Notification from '../Components/Notification'
+// actions
+import * as productActions from '../actions/product'
 
 const styles = {
   display: 'flex',
@@ -17,60 +21,115 @@ const styles = {
 class ProductAddStepOne extends Component {
   constructor (props) {
     super(props)
+
+    let { stepOne } = props.tempCreateProduct
+    let images = stepOne.isFound ? stepOne.images : []
+
     this.state = {
-      pictures: [],
+      tempCreateProduct: props.tempCreateProduct || null,
+      images,
       notAcceptedFileType: [],
-      notAcceptedFileSize: []
+      notAcceptedFileSize: [],
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
+
+    this.submiting = false
   }
 
   triggerFileUpload () {
-    this.inputElement.click()
+    this.inputElementPress.click()
   }
 
   onDropFile (e) {
-    const { pictures, notAcceptedFileType, notAcceptedFileSize } = this.state
-    const files = e.target.files
+    let files = e.target.files
+    let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
+    notification = {
+      status: false,
+      message: 'Error, default message.'
+    }
+    console.log(files)
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]
+      console.log(f)
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
-        this.setState({ notAcceptedFileType })
+        notification = {
+          status: true,
+          message: this.props.fileTypeError + ' ' + this.props.label
+        }
+        this.setState({ notAcceptedFileType, notification })
         continue
       }
       // Check for file size
       if (f.size > this.props.maxFileSize) {
         notAcceptedFileSize.push(f.name)
-        this.setState({ notAcceptedFileSize })
+        notification = {
+          status: true,
+          message: this.props.fileSizeError + ' ' + this.props.label
+        }
+        this.setState({ notAcceptedFileSize, notification })
         continue
       }
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        pictures.push(e.target.result)
-        this.setState({ pictures })
-      }
-      reader.readAsDataURL(f)
+      f['preview'] = winurl.createObjectURL(f)
+      images.push(f)
+      this.setState({ images })
+      // const reader = new FileReader()
+      // reader.onload = (e) => {
+      //   images.push(e.target.result)
+      //   this.setState({ images })
+      // }
+      // reader.readAsDataURL(f)
     }
   }
 
   inputElement (input) {
-    this.inputElement = input
+    this.inputElementPress = input
   }
+
   hasExtension (fileName) {
     return (new RegExp('(' + this.props.imgExtension.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)
   }
 
   removeImage (picture) {
-    const filteredAry = this.state.pictures.filter((e) => e !== picture)
-    this.setState({pictures: filteredAry})
+    const filteredAry = this.state.images.filter((e) => e !== picture)
+    this.setState({images: filteredAry})
+  }
+
+  submit () {
+    const { images, tempCreateProduct } = this.state
+    if (images.length > 0) {
+      this.submiting = true
+      this.props.setTempCreateProduct({ ...tempCreateProduct, stepOne: { isFound: true, images } })
+    } else {
+      this.setState({
+        notification: {
+          status: true,
+          message: 'Foto produk wajib diisi!'
+        }
+      })
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { tempCreateProduct } = nextProps
+    if (this.submiting && tempCreateProduct.stepOne.isFound) Router.push('/product-add-step-two')
   }
 
   render () {
-    const { pictures } = this.state
+    const { images, notification } = this.state
     return (
       <section className='section is-paddingless'>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <Wizard total={4} active={1} />
         <div className='add-product'>
           <div className='container is-fluid'>
@@ -78,13 +137,13 @@ class ProductAddStepOne extends Component {
             <ul className='add-photo-list'>
               <FlipMove enterAnimation='fade' leaveAnimation='fade' style={styles}>
                 {
-                  pictures.map((picture, index) => {
+                  images.map((picture, index) => {
                     return (
                       <li key={index}>
                         <div className='photo-product'>
                           <a onClick={() => this.removeImage(picture)} className='del-photo'><span className='icon-cross-circle' /></a>
                           <div className='photo-wrapp'>
-                            <MyImage src={picture} alt='' />
+                            <MyImage src={picture.preview} alt='' />
                           </div>
                         </div>
                       </li>
@@ -96,7 +155,7 @@ class ProductAddStepOne extends Component {
                   <input
                     style={{ display: 'none' }}
                     type='file'
-                    ref={input => this.inputElement(input)}
+                    ref={(input) => this.inputElement(input)}
                     name={this.props.name}
                     multiple='multiple'
                     onChange={(e) => this.onDropFile(e)}
@@ -107,7 +166,7 @@ class ProductAddStepOne extends Component {
             </ul>
             <div className='field'>
               <p className='control'>
-                <button onClick={() => Router.push('/product-add-step-two')} className='button is-primary is-large is-fullwidth'>Lanjutkan</button>
+                <button onClick={() => !this.submiting && this.submit()} className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}>Lanjutkan</button>
               </p>
             </div>
           </div>
@@ -120,19 +179,19 @@ class ProductAddStepOne extends Component {
 ProductAddStepOne.defaultProps = {
   accept: 'accept=image/*',
   withLabel: true,
-  label: 'Max file size: 5mb, accepted: jpg|gif|png|gif',
-  imgExtension: ['.jpg', '.gif', '.png'],
+  label: 'Max file size: 5mb, accepted: jpg|gif|png|JPG',
+  imgExtension: ['.jpg', '.JPG', '.png'],
   maxFileSize: 5242880,
   fileSizeError: ' file size is too big',
   fileTypeError: ' is not supported file extension'
 }
 
 const mapStateToProps = (state) => ({
-
+  tempCreateProduct: state.tempCreateProduct
 })
 
 const mapDispatchToProps = (dispatch) => ({
-
+  setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAddStepOne)

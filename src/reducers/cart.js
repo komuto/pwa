@@ -1,98 +1,59 @@
 import * as actions from '../actions/cart'
-import { buildReducer, buildType, initState } from '../config'
+import { buildInitState, createReducer, succState } from '../config'
 
-export const cart = (state = initState({ cart: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_CART:
-      return { ...buildReducer(state, action, type, 'cart'), type: 'get' }
-    case actions.GET_CART_RESET:
-      return { ...initState(), cart: state.cart, type: 'reset' }
-    default:
-      return state
-  }
-}
+export const cart = createReducer(buildInitState({ cart: [] }))
+  .addReducer({
+    type: actions.GET_CART,
+    resultName: 'cart',
+    includeNonSaga: true,
+    resetPrevState: { ...buildInitState() }
+  }).run()
 
-export const checkout = (state = initState({ checkout: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.CHECKOUT:
-      return buildReducer(state, action, type, 'checkout')
-    default:
-      return state
-  }
-}
+export const checkout = createReducer(buildInitState({ checkout: {} }))
+  .addReducer({
+    type: actions.CHECKOUT,
+    resultName: 'checkout'
+  }).run()
 
-export const addToCart = (state = initState({ addToCart: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.ADD_TO_CART:
-      return buildReducer(state, action, type, 'cart')
-    case actions.ADD_TO_CART_RESET:
-      return { ...initState(), addToCart: state.addToCart, type: 'reset' }
-    default:
-      return state
-  }
-}
+export const addToCart = createReducer(buildInitState({ addToCart: {} }))
+  .addReducer({
+    type: actions.ADD_TO_CART,
+    resultName: 'cart',
+    includeNonSaga: true,
+    resetPrevState: { ...buildInitState() }
+  }).run()
 
-export const countCart = (state = initState({ cartCount: 0 }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.COUNT_CART:
-      return buildReducer(state, action, type, 'cartCount')
-    default:
-      return state
-  }
-}
+export const countCart = createReducer(buildInitState({ cartCount: 0 }))
+  .addReducer({
+    type: actions.COUNT_CART,
+    customSuccState: (state, action) => ({ cartCount: action.data.count, ...succState(action) })
+  }).run()
 
-export const deleteItem = (state = initState({ deleteItem: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.DELETE_ITEM:
-      return buildReducer(state, action, type, 'deleteItem')
-    default:
-      return state
-  }
-}
+export const deleteItem = createReducer(buildInitState({ deleteItem: {} }))
+  .addReducer({
+    type: actions.DELETE_ITEM
+  }).run()
 
-export const getPromo = (state = initState({ promo: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_PROMO:
-      return buildReducer(state, action, type, 'promo')
-    default:
-      return state
-  }
-}
+export const getPromo = createReducer(buildInitState({ promo: {} }))
+  .addReducer({
+    type: actions.GET_PROMO,
+    resultName: 'promo'
+  }).run()
 
-export const cancelPromo = (state = initState(), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.CANCEL_PROMO:
-      return buildReducer(state, action, type)
-    default:
-      return state
-  }
-}
+export const cancelPromo = createReducer(buildInitState())
+  .addReducer({
+    type: actions.CANCEL_PROMO
+  }).run()
 
-export const getItem = (state = initState({ item: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_ITEM:
-      return buildReducer(state, action, type, 'item')
-    default:
-      return state
-  }
-}
+export const getItem = createReducer(buildInitState({ item: {} }))
+  .addReducer({
+    type: actions.GET_ITEM,
+    resultName: 'item'
+  }).run()
 
-export const updateCart = (state = initState({ items: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.UPDATE_CART:
-      return buildReducer(state, action, type, 'items')
-    case actions.RESET_UPDATE_CART:
-      return initState({ items: [] })
-    default:
-      return state
-  }
-}
+export const updateCart = createReducer(buildInitState({ items: [] }))
+  .addReducer({
+    type: actions.UPDATE_CART,
+    resultName: 'items',
+    includeNonSaga: true
+  }).run()

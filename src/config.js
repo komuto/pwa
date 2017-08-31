@@ -1,12 +1,13 @@
 import { delay } from 'redux-saga'
-import { put, call } from 'redux-saga/effects'
-
+import { put, call, select } from 'redux-saga/effects'
+import localforage from 'localforage'
 export const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
 export const apiKomuto = 'https://api.komuto.skyshi.com/4690fa4c3d68f93b/'
+export const storage = localforage
 
 export function errorHandling (actionType, res) {
-  const errorOffline = {
-    message: 'Your device is offline',
+  const errorTimeout = {
+    message: 'Timeout reached!',
     code: 'ENOENT',
     isOnline: false
   }
@@ -18,15 +19,15 @@ export function errorHandling (actionType, res) {
       data.isOnline = true
       return put({ type: actionType, ...data })
     } else {
-      let errorBadGateway = {
+      const errorBadRequest = {
         message: res.response.statusText,
         code: res.response.status,
         isOnline: true
       }
-      return put({ type: actionType, ...errorBadGateway })
+      return put({ type: actionType, ...errorBadRequest })
     }
   } else {
-    return put({ type: actionType, ...errorOffline })
+    return put({ type: actionType, ...errorTimeout })
   }
 }
 
@@ -35,7 +36,7 @@ export function errorHandling (actionType, res) {
  * @param props {object} additional fields
  * @param meta {boolean}
  */
-export const initState = (props = {}, meta = false) => {
+export const buildInitState = (props = {}, meta = false) => {
   const state = {
     message: '',
     status: 0,
@@ -52,16 +53,14 @@ export const initState = (props = {}, meta = false) => {
 /**
  * Build request state
  * @param state {object} current state
- * @param meta {boolean}
  */
-export const reqState = (state, meta) => {
+export const reqState = (state = {}) => {
   const res = {
     ...state,
     status: 0,
     isLoading: true,
     isFound: false
   }
-  if (meta) res['meta'] = { page: 0, limit: 10 }
   return res
 }
 
@@ -70,10 +69,10 @@ export const reqState = (state, meta) => {
  * @param action {object}
  * @param data {string} Prop name
  */
-export const succState = (action, data) => {
+export const succState = (action, data = '') => {
   const state = {
-    message: action.message,
-    status: action.code,
+    message: action.message || '',
+    status: action.code || 200,
     isLoading: false,
     isFound: true,
     isOnline: true
@@ -89,7 +88,7 @@ export const succState = (action, data) => {
  * @param data {string} Prop name
  * @param value {*} value for the prop
  */
-export const failState = (action, data, value = false) => {
+export const failState = (action, data = '', value = false) => {
   const state = {
     message: action.message,
     status: action.code,
@@ -117,23 +116,23 @@ export const buildAction = (type, params = false) => {
  * @param action {object}
  * @param type {string}
  * @param name {string} additional field name
- * @param meta {boolean} add meta init on req state
+ * @param customState {array}
  */
-export const buildReducer = (state, action, type, name, meta = false) => {
+export const buildReducer = (state, action, type, name, customState) => {
   switch (action.type) {
     case typeReq(type):
-      return reqState(state, meta)
+      return !customState[0] ? reqState(state) : customState[0](state, action)
     case typeSucc(type):
-      return succState(action, name)
+      return !customState[1] ? succState(action, name) : customState[1](state, action)
     case typeFail(type):
-      return failState(action, name, state[name])
+      return !customState[2] ? failState(action, name, state[name]) : customState[2](state, action)
     default:
       return state
   }
 }
 
 /**
- * Remove [REQUEST, SUCCESS, FAILURE] from action type
+ * Remove toBeRemoved from action type
  * @param type {string}
  */
 export const buildType = (type) => {
@@ -147,6 +146,8 @@ export const buildType = (type) => {
 export const typeReq = type => `${type}_REQUEST`
 export const typeSucc = type => `${type}_SUCCESS`
 export const typeFail = type => `${type}_FAILURE`
+export const typeReset = type => `${type}_RESET`
+export const typeTemp = type => `${type}_TEMP`
 
 /**
  * Build query string
@@ -169,30 +170,38 @@ export const buildQuery = (params) => Object.keys(params)
  * Build sagas
  * @param callApi {function}
  * @param actionType {string}
- * @param props {[string]} take specific prop for data from api
- * ['user', 'province', 'id'] only take data.user.province.id for data
+ * @param getState {function} Get result from other state
  */
-export const buildSaga = (callApi, actionType, props = []) => function * ({ type, ...params }) {
+export const buildSaga = (callApi, actionType, getState = false) => function * ({ type, ...params }) {
   try {
-    const { data } = yield callApi(params)
-    if (props) {
-      data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
+    let res, fromState
+    if (getState) {
+      fromState = yield select(getState(params))
+      res = { data: fromState }
     }
-    yield put({ type: typeSucc(actionType), ...data })
+    if (!fromState) {
+      const { data } = yield callApi(params)
+      res = data
+    }
+    yield put({ type: typeSucc(actionType), ...res })
   } catch (e) {
-    console.log('test', e)
     yield errorHandling(typeFail(actionType), e)
   }
 }
 
-export const buildSagaDelay = (callApi, actionType, delayCount = 200, props = []) => function * ({ type, ...params }) {
+export const buildSagaDelay = (callApi, actionType, delayCount = 200, getState = false) => function * ({ type, ...params }) {
   try {
     yield call(delay, delayCount)
-    const { data } = yield callApi(params)
-    if (props !== undefined) {
-      data.data = props.reduce((data, prop) => data[prop] || {}, data.data)
+    let res, fromState
+    if (getState) {
+      fromState = yield select(getState(params))
+      res = { data: fromState }
     }
-    yield put({ type: typeSucc(actionType), ...data })
+    if (!fromState) {
+      const { data } = yield callApi(params)
+      res = data
+    }
+    yield put({ type: typeSucc(actionType), ...res })
   } catch (e) {
     yield errorHandling(typeFail(actionType), e)
   }
@@ -207,3 +216,75 @@ export const filterUpdate = obj => Object.keys(obj).reduce((res, prop) => {
   res[prop] = obj[prop]
   return res
 }, {})
+
+const composeReducer = (initState, sagaReducer) => (state = initState, { type, ...data }) => {
+  const actionType = buildType(type)
+  let resultState = {}
+  const check = sagaReducer.some((options) => {
+    const { resultName, type: reducerType, add, includeNonSaga, resetPrevState } = options
+    const customState = [options.customReqState, options.customSuccState, options.customFailState]
+    if (actionType === reducerType) {
+      // For _REQUEST/_SUCCESS/_FAILURE action type
+      resultState = { ...buildReducer(state, { type, ...data }, actionType, resultName, customState), ...add }
+      return true
+    }
+    if (includeNonSaga) {
+      if (type === typeReset(reducerType)) {
+        // For _RESET action type
+        resultState = initState
+        if (resetPrevState) resultState = { ...state, ...resetPrevState }
+        return true
+      } else if (type === typeTemp(reducerType)) {
+        // For _TEMP action type
+        resultState = { ...state, ...data }
+        return true
+      }
+    }
+    return false
+  })
+  return check ? resultState : state
+}
+
+/**
+ * @param initState {object} initial state for this reducer
+ */
+export const createReducer = (initState) => {
+  const reducerTypes = []
+  return {
+    /**
+     * @param options {object}
+     * @options resultName {string} prop name for the api result
+     * @options type {string} reducer action type
+     * @options add {object} other objects to add to the state
+     * @options includeNonSaga {boolean} non saga reducer operation
+     * @options resetPrevState {object} change prev state with the provided object
+     * @options customReqState {function}
+     * @options customSuccState {function}
+     * @options customfailState {function}
+     */
+    addReducer (options) {
+      reducerTypes.push(options)
+      return this
+    },
+    run () {
+      return composeReducer(initState, reducerTypes)
+    }
+  }
+}
+
+/**
+ * Get state from another state
+ * @param from {function} state to search
+ * @param get {string} amount to get
+ * @param match {string/array}
+ */
+export const getState = ({ from, get, match = 'id' }) => (params) => (state) => {
+  let toMatch
+  const result = from(state).filter(value => {
+    if (!Array.isArray(match)) toMatch = value[match]
+    else toMatch = match.reduce((value, prop) => value[prop], value)
+    return toMatch === params.id
+  })
+  if (get === 'all') return result[0] ? result : false
+  return result[0]
+}

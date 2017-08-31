@@ -1,7 +1,6 @@
-import { buildAction, typeReq } from '../config'
+import { buildAction, typeReq, typeReset } from '../config'
 
 export const CREATE_CATALOG = 'CREATE_CATALOG'
-export const CREATE_CATALOG_RESET = 'CREATE_CATALOG_RESET'
 export const UPDATE_CATALOG = 'UPDATE_CATALOG'
 export const GET_CATALOG = 'GET_CATALOG'
 export const GET_LIST_CATALOG = 'GET_LIST_CATALOG'
@@ -12,7 +11,7 @@ export const DELETE_CATALOG = 'DELETE_CATALOG'
  * @state createCatalog
  */
 export const createCatalog = params => buildAction(typeReq(CREATE_CATALOG), params)
-export const resetCreateCatalog = () => buildAction(CREATE_CATALOG_RESET)
+export const resetCreateCatalog = () => buildAction(typeReset(CREATE_CATALOG))
 
 /**
  * @param id {int} catalog id
