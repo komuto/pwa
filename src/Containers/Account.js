@@ -30,11 +30,11 @@ class Account extends Component {
 
   handleOnClick (e) {
     e.preventDefault()
-    const { profile, user } = this.props
+    const { profile } = this.props
     if (profile.user.store.hasOwnProperty('name')) {
       Router.push('/manage-store')
     } else {
-      if (user.is_phone_verified) {
+      if (profile.user.user.is_phone_verified) {
         Router.push('/information-store')
       } else {
         this.handleVerify()
@@ -111,6 +111,7 @@ class Account extends Component {
   }
 
   render () {
+    console.log('state ', this.state)
     const { profile } = this.state
     return (
       <Content>
