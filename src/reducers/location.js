@@ -1,7 +1,7 @@
 import * as actions from '../actions/location'
-import { buildReducer, buildType, initState, typeReq, typeSucc, typeFail, reqState, succState, failState } from '../config'
+import { buildInitState, typeReq, typeSucc, typeFail, reqState, succState, failState, createReducer } from '../config'
 
-export const province = (state = initState({ provinces: [] }), action) => {
+export const province = (state = buildInitState({ provinces: [] }), action) => {
   switch (action.type) {
     case typeReq(actions.GET_PROVINCE):
       return reqState(state)
@@ -22,7 +22,7 @@ export const province = (state = initState({ provinces: [] }), action) => {
   }
 }
 
-export const district = (state = initState({ districts: [] }), action) => {
+export const district = (state = buildInitState({ districts: [] }), action) => {
   switch (action.type) {
     case typeReq(actions.GET_DISTRICT):
       return reqState(state)
@@ -42,7 +42,7 @@ export const district = (state = initState({ districts: [] }), action) => {
   }
 }
 
-export const subdistrict = (state = initState({ subdistricts: [] }), action) => {
+export const subdistrict = (state = buildInitState({ subdistricts: [] }), action) => {
   switch (action.type) {
     case typeReq(actions.GET_SUBDISTRICT):
       return reqState(state)
@@ -63,12 +63,8 @@ export const subdistrict = (state = initState({ subdistricts: [] }), action) => 
   }
 }
 
-export const village = (state = initState({ villages: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_VILLAGE:
-      return buildReducer(state, action, type, 'villages')
-    default:
-      return state
-  }
-}
+export const village = createReducer(buildInitState({ villages: [] }))
+  .addReducer({
+    type: actions.GET_VILLAGE,
+    resultName: 'villages'
+  }).run()
