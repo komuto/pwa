@@ -1,84 +1,51 @@
 import * as actions from '../actions/home'
-import { buildReducer, buildType, initState } from '../config'
+import { buildInitState, createReducer } from '../config'
 
-export const product = (state = initState({ products: [] }, true), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.HOME_PRODUCT:
-      return buildReducer(state, action, type, 'products', true)
-    default:
-      return state
-  }
-}
+export const product = createReducer(buildInitState({ products: [] }, true))
+  .addReducer({
+    type: actions.HOME_PRODUCT,
+    resultName: 'products'
+  }).run()
 
-export const searchProduct = (state = initState({ products: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.SEARCH_PRODUCT:
-      return buildReducer(state, action, type, 'products')
-    default:
-      return state
-  }
-}
+export const searchProduct = createReducer(buildInitState({ products: [] }))
+  .addReducer({
+    type: actions.SEARCH_PRODUCT,
+    resultName: 'products'
+  }).run()
 
-export const filterProduct = (state = initState({ products: [] }, true), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.FILTER_PRODUCT:
-      return buildReducer(state, action, type, 'products', true)
-    default:
-      return state
-  }
-}
+export const filterProduct = createReducer(buildInitState({ products: [] }, true))
+  .addReducer({
+    type: actions.FILTER_PRODUCT,
+    resultName: 'products'
+  }).run()
 
-export const allCategory = (state = initState({ allCategory: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.ALL_CATEGORY:
-      return buildReducer(state, action, type, 'allCategory')
-    default:
-      return state
-  }
-}
+export const allCategory = createReducer(buildInitState({ allCategory: [] }))
+  .addReducer({
+    type: actions.ALL_CATEGORY,
+    resultName: 'allCategory'
+  }).run()
 
-export const categoryList = (state = initState({ categories: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_CATEGORIES_1:
-      return buildReducer(state, action, type, 'categories')
-    default:
-      return state
-  }
-}
+export const categoryList = createReducer(buildInitState({ categories: [] }))
+  .addReducer({
+    type: actions.GET_CATEGORIES_1,
+    resultName: 'categories'
+  }).run()
 
-export const subCategory = (state = initState({ categories: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.STATUS_SUBCATEGORY_RESET:
-      return initState({ categories: [] })
-    case actions.GET_CATEGORIES_2:
-      return buildReducer(state, action, type, 'categories')
-    default:
-      return state
-  }
-}
+export const subCategory = createReducer(buildInitState({ categories: [] }))
+  .addReducer({
+    type: actions.GET_CATEGORIES_2,
+    resultName: 'categories',
+    includeNonSaga: true
+  }).run()
 
-export const subCategory2 = (state = initState({ categories: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_CATEGORIES_3:
-      return buildReducer(state, action, type, 'categories')
-    default:
-      return state
-  }
-}
+export const subCategory2 = createReducer(buildInitState({ categories: [] }))
+  .addReducer({
+    type: actions.GET_CATEGORIES_3,
+    resultName: 'categories'
+  }).run()
 
-export const subCategory3 = (state = initState({ categories: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_CATEGORIES_4:
-      return buildReducer(state, action, type, 'categories')
-    default:
-      return state
-  }
-}
+export const subCategory3 = createReducer(buildInitState({ categories: [] }))
+  .addReducer({
+    type: actions.GET_CATEGORIES_4,
+    resultName: 'categories'
+  }).run()

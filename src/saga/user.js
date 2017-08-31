@@ -1,13 +1,12 @@
 import { put } from 'redux-saga/effects'
 import * as actions from '../actions/user'
 import * as apis from '../api/user'
-import localforage from 'localforage'
-import { errorHandling, typeSucc, typeFail, buildSaga } from '../config'
+import { errorHandling, typeSucc, typeFail, buildSaga, storage } from '../config'
 
 export const register = function * (action) {
   try {
     const {data} = yield apis.register(action)
-    yield localforage.setItem('token', data.data.token)
+    yield storage.setItem('token', data.data.token)
     yield put({ type: typeSucc(actions.USER_REGISTER), ...data })
   } catch (e) {
     yield errorHandling(typeFail(actions.USER_REGISTER), e)
@@ -17,7 +16,7 @@ export const register = function * (action) {
 export const login = function * login (action) {
   try {
     const {data} = yield apis.login(action)
-    yield localforage.setItem('token', data.data.token)
+    yield storage.setItem('token', data.data.token)
     yield put({ type: typeSucc(actions.USER_LOGIN), ...data })
   } catch (e) {
     yield errorHandling(typeFail(actions.USER_LOGIN), e)
@@ -27,7 +26,7 @@ export const login = function * login (action) {
 export const logout = function * (action) {
   try {
     const data = yield apis.logout(action)
-    yield localforage.removeItem('token')
+    yield storage.removeItem('token')
     yield put({ type: typeSucc(actions.USER_LOGOUT), ...data })
   } catch (e) {
     const data = {
@@ -41,7 +40,7 @@ export const logout = function * (action) {
 export const loginSocial = function * login (action) {
   try {
     const {data} = yield apis.loginSocial(action)
-    yield localforage.setItem('token', data.data.token)
+    yield storage.setItem('token', data.data.token)
     yield put({ type: typeSucc(actions.LOGIN_SOCIAL), ...data })
   } catch (e) {
     yield errorHandling(typeFail(actions.LOGIN_SOCIAL), e)
@@ -66,3 +65,6 @@ export const sendOTPPhone = buildSaga(apis.sendOTPPhone, actions.SEND_PHONE_OTP)
 export const verifyPhone = buildSaga(apis.verifyPhone, actions.VERIFIY_PHONE)
 export const wishlist = buildSaga(apis.wishlist, actions.GET_WISHLIST)
 export const sendOTPBank = buildSaga(apis.sendOTPBank, actions.SEND_BANK_OTP)
+export const updateFirebaseToken = buildSaga(apis.updateFirebaseToken, actions.UPDATE_FIREBASE_REG_TOKEN)
+export const getNotifSettings = buildSaga(apis.getNotifSettings, actions.GET_NOTIF_SETTINGS)
+export const updateNotifSettings = buildSaga(apis.updateNotifSettings, actions.UPDATE_NOTIF_SETTINGS)

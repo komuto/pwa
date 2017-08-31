@@ -1,54 +1,33 @@
 import * as actions from '../actions/catalog'
-import { buildReducer, buildType, initState } from '../config'
+import { buildInitState, createReducer } from '../config'
 
-export const createCatalog = (state = initState({ catalog: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.CREATE_CATALOG:
-      return buildReducer(state, action, type, 'catalog')
-    case actions.CREATE_CATALOG_RESET:
-      return initState({ catalog: {} })
-    default:
-      return state
-  }
-}
+export const createCatalog = createReducer(buildInitState({ catalog: {} }))
+  .addReducer({
+    type: actions.CREATE_CATALOG,
+    resultName: 'catalog',
+    includeNonSaga: true
+  }).run()
 
-export const updateCatalog = (state = initState({ catalog: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.UPDATE_CATALOG:
-      return buildReducer(state, action, type, 'catalog')
-    default:
-      return state
-  }
-}
+export const updateCatalog = createReducer(buildInitState({ catalog: {} }))
+  .addReducer({
+    type: actions.UPDATE_CATALOG,
+    resultName: 'catalog'
+  }).run()
 
-export const getDetailCatalog = (state = initState({ catalog: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_CATALOG:
-      return buildReducer(state, action, type, 'catalog')
-    default:
-      return state
-  }
-}
+export const getDetailCatalog = createReducer(buildInitState({ catalog: {} }))
+  .addReducer({
+    type: actions.GET_CATALOG,
+    resultName: 'catalog'
+  }).run()
 
-export const getListCatalog = (state = initState({ catalogs: [] }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.GET_LIST_CATALOG:
-      return buildReducer(state, action, type, 'catalogs')
-    default:
-      return state
-  }
-}
+export const getListCatalog = createReducer(buildInitState({ catalogs: [] }))
+  .addReducer({
+    type: actions.GET_LIST_CATALOG,
+    resultName: 'catalogs'
+  }).run()
 
-export const deleteCatalog = (state = initState({ catalog: {} }), action) => {
-  const type = buildType(action.type)
-  switch (type) {
-    case actions.DELETE_CATALOG:
-      return buildReducer(state, action, type, 'catalog')
-    default:
-      return state
-  }
-}
+export const deleteCatalog = createReducer(buildInitState({ catalog: {} }))
+  .addReducer({
+    type: actions.DELETE_CATALOG,
+    resultName: 'catalog'
+  }).run()

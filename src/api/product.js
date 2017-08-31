@@ -1,20 +1,9 @@
 import { publicApiKomuto, authApiKomuto } from './api'
-import localforage from 'localforage'
-import { buildQuery, filterUpdate } from '../config'
+import { buildQuery, filterUpdate, storage } from '../config'
 
-export const getProduct = ({ id }) => {
-  const token = localforage.getItem('token')
-  let axios = publicApiKomuto()
-  if (token) axios = authApiKomuto()
-  return axios.get(`products/${id}`)
-}
-
-export const getProductBy = (action) => {
-  const token = localforage.getItem('token')
-  let axios = publicApiKomuto()
-  if (token) axios = authApiKomuto()
-  if (Array.isArray(action.price) && action.price.length > 0) {
-    action.price = action.price.reduce((price, val, index) => {
+const prepareGetProducts = (data) => {
+  if (Array.isArray(data.price) && data.price.length > 0) {
+    data.price = data.price.reduce((price, val, index) => {
       // minimum and maximum price can't be 0 to use the api
       // so set the default value if it is 0
       if (index === 0) price += val === 0 ? '50-' : `${val}-`
@@ -22,7 +11,21 @@ export const getProductBy = (action) => {
       return price
     }, '')
   }
-  const query = buildQuery(action)
+  return buildQuery(data)
+}
+
+export const getProduct = async ({ id }) => {
+  const token = await storage.getItem('token')
+  let axios = publicApiKomuto()
+  if (token) axios = authApiKomuto()
+  return axios.get(`products/${id}`)
+}
+
+export const getProductBy = async (data) => {
+  const token = await storage.getItem('token')
+  let axios = publicApiKomuto()
+  if (token) axios = authApiKomuto()
+  const query = prepareGetProducts(data)
   return axios.get(`products?${query}`)
 }
 
@@ -91,4 +94,15 @@ export const getProductExpeditions = ({ id }) => {
 export const addDropshipProducts = ({ id, ...params }) => {
   const axios = authApiKomuto()
   return axios.post(`products/${id}/dropship`, params)
+}
+
+export const getDropshipProducts = (data) => {
+  const axios = authApiKomuto()
+  const query = prepareGetProducts(data)
+  return axios.get(`products/dropship?${query}`)
+}
+
+export const updateDropshipStatus = (data) => {
+  const axios = authApiKomuto()
+  return axios.post('users/store/products/dropships', data)
 }

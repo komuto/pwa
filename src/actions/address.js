@@ -1,20 +1,18 @@
-import { buildAction, typeReq } from '../config'
+import { buildAction, typeReq, typeReset } from '../config'
 
 export const ADD_ADDRESS = 'ADD_ADDRESS'
-export const ADD_ADDRESS_RESET = 'ADD_ADDRESS_RESET'
 export const UPDATE_ADDRESS = 'UPDATE_ADDRESS'
 export const DELETE_ADDRESS = 'DELETE_ADDRESS'
 export const GET_ADDRESS_DETAIL = 'GET_ADDRESS_DETAIL'
 export const GET_LIST_ADDRESS = 'GET_LIST_ADDRESS'
 export const GET_PRIMARY_ADDRESS = 'GET_PRIMARY_ADDRESS'
-export const PRIMARY_ADDRESS_RESET = 'PRIMARY_ADDRESS_RESET'
 
 /**
  * @param params are the same as the api
  * @state addAddress
  */
 export const addAddress = params => buildAction(typeReq(ADD_ADDRESS), params)
-export const addAddressReset = () => buildAction(ADD_ADDRESS_RESET)
+export const addAddressReset = () => buildAction(typeReset(ADD_ADDRESS))
 
 /**
  * @param id {int} address id
@@ -30,7 +28,7 @@ export const updateAddress = params => buildAction(typeReq(UPDATE_ADDRESS), para
 export const deleteAddress = params => buildAction(typeReq(DELETE_ADDRESS), params)
 
 /**
- * @paramr id {int} address id
+ * @params id {int} address id
  * @state address
  */
 export const getAddressDetail = params => buildAction(typeReq(GET_ADDRESS_DETAIL), params)
@@ -44,4 +42,4 @@ export const getListAddress = () => buildAction(typeReq(GET_LIST_ADDRESS))
  * @state primaryAddress
  */
 export const getPrimaryAddress = () => buildAction(typeReq(GET_PRIMARY_ADDRESS))
-export const resetPrimaryAddress = () => buildAction(PRIMARY_ADDRESS_RESET)
+export const resetPrimaryAddress = () => buildAction(typeReset(GET_PRIMARY_ADDRESS))

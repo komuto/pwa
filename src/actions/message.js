@@ -4,8 +4,14 @@ export const GET_BUYER_MESSAGES = 'GET_BUYER_MESSAGES'
 export const GET_BUYER_DETAIL_MESSAGE = 'GET_BUYER_DETAIL_MESSAGE'
 export const GET_SELLER_MESSAGES = 'GET_SELLER_MESSAGES'
 export const GET_SELLER_DETAIL_MESSAGE = 'GET_SELLER_DETAIL_MESSAGE'
-export const ARCHIVE_BUYER_MESSAGE = 'ARCHIVE_BUYER_MESSAGE'
-export const ARCHIVE_SELLER_MESSAGE = 'ARCHIVE_SELLER_MESSAGE'
+export const GET_ARCHIVE_BUYER_MESSAGES = 'GET_ARCHIVE_BUYER_MESSAGES'
+export const GET_ARCHIVE_SELLER_MESSAGES = 'GET_ARCHIVE_SELLER_MESSAGES'
+export const UPDATE_BUYER_MESSAGE = 'UPDATE_BUYER_MESSAGE'
+export const UPDATE_SELLER_MESSAGE = 'UPDATE_SELLER_MESSAGE'
+export const BUYER_REPLY_MESSAGE = 'BUYER_REPLY_MESSAGE'
+export const SELLER_REPLY_MESSAGE = 'SELLER_REPLY_MESSAGE'
+export const BUYER_DELETE_MESSAGE = 'BUYER_DELETE_MESSAGE'
+export const SELLER_DELETE_MESSAGE = 'SELLER_DELETE_MESSAGE'
 
 /**
  * @params params are the same as the api query
@@ -32,13 +38,51 @@ export const getBuyerDetailMessage = params => buildAction(typeReq(GET_BUYER_DET
 export const getSellerDetailMessage = params => buildAction(typeReq(GET_SELLER_DETAIL_MESSAGE), params)
 
 /**
- * @params id {int} message id
- * @state archiveMessage
+ * @state archiveBuyerMessages
  */
-export const archiveBuyerMessage = params => buildAction(typeReq(ARCHIVE_BUYER_MESSAGE), params)
+export const getArchiveBuyerMessages = () => buildAction(typeReq(GET_ARCHIVE_BUYER_MESSAGES))
+
+/**
+ * @state archiveSellerMessages
+ */
+export const getArchiveSellerMessages = () => buildAction(typeReq(GET_ARCHIVE_SELLER_MESSAGES))
 
 /**
  * @params id {int} message id
- * @state archiveMessage
+ * @params messageType {string}
+ * @state updateMessage
  */
-export const archiveSellerMessage = params => buildAction(typeReq(ARCHIVE_SELLER_MESSAGE), params)
+export const updateBuyerMessage = params => buildAction(typeReq(UPDATE_BUYER_MESSAGE), params)
+
+/**
+ * @params id {int} message id
+ * @params messageType {string}
+ * @state updateMessage
+ */
+export const updateSellerMessage = params => buildAction(typeReq(UPDATE_SELLER_MESSAGE), params)
+
+/**
+ * @params id {int} message id
+ * @param params are the same as the api
+ * @state replyMessage
+ */
+export const buyerReplyMessage = params => buildAction(typeReq(BUYER_REPLY_MESSAGE), params)
+
+/**
+ * @params id {int} message id
+ * @param params are the same as the api
+ * @state replyMessage
+ */
+export const sellerReplyMessage = params => buildAction(typeReq(SELLER_REPLY_MESSAGE), params)
+
+/**
+ * @params id {int} message id
+ * @state deleteMessage
+ */
+export const buyerDeleteMessage = params => buildAction(typeReq(BUYER_DELETE_MESSAGE), params)
+
+/**
+ * @params id {int} message id
+ * @state deleteMessage
+ */
+export const sellerDeleteMessage = params => buildAction(typeReq(SELLER_DELETE_MESSAGE), params)

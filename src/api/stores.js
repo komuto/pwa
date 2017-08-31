@@ -107,9 +107,10 @@ export const updateStoreAddress = (data) => {
   return axios.put('users/store/address', data)
 }
 
-export const getHiddenStoreProducts = () => {
+export const getHiddenStoreProducts = (data) => {
   const axios = authApiKomuto()
-  return axios.get('users/store/products?hidden=true')
+  const query = buildQuery(data)
+  return axios.get(`users/store/products/hidden?${query}`)
 }
 
 export const getStoreDiscussions = (params) => {
@@ -121,4 +122,10 @@ export const getStoreDiscussions = (params) => {
 export const getStoreProductDetail = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`users/store/products/${id}`)
+}
+
+export const getStoreProductsByCatalog = ({ id, ...data }) => {
+  const axios = authApiKomuto()
+  const query = buildQuery(data)
+  return axios.get(`users/store/products/catalogs/${id}/list?${query}`)
 }
