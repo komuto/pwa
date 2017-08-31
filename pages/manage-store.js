@@ -1,10 +1,15 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ManageStore from '../src/Containers/ManageStore'
+
+const toProfile = () => {
+  Router.push('/profile')
+}
 
 const params = {
   style: 'main no-padding-bottom bg-grey',
@@ -14,6 +19,7 @@ const params = {
   navbar: {
     searchBoox: false,
     path: '/',
+    callBack: () => toProfile(),
     textPath: 'Toko Anda'
   }
 }
