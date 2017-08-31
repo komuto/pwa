@@ -7,26 +7,39 @@ import Wizard from '../Components/Wizard'
 // actions
 import * as homeActions from '../actions/home'
 import * as brandActions from '../actions/brand'
+import * as productActions from '../actions/product'
 // Utils
 import { Status } from '../Services/Status'
 
 class ProductAddStepTwo extends Component {
   constructor (props) {
     super(props)
+    let { stepTwo } = props.tempCreateProduct
     this.state = {
       brands: props.brands || null,
       category: props.category || null,
       subCategory: props.subCategory || null,
       subCategory2: props.subCategory2 || null,
       subCategory3: props.subCategory3 || null,
-      form: {},
+      tempCreateProduct: props.tempCreateProduct || null,
+      form: {
+        ...stepTwo
+      },
+      includeBrand: false,
       error: null
     }
+    this.submiting = false
   }
 
   formHandling (e) {
-    const { form } = this.state
+    let { form, error } = this.state
     form[e.target.name] = e.target.value
+    error = null
+    if (e.target.value === '') {
+      error = e.target.name
+      this.setState({ error })
+      return
+    }
     // fetch category level 2
     if (e.target.name === 'categoryOne') {
       this.props.getSubCategory({ id: e.target.value })
@@ -39,7 +52,58 @@ class ProductAddStepTwo extends Component {
     if (e.target.name === 'categoryThree') {
       this.props.getSubCategory3({ id: e.target.value })
     }
-    this.setState({ form })
+    this.setState({ form, error })
+  }
+
+  includeBrandPress (e, isBrandChecked) {
+    e.preventDefault()
+    let { includeBrand, form } = this.state
+    includeBrand = !isBrandChecked
+    if (!includeBrand) delete form['brand_id']
+    this.setState({ includeBrand, form })
+  }
+
+  submit () {
+    const { form, tempCreateProduct } = this.state
+
+    if (form.name === undefined || form.name === '') {
+      this.setState({ error: 'name' })
+      return
+    }
+
+    if (form.categoryOne === undefined) {
+      this.setState({ error: 'categoryOne' })
+      return
+    }
+
+    if (form.categoryTwo === undefined) {
+      this.setState({ error: 'categoryTwo' })
+      return
+    }
+
+    if (form.categoryThree === undefined) {
+      this.setState({ error: 'categoryThree' })
+      return
+    }
+
+    if (form.category_id === undefined) {
+      this.setState({ error: 'category_id' })
+      return
+    }
+
+    if (form.description === undefined) {
+      this.setState({ error: 'description' })
+      return
+    }
+
+    this.submiting = true
+    this.props.setTempCreateProduct({
+      ...tempCreateProduct,
+      stepTwo: {
+        ...form,
+        isFound: true
+      }
+    })
   }
 
   async componentDidMount () {
@@ -49,6 +113,7 @@ class ProductAddStepTwo extends Component {
       // fetch category level 1
       await this.props.getCategory()
     }
+
     if (!brands.isFound) {
       NProgress.start()
       await this.props.getBrand()
@@ -56,7 +121,8 @@ class ProductAddStepTwo extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { category, subCategory, subCategory2, subCategory3, brands } = nextProps
+    const { category, subCategory, subCategory2, subCategory3, brands, tempCreateProduct } = nextProps
+
     if (!category.isLoading) {
       NProgress.done()
       if (category.status === Status.SUCCESS) this.setState({ category })
@@ -82,27 +148,38 @@ class ProductAddStepTwo extends Component {
       if (brands.status === Status.SUCCESS) this.setState({ brands })
       if (brands.status === Status.OFFLINE || brands.status === Status.FAILED) this.setState({ notification: {status: true, message: brands.message} })
     }
+
+    if (this.submiting && tempCreateProduct.stepTwo.isFound) {
+      this.submiting = false
+      Router.push('/product-add-step-three')
+    }
   }
 
   render () {
-    const { form, category, subCategory, subCategory2, subCategory3, brands } = this.state
-    console.log(brands)
+    const { form, category, subCategory, subCategory2, subCategory3, brands, error } = this.state
+    const styleError = {
+      borderBottomColor: '#ef5656',
+      color: '#ef5656'
+    }
+    let { includeBrand } = this.state
+    let isBrandChecked = (includeBrand) || (form.brand_id !== undefined)
+
     return (
       <section className='section is-paddingless'>
         <Wizard total={4} active={2} />
         <div className='add-product'>
           <div className='form-product'>
-            <div className='field'>
-              <label>Nama Produk</label>
+            <div className='field' style={error === 'name' ? styleError : {}}>
+              <label>Nama Produk *</label>
               <p className='control'>
-                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' value={(form.name !== undefined) ? form.name : ''} />
+                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name !== undefined) ? form.name : ''} />
               </p>
             </div>
             <div className='field'>
-              <label>Kategori</label>
+              <label style={error === 'categoryOne' ? styleError : {}}>Kategori</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne'>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
                     <option value='default'> Pilih</option>
                     {
                         category.isFound &&
@@ -115,10 +192,10 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label>Sub-Kategori 1</label>
+              <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 1</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo'>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
                     <option value='default'> Pilih</option>
                     {
                       subCategory.isFound &&
@@ -132,10 +209,10 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label>Sub-Kategori 2</label>
+              <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree'>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
                     <option value='default'> Pilih</option>
                     {
                       subCategory2.isFound &&
@@ -149,10 +226,10 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label>Sub-Kategori 3</label>
+              <label style={error === 'category_id' ? styleError : {}}>Sub-Kategori 3</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.category_id !== undefined ? form.category_id : 'default'} name='category_id'>
+                  <select onChange={(e) => this.formHandling(e)} value={form.category_id !== undefined ? form.category_id : 'default'} name='category_id' style={error === 'category_id' ? styleError : {}}>
                     <option value='default'> Pilih</option>
                     {
                       subCategory3.isFound &&
@@ -168,14 +245,14 @@ class ProductAddStepTwo extends Component {
             <div className='filter-option active'>
               <div className='sort-list check-all middle'>
                 <label className='checkbox'>
-                  <span className='sort-text'>Sertakan Brand</span>
-                  <span className='input-wrapper'>
-                    <input type='checkbox' />
+                  <span className={`sort-text ${(isBrandChecked) ? 'active' : ''}`}>Sertakan Brand</span>
+                  <span className={`input-wrapper ${(isBrandChecked) && 'checked'}`}>
+                    <input type='checkbox' onClick={(e) => this.includeBrandPress(e, isBrandChecked)} />
                   </span>
                 </label>
               </div>
             </div>
-            <div className='field'>
+            <div className='field effect-fadein' style={{ display: isBrandChecked ? 'block' : 'none' }}>
               <label>Brand</label>
               <p className='control'>
                 <span className='select'>
@@ -199,7 +276,7 @@ class ProductAddStepTwo extends Component {
             </div>
             <div className='field'>
               <p className='control'>
-                <button onClick={() => Router.push('/product-add-step-three')} className='button is-primary is-large is-fullwidth'>Lanjutkan</button>
+                <button onClick={() => !this.submiting && this.submit()} className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}>Lanjutkan</button>
               </p>
             </div>
           </div>
@@ -209,12 +286,22 @@ class ProductAddStepTwo extends Component {
   }
 }
 
+ProductAddStepTwo.defaultProps = {
+  initForm: {
+    name: '',
+    category_id: 0,
+    brand_id: 0,
+    description: ''
+  }
+}
+
 const mapStateToProps = (state) => ({
   brands: state.brands,
   category: state.category,
   subCategory: state.subCategory,
   subCategory2: state.subCategory2,
-  subCategory3: state.subCategory3
+  subCategory3: state.subCategory3,
+  tempCreateProduct: state.tempCreateProduct
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -222,7 +309,8 @@ const mapDispatchToProps = (dispatch) => ({
   getCategory: () => dispatch(homeActions.categoryList()),
   getSubCategory: (params) => dispatch(homeActions.subCategory(params)),
   getSubCategory2: (params) => dispatch(homeActions.subCategory2(params)),
-  getSubCategory3: (params) => dispatch(homeActions.subCategory3(params))
+  getSubCategory3: (params) => dispatch(homeActions.subCategory3(params)),
+  setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAddStepTwo)
