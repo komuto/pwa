@@ -75,7 +75,6 @@ class ManageAccount extends Component {
     if (!isLogin.login && submitSignOut) {
       const token = await GET_TOKEN.getToken()
       this.setState({ submitSignOut: false })
-      console.log('token ', token)
       if (token === null) {
         const href = `/profile?isSignOut`
         const as = 'profile'
@@ -83,7 +82,6 @@ class ManageAccount extends Component {
         NProgress.done()
       }
     }
-    console.log('nextProps', nextProps)
   }
 
   toNomorHandphone (e) {
