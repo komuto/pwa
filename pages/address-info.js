@@ -5,8 +5,6 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import AddressInfo from '../src/Containers/AddressInfo'
-// utils
-// import { PROFILE } from '../src/Utils/Constant'
 
 const params = {
   style: 'main seller',
@@ -20,9 +18,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <AddressInfo />
+    <AddressInfo query={props.query} />
   </DefaultLayout>
 )
 
