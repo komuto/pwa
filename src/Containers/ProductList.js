@@ -8,6 +8,7 @@ import { Navbar } from './Navbar'
 // components
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
+import Notification from '../Components/Notification'
 // actions
 import * as storeActions from '../actions/stores'
 // services
@@ -48,6 +49,7 @@ class ProductList extends Component {
     const { storeProducts } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
+    console.log(storeProducts)
     // storeProducts data
     if (!storeProducts.isLoading) {
       NProgress.done()
@@ -67,7 +69,7 @@ class ProductList extends Component {
   }
 
   render () {
-    const { tabs, showListCatalog, storeProducts } = this.state
+    const { tabs, showListCatalog, storeProducts, notification } = this.state
     let navbar = {
       searchBoox: false,
       path: '/',
@@ -80,6 +82,12 @@ class ProductList extends Component {
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_SHOW_IN_PAGE && 'active'}>Ditampilkan di Toko</a>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_HIDE_IN_PAGE && 'active'}>Disembunyikan</a>
         </div>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
@@ -114,7 +122,7 @@ class ProductList extends Component {
                   sp.products.map((p, i) => {
                     let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
                     return (
-                      <div className='detail-product' key={i + index}>
+                      <div className='detail-product' key={i}>
                         <div className='remove rightTop'>
                           <span className='icon-discount-sign' />
                           <span className='icon-grosir-sign' />
@@ -156,7 +164,7 @@ class ProductList extends Component {
               {
               storeProducts.isFound && storeProducts.storeProducts.map((sp, index) => {
                 return <li>
-                  <Link activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
+                  <Link key={index} activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
                 </li>
               })
             }
