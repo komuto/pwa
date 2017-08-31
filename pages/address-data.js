@@ -5,28 +5,28 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import DataRekening from '../src/Containers/DataRekening'
+import AddressData from '../src/Containers/AddressData'
 
-const toManageAccount = () => {
-  Router.push('/manage-account')
+const toStoreSetting = () => {
+  Router.push('/store-setting')
 }
 
 const params = {
-  style: 'main detail edit-data bg-grey',
+  style: 'main detail edit-data',
   header: {
-    title: 'Data Rekening'
+    title: 'Info Alamat'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Data Rekening'
+    callBack: () => toStoreSetting(),
+    textPath: 'Info Alamat'
   }
 }
 
 const Index = (props) => (
   <DefaultLayout params={params}>
-    <DataRekening query={props.query} />
+    <AddressData query={props.query} />
   </DefaultLayout>
 )
 

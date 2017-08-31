@@ -5,15 +5,20 @@ import Dropzone from 'react-dropzone'
 // components
 import Router from 'next/router'
 import {Images} from '../Themes'
+import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../actions/stores'
+import * as actionUserTypes from '../actions/user'
+// services
+import { Status } from '../Services/Status'
 
 var FormData = require('form-data')
 
-class AddInformationStore extends React.Component {
+class InformationStore extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      profile: props.profile,
       files: {
         preview: props.formInfo.store.logo
       },
@@ -23,11 +28,20 @@ class AddInformationStore extends React.Component {
       submitting: false,
       overSlogan: 25,
       validation: false,
+      setStateStart: false,
       notification: {
         status: false,
+        color: 'is-success',
         message: 'Error, default message.'
       }
     }
+  }
+
+  handleNotification (e) {
+    const { notification } = this.state
+    const newState = { notification }
+    newState.notification['status'] = !notification.status
+    this.setState(newState)
   }
 
   onDrop (files) {
@@ -78,7 +92,9 @@ class AddInformationStore extends React.Component {
   }
 
   postInfoStore () {
-    const { formInfo, files } = this.state
+    const { formInfo, files, submitting } = this.state
+    const { tempCreateStore, updateInformation, query } = this.props
+    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     let logo = files
     let nameStore = formInfo.name
     let slogan = formInfo.slogan
@@ -89,14 +105,14 @@ class AddInformationStore extends React.Component {
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
-      this.setState({ submitting: true })
-      this.setState({ validation: false })
-      if (files.preview !== formInfo.logo) {
+      const newSubmitting = { submitting, validation: false }
+      newSubmitting.submitting = true
+      this.setState(newSubmitting)
+      if (files.preview !== '' && files.preview !== formInfo.logo) {
         this.handleUploadImage()
       } else {
-        this.props.createStoreTemp({ store: formInfo })
-        this.setState({ submitting: true })
-        Router.push('/shipping-expedition')
+        isSetting ? updateInformation(formInfo) : tempCreateStore({ store: formInfo })
+        !isSetting && Router.push('/shipping-expedition')
       }
     } else {
       this.setState({ validation: true })
@@ -113,23 +129,101 @@ class AddInformationStore extends React.Component {
     }
   }
 
+  handleButton () {
+    const { submitting } = this.state
+    const { query } = this.props
+    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    return (
+      <button
+        className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
+        onClick={(e) => this.postInfoStore(e)} >
+        { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
+      </button>
+    )
+  }
+
+  componentDidMount () {
+    const { profile, formInfo } = this.state
+    const { query, getProfile } = this.props
+    if (query.type === 'settingStore') {
+      if (!profile.isFound) {
+        this.setState({ setStateStart: true })
+        getProfile()
+      } else {
+        const newState = { formInfo, setStateStart: false }
+        const splitLogo = profile.user.store.logo.split('/')
+        const logo = splitLogo.pop() || splitLogo.pop()
+        newState.formInfo['name'] = profile.user.store.name
+        newState.formInfo['slogan'] = profile.user.store.slogan
+        newState.formInfo['description'] = profile.user.store.description
+        newState.formInfo['logo'] = logo
+        newState.formInfo['path'] = splitLogo.join('/')
+        this.setState(newState)
+      }
+    }
+    NProgress.done()
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { formInfo, submitting } = this.state
-    const { createStoreTemp } = this.props
-    if (nextProps.upload.status === 200 && submitting) {
-      const logo = nextProps.upload.payload.images[0].name
-      const path = nextProps.upload.payload.path
+    const { formInfo, submitting, notification, setStateStart } = this.state
+    const { tempCreateStore, query, updateInformation, getProfile } = this.props
+    const { profile, updateStore, upload } = nextProps
+    if (!upload.isLoading && upload.isFound && submitting) {
+      const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+      const logo = upload.payload.images[0].name
+      const path = upload.payload.path
       const newState = { formInfo, submitting: false }
       newState.formInfo['logo'] = logo
       newState.formInfo['path'] = path
       this.setState(newState)
-      createStoreTemp({ store: formInfo })
-      Router.push('/shipping-expedition')
+      if (isSetting) {
+        updateInformation(formInfo)
+      } else {
+        tempCreateStore({ store: formInfo })
+        Router.push('/shipping-expedition')
+      }
+    }
+    if (!profile.isLoading && profile.isFound && setStateStart) {
+      const newState = { formInfo, setStateStart: false }
+      const splitLogo = profile.user.store.logo.split('/')
+      const logo = splitLogo.pop() || splitLogo.pop()
+      newState.formInfo['name'] = profile.user.store.name
+      newState.formInfo['slogan'] = profile.user.store.slogan
+      newState.formInfo['description'] = profile.user.store.description
+      newState.formInfo['logo'] = logo
+      newState.formInfo['path'] = splitLogo.join('/')
+      this.setState(newState)
+      this.setState({ profile })
+    }
+    if (!updateStore.isLoading && updateStore.isFound && submitting) {
+      switch (updateStore.status) {
+        case Status.SUCCESS: {
+          getProfile()
+          const newNotification = { notification, submitting: false }
+          newNotification.notification['status'] = true
+          newNotification.notification['message'] = updateStore.message
+          newNotification.notification['color'] = 'is-success'
+          this.setState(newNotification)
+          break
+        }
+        case Status.OFFLINE :
+        case Status.FAILED : {
+          const newNotif = { notification, submitting: false }
+          newNotif.notification['status'] = true
+          newNotif.notification['message'] = updateStore.message
+          newNotif.notification['color'] = 'is-danger'
+          this.setState(newNotif)
+          break
+        }
+        default:
+          break
+      }
+      this.setState({ notification })
     }
   }
 
   render () {
-    const { files, formInfo, overSlogan, submitting } = this.state
+    const { files, formInfo, overSlogan, notification } = this.state
     let logoOnRedux = formInfo.path + formInfo.logo
     let logoImages
     if (formInfo.path) {
@@ -139,6 +233,12 @@ class AddInformationStore extends React.Component {
     }
     return (
       <div>
+        <div
+          className={`notification ${notification.status && notification.color}`}
+          style={{display: notification.status ? 'block' : 'none'}}>
+          <button className='delete' onClick={(e) => this.handleNotification(e)} />
+          {notification.message}
+        </div>
         <section className='section is-paddingless'>
           <div className='seller-bar'>
             <div className='seller-step active1'>
@@ -210,10 +310,7 @@ class AddInformationStore extends React.Component {
             </div>
             <div className='field'>
               <p className='control'>
-                <button
-                  className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
-                  onClick={(e) => this.postInfoStore(e)} >Lanjutkan
-                </button>
+                {this.handleButton()}
               </p>
             </div>
           </div>
@@ -225,14 +322,18 @@ class AddInformationStore extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    formInfo: state.createStoreTemp,
-    upload: state.upload
+    formInfo: state.tempCreateStore,
+    upload: state.upload,
+    profile: state.profile,
+    updateStore: state.updateStore
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  createStoreTemp: (params) => dispatch(actionTypes.createStoreTemp(params)),
-  photoUpload: (params) => dispatch(actionTypes.photoUpload({data: params}))
+  tempCreateStore: (params) => dispatch(actionTypes.tempCreateStore(params)),
+  photoUpload: (params) => dispatch(actionTypes.photoUpload({data: params})),
+  getProfile: () => dispatch(actionUserTypes.getProfile()),
+  updateInformation: (params) => dispatch(actionTypes.updateInformation(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddInformationStore)
+export default connect(mapStateToProps, mapDispatchToProps)(InformationStore)

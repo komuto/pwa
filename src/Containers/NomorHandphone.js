@@ -39,31 +39,33 @@ class NomorHandphone extends React.Component {
 
   componentDidMount () {
     const { profile, notification } = this.state
-    const { verifyPhone } = this.props
+    const { verifyPhone, query } = this.props
     if (!profile.isFound) {
       this.props.getProfile()
     }
-    if (!verifyPhone.isLoading) {
-      switch (verifyPhone.status) {
-        case Status.SUCCESS:
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = verifyPhone.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = verifyPhone.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+    if (query.hasOwnProperty('isSuccess')) {
+      if (!verifyPhone.isLoading) {
+        switch (verifyPhone.status) {
+          case Status.SUCCESS:
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = verifyPhone.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          case Status.OFFLINE :
+          case Status.FAILED :
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = verifyPhone.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          default:
+            break
+        }
+        this.setState({ notification })
       }
-      this.setState({ notification })
     }
   }
 

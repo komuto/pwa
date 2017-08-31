@@ -124,7 +124,9 @@ class VerifyNoTelp extends React.Component {
       switch (bankAccount.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          Router.push('/data-rekening')
+          const href = `/data-rekening?isSuccess`
+          const as = 'data-rekening'
+          Router.push(href, as, { shallow: true })
           break
         case Status.OFFLINE :
         case Status.FAILED :

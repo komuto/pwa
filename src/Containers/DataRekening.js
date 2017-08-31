@@ -60,69 +60,71 @@ class DataRekening extends React.Component {
 
   componentDidMount () {
     const { notification } = this.state
-    const { getBankAccounts, bankAccount } = this.props
+    const { getBankAccounts, bankAccount, query } = this.props
     getBankAccounts()
-    if (bankAccount.type === 'add') {
-      switch (bankAccount.status) {
-        case Status.SUCCESS:
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = bankAccount.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = bankAccount.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+    if (query.hasOwnProperty('isSuccess')) {
+      if (bankAccount.type === 'add') {
+        switch (bankAccount.status) {
+          case Status.SUCCESS:
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = bankAccount.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          case Status.OFFLINE :
+          case Status.FAILED :
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = bankAccount.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          default:
+            break
+        }
       }
-    }
-    if (bankAccount.type === 'update') {
-      switch (bankAccount.status) {
-        case Status.SUCCESS:
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = bankAccount.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = bankAccount.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+      if (bankAccount.type === 'update') {
+        switch (bankAccount.status) {
+          case Status.SUCCESS:
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = bankAccount.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          case Status.OFFLINE :
+          case Status.FAILED :
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = bankAccount.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          default:
+            break
+        }
       }
-    }
-    if (bankAccount.type === 'delete') {
-      switch (bankAccount.status) {
-        case Status.SUCCESS:
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = bankAccount.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = bankAccount.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+      if (bankAccount.type === 'delete') {
+        switch (bankAccount.status) {
+          case Status.SUCCESS:
+            const newNotification = { notification }
+            newNotification.notification['status'] = true
+            newNotification.notification['message'] = bankAccount.message
+            newNotification.notification['color'] = 'is-success'
+            this.setState(newNotification)
+            break
+          case Status.OFFLINE :
+          case Status.FAILED :
+            const newNotif = { notification }
+            newNotif.notification['status'] = true
+            newNotif.notification['message'] = bankAccount.message
+            newNotif.notification['color'] = 'is-danger'
+            this.setState(newNotif)
+            break
+          default:
+            break
+        }
       }
     }
   }

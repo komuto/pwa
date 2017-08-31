@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
 // import Loading from '../Components/Loading'
+import NProgress from 'nprogress'
 import Notification from '../Components/Notification'
 // actions
 import * as actionLocationTypes from '../actions/location'
@@ -19,6 +20,7 @@ class AddressInfo extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      storeAddress: props.storeAddress,
       expeditions: props.expeditions,
       listAddress: props.listAddress,
       provinces: {
@@ -37,7 +39,7 @@ class AddressInfo extends React.Component {
         data: props.villages,
         selected: null
       },
-      formAdress: {
+      formAddress: {
         province_id: '',
         district_id: '',
         sub_district_id: '',
@@ -48,6 +50,8 @@ class AddressInfo extends React.Component {
       submitting: false,
       showAddress: false,
       validation: false,
+      setStateStart: false,
+      showVerified: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -60,12 +64,12 @@ class AddressInfo extends React.Component {
     const { provinces, districts, subdistricts, villages } = this.state
     const { getDistrict, getSubDistrict, getVillage } = this.props
     const { name, value } = e.target
-    const { formAdress } = this.state
-    const newState = { formAdress }
+    const { formAddress } = this.state
+    const newState = { formAddress }
     if (name === 'postal_code') {
-      newState.formAdress[name] = inputNumber(value)
+      newState.formAddress[name] = inputNumber(value)
     } else {
-      newState.formAdress[name] = value
+      newState.formAddress[name] = value
     }
     this.setState(newState)
     // set location
@@ -98,14 +102,14 @@ class AddressInfo extends React.Component {
 
   submitAddressToForm (e, address) {
     e.preventDefault()
-    const { formAdress, provinces, districts, subdistricts, villages } = this.state
-    const newAddress = { formAdress }
-    newAddress.formAdress['address'] = address.address
-    newAddress.formAdress['province_id'] = address.province.id.toString()
-    newAddress.formAdress['district_id'] = address.district.id.toString()
-    newAddress.formAdress['sub_district_id'] = address.subDistrict.id.toString()
-    newAddress.formAdress['village_id'] = address.village.id.toString()
-    newAddress.formAdress['postal_code'] = address.postal_code
+    const { formAddress, provinces, districts, subdistricts, villages } = this.state
+    const newAddress = { formAddress }
+    newAddress.formAddress['address'] = address.address
+    newAddress.formAddress['province_id'] = address.province.id.toString()
+    newAddress.formAddress['district_id'] = address.district.id.toString()
+    newAddress.formAddress['sub_district_id'] = address.subDistrict.id.toString()
+    newAddress.formAddress['village_id'] = address.village.id.toString()
+    newAddress.formAddress['postal_code'] = address.postal_code
     this.setState(newAddress)
     const newProvince = { provinces }
     newProvince.provinces.data['provinces'] = [address.province]
@@ -127,13 +131,13 @@ class AddressInfo extends React.Component {
   }
 
   renderValidation (name, textFailed) {
-    const { formAdress, validation } = this.state
-    let provinceId = formAdress.province_id
-    let districtId = formAdress.district_id
-    let subDistrictId = formAdress.sub_district_id
-    let villageId = formAdress.village_id
-    let address = formAdress.address
-    let postalCode = formAdress.postal_code
+    const { formAddress, validation } = this.state
+    let provinceId = formAddress.province_id.toString()
+    let districtId = formAddress.district_id.toString()
+    let subDistrictId = formAddress.sub_district_id.toString()
+    let villageId = formAddress.village_id.toString()
+    let address = formAddress.address
+    let postalCode = formAddress.postal_code
     let provinceIdRequired = name === 'province_id' && provinceId.length > 0
     let districtIdRequired = name === 'district_id' && districtId.length > 0
     let subDistrictIdRequired = name === 'sub_district_id' && subDistrictId.length > 0
@@ -156,13 +160,14 @@ class AddressInfo extends React.Component {
 
   submitAddressInfo (e) {
     e.preventDefault()
-    const { formAdress, submitting } = this.state
-    let provinceId = formAdress.province_id
-    let districtId = formAdress.district_id
-    let subDistrictId = formAdress.sub_district_id
-    let villageId = formAdress.village_id
-    let address = formAdress.address
-    let postalCode = formAdress.postal_code
+    const { formAddress, submitting } = this.state
+    const { query } = this.props
+    let provinceId = formAddress.province_id.toString()
+    let districtId = formAddress.district_id.toString()
+    let subDistrictId = formAddress.sub_district_id.toString()
+    let villageId = formAddress.village_id.toString()
+    let address = formAddress.address
+    let postalCode = formAddress.postal_code
     let provinceIdRequired = provinceId.length > 0
     let districtIdRequired = districtId.length > 0
     let subDistrictIdRequired = subDistrictId.length > 0
@@ -171,18 +176,31 @@ class AddressInfo extends React.Component {
     let postalCodeRequired = postalCode.length > 0
     let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired
     if (isValid) {
-      const newSubmitting = { submitting }
+      const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+      const newSubmitting = { submitting, validation: false }
       newSubmitting.submitting = true
       this.setState(newSubmitting)
-      this.setState({ validation: false })
-      this.proccessCreateStore()
+      isSetting ? this.updateAddress() : this.proccessCreateStore()
     } else {
       this.setState({ validation: true })
     }
   }
 
+  updateAddress () {
+    const { formAddress } = this.state
+    const newAddress = {
+      province_id: Number.parseInt(formAddress.province_id),
+      district_id: Number.parseInt(formAddress.district_id),
+      sub_district_id: Number.parseInt(formAddress.sub_district_id),
+      village_id: Number.parseInt(formAddress.village_id),
+      address: formAddress.address,
+      postal_code: formAddress.postal_code
+    }
+    this.props.updateStoreAddress(newAddress)
+  }
+
   proccessCreateStore () {
-    const { expeditions, formAdress } = this.state
+    const { expeditions, formAddress } = this.state
     const { processCreateStore, profile, createStore } = this.props
     // data expedition
     const dataServices = []
@@ -196,14 +214,15 @@ class AddressInfo extends React.Component {
       let isSelected = processCreateStore.expedition_services.selectedServices.filter((Id) => {
         return Id === idService
       }).length > 0
-      newExpedition.push({expedition_service_id: idService, status: +isSelected})
+      let statusSelected = isSelected ? 1 : 2
+      newExpedition.push({expedition_service_id: idService, status: statusSelected})
     })
     // data address
     const newAddress = [
-      Number.parseInt(formAdress.province_id), Number.parseInt(formAdress.district_id),
-      Number.parseInt(formAdress.sub_district_id), Number.parseInt(formAdress.village_id),
+      Number.parseInt(formAddress.province_id), Number.parseInt(formAddress.district_id),
+      Number.parseInt(formAddress.sub_district_id), Number.parseInt(formAddress.village_id),
       profile.user.user.name, profile.user.user.email, profile.user.user.phone_number,
-      formAdress.postal_code, formAdress.address
+      formAddress.postal_code, formAddress.address
     ]
     // data store
     const newStore = [
@@ -227,38 +246,65 @@ class AddressInfo extends React.Component {
     createStore(dataCreateStore)
   }
 
-  componentWillMount () {
-    const { provinces, listAddress, expeditions } = this.state
-    const { getListAddress, getProvince, getExpedition } = this.props
-    if (provinces.data.provinces.length === 0) {
-      getProvince()
-    }
-    if (listAddress.address.length === 0) {
+  componentDidMount () {
+    const { districts, subdistricts, villages, listAddress, expeditions, storeAddress, formAddress } = this.state
+    const { getListAddress, getProvince, getExpedition, getStoreAddress, query } = this.props
+    getProvince()
+    if (!listAddress.isFound) {
       getListAddress()
     }
-    if (expeditions.expeditions.length === 0) {
+    if (!expeditions.isFound) {
       getExpedition()
+    }
+    if (this.props.hasOwnProperty('query') && query.type === 'settingStore') {
+      if (!storeAddress.isFound) {
+        NProgress.start()
+        this.setState({ setStateStart: true }, () => {
+          if (this.state.setStateStart) {
+            getStoreAddress()
+          }
+        })
+      } else {
+        const newState = { formAddress }
+        newState.formAddress['province_id'] = storeAddress.storeAddress.province.id
+        newState.formAddress['district_id'] = storeAddress.storeAddress.district.id
+        newState.formAddress['sub_district_id'] = storeAddress.storeAddress.subDistrict.id
+        newState.formAddress['village_id'] = storeAddress.storeAddress.village.id
+        newState.formAddress['address'] = storeAddress.storeAddress.address
+        newState.formAddress['postal_code'] = storeAddress.storeAddress.postal_code
+        this.setState(newState)
+        if (!districts.data.isFound) {
+          this.props.getDistrict({ province_id: formAddress.province_id })
+        }
+        if (!subdistricts.data.isFound) {
+          this.props.getSubDistrict({ district_id: formAddress.district_id })
+        }
+        if (!villages.data.isFound) {
+          this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
+        }
+      }
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { provinces, districts, subdistricts, villages, submitting } = this.state
-    if (nextProps.provinces.status === 200) {
+    const { formAddress, provinces, districts, subdistricts, villages, submitting, setStateStart } = this.state
+    const { store, listAddress, storeAddress, statusUpdateStoreAddress } = nextProps
+    if (nextProps.provinces.isFound) {
       const newProvince = { provinces }
       newProvince.provinces['data'] = nextProps.provinces
       this.setState(newProvince)
     }
-    if (nextProps.districts.status === 200) {
+    if (nextProps.districts.isFound) {
       const newDistrict = { districts }
       newDistrict.districts['data'] = nextProps.districts
       this.setState(newDistrict)
     }
-    if (nextProps.subdistricts.status === 200) {
+    if (nextProps.subdistricts.isFound) {
       const newSubdistrict = { subdistricts }
       newSubdistrict.subdistricts['data'] = nextProps.subdistricts
       this.setState(newSubdistrict)
     }
-    if (nextProps.villages.status === 200) {
+    if (nextProps.villages.isFound) {
       const newVillage = { villages }
       newVillage.villages['data'] = nextProps.villages
       this.setState(newVillage)
@@ -276,8 +322,31 @@ class AddressInfo extends React.Component {
       resetVillages.villages.data['villages'] = []
       this.setState(resetVillages)
     }
-    this.setState({ listAddress: nextProps.listAddress })
-    const { store } = nextProps
+    if (!listAddress.isLoading && listAddress.isFound) {
+      this.setState({ listAddress })
+    }
+    if (!storeAddress.isLoading && storeAddress.isFound && setStateStart) {
+      this.setState({ storeAddress })
+      const newState = { formAddress, setStateStart: false }
+      newState.formAddress['id'] = storeAddress.storeAddress.id
+      newState.formAddress['province_id'] = storeAddress.storeAddress.province.id
+      newState.formAddress['district_id'] = storeAddress.storeAddress.district.id
+      newState.formAddress['sub_district_id'] = storeAddress.storeAddress.subDistrict.id
+      newState.formAddress['village_id'] = storeAddress.storeAddress.village.id
+      newState.formAddress['address'] = storeAddress.storeAddress.address
+      newState.formAddress['postal_code'] = storeAddress.storeAddress.postal_code
+      this.setState(newState)
+      if (!districts.data.isFound) {
+        this.props.getDistrict({ province_id: formAddress.province_id })
+      }
+      if (!subdistricts.data.isFound) {
+        this.props.getSubDistrict({ district_id: formAddress.district_id })
+      }
+      if (!villages.data.isFound) {
+        this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
+      }
+      NProgress.done()
+    }
     if (!store.isLoading && submitting) {
       let { notification } = this.state
       notification = {status: false, message: 'Error, default message.'}
@@ -295,6 +364,20 @@ class AddressInfo extends React.Component {
           break
       }
       this.setState({ notification })
+    }
+    if (!statusUpdateStoreAddress.isLoading && statusUpdateStoreAddress.isFound && submitting) {
+      switch (statusUpdateStoreAddress.status) {
+        case Status.SUCCESS:
+          this.setState({ submitting: false, showVerified: true })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ submitting: false })
+          Router.push(`/address-data?isSuccess`)
+          break
+        default:
+          break
+      }
     }
   }
 
@@ -329,8 +412,43 @@ class AddressInfo extends React.Component {
     )
   }
 
+  handleButton () {
+    const { submitting } = this.state
+    const { query } = this.props
+    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    return (
+      <button
+        className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
+        onClick={(e) => this.submitAddressInfo(e)} >
+        { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
+      </button>
+    )
+  }
+
+  showModalVerified () {
+    const { showVerified } = this.state
+    return (
+      <div className='sort-option' style={{display: showVerified && 'block'}}>
+        <div className='notif-report'>
+          <h3>Alamat berhasil diubah. Kami akan mengirim kode Verifikasi ke alamat baru Anda.</h3>
+          <p>Dengan mengubah Alamat, status toko Anda menjadi tidak terverifikasi sampai Anda memasukkan kode verifikasi yang akan kami kirimkan ke alamat baru Anda</p>
+          <button
+            className='button is-primary is-large is-fullwidth'
+            onClick={() => this.closeModalVerified()}>
+            Tutup
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  closeModalVerified () {
+    this.setState({ showVerified: false })
+    Router.push(`/address-data?isSuccess`)
+  }
+
   render () {
-    const { formAdress, provinces, districts, subdistricts, villages, notification, submitting } = this.state
+    const { formAddress, provinces, districts, subdistricts, villages, notification } = this.state
     return (
       <div>
         <Notification
@@ -364,7 +482,7 @@ class AddressInfo extends React.Component {
                   type='text'
                   name='address'
                   className='input'
-                  value={formAdress.address}
+                  value={formAddress.address}
                   onChange={(e) => this.handleAddress(e)} />
                 <br />{this.renderValidation('address', 'Mohon isi alamat lengkap anda')}
               </p>
@@ -375,7 +493,7 @@ class AddressInfo extends React.Component {
                 <span className='select'>
                   <select
                     name='province_id'
-                    value={formAdress.province_id}
+                    value={formAddress.province_id}
                     onChange={(e) => this.handleAddress(e)}>
                     <option disabled='disabled' value=''>Pilih Provinsi </option>
                     { provinces.data.provinces.map((province, index) => {
@@ -398,7 +516,7 @@ class AddressInfo extends React.Component {
                 <span className='select'>
                   <select
                     name='district_id'
-                    value={formAdress.district_id}
+                    value={formAddress.district_id}
                     onChange={(e) => this.handleAddress(e)}>
                     <option disabled='disabled' value=''>Pilih Kota / Kabupaten </option>
                     { districts.data.districts.map((district, index) => {
@@ -421,7 +539,7 @@ class AddressInfo extends React.Component {
                 <span className='select'>
                   <select
                     name='sub_district_id'
-                    value={formAdress.sub_district_id}
+                    value={formAddress.sub_district_id}
                     onChange={(e) => this.handleAddress(e)}>
                     <option disabled='disabled' value=''>Pilih Kecamatan </option>
                     { subdistricts.data.subdistricts.map((subdistrict, index) => {
@@ -444,7 +562,7 @@ class AddressInfo extends React.Component {
                 <span className='select'>
                   <select
                     name='village_id'
-                    value={formAdress.village_id}
+                    value={formAddress.village_id}
                     onChange={(e) => this.handleAddress(e)}>
                     <option disabled='disabled' value=''>Pilih Kelurahan </option>
                     { villages.data.villages.map((village, index) => {
@@ -468,22 +586,20 @@ class AddressInfo extends React.Component {
                   type='text'
                   name='postal_code'
                   className='input'
-                  value={formAdress.postal_code}
+                  value={formAddress.postal_code}
                   onChange={(e) => this.handleAddress(e)} />
                 <br />{this.renderValidation('postal_code', 'Mohon isi kode pos anda')}
               </p>
             </div>
             <div className='field'>
               <p className='control'>
-                <button
-                  className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
-                  onClick={(e) => this.submitAddressInfo(e)}>Lanjutkan
-                </button>
+                {this.handleButton()}
               </p>
             </div>
           </div>
         </section>
         {this.showAddAddress()}
+        {this.showModalVerified()}
       </div>
     )
   }
@@ -491,10 +607,12 @@ class AddressInfo extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    storeAddress: state.storeAddress,
     store: state.createStore,
-    processCreateStore: state.createStoreTemp,
+    processCreateStore: state.tempCreateStore,
     profile: state.profile,
     listAddress: state.listAddress,
+    statusUpdateStoreAddress: state.updateStoreAddress,
     // location
     provinces: state.provinces,
     districts: state.districts,
@@ -505,12 +623,14 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = dispatch => ({
+  getStoreAddress: () => dispatch(actionStoreTypes.getStoreAddress()),
+  createStore: (params) => dispatch(actionStoreTypes.createStore(params)),
+  updateStoreAddress: (params) => dispatch(actionStoreTypes.updateStoreAddress(params)),
   getListAddress: () => dispatch(actionAddressTypes.getListAddress()),
   getProvince: () => dispatch(actionLocationTypes.getProvince()),
   getDistrict: (params) => dispatch(actionLocationTypes.getDistrict(params)),
   getSubDistrict: (params) => dispatch(actionLocationTypes.getSubDistrict(params)),
   getVillage: (params) => dispatch(actionLocationTypes.getVillage(params)),
-  createStore: (params) => dispatch(actionStoreTypes.createStore(params)),
   getExpedition: () => dispatch(actionExpeditionTypes.getExpedition())
 })
 

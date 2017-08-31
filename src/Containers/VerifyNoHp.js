@@ -94,7 +94,9 @@ class VerifyNoTelp extends React.Component {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          Router.push('/nomor-handphone')
+          const href = `/nomor-handphone?isSuccess`
+          const as = 'nomor-handphone'
+          Router.push(href, as, { shallow: true })
           break
         case Status.OFFLINE :
         case Status.FAILED :

@@ -1,13 +1,11 @@
 // @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-// import Router from 'next/router'
-import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
 // import { ButtonFullWidth } from '../Components/Button'
-import Router from 'next/router'
 import {Images} from '../Themes'
 // actions
 import * as loginAction from '../actions/user'
@@ -17,18 +15,12 @@ class Account extends Component {
     super(props)
     this.state = {
       verify: false,
-      profile: props.profile,
-      users: props.users
+      profile: props.profile
     }
   }
 
   handleVerify () {
     this.setState({verify: !this.state.verify})
-  }
-
-  handleSignOutClick () {
-    NProgress.start()
-    this.props.dispatch(loginAction.logout())
   }
 
   sendOTPPhone (e) {
@@ -38,12 +30,12 @@ class Account extends Component {
 
   handleOnClick (e) {
     e.preventDefault()
-    const { profile, user } = this.props
+    const { profile } = this.props
     if (profile.user.store.hasOwnProperty('name')) {
-      Router.push('/store-seller')
+      Router.push('/manage-store')
     } else {
-      if (user.is_phone_verified) {
-        Router.push('/add-information-store')
+      if (profile.user.user.is_phone_verified) {
+        Router.push('/information-store')
       } else {
         this.handleVerify()
       }
@@ -55,18 +47,9 @@ class Account extends Component {
     Router.push('/manage-account')
   }
 
-  componentDidMount () {
-    if (!this.state.profile.isFound) {
-      this.props.getProfile()
-    }
-  }
-
   componentWillReceiveProps (nextProps) {
     if (nextProps.sendOTPPhone.status === 200) {
       Router.push('/verify-no-telp')
-    }
-    if (nextProps.profile.status === 200) {
-      this.setState({ profile: nextProps.profile })
     }
   }
 
@@ -95,8 +78,7 @@ class Account extends Component {
   }
 
   renderStore () {
-    console.log('state ', this.state)
-    const { profile } = this.props
+    const { profile } = this.state
     const isHasStoreprofile = profile.user.store.hasOwnProperty('name')
     return (
       <Section className='bg-white'>
@@ -129,12 +111,13 @@ class Account extends Component {
   }
 
   render () {
-    const { user } = this.props
+    console.log('state ', this.state)
+    const { profile } = this.state
     return (
       <Content>
         <Section className='bg-white'>
           {
-          user.status === 0
+          profile.user.user.status === 0
           ? <div className='notif-verify'>
             <div className='box is-paddingless'>
               <article className='media'>
@@ -147,7 +130,7 @@ class Account extends Component {
                   <div className='content'>
                     <p>
                       <strong>Verifikasikan email untuk mengakses semua menu</strong>
-                      Silahkan klik link verifikasi yang telah kami kirimkan ke { user.email }
+                      Silahkan klik link verifikasi yang telah kami kirimkan ke { profile.user.user.email }
                       <a className='button is-warning is-outlined'>Kirim Ulang link verifikasi</a>
                     </p>
                   </div>
@@ -164,13 +147,13 @@ class Account extends Component {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image user-pict'>
-                        <img src={(user.photo) ? user.photo : Images.noImage} alt='pict' />
+                        <img src={(profile.user.user.photo) ? profile.user.user.photo : Images.noImage} alt='pict' />
                       </figure>
                     </div>
                     <div className='media-content'>
                       <div className='content'>
                         <p className='user-name'>
-                          <strong>{ user.name }</strong>
+                          <strong>{ profile.user.user.name }</strong>
                           <br />
                           Kelola Akun
                         </p>
@@ -194,7 +177,7 @@ class Account extends Component {
                         <p>
                           <strong>Saldo</strong>
                         </p>
-                        <div className='val-right'><span>Rp { user.saldo_wallet }</span></div>
+                        <div className='val-right'><span>Rp { profile.user.user.saldo_wallet }</span></div>
                       </div>
                     </div>
                   </article>
@@ -232,17 +215,12 @@ class Account extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    // user: state.user
-    users: state.user,
-    sendOTPPhone: state.sendOTPPhone,
-    profile: state.profile
+    sendOTPPhone: state.sendOTPPhone
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  sendOTPToPhone: () => dispatch(loginAction.sendOTPPhone()),
-  getProfile: () => dispatch(loginAction.getProfile())
-  // verifyStore: () => dispatch(verifyStore())
+  sendOTPToPhone: () => dispatch(loginAction.sendOTPPhone())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account)

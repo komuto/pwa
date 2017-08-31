@@ -2,7 +2,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
-import _ from 'lodash'
 // components
 import Content from '../Components/Content'
 import AccountLogin from './AccountLogin'
@@ -19,6 +18,7 @@ class Profile extends Component {
   constructor (props) {
     super(props)
     this.state = ({
+      profile: props.profile,
       user: props.user || null,
       notification: {
         status: false,
@@ -28,25 +28,31 @@ class Profile extends Component {
   }
 
   async componentDidMount () {
-    const { user } = this.state
+    const { profile } = this.state
+    const { query, getProfile } = this.props
     const token = await GET_TOKEN.getToken()
 
     console.log(token)
 
-    if (token && _.isEmpty(user.user)) {
+    if (token) {
       NProgress.start()
-      this.props.dispatch(loginAction.getProfile())
+      getProfile()
+    }
+    if (query.hasOwnProperty('isSignOut')) {
+      const newState = { profile }
+      newState.profile['isFound'] = false
+      this.setState(newState)
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { user } = nextProps
-    if (!user.isLoading) {
+    const { user, profile } = nextProps
+    if (!profile.isLoading) {
       NProgress.done()
-      switch (user.status) {
+      switch (profile.status) {
         case Status.SUCCESS :
-          (user.isFound)
-          ? this.setState({ user })
+          (profile.isFound)
+          ? this.setState({ profile: profile, user: profile })
           : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
           break
         case Status.OFFLINE :
@@ -60,7 +66,7 @@ class Profile extends Component {
   }
 
   render () {
-    let { user, notification } = this.state
+    let { profile, notification } = this.state
     return (
       <Content>
         <Notification
@@ -70,8 +76,8 @@ class Profile extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-          user.isFound
-          ? <Account user={user.user.user} />
+          profile.isFound
+          ? <Account profile={profile} />
           : <AccountLogin />
         }
       </Content>
@@ -81,8 +87,13 @@ class Profile extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.profile
+    user: state.user,
+    profile: state.profile
   }
 }
 
-export default connect(mapStateToProps)(Profile)
+const mapDispatchToProps = dispatch => ({
+  getProfile: () => dispatch(loginAction.getProfile())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)

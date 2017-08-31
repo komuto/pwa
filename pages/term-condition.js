@@ -4,23 +4,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ShippingExpedition from '../src/Containers/ShippingExpedition'
+import TermCondition from '../src/Containers/TermCondition'
 
 const params = {
-  style: 'main seller',
+  style: 'main user',
   header: {
-    title: 'Ekspedisi Pengiriman'
+    title: 'Terms and Conditions'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    textPath: 'Ekspedisi Pengiriman'
+    textPath: 'Terms and Conditions'
   }
 }
 
-const Index = (props) => (
+const Index = () => (
   <DefaultLayout params={params}>
-    <ShippingExpedition query={props.query} />
+    <TermCondition />
   </DefaultLayout>
 )
 

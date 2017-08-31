@@ -148,13 +148,13 @@ class OwnerInformation extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    formOwnerInfo: state.createStoreTemp,
+    formOwnerInfo: state.tempCreateStore,
     profile: state.profile
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  setOwnerInfo: (params) => dispatch(actionTypes.createStoreTemp(params))
+  setOwnerInfo: (params) => dispatch(actionTypes.tempCreateStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(OwnerInformation)

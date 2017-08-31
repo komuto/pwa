@@ -1,32 +1,27 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import DataRekening from '../src/Containers/DataRekening'
-
-const toManageAccount = () => {
-  Router.push('/manage-account')
-}
+import InformationStore from '../src/Containers/InformationStore'
+// utils
 
 const params = {
-  style: 'main detail edit-data bg-grey',
+  style: 'main seller',
   header: {
-    title: 'Data Rekening'
+    title: 'Informasi Toko'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Data Rekening'
+    textPath: 'Informasi Toko'
   }
 }
 
 const Index = (props) => (
   <DefaultLayout params={params}>
-    <DataRekening query={props.query} />
+    <InformationStore query={props.query} />
   </DefaultLayout>
 )
 

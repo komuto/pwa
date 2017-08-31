@@ -105,28 +105,28 @@ class EditRekening extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { formBank, convertToForm } = this.state
-    const { banks, listBankAccounts } = nextProps
+    const { banks, bankAccountDetail } = nextProps
     if (banks.status === 200) {
       this.setState({ banks: nextProps.banks })
     }
-    if (listBankAccounts.status === 200 && convertToForm) {
+    if (bankAccountDetail.status === 200 && convertToForm) {
       const newState = { formBank }
-      newState.formBank['master_bank_id'] = listBankAccounts.listBankAccounts.bank.id
-      newState.formBank['holder_name'] = listBankAccounts.listBankAccounts.holder_name
-      newState.formBank['holder_account_number'] = listBankAccounts.listBankAccounts.holder_account_number
-      newState.formBank['bank_branch_office_name'] = listBankAccounts.listBankAccounts.bank_branch_office_name
+      newState.formBank['master_bank_id'] = bankAccountDetail.bankAccountDetail.bank.id
+      newState.formBank['holder_name'] = bankAccountDetail.bankAccountDetail.holder_name
+      newState.formBank['holder_account_number'] = bankAccountDetail.bankAccountDetail.holder_account_number
+      newState.formBank['bank_branch_office_name'] = bankAccountDetail.bankAccountDetail.bank_branch_office_name
       this.setState(newState)
-      this.setState({convertToForm: false, selectedBank: listBankAccounts.listBankAccounts.bank.name})
+      this.setState({convertToForm: false, selectedBank: bankAccountDetail.bankAccountDetail.bank.name})
     }
   }
 
   componentDidMount () {
-    const { listBank, query, getBankAccounts } = this.props
+    const { listBank, query, getBankAccountDetail } = this.props
     if (!this.state.banks.isFound) {
       listBank()
     }
-    if (query.holder_name !== '') {
-      getBankAccounts({id: query.id})
+    if (query.id !== '') {
+      getBankAccountDetail({id: query.id})
       this.setState({convertToForm: true})
     }
   }
@@ -161,8 +161,6 @@ class EditRekening extends React.Component {
 
   render () {
     const { formBank, selectedBank, submitting } = this.state
-    console.log('state ', this.state)
-    console.log('props ', this.props)
     return (
       <section className='section is-paddingless'>
         <div className='edit-data-delivery bg-white edit'>
@@ -230,12 +228,12 @@ class EditRekening extends React.Component {
 const mapStateToProps = (state) => {
   return {
     banks: state.banks,
-    listBankAccounts: state.listBankAccounts
+    bankAccountDetail: state.bankAccountDetail
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getBankAccounts: (params) => dispatch(actionTypes.getBankAccounts(params)),
+  getBankAccountDetail: (params) => dispatch(actionTypes.getBankAccountDetail(params)),
   listBank: () => dispatch(actionTypes.listBank()),
   sendOTPBank: () => dispatch(actionUserTypes.sendOTPBank())
 })
