@@ -46,7 +46,28 @@ class Payment extends Component {
   }
 
   paymentMidtrans () {
-
+    const { snapToken } = this.state
+    if (snapToken.isFound) {
+      snap.pay(snapToken.token, {
+        onSuccess: (result) => {
+          console.log('success')
+          console.log(result)
+        },
+        onPending: (result) => {
+          console.log('pending')
+          console.log(result)
+        },
+        onError: (result) => {
+          console.log('error')
+          console.log(result)
+        },
+        onClose: () => {
+          console.log('customer closed the popup without finishing the payment')
+        }
+      })
+    } else {
+      console.log('Token not found!')
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -54,7 +75,20 @@ class Payment extends Component {
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
 
-    console.log('snapToken', snapToken)
+    if (!snapToken.isLoading) {
+      switch (snapToken.status) {
+        case Status.SUCCESS :
+          if (!snapToken.isFound) notification = {type: 'is-danger', status: true, message: 'Token tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: balance.message}
+          break
+        default:
+          break
+      }
+      this.setState({ snapToken, notification })
+    }
 
     if (!balance.isLoading) {
       switch (balance.status) {
