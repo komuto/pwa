@@ -24,6 +24,11 @@ class ProductList extends Component {
     super(props)
     this.state = {
       storeProducts: props.storeProducts || null,
+      search: {
+        status: false,
+        value: '',
+        results: []
+      },
       tabs: TAB_SHOW_IN_PAGE,
       showListCatalog: false,
       notification: {
@@ -45,12 +50,36 @@ class ProductList extends Component {
     this.props.getStoreProducts({hidden: false})
   }
 
+  searchOnChange (event) {
+    const { search, storeProducts } = this.state
+    search.status = true
+    search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+
+    if (search.value !== '') {
+      search.status = true
+      search.results = []
+      storeProducts.storeProducts.map((sp) => {
+        let tamProducts = []
+        sp.products.map((product) => {
+          (product.name.toLowerCase().indexOf(search.value) > -1) && tamProducts.push(product)
+        })
+        if (tamProducts.length > 0) {
+          sp.products = tamProducts
+          search.results.push(sp)
+        }
+      })
+    } else {
+      search.status = false
+      search.results = []
+    }
+
+    this.setState({ search })
+  }
+
   componentWillReceiveProps (nextProps) {
     const { storeProducts } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
-    console.log(storeProducts)
-    // storeProducts data
     if (!storeProducts.isLoading) {
       NProgress.done()
       switch (storeProducts.status) {
@@ -69,11 +98,17 @@ class ProductList extends Component {
   }
 
   render () {
-    const { tabs, showListCatalog, storeProducts, notification } = this.state
+    const { tabs, showListCatalog, storeProducts, search, notification } = this.state
     let navbar = {
       searchBoox: false,
       path: '/',
       textPath: 'Daftar Produk'
+    }
+    let catalogProducts = []
+    if (search.status) {
+      catalogProducts = search.results
+    } else {
+      catalogProducts = storeProducts.isFound ? storeProducts.storeProducts : []
     }
     return (
       <Content>
@@ -91,7 +126,7 @@ class ProductList extends Component {
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onChange={(e) => this.searchOnChange(e)} />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>
@@ -99,7 +134,7 @@ class ProductList extends Component {
           </div>
         </section>
         {
-          storeProducts.isFound && storeProducts.storeProducts.map((sp, index) => {
+          catalogProducts.map((sp, index) => {
             return (
               <Element name={String(sp.catalog.id)} className={`section is-paddingless detail`} key={index} style={{ marginBottom: 20 }}>
                 <div className='info-purchase'>
@@ -162,11 +197,11 @@ class ProductList extends Component {
           <div className='sort-list catalog-list'>
             <ul>
               {
-              storeProducts.isFound && storeProducts.storeProducts.map((sp, index) => {
-                return <li>
-                  <Link key={index} activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
-                </li>
-              })
+                catalogProducts.map((sp, index) => {
+                  return <li key={index}>
+                    <Link activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
+                  </li>
+                })
             }
             </ul>
           </div>
