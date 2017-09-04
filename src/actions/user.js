@@ -127,7 +127,7 @@ export const updatePhone = params => buildAction(typeReq(UPDATE_PHONE), params)
 /**
  * @state userDiscussion
  */
-export const getDiscussion = () => buildAction(typeReq(GET_USER_DISCUSSION))
+export const getDiscussion = params => buildAction(typeReq(GET_USER_DISCUSSION), params)
 
 /**
  * @param params are the same as the api query

@@ -7,3 +7,4 @@ export const confirmTransfer = buildSaga(apis.confirmTransfer, actions.CONFIRM_T
 export const getDokuInvoice = buildSaga(apis.getDokuInvoice, actions.GET_DOKU_INVOICE)
 export const payDoku = buildSaga(apis.payDoku, actions.PAY_DOKU)
 export const withdraw = buildSaga(apis.withdraw, actions.WITHDRAW)
+export const getMidtransToken = buildSaga(apis.getMidtransToken, actions.GET_MIDTRANS_TOKEN)

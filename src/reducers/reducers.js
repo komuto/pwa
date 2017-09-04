@@ -184,7 +184,8 @@ const payment = {
   invoice: paymentReducers.getDokuInvoice,
   paymentMethods: paymentReducers.getPaymentMethods,
   confirmation: paymentReducers.confirmTransfer,
-  withdrawal: paymentReducers.withdraw
+  withdrawal: paymentReducers.withdraw,
+  snapToken: paymentReducers.getMidtransToken
 }
 
 const review = {

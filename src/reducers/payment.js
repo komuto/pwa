@@ -1,5 +1,5 @@
 import * as actions from '../actions/payment'
-import { buildInitState, createReducer } from '../config'
+import { buildInitState, createReducer, succState } from '../config'
 
 export const getPaymentMethods = createReducer(buildInitState({ paymentMethods: [] }))
   .addReducer({
@@ -29,3 +29,10 @@ export const withdraw = createReducer(buildInitState())
   .addReducer({
     type: actions.WITHDRAW
   }).run()
+
+export const getMidtransToken = createReducer(buildInitState())
+  .addReducer({
+    type: actions.GET_MIDTRANS_TOKEN,
+    customSuccState: (state, action) => ({ ...succState(action), token: action.data.token })
+  }).run()
+
