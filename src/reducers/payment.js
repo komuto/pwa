@@ -35,4 +35,3 @@ export const getMidtransToken = createReducer(buildInitState())
     type: actions.GET_MIDTRANS_TOKEN,
     customSuccState: (state, action) => ({ ...succState(action), token: action.data.token })
   }).run()
-
