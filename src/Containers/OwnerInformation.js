@@ -52,27 +52,34 @@ class OwnerInformation extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
     const { formInfo } = this.state
-    const { OwnerInfo } = this.props
+    const { setOwnerInfo } = this.props
     let idNumber = formInfo.id_number
     let motherName = formInfo.mother_name
     let idNumberRequired = idNumber.length > 0
     let motherNameRequired = motherName.length > 0
     let isValid = idNumberRequired && motherNameRequired
     if (isValid) {
-      this.setState({ validation: false })
-      OwnerInfo(formInfo)
-      Router.push('/address-info')
+      this.setState({ submitting: true }, () => {
+        if (this.state.submitting) {
+          setOwnerInfo({ user: formInfo })
+        }
+      })
     } else {
       this.setState({ validation: true })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    this.setState({ formInfo: nextProps.formOwnerInfo.user })
+    const { formOwnerInfo } = nextProps
+    this.setState({ formInfo: formOwnerInfo.user })
+    if (formOwnerInfo.user.id_number !== '' && formOwnerInfo.user.mother_name !== '' && this.state.submitting) {
+      this.setState({ submitting: false })
+      Router.push('/address-info')
+    }
   }
 
   render () {
-    const { formInfo, profile } = this.state
+    const { formInfo, profile, submitting } = this.state
     return (
       <div>
         <section className='section is-paddingless'>
@@ -125,7 +132,7 @@ class OwnerInformation extends React.Component {
             <div className='field'>
               <p className='control'>
                 <button
-                  className='button is-primary is-large is-fullwidth'
+                  className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
                   onClick={(e) => this.handleSubmit(e)}
                   >
                   Lanjutkan
@@ -141,13 +148,13 @@ class OwnerInformation extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    formOwnerInfo: state.processCreateStore,
+    formOwnerInfo: state.tempCreateStore,
     profile: state.profile
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  OwnerInfo: (params) => dispatch(actionTypes.OwnerInfo(params))
+  setOwnerInfo: (params) => dispatch(actionTypes.tempCreateStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(OwnerInformation)

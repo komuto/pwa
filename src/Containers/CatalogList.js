@@ -1,21 +1,23 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import Router from 'next/router'
 // components
+import Router from 'next/router'
+import NProgress from 'nprogress'
 // actions
-import * as actionTypes from '../actions/address'
+import * as actionTypes from '../actions/catalog'
 // services
 import { Status } from '../Services/Status'
 
-class DataAddress extends React.Component {
+class CatalogList extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      listAddress: props.listAddress,
+      listCatalog: props.listCatalog,
       dropdownSelected: '',
-      confirmDelete: '',
-      deleteAddressTemp: '',
+      confirmDelete: false,
+      deleteCatalogTemp: '',
+      failedDelete: false,
       notification: {
         status: false,
         color: 'is-success',
@@ -39,37 +41,57 @@ class DataAddress extends React.Component {
     this.setState(newState)
   }
 
-  modalShowDelete (e, address) {
+  modalFailedDelete (catalog) {
+    const { failedDelete } = this.state
+    this.setState({ failedDelete: !failedDelete, deleteCatalogTemp: catalog, dropdownSelected: '' })
+  }
+
+  modalShowDelete (e, catalog) {
     e.preventDefault()
     const { confirmDelete } = this.state
-    this.setState({ confirmDelete: !confirmDelete, deleteAddressTemp: address.id, dropdownSelected: '' })
+    if (catalog.count_product === 0) {
+      this.setState({ confirmDelete: !confirmDelete, deleteCatalogTemp: catalog, dropdownSelected: '' })
+    } else {
+      this.modalFailedDelete(catalog)
+    }
   }
 
   modalConfirmDelete (e) {
     e.preventDefault()
-    const {deleteAddressTemp} = this.state
+    const { deleteCatalogTemp } = this.state
     this.setState({ submitting: true })
-    this.props.deleteAddress({id: deleteAddressTemp})
+    this.props.deleteCatalog({id: deleteCatalogTemp.id})
   }
 
-  toEditAddress (e, address) {
+  toEditCatalog (e, catalog) {
     e.preventDefault()
-    Router.push(`/edit-address?id=${address.id}`)
+    NProgress.start()
+    Router.push(`/catalog-edit?id=${catalog.id}`)
+  }
+
+  toAddCatalog (e) {
+    e.preventDefault()
+    NProgress.start()
+    Router.push('/catalog-add')
+  }
+
+  componentDidMount () {
+    this.props.getListCatalog()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { notification, listAddress, deleteAddressTemp, submitting } = this.state
-    const { addAddress, updateAddress, statusDeleteAddress, query } = nextProps
-    if (nextProps.listAddress.status === 200) {
-      this.setState({ listAddress: nextProps.listAddress })
+    const { notification, listCatalog, deleteCatalogTemp, submitting } = this.state
+    const { createCatalog, updateCatalog, statusDeleteCatalog, query } = nextProps
+    if (nextProps.listCatalog.status === 200) {
+      this.setState({ listCatalog: nextProps.listCatalog })
     }
     if (query.hasOwnProperty('isSuccess')) {
-      if (!addAddress.isLoading) {
-        switch (addAddress.status) {
+      if (!createCatalog.isLoading) {
+        switch (createCatalog.status) {
           case Status.SUCCESS: {
             const newNotification = { notification }
             newNotification.notification['status'] = true
-            newNotification.notification['message'] = addAddress.message
+            newNotification.notification['message'] = createCatalog.message
             newNotification.notification['color'] = 'is-success'
             this.setState(newNotification)
             break
@@ -78,7 +100,7 @@ class DataAddress extends React.Component {
           case Status.FAILED : {
             const newNotif = { notification }
             newNotif.notification['status'] = true
-            newNotif.notification['message'] = addAddress.message
+            newNotif.notification['message'] = createCatalog.message
             newNotif.notification['color'] = 'is-danger'
             this.setState(newNotif)
             break
@@ -88,12 +110,12 @@ class DataAddress extends React.Component {
         }
         this.setState({ notification })
       }
-      if (updateAddress.isFound) {
-        switch (updateAddress.status) {
+      if (updateCatalog.isFound) {
+        switch (updateCatalog.status) {
           case Status.SUCCESS: {
             const newNotification = { notification }
             newNotification.notification['status'] = true
-            newNotification.notification['message'] = updateAddress.message
+            newNotification.notification['message'] = updateCatalog.message
             newNotification.notification['color'] = 'is-success'
             this.setState(newNotification)
             break
@@ -102,7 +124,7 @@ class DataAddress extends React.Component {
           case Status.FAILED : {
             const newNotif = { notification }
             newNotif.notification['status'] = true
-            newNotif.notification['message'] = updateAddress.message
+            newNotif.notification['message'] = updateCatalog.message
             newNotif.notification['color'] = 'is-danger'
             this.setState(newNotif)
             break
@@ -113,17 +135,17 @@ class DataAddress extends React.Component {
         this.setState({ notification })
       }
     }
-    if (!statusDeleteAddress.isLoading && submitting) {
-      switch (statusDeleteAddress.status) {
+    if (!statusDeleteCatalog.isLoading && submitting) {
+      switch (statusDeleteCatalog.status) {
         case Status.SUCCESS: {
-          let newData = listAddress.address.filter(data => data.id !== deleteAddressTemp)
-          let newListAddress = {
-            ...listAddress, address: newData
+          let newData = listCatalog.catalogs.filter(data => data.id !== deleteCatalogTemp.id)
+          let newListCatalog = {
+            ...listCatalog, catalogs: newData
           }
-          this.setState({ listAddress: newListAddress, submitting: false, confirmDelete: false, dropdownSelected: '' })
+          this.setState({ listCatalog: newListCatalog, submitting: false, confirmDelete: false, dropdownSelected: '' })
           const newNotification = { notification }
           newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusDeleteAddress.message
+          newNotification.notification['message'] = statusDeleteCatalog.message
           newNotification.notification['color'] = 'is-success'
           this.setState(newNotification)
           break
@@ -133,7 +155,7 @@ class DataAddress extends React.Component {
           this.setState({ submitting: false, confirmDelete: false, dropdownSelected: '' })
           const newNotif = { notification }
           newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusDeleteAddress.message
+          newNotif.notification['message'] = statusDeleteCatalog.message
           newNotif.notification['color'] = 'is-danger'
           this.setState(newNotif)
           break
@@ -145,17 +167,8 @@ class DataAddress extends React.Component {
     }
   }
 
-  componentWillMount () {
-    this.props.getListAddress()
-  }
-
-  toAddAddress (e) {
-    e.preventDefault()
-    Router.push('/add-address')
-  }
-
   render () {
-    const { listAddress, dropdownSelected, confirmDelete, notification, submitting } = this.state
+    const { listCatalog, dropdownSelected, confirmDelete, deleteCatalogTemp, notification, failedDelete, submitting } = this.state
     return (
       <div>
         <div
@@ -164,56 +177,50 @@ class DataAddress extends React.Component {
           <button className='delete' onClick={(e) => this.handleNotification(e)} />
           {notification.message}
         </div>
-        { listAddress.address.length !== 0 ? listAddress.address.map(val => {
+        { listCatalog.catalogs.length !== 0 ? listCatalog.catalogs.map(val => {
           return (
-            <section className='section is-paddingless bg-white has-shadow' key={val.id}>
+            <section className='section is-paddingless bg-white' key={val.id}>
               <div className='data-wrapper'>
                 <div className='head-panel' onClick={(e) => this.handleDropdown(e, val.id)}>
-                  <h3>{val.alias_address} {val.is_primary_address && <span className='tag is-primary'>Alamat Utama</span>}</h3>
-                  <div
-                    className={`menu-top ${dropdownSelected === val.id && 'open'}`}
-                    >
+                  <h3>{val.name}</h3>
+                  <p>{val.count_product} Produk</p>
+                  <div className={`menu-top ${dropdownSelected === val.id && 'open'}`}>
                     <a className='option-content'>
                       <span /><span /><span />
                     </a>
                     <ul className='option-dropdown'>
-                      <li onClick={(e) => this.toEditAddress(e, val)}><a>Edit</a></li>
+                      <li onClick={(e) => this.toEditCatalog(e, val)}><a>Edit</a></li>
                       <li onClick={(e) => this.modalShowDelete(e, val)}>
                         <a className='js-option'>Hapus</a>
                       </li>
                     </ul>
                   </div>
                 </div>
-                <div className='data-content'>
-                  <div className='title-content'>
-                    <h3>Nama Penerima</h3>
-                  </div>
-                  <p>{val.name}</p>
-                  <br />
-                  <div className='title-content'>
-                    <h3>No Handphone</h3>
-                  </div>
-                  <p>{val.phone_number}</p>
-                  <br />
-                  <div className='title-content'>
-                    <h3>Alamat</h3>
-                  </div>
-                  <p>{val.address}</p>
-                </div>
               </div>
             </section>
           )
-        }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>Silahkan tambah alamat baru</p>}
-        <a className='sticky-button' onClick={(e) => this.toAddAddress(e)}>
+        }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>Silahkan tambah katalog baru</p>}
+        <a className='sticky-button' onClick={(e) => this.toAddCatalog(e)}>
           <span className='txt'>+</span>
         </a>
         <div className='sort-option' style={{display: confirmDelete && 'block'}}>
           <div className='notif-report'>
-            <h3>Anda yakin akan menghapus Alamat tersebut?</h3>
+            <h3>Anda yakin akan menghapus</h3>
+            <h3>Katalog "{deleteCatalogTemp.name}" ?</h3>
             <button
               className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
-              onClick={(e) => this.modalConfirmDelete(e)}>Ya, Hapus Alamat</button>
+              onClick={(e) => this.modalConfirmDelete(e)}>Ya, Hapus Katalog</button>
             <a className='cancel' onClick={(e) => this.modalShowDelete(e, '')}>Batal</a>
+          </div>
+        </div>
+        <div className='sort-option' style={{display: failedDelete && 'block'}}>
+          <div className='notif-report'>
+            <h3>Gagal menghapus katalog</h3>
+            <h3>"{deleteCatalogTemp.name}"</h3>
+            <p>Anda tidak bisa menghapus katalog tersebut karena masih ada barang di dalamnya</p>
+            <button
+              className='button is-primary is-large is-fullwidth'>Tutup</button>
+            <a className='cancel' onClick={() => this.modalFailedDelete('')}>Batal</a>
           </div>
         </div>
       </div>
@@ -223,16 +230,16 @@ class DataAddress extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    listAddress: state.listAddress,
-    addAddress: state.addAddress,
-    updateAddress: state.updateAddress,
-    statusDeleteAddress: state.deleteAddress
+    createCatalog: state.createCatalog,
+    updateCatalog: state.updateCatalog,
+    listCatalog: state.getListCatalog,
+    statusDeleteCatalog: state.deleteCatalog
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getListAddress: () => dispatch(actionTypes.getListAddress()),
-  deleteAddress: (params) => dispatch(actionTypes.deleteAddress(params))
+  getListCatalog: () => dispatch(actionTypes.getListCatalog()),
+  deleteCatalog: (params) => dispatch(actionTypes.deleteCatalog(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataAddress)
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogList)

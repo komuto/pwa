@@ -1,10 +1,15 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ManageAccount from '../src/Containers/ManageAccount'
+
+const toProfile = () => {
+  Router.push('/profile')
+}
 
 const params = {
   style: 'main detail edit-data bg-grey',
@@ -14,13 +19,14 @@ const params = {
   navbar: {
     searchBoox: false,
     path: '/',
+    callBack: () => toProfile(),
     textPath: 'Kelola Akun'
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <ManageAccount />
+    <ManageAccount query={props.query} />
   </DefaultLayout>
 )
 

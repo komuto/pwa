@@ -2,10 +2,33 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // components
-import Link from 'next/link'
+import Router from 'next/router'
 import {Images} from '../Themes'
+// actions
+import * as actionTypes from '../actions/user'
 
 class HasOpenedStore extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      submitting: false
+    }
+  }
+
+  toProfile (e) {
+    e.preventDefault()
+    this.setState({ submitting: true })
+    this.props.getProfile()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { submitting } = this.state
+    if (nextProps.profile.status === 200 && submitting) {
+      this.setState({ profile: nextProps.profile, submitting: false })
+      Router.push('/profile')
+    }
+  }
+
   render () {
     return (
       <section className='content'>
@@ -18,13 +41,11 @@ class HasOpenedStore extends React.Component {
           </div>
           <div className='columns is-mobile'>
             <div className='column'>
-              <Link href='/profile'>
-                <a
-                  className='button is-primary is-large is-fullwidth'
-                  >
-                  Kembali Ke Halaman Profil
-                </a>
-              </Link>
+              <a
+                className='button is-primary is-large is-fullwidth'
+                onClick={(e) => this.toProfile(e)}>
+                Kembali Ke Halaman Profil
+              </a>
             </div>
           </div>
         </div>
@@ -33,4 +54,14 @@ class HasOpenedStore extends React.Component {
   }
 }
 
-export default connect()(HasOpenedStore)
+const mapStateToProps = (state) => {
+  return {
+    profile: state.profile
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  getProfile: () => dispatch(actionTypes.getProfile())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(HasOpenedStore)

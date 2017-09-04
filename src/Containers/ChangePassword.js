@@ -95,17 +95,21 @@ class ChangePassword extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { notification } = this.state
     const { statusChangePassword } = nextProps
-    if (!statusChangePassword.isLoading && statusChangePassword.isFound) {
+    if (!statusChangePassword.isLoading) {
       switch (statusChangePassword.status) {
         case Status.SUCCESS: {
           this.setState({ submitting: false })
-          Router.push('/manage-account')
+          const href = `/manage-account?isSuccess`
+          const as = 'manage-account'
+          Router.push(href, as, { shallow: true })
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
           this.setState({ submitting: false })
-          Router.push('/manage-account')
+          const href = `/manage-account?isSuccess=false`
+          const as = 'manage-account'
+          Router.push(href, as, { shallow: true })
           break
         }
         default:

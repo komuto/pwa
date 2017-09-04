@@ -23,9 +23,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <Profile />
+    <Profile query={props.query} />
   </DefaultLayout>
 )
 
