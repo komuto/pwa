@@ -17,7 +17,7 @@ import { Status } from '../Services/Status'
 import RupiahFormat from '../Lib/RupiahFormat'
 
 const TAB_SHOW_IN_PAGE = 'TAB_SHOW_IN_PAGE'
-const TAB_HIDE_IN_PAGE = 'TAB_HIDE_IN_PAGE'
+const TAB_HIDDEN_IN_PAGE = 'TAB_HIDDEN_IN_PAGE'
 
 class ProductList extends Component {
   constructor (props) {
@@ -40,7 +40,7 @@ class ProductList extends Component {
 
   switchTab (e) {
     const { tabs } = this.state
-    this.setState({ tabs: (tabs === TAB_SHOW_IN_PAGE) ? TAB_HIDE_IN_PAGE : TAB_SHOW_IN_PAGE })
+    this.setState({ tabs: (tabs === TAB_SHOW_IN_PAGE) ? TAB_HIDDEN_IN_PAGE : TAB_SHOW_IN_PAGE })
   }
 
   showListCatalogPress = () => { this.setState({ showListCatalog: !this.state.showListCatalog }) }
@@ -115,7 +115,7 @@ class ProductList extends Component {
         <Navbar params={navbar} />
         <div className='nav-tabs'>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_SHOW_IN_PAGE && 'active'}>Ditampilkan di Toko</a>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_HIDE_IN_PAGE && 'active'}>Disembunyikan</a>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_HIDDEN_IN_PAGE && 'active'}>Disembunyikan</a>
         </div>
         <Notification
           type='is-danger'
@@ -134,84 +134,105 @@ class ProductList extends Component {
           </div>
         </section>
         {
-          catalogProducts.map((sp, index) => {
-            return (
-              <Element name={String(sp.catalog.id)} className={`section is-paddingless detail`} key={index} style={{ marginBottom: 20 }}>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>{sp.catalog.name} ({sp.products.length})</strong>
-                        </div>
+          tabs === TAB_SHOW_IN_PAGE
+          ? <ContentShow
+            catalogProducts={catalogProducts}
+            showListCatalog={showListCatalog}
+            showListCatalogPress={() => this.showListCatalogPress()} />
+          : <ContentHidden />
+        }
+      </Content>
+    )
+  }
+}
+
+const ContentHidden = (props) => {
+  return (
+    <h1>Content Hidden</h1>
+  )
+}
+
+const ContentShow = (props) => {
+  return (
+    <div>
+      {
+        props.catalogProducts.map((sp, index) => {
+          return (
+            <Element name={String(sp.catalog.id)} className={`section is-paddingless detail`} key={index} style={{ marginBottom: 20 }}>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half'>
+                      <div className='rating-content is-left'>
+                        <strong>{sp.catalog.name} ({sp.products.length})</strong>
                       </div>
-                      <div className='column is-half'>
-                        <div className='rating-content has-text-right'>
-                          <a className='option-content'><span /><span /><span /></a>
-                        </div>
+                    </div>
+                    <div className='column is-half'>
+                      <div className='rating-content has-text-right'>
+                        <a className='option-content'><span /><span /><span /></a>
                       </div>
                     </div>
                   </div>
                 </div>
-                {
-                  sp.products.map((p, i) => {
-                    let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
-                    return (
-                      <div className='detail-product' key={i}>
-                        <div className='remove rightTop'>
-                          <span className='icon-discount-sign' />
-                          <span className='icon-grosir-sign' />
-                        </div>
-                        <div className='purchase'>
-                          <figure className='img-item xx'>
-                            <MyImage src='../images/pict.jpg' alt='pict' />
-                          </figure>
-                          <div className='content-product'>
-                            <h3>{ p.name }</h3>
-                            { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
-                            { (p.is_dropshipper) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
-                            <p>Jumlah Stok : { p.stock }</p>
-                            <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
-                          </div>
+              </div>
+              {
+                sp.products.map((p, i) => {
+                  let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+                  return (
+                    <div className='detail-product' key={i}>
+                      <div className='remove rightTop'>
+                        <span className='icon-discount-sign' />
+                        <span className='icon-grosir-sign' />
+                      </div>
+                      <div className='purchase'>
+                        <figure className='img-item xx'>
+                          <MyImage src='../images/pict.jpg' alt='pict' />
+                        </figure>
+                        <div className='content-product'>
+                          <h3>{ p.name }</h3>
+                          { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
+                          { (p.is_dropshipper) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                          <p>Jumlah Stok : { p.stock }</p>
+                          <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
                         </div>
                       </div>
-                    )
-                  })
-                }
-                <div className='see-all'>
-                  <span className='link' onClick={() => Router.push(`/catalog?id=${sp.catalog.id}`)}>Lihat semua produk di katalog ini
-                    <span className='icon-arrow-right' />
-                  </span>
-                </div>
-              </Element>
-            )
-          })
-        }
-
-        <a className='catalog-button js-option' onClick={() => this.showListCatalogPress()}>
-          <span className='icon-catalog' /> Daftar Katalog
-        </a>
-        <a className='sticky-button' onClick={() => Router.push('/product-add')}><span className='txt'>+</span></a>
-
-        <div className='sort-option' style={{ display: showListCatalog && 'block' }}>
-          <div className='sort-list catalog-list'>
-            <ul>
-              {
-                catalogProducts.map((sp, index) => {
-                  return <li key={index}>
-                    <Link activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
-                  </li>
+                    </div>
+                  )
                 })
-            }
-            </ul>
-          </div>
-          <a className='close-option js-close' onClick={() => this.showListCatalogPress()}>
-            <span className='icon-close white' />
-          </a>
+              }
+              <div className='see-all'>
+                <span className='link' onClick={() => Router.push(`/catalog?id=${sp.catalog.id}`)}>Lihat semua produk di katalog ini
+                  <span className='icon-arrow-right' />
+                </span>
+              </div>
+            </Element>
+          )
+        })
+      }
+
+      <a className='catalog-button js-option' onClick={() => this.showListCatalogPress()}>
+        <span className='icon-catalog' /> Daftar Katalog
+      </a>
+      <a className='sticky-button' onClick={() => Router.push('/product-add')}><span className='txt'>+</span></a>
+
+      <div className='sort-option' style={{ display: props.showListCatalog && 'block' }}>
+        <div className='sort-list catalog-list'>
+          <ul>
+            {
+              props.catalogProducts.map((sp, index) => {
+                return <li key={index}>
+                  <Link activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
+                </li>
+              })
+          }
+          </ul>
         </div>
-      </Content>
-    )
-  }
+        <a className='close-option js-close' onClick={() => props.showListCatalogPress()}>
+          <span className='icon-close white' />
+        </a>
+      </div>
+    </div>
+  )
 }
 
 const mapStateToProps = (state) => ({
