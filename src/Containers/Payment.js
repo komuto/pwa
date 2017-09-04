@@ -23,6 +23,7 @@ class Payment extends Component {
       cart: props.cart || null,
       balance: props.balance || null,
       paymentMethods: props.paymentMethods || null,
+      snapToken: props.snapToken || null,
       submiting: false,
       notification: {
         type: 'is-danger',
@@ -36,6 +37,7 @@ class Payment extends Component {
     await this.props.getBalance()
     await this.props.getPaymentMethods()
     await this.props.getCart()
+    await this.props.getMidtransToken()
   }
 
   paymentRedirect (pm) {
@@ -43,10 +45,16 @@ class Payment extends Component {
     pm.id === 13 && Router.push(`/payment-doku?type=${pm.id}`)
   }
 
+  paymentMidtrans () {
+
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { balance, paymentMethods, cart } = nextProps
+    const { balance, paymentMethods, cart, snapToken } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
+
+    console.log('snapToken', snapToken)
 
     if (!balance.isLoading) {
       switch (balance.status) {
@@ -140,6 +148,12 @@ class Payment extends Component {
             <span className='icon-arrow-right' />
           </div>
         </div>
+        <div className='box-rounded' onClick={() => this.paymentMidtrans()}>
+          <div className='payment-method'>
+            paymentMidtrans()
+            <span className='icon-arrow-right' />
+          </div>
+        </div>
         {
           paymentMethods.paymentMethods.map((pm) => {
             return (
@@ -163,13 +177,15 @@ class Payment extends Component {
 const mapStateToProps = (state) => ({
   cart: state.cart,
   balance: state.balance,
-  paymentMethods: state.paymentMethods
+  paymentMethods: state.paymentMethods,
+  snapToken: state.snapToken
 })
 
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
   getBalance: () => dispatch(userActions.getBalance()),
-  getPaymentMethods: () => dispatch(paymentActions.getPaymentMethods())
+  getPaymentMethods: () => dispatch(paymentActions.getPaymentMethods()),
+  getMidtransToken: () => dispatch(paymentActions.getMidtransToken())
 })
 
 export default connect(mapStateToProps, mapDiaptchToProps)(Payment)
