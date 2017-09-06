@@ -13,6 +13,7 @@ import Notification from '../Components/Notification'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import MyImage from '../Components/MyImage'
+import ModalLoginRegister from '../Components/ModalLoginRegister'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
@@ -21,6 +22,7 @@ import { Status } from '../Services/Status'
 import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
+// import Wrapper from './Wrapper'
 
 class Home extends Component {
   constructor (props) {
@@ -29,6 +31,7 @@ class Home extends Component {
       products: props.products || null,
       category: props.category || null,
       token: null,
+      mustLogin: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -40,6 +43,7 @@ class Home extends Component {
 
   async wishlistPress (id) {
     let { products, token } = this.state
+    console.log(products)
     if (token) {
       products.products.map((myProduct) => {
         if (myProduct.product.id === id) {
@@ -50,7 +54,7 @@ class Home extends Component {
       await this.props.dispatch(productActions.addToWishlist({ id }))
       this.setState({ products })
     } else {
-      this.setState({notification: {status: true, message: 'Anda harus login'}})
+      this.setState({ mustLogin: true })
     }
   }
 
@@ -141,7 +145,7 @@ class Home extends Component {
   render () {
     const { categories } = this.state.category
     const { products } = this.state.products
-    const { notification } = this.state
+    const { notification, mustLogin } = this.state
     let settings = {
       autoplay: true,
       dots: false,
@@ -150,7 +154,6 @@ class Home extends Component {
       slidesToShow: 1,
       slidesToScroll: 1
     }
-
     return (
       <Content>
         <Notification
@@ -159,6 +162,7 @@ class Home extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
+        <ModalLoginRegister show={mustLogin} close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
         <Section>
           <Content className='slide-banner'>
             <Slider {...settings}>
@@ -236,4 +240,5 @@ const mapStateToProps = (state) => {
   }
 }
 
+// export default connect(mapStateToProps)(Wrapper(Home))
 export default connect(mapStateToProps)(Home)
