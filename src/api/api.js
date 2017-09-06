@@ -44,14 +44,14 @@ export function uploadApi () {
   return api
 }
 
-export function authApiKomuto () {
+export function authApiKomuto (custToken) {
   const api = axios.create({
     baseURL: apiKomuto + '/',
     timeout: 10000
   })
   api.interceptors.request.use(async config => {
     try {
-      const token = await storage.getItem('token')
+      const token = await !custToken ? storage.getItem('token') : custToken
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }

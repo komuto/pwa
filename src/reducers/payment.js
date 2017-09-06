@@ -13,18 +13,6 @@ export const confirmTransfer = createReducer(buildInitState())
     resultName: 'confirmation'
   }).run()
 
-export const getDokuInvoice = createReducer(buildInitState({ invoice: {} }))
-  .addReducer({
-    type: actions.GET_DOKU_INVOICE,
-    resultName: 'invoice'
-  }).run()
-
-export const payDoku = createReducer(buildInitState({ payment: {} }))
-  .addReducer({
-    type: actions.PAY_DOKU,
-    resultName: 'payment'
-  }).run()
-
 export const withdraw = createReducer(buildInitState())
   .addReducer({
     type: actions.WITHDRAW
@@ -33,5 +21,11 @@ export const withdraw = createReducer(buildInitState())
 export const getMidtransToken = createReducer(buildInitState())
   .addReducer({
     type: actions.GET_MIDTRANS_TOKEN,
+    customSuccState: (state, action) => ({ ...succState(action), token: action.data.token })
+  }).run()
+
+export const getMidtransToken2 = createReducer(buildInitState())
+  .addReducer({
+    type: actions.GET_MIDTRANS_TOKEN_2,
     customSuccState: (state, action) => ({ ...succState(action), token: action.data.token })
   }).run()

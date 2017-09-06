@@ -6,6 +6,7 @@ export const productByCategory = buildSagaDelay(apis.getProductBy, actions.LIST_
 export const productBySearch = buildSagaDelay(apis.getProductBy, actions.LIST_PRODUCT_BY_SEARCH)
 export const getProduct = buildSaga(apis.getProduct, actions.GET_PRODUCT)
 export const addToWishlist = buildSaga(apis.addToWishlist, actions.ADD_TO_WISHLIST)
+export const addToWishlistHome = buildSaga(apis.addToWishlist, actions.ADD_TO_WISHLIST_HOME)
 export const getDiscussion = buildSaga(apis.getDiscussion, actions.GET_DISCUSSION)
 export const newDiscussion = buildSaga(apis.newDiscussion, actions.NEW_DISCUSSION)
 export const newComment = buildSaga(apis.newComment, actions.NEW_COMMENT)
