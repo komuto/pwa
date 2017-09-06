@@ -51,7 +51,7 @@ export function authApiKomuto (custToken) {
   })
   api.interceptors.request.use(async config => {
     try {
-      const token = await !custToken ? storage.getItem('token') : custToken
+      const token = !custToken ? await storage.getItem('token') : custToken
       if (token !== null) {
         config.headers['Authorization'] = 'JWT ' + token
       }
