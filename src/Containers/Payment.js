@@ -20,6 +20,7 @@ class Payment extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      token: props.query.token || null,
       cart: props.cart || null,
       balance: props.balance || null,
       paymentMethods: props.paymentMethods || null,
@@ -74,6 +75,8 @@ class Payment extends Component {
     const { balance, paymentMethods, cart, snapToken } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
+
+    console.log(snapToken)
 
     if (!snapToken.isLoading) {
       switch (snapToken.status) {
@@ -138,11 +141,11 @@ class Payment extends Component {
   }
 
   render () {
-    const { balance, paymentMethods, cart } = this.state
+    const { balance, paymentMethods, cart, token } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
 
-    console.log(paymentMethods)
+    console.log('token', token)
 
     if (!paymentMethods.isFound) return null
 
@@ -184,7 +187,7 @@ class Payment extends Component {
         </div>
         <div className='box-rounded' onClick={() => this.paymentMidtrans()}>
           <div className='payment-method'>
-            paymentMidtrans()
+            Midtrans Payment Gateway
             <span className='icon-arrow-right' />
           </div>
         </div>
