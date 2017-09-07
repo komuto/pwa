@@ -43,15 +43,14 @@ class Home extends Component {
 
   async wishlistPress (id) {
     let { products, token } = this.state
-    console.log(products)
     if (token) {
       products.products.map((myProduct) => {
         if (myProduct.product.id === id) {
-          (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
+          myProduct.product.is_liked ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
           myProduct.product.is_liked = !myProduct.product.is_liked
         }
       })
-      await this.props.dispatch(productActions.addToWishlist({ id }))
+      await this.props.addToWishlist({ id })
       this.setState({ products })
     } else {
       this.setState({ mustLogin: true })
@@ -59,11 +58,14 @@ class Home extends Component {
   }
 
   async componentDidMount () {
-    const { products } = this.state.products
-    const { categories } = this.state.category
-    if (products.length < 1 && categories.length < 1) {
+    const { products, category } = this.state
+    if (!products.isFound) {
       NProgress.start()
-      await this.props.dispatch(homeActions.products(this.params)) && this.props.dispatch(homeActions.categoryList())
+      await this.props.getProducts(this.params)
+    }
+    if (!category.isFound) {
+      NProgress.start()
+      this.props.getCategoryList()
     }
     this.setState({ token: await GET_TOKEN.getToken() })
   }
@@ -143,8 +145,7 @@ class Home extends Component {
   }
 
   render () {
-    const { categories } = this.state.category
-    const { products } = this.state.products
+    const { category, products } = this.state
     const { notification, mustLogin } = this.state
     let settings = {
       autoplay: true,
@@ -176,7 +177,8 @@ class Home extends Component {
           <SectionTitle title='Kategori Produk' />
           <Content className='columns is-mobile is-multiline custom'>
             {
-              categories.map(category => {
+              category.isFound &&
+              category.categories.map(category => {
                 return (
                   <div
                     className={`column is-one-third effect-display`}
@@ -208,7 +210,7 @@ class Home extends Component {
         <Section>
           <SectionTitle title='Produk Terbaru' />
           <Content className='columns is-mobile is-multiline custom'>
-            { products.length > 0 ? this.renderProductColoumn('grid', products) : '' }
+            { products.isFound && this.renderProductColoumn('grid', products.products) }
             <Content className='column is-paddingless'>
               <Content className='see-all'>
                 <a
@@ -232,13 +234,17 @@ class Home extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-    category: state.category,
-    addWishlist: state.addWishlist
-  }
-}
+const mapStateToProps = (state) => ({
+  products: state.products,
+  category: state.category,
+  addWishlist: state.addWishlist
+})
 
-// export default connect(mapStateToProps)(Wrapper(Home))
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = (dispatch) => ({
+  getProducts: (params) => dispatch(homeActions.products(params)),
+  getCategoryList: () => dispatch(homeActions.categoryList()),
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
+// export default connect(mapStateToProps)(Home)
