@@ -40,6 +40,26 @@ app.prepare().then(_ => {
     return app.render(req, res, '/product', params)
   })
 
+  server.get('/d/:slugparent/:slugsubparent/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/dropship', params)
+  })
+
+  server.get('/d/:slugparent/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/dropship', params)
+  })
+
+  server.get('/d/:slug', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/dropship', params)
+  })
+
+  server.get('/d', (req, res) => {
+    const params = Object.assign(req.query, req.params)
+    return app.render(req, res, '/dropship', params)
+  })
+
   server.get('/c/:slugparent/:slugsubparent/:slug/:id', (req, res) => {
     const params = Object.assign(req.query, req.params)
     return app.render(req, res, '/product', params)
