@@ -15,6 +15,7 @@ class Account extends Component {
     super(props)
     this.state = {
       verify: false,
+      submitting: false,
       profile: props.profile
     }
   }
@@ -25,6 +26,7 @@ class Account extends Component {
 
   sendOTPPhone (e) {
     e.preventDefault()
+    this.setState({ submitting: true })
     this.props.sendOTPToPhone()
   }
 
@@ -48,13 +50,14 @@ class Account extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.sendOTPPhone.status === 200) {
+    const { submitting } = this.state
+    if (nextProps.sendOTPPhone.isFound && submitting) {
       Router.push('/verify-no-telp')
     }
   }
 
   renderModalVerify () {
-    const { verify } = this.state
+    const { verify, submitting } = this.state
     return (
       <div className='sort-option' style={{display: verify && 'block'}}>
         <div className='notif-report'>
@@ -63,7 +66,7 @@ class Account extends Component {
           <p>Verifikasi Nomor Telepon Anda terlebih dahulu untuk melanjutkan proses membuka toko</p>
           <button
             onClick={(e) => this.sendOTPPhone(e)}
-            className='button is-primary is-large is-fullwidth'>
+            className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}>
             Verifikasi Sekarang
           </button>
           <strong
@@ -157,7 +160,9 @@ class Account extends Component {
                           <br />
                           Kelola Akun
                         </p>
-                        <div className='val-right'><span className='notif-akun'>1</span></div>
+                        { profile.user.user.is_phone_verified ? '' : <div className='val-right'>
+                          <span className='notif-akun'>1</span></div>
+                        }
                       </div>
                     </div>
                   </article>
