@@ -50,7 +50,7 @@ class ManageStore extends Component {
 
   toListProducts (e) {
     e.preventDefault()
-    Router.push('/product-add')
+    Router.push('/product-list')
   }
 
   render () {
