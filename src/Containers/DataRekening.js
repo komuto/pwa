@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
 // services
 import { Status } from '../Services/Status'
@@ -59,9 +60,18 @@ class DataRekening extends React.Component {
   }
 
   componentDidMount () {
-    const { notification } = this.state
-    const { getBankAccounts, bankAccount, query } = this.props
+    const { getBankAccounts } = this.props
     getBankAccounts()
+    NProgress.start()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { notification } = this.state
+    const { bankAccount, query } = this.props
+    if (nextProps.listBankAccounts.status) {
+      this.setState({ listBankAccounts: nextProps.listBankAccounts })
+      NProgress.done()
+    }
     if (query.hasOwnProperty('isSuccess')) {
       if (bankAccount.type === 'add') {
         switch (bankAccount.status) {
@@ -126,12 +136,6 @@ class DataRekening extends React.Component {
             break
         }
       }
-    }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.listBankAccounts.status) {
-      this.setState({ listBankAccounts: nextProps.listBankAccounts })
     }
   }
 
