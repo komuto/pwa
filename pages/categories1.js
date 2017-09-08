@@ -22,7 +22,7 @@ const params = {
 const Index = (props) => {
   return (
     <DefaultLayout params={params}>
-      <Categories1 />
+      <Categories1 query={props.query} />
     </DefaultLayout>
   )
 }
