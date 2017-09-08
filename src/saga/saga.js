@@ -81,6 +81,8 @@ const user = function * () {
   yield takeEvery(typeReq(userActions.GET_RESOLVED_RESOLUTIONS), userSaga.getResolvedResolutions)
   yield takeEvery(typeReq(userActions.GET_UNRESOLVED_RESOLUTIONS), userSaga.getUnresolvedResolutions)
   yield takeEvery(typeReq(userActions.GET_RESOLUTION_DETAIL), userSaga.getResolutionDetail)
+  yield takeEvery(typeReq(userActions.CREATE_RESOLUTION), userSaga.createResolution)
+  yield takeEvery(typeReq(userActions.REPLY_RESOLUTION), userSaga.replyResolution)
 }
 
 const home = function * () {
@@ -114,6 +116,7 @@ const product = function * () {
   yield takeEvery(typeReq(productActions.ADD_DROPSHIP_PRODUCTS), productSaga.addDropshipProducts)
   yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCTS), productSaga.getDropshipProducts)
   yield takeEvery(typeReq(productActions.UPDATE_DROPSHIP_STATUS), productSaga.updateDropshipStatus)
+  yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCT_DETAIL), productSaga.getDropshipProductDetail)
 }
 
 const store = function * () {
@@ -228,7 +231,7 @@ const payment = function * () {
 
 const review = function * () {
   yield takeEvery(typeReq(reviewActions.GET_REVIEWS), reviewSaga.getReviews)
-  yield takeEvery(typeReq(reviewActions.ADD_REVIEW), reviewSaga.addReview)
+  yield takeEvery(typeReq(reviewActions.ADD_REVIEWS), reviewSaga.addReviews)
   yield takeEvery(typeReq(reviewActions.GET_BUYER_REVIEW), reviewSaga.getBuyerReview)
   yield takeEvery(typeReq(reviewActions.GET_SELLER_REVIEW), reviewSaga.getSellerReview)
 }
@@ -237,6 +240,7 @@ const transaction = function * () {
   yield takeEvery(typeReq(transactionActions.LIST_TRANSACTIONS), transactionSaga.listTransactions)
   yield takeEvery(typeReq(transactionActions.GET_TRANSACTION), transactionSaga.getTransaction)
   yield takeEvery(typeReq(transactionActions.GET_SALDO_HISTORY), transactionSaga.getSaldoHistory)
+  yield takeEvery(typeReq(transactionActions.GET_BUYER_INVOICE_DETAIL), transactionSaga.getBuyerInvoiceDetail)
 }
 
 export default dataSaga

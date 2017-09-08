@@ -7,10 +7,10 @@ export const getReviews = createReducer(buildInitState({ reviews: [] }, true))
     resultName: 'reviews'
   }).run()
 
-export const addReview = createReducer(buildInitState({ review: {} }))
+export const addReviews = createReducer(buildInitState({ reviews: [] }))
   .addReducer({
-    type: actions.ADD_REVIEW,
-    resultName: 'review',
+    type: actions.ADD_REVIEWS,
+    resultName: 'reviews',
     includeNonSaga: true
   }).run()
 

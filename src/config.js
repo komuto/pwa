@@ -5,29 +5,46 @@ export const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
 export const apiKomuto = 'https://api.komuto.skyshi.com/4690fa4c3d68f93b/'
 export const storage = localforage
 
-export function errorHandling (actionType, res) {
-  const errorTimeout = {
-    message: 'Timeout reached!',
-    code: 'ENOENT',
-    isOnline: false
-  }
-
-  const data = res.response
-  if (data !== undefined) {
+export function errorHandling (actionType, err) {
+  if (err.response) {
+    const data = err.response
     if (data.status !== 502) {
-      const {data} = res.response
+      const {data} = err.response
       data.isOnline = true
       return put({ type: actionType, ...data })
     } else {
-      const errorBadRequest = {
-        message: res.response.statusText,
-        code: res.response.status,
-        isOnline: true
+      const errorGateway = {
+        message: err.response.statusText,
+        status: data.status,
+        isOnline: true,
+        isLoading: false
       }
-      return put({ type: actionType, ...errorBadRequest })
+      return put({ type: actionType, ...errorGateway })
     }
-  } else {
+  } else if (err.code === 'ECONNABORTED') {
+    const errorTimeout = {
+      message: 'Timeout reached!',
+      status: 'ETIMEOUT',
+      isOnline: true,
+      isLoading: false
+    }
     return put({ type: actionType, ...errorTimeout })
+  } else if (err.code === 'ENOTFOUND' && !err.response) {
+    const errorOffline = {
+      message: 'Device offline!',
+      status: 'EOFFLINE',
+      isOnline: false,
+      isLoading: false
+    }
+    return put({ type: actionType, ...errorOffline })
+  } else {
+    const errorUnknown = {
+      message: err.message,
+      status: 'EUNKNOWN',
+      isOnline: true,
+      isLoading: false
+    }
+    return put({ type: actionType, ...errorUnknown })
   }
 }
 
@@ -171,17 +188,18 @@ export const buildQuery = (params) => Object.keys(params)
  * @param callApi {function}
  * @param actionType {string}
  * @param getState {function} Get result from other state
+ * @param combine {function} combine getState with api result
  */
-export const buildSaga = (callApi, actionType, getState = false) => function * ({ type, ...params }) {
+export const buildSaga = (callApi, actionType, getState = false, combine = false) => function * ({ type, ...params }) {
   try {
     let res, fromState
     if (getState) {
       fromState = yield select(getState(params))
       res = { data: fromState }
     }
-    if (!fromState) {
+    if (!fromState || combine) {
       const { data } = yield callApi(params)
-      res = data
+      res = !combine ? data : combine(fromState, data)
     }
     yield put({ type: typeSucc(actionType), ...res })
   } catch (e) {
@@ -189,7 +207,7 @@ export const buildSaga = (callApi, actionType, getState = false) => function * (
   }
 }
 
-export const buildSagaDelay = (callApi, actionType, delayCount = 200, getState = false) => function * ({ type, ...params }) {
+export const buildSagaDelay = (callApi, actionType, delayCount = 200, getState = false, combine = false) => function * ({ type, ...params }) {
   try {
     yield call(delay, delayCount)
     let res, fromState
@@ -197,9 +215,9 @@ export const buildSagaDelay = (callApi, actionType, delayCount = 200, getState =
       fromState = yield select(getState(params))
       res = { data: fromState }
     }
-    if (!fromState) {
+    if (!fromState || combine) {
       const { data } = yield callApi(params)
-      res = data
+      res = !combine ? data : combine(fromState, data)
     }
     yield put({ type: typeSucc(actionType), ...res })
   } catch (e) {
@@ -256,7 +274,7 @@ export const createReducer = (initState) => {
      * @options resultName {string} prop name for the api result
      * @options type {string} reducer action type
      * @options add {object} other objects to add to the state
-     * @options includeNonSaga {boolean} non saga reducer operation
+     * @options includeNonSaga {boolean} non saga reducer operation [RESET || TEMP]
      * @options resetPrevState {object} change prev state with the provided object
      * @options customReqState {function}
      * @options customSuccState {function}

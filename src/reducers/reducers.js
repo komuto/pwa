@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import * as storage from 'redux-storage'
 import * as purchaseReducers from './purchase'
+import * as storage from 'redux-storage'
 import * as userReducers from './user'
 import * as homeReducers from './home'
 import * as brandReducers from './brand'
@@ -53,7 +53,9 @@ const user = {
   notifSettings: userReducers.notifSettings,
   resolvedResolutions: userReducers.getResolvedResolutions,
   unresolvedResolutions: userReducers.getUnresolvedResolutions,
-  resolutionDetail: userReducers.getResolutionDetail
+  resolutionDetail: userReducers.getResolutionDetail,
+  createResolution: userReducers.createResolution,
+  replyResolution: userReducers.replyResolution
 }
 
 const home = {
@@ -192,7 +194,7 @@ const payment = {
 
 const review = {
   productReview: reviewReducers.getReviews,
-  addReview: reviewReducers.addReview,
+  addReviews: reviewReducers.addReviews,
   buyerReview: reviewReducers.getBuyerReview,
   sellerReview: reviewReducers.getSellerReview
 }
@@ -200,7 +202,8 @@ const review = {
 const transaction = {
   listTransactions: transactionReducers.listTransactions,
   transaction: transactionReducers.getTransaction,
-  saldoHistory: transactionReducers.getSaldoHistory
+  saldoHistory: transactionReducers.getSaldoHistory,
+  buyerInvoiceDetail: transactionReducers.getBuyerInvoiceDetail
 }
 
 const komutoApps = storage.reducer(combineReducers({

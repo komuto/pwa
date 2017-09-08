@@ -22,6 +22,10 @@ export const getProduct = createReducer(buildInitState({ detail: {} }))
     resultName: 'detail',
     includeNonSaga: true,
     resetPrevState: { state: 0 }
+  })
+  .addReducer({
+    type: actions.GET_DROPSHIP_PRODUCT_DETAIL,
+    resultName: 'detail'
   }).run()
 
 export const productByCategory = createReducer(buildInitState({ products: [] }, true))
@@ -53,7 +57,8 @@ export const addToWishlistHome = createReducer(buildInitState({ wishlist: [] }))
 export const getDiscussion = createReducer(buildInitState({ discussions: [] }, true))
   .addReducer({
     type: actions.GET_DISCUSSION,
-    resultName: true
+    resultName: 'discussions',
+    includeNonSaga: true
   }).run()
 
 export const newDiscussion = createReducer(buildInitState({ discussion: {} }))

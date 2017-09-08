@@ -16,6 +16,6 @@ export const withdraw = (data) => {
 }
 
 export const getMidtransToken = ({ token } = {}) => {
-  const axios = authApiKomuto(token)
+  const axios = authApiKomuto(token, 50000)
   return axios.get(`payments`)
 }

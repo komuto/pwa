@@ -138,4 +138,14 @@ export const getResolutionDetail = ({ id }) => {
   return axios.get(`users/resolutions/${id}`)
 }
 
+export const createResolution = (data) => {
+  const axios = authApiKomuto()
+  return axios.post('users/resolutions', data)
+}
+
+export const replyResolution = ({ id, ...data }) => {
+  const axios = authApiKomuto()
+  return axios.post(`users/resolutions/${id}`, data)
+}
+
 export const logout = () => ({ message: 'LOGOUT SUCCESS', code: 0 })

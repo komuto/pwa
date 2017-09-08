@@ -44,10 +44,10 @@ export function uploadApi () {
   return api
 }
 
-export function authApiKomuto (custToken) {
+export function authApiKomuto (custToken, timeout = 10000) {
   const api = axios.create({
     baseURL: apiKomuto + '/',
-    timeout: 10000
+    timeout
   })
   api.interceptors.request.use(async config => {
     try {
