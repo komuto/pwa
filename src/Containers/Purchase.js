@@ -82,7 +82,7 @@ class Purchase extends Component {
   async plussPress () {
     let { amountProduct } = this.state
     amountProduct += 1
-    await this.props.dispatch(purchaseActions.amountProduct({ amountProduct }))
+    await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
 
@@ -90,7 +90,7 @@ class Purchase extends Component {
   async minPress () {
     let { amountProduct } = this.state
     amountProduct -= 1
-    await this.props.dispatch(purchaseActions.amountProduct({ amountProduct }))
+    await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
 
@@ -103,13 +103,13 @@ class Purchase extends Component {
   async addressSelected (e, selected) {
     e.preventDefault()
     const { id, productDetail } = this.state
-    await this.props.dispatch(expeditionActions.estimatedShipping({
+    await this.props.setEstimatedShipping({
       id,
-      origin_id: productDetail.detail.store.district.ro_id,
+      origin_id: productDetail.detail.location.district.ro_id,
       destination_id: selected.district.ro_id,
       weight: 1000
-    }))
-    await this.props.dispatch(purchaseActions.addressSelected({ ...selected, status: true }))
+    })
+    await this.props.setAddressSelected({ ...selected, status: true })
     this.setState({
       address: {...this.state.address, show: false, selected: { ...selected, status: true }, submiting: true},
       expeditions: { ...this.state.expeditions, selected: { id: null, name: null } },
@@ -125,7 +125,7 @@ class Purchase extends Component {
 
   async expeditionSelected (e, selected) {
     e.preventDefault()
-    await this.props.dispatch(purchaseActions.courierExpedition(selected))
+    await this.props.setCourierExpedition(selected)
     this.setState({
       expeditions: { ...this.state.expeditions, show: false, selected },
       expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
@@ -140,7 +140,7 @@ class Purchase extends Component {
 
   async expeditionsPackageSelected (e, selected) {
     e.preventDefault()
-    await this.props.dispatch(purchaseActions.packageExpedition(selected))
+    await this.props.setPackageExpedition(selected)
     this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, selected, show: false }, error: this.state.error === 'expeditionsPackage' && null })
   }
 
@@ -152,7 +152,7 @@ class Purchase extends Component {
 
   async insuranceSelected (e, selected) {
     e.preventDefault()
-    await this.props.dispatch(purchaseActions.insurance({ insurance: selected }))
+    await this.props.setInsurance({ insurance: selected })
     this.setState({ insurance: { ...this.state.insurance, selected, show: false }, error: this.state.error === 'insurance' && null })
   }
 
@@ -161,7 +161,7 @@ class Purchase extends Component {
     e.preventDefault()
     let { noted } = this.state
     noted = inputValidations.inputNormal(e.target.value)
-    await this.props.dispatch(purchaseActions.noted({ noted }))
+    await this.props.setNoted({ noted })
     this.setState({ noted })
   }
 
@@ -191,9 +191,9 @@ class Purchase extends Component {
     }
 
     this.setState({ submiting: true })
-    this.props.dispatch(cartActions.addToCart({
+    this.props.setAddToCart({
       'destination_ro_id': address.selected.district.ro_id,
-      'origin_ro_id': productDetail.detail.store.district.ro_id,
+      'origin_ro_id': productDetail.detail.location.district.ro_id,
       'service': expeditionsPackage.selected.name,
       'product_id': Number(id),
       'expedition_id': expeditions.selected.id,
@@ -202,18 +202,18 @@ class Purchase extends Component {
       'note': noted,
       'address_id': address.selected.id,
       'is_insurance': insurance === 'Ya'
-    }))
+    })
   }
   async componentDidMount () {
     const { id, productDetail, listAddress } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+      await this.props.getProduct({ id })
     }
 
     if (!listAddress.isFound) {
       NProgress.start()
-      await this.props.dispatch(addressActions.getListAddress())
+      await this.props.getListAddress()
     }
   }
 
@@ -253,14 +253,13 @@ class Purchase extends Component {
           break
       }
 
-      console.log(estimatedCharges)
       this.setState({
         expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
         address: { ...this.state.address, data: listAddress.address, submiting: false },
         notification
       })
     }
-
+    console.log(addToCart)
     if (!addToCart.isLoading) {
       switch (addToCart.status) {
         case Status.SUCCESS :
@@ -310,6 +309,7 @@ class Purchase extends Component {
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
     const insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
+
     return (
       <Content style={{paddingBottom: 0}}>
         <Notification
@@ -565,20 +565,31 @@ class Purchase extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail,
-    listAddress: state.listAddress,
-    amountProduct: state.amountProduct,
-    addressSelected: state.addressSelected,
-    shippingInformation: state.shippingInformation,
-    courierExpedition: state.courierExpedition,
-    packageExpedition: state.packageExpedition,
-    estimatedCharges: state.estimatedCharges,
-    insurance: state.insurance,
-    noted: state.noted,
-    addToCart: state.addToCart
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail,
+  listAddress: state.listAddress,
+  amountProduct: state.amountProduct,
+  addressSelected: state.addressSelected,
+  shippingInformation: state.shippingInformation,
+  courierExpedition: state.courierExpedition,
+  packageExpedition: state.packageExpedition,
+  estimatedCharges: state.estimatedCharges,
+  insurance: state.insurance,
+  noted: state.noted,
+  addToCart: state.addToCart
+})
 
-export default connect(mapStateToProps)(Purchase)
+const mapDispatchToProps = (dispatch) => ({
+  setAmountProduct: (params) => dispatch(purchaseActions.amountProduct(params)),
+  setEstimatedShipping: (params) => dispatch(expeditionActions.estimatedShipping(params)),
+  setAddressSelected: (params) => dispatch(purchaseActions.addressSelected(params)),
+  setCourierExpedition: (params) => dispatch(purchaseActions.courierExpedition(params)),
+  setPackageExpedition: (params) => dispatch(purchaseActions.packageExpedition(params)),
+  setInsurance: (params) => dispatch(purchaseActions.insurance(params)),
+  setNoted: (params) => dispatch(purchaseActions.noted(params)),
+  setAddToCart: (params) => dispatch(cartActions.addToCart(params)),
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  getListAddress: () => dispatch(addressActions.getListAddress())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Purchase)
