@@ -73,6 +73,8 @@ class MySearch extends Component {
   }
 
   render () {
+    console.log('state ', this.state)
+    console.log('props ', this.props)
     const { submitting, searchProduct, notification, notFound } = this.state
     let key = 0
     return (
@@ -84,7 +86,8 @@ class MySearch extends Component {
               <span className={`${submitting && 'button self is-loading right'}`} />
               <input
                 onChange={e => this.doSearch(e)}
-                ref={(input) => this.refInput(input)} className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+                ref={(input) => this.refInput(input)}
+                className='input is-medium' type='text' placeholder='Cari barang atau toko' />
             </p>
           </div>
         </div>
