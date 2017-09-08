@@ -15,14 +15,14 @@ import { Navbar } from '../Containers/Navbar'
 // actions
 import * as homeActions from '../actions/home'
 // utils
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 
 class Categories2 extends Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      categories: props.subCategory || [],
+      subCategory: props.subCategory || [],
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -37,31 +37,21 @@ class Categories2 extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { subCategory } = nextProps
-    if (!subCategory.isLoading) {
+    if (!isFetching(subCategory)) {
       NProgress.done()
-      switch (subCategory.status) {
-        case Status.SUCCESS :
-          (subCategory.isFound)
-          ? this.setState({ categories: subCategory.categories })
-          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: subCategory.message} })
-          break
-        default:
-          break
-      }
+      this.setState({ subCategory, notification: validateResponse(subCategory, 'Data sub kategori tidak ditemukan!') })
     }
   }
 
   render () {
-    const { categories, notification } = this.state
+    const { subCategory, notification } = this.state
+    const { categories } = subCategory
     const navbar = {
       searchBoox: false,
       path: '/',
       textPath: categories.name
     }
+    console.log(subCategory)
     return (
       <Content>
         <Navbar params={navbar} />

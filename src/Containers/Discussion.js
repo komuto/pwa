@@ -14,7 +14,7 @@ import Loading from '../Components/Loading'
 // actions
 import * as productActions from '../actions/product'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching, Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -26,7 +26,6 @@ class Discussion extends Component {
       productDetail: props.productDetail || null,
       discussions: props.discussions || null,
       fetching: false,
-      hasMore: true,
       pagination: {
         page: 1,
         limit: 10
@@ -50,9 +49,7 @@ class Discussion extends Component {
   }
 
   async handleLoadMore () {
-    let { id, pagination, fetching, hasMore } = this.state
-    console.log('fetching', fetching)
-    console.log('hasMore', hasMore)
+    let { id, pagination, fetching } = this.state
     if (!fetching) {
       pagination.page += 1
       await this.props.dispatch(productActions.getDiscussion({ id, ...this.state.pagination }))
@@ -64,65 +61,38 @@ class Discussion extends Component {
     const { productDetail, discussions } = nextProps
     const beforeDiscuss = this.props.newDiscussion
     const nextDiscuss = nextProps.newDiscussion
-    let { notification, pagination } = this.state
     let stateDiscussions = this.state.discussions
 
-    notification = {type: 'is-danger', status: false, message: 'Error, default message.'}
-
-    if (!productDetail.isLoading) {
+    if (!isFetching(productDetail)) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          if (!productDetail.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
-          break
-        default:
-          break
-      }
-      this.setState({ productDetail, notification })
+      this.setState({ productDetail, notification: validateResponse(productDetail, 'Data produk tidak ditemukan!') })
     }
 
     if (nextDiscuss.isFound && (nextDiscuss.discussion.id !== beforeDiscuss.discussion.id)) {
       this.isAddNewDiscussion = true
       stateDiscussions.discussions.unshift(nextDiscuss.discussion)
       this.setState({ discussions: stateDiscussions, notification: {type: 'is-success', status: true, message: 'Berhasil mengirim diskusi'} })
-    } else if (!discussions.isLoading) {
+    } else if (!isFetching(discussions)) {
       NProgress.done()
-      let hasMore = false
-      switch (discussions.status) {
-        case Status.SUCCESS :
-          if (discussions.isFound) {
-            hasMore = discussions.discussions.length >= pagination.limit
-            // jika page di state kurang dari page di props maka data discussion di tambahkan
-            if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
-              discussions.discussions = _.uniqBy(stateDiscussions.discussions.concat(discussions.discussions), 'id')
-              this.isAddNewDiscussion = false
-            } else {
-              discussions.discussions = stateDiscussions.discussions
-            }
-          } else {
-            notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: discussions.message}
-          break
-        default:
-          break
+      if (discussions.status === Status.SUCCESS && discussions.isFound) {
+        // jika page di state kurang dari page di props maka data discussion di tambahkan
+        if ((stateDiscussions.meta.page < discussions.meta.page) && discussions.discussions.length > 0) {
+          discussions.discussions = _.uniqBy(stateDiscussions.discussions.concat(discussions.discussions), 'id')
+          this.isAddNewDiscussion = false
+        } else {
+          discussions.discussions = stateDiscussions.discussions
+        }
       }
-      this.setState({ fetching: false, hasMore, discussions, notification })
+      this.setState({ fetching: false, discussions, notification: validateResponse(productDetail, 'Data produk tidak ditemukan!') })
     } else if (nextDiscuss.status === Status.OFFLINE || nextDiscuss.status === Status.FAILED) {
-      this.setState({ notification: {type: 'is-danger', status: true, message: nextDiscuss.message} })
+      this.setState({ notification: validateResponse(nextDiscuss, '') })
     }
   }
 
   render () {
-    const { productDetail, discussions, notification, hasMore } = this.state
+    const { productDetail, discussions, pagination, notification } = this.state
     const { product, images } = productDetail.detail
+    let hasMore = discussions.discussions.length >= pagination.limit
 
     if (!productDetail.isFound) return null
     return (

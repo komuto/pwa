@@ -9,7 +9,7 @@ import MyImage from '../Components/MyImage'
 // actions
 import * as storeActions from '../actions/stores'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 // Lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -34,22 +34,9 @@ class Catalog extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { storeCatalogProducts } = nextProps
-    let { notification } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    if (!storeCatalogProducts.isLoading) {
+    if (!isFetching(storeCatalogProducts)) {
       NProgress.done()
-      switch (storeCatalogProducts.status) {
-        case Status.SUCCESS :
-          if (!storeCatalogProducts.isFound) notification = {status: true, message: 'Data katalog tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: storeCatalogProducts.message}
-          break
-        default:
-          break
-      }
-      this.setState({ storeCatalogProducts, notification })
+      this.setState({ storeCatalogProducts, notification: validateResponse(storeCatalogProducts, 'Data katalog tidak ditemukan!') })
     }
   }
 

@@ -13,7 +13,7 @@ import Notification from '../Components/Notification'
 // actions
 import * as homeActions from '../actions/home'
 // Utils
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 
 class Categories1 extends Component {
   constructor (props) {
@@ -29,7 +29,7 @@ class Categories1 extends Component {
 
   async componentDidMount () {
     const { allCategory } = this.state.allCategory
-    if (allCategory.length < 1) {
+    if (!allCategory.isFound) {
       NProgress.start()
       await this.props.getCategory()
     }
@@ -37,18 +37,15 @@ class Categories1 extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { allCategory } = nextProps
-    if (!allCategory.isLoading) {
+    if (!isFetching(allCategory)) {
       NProgress.done()
-      if (allCategory.status === Status.SUCCESS) this.setState({ allCategory })
-      if (allCategory.status === Status.OFFLINE) this.setState({ notification: {status: true, message: allCategory.message} })
-      if (allCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: allCategory.message} })
+      this.setState({ allCategory, notification: validateResponse(allCategory, 'Data kategori tidak ditemukan!') })
     }
   }
 
   render () {
-    const { notification } = this.state
-    const { allCategory } = this.state.allCategory
-    let categoriesItems = allCategory.map((category) => {
+    const { allCategory, notification } = this.state
+    let categoriesItems = allCategory.isFound && allCategory.allCategory.map((category) => {
       return (
         <Section key={category.id}>
           <SectionTitle title={category.name} />

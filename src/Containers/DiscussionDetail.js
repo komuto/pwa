@@ -12,7 +12,7 @@ import Notification from '../Components/Notification'
 // actions
 import * as productActions from '../actions/product'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching, Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -75,59 +75,26 @@ class DiscussionDetail extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { productDetail, comments, newComment } = nextProps
-    if (!productDetail.isLoading) {
+
+    if (!isFetching(productDetail)) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
-      }
+      this.setState({ productDetail, notification: validateResponse(productDetail, 'Data produk tidak ditemukan!') })
     }
 
-    if (!comments.isLoading) {
+    if (!isFetching(comments)) {
       NProgress.done()
-      switch (comments.status) {
-        case Status.SUCCESS :
-          if (comments.isFound) {
-            comments.comments = _.orderBy(comments.comments, ['id'], ['asc'])
-            this.setState({ comments })
-          } else {
-            this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: comments.message} })
-          break
-        default:
-          break
+      if (comments.status === Status.SUCCESS && comments.isFound) {
+        comments.comments = _.orderBy(comments.comments, ['id'], ['asc'])
       }
+      this.setState({ comments, notification: validateResponse(comments, 'Data komentar tidak ditemukan!') })
     }
 
-    if (!newComment.isLoading) {
+    if (!isFetching(newComment)) {
       NProgress.done()
-      switch (newComment.status) {
-        case Status.SUCCESS :
-          if (newComment.isFound) {
-            comments.comments.push(newComment.comment)
-            this.setState({ comments, newComment })
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: newComment.message} })
-          break
-        default:
-          break
+      if (newComment.status === Status.SUCCESS && newComment.isFound) {
+        comments.comments.push(newComment.comment)
       }
+      this.setState({ comments, newComment, notification: validateResponse(newComment, 'Komentar gagal ditambahkan!') })
     }
   }
 

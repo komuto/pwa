@@ -18,7 +18,7 @@ import ModalLoginRegister from '../Components/ModalLoginRegister'
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
@@ -72,52 +72,17 @@ class Home extends Component {
 
   async componentWillReceiveProps (nextProps) {
     const { products, addWishlist, category } = nextProps
-    if (!addWishlist.isLoading) {
-      switch (addWishlist.status) {
-        case Status.SUCCESS :
-          (addWishlist.isFound)
-          ? this.setState({ addWishlist })
-          : this.setState({ notification: {status: true, message: 'Gagal menambah wishlist'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: addWishlist.message} })
-          break
-        default:
-          break
-      }
+
+    if (!isFetching(addWishlist)) {
+      this.setState({ addWishlist, notification: validateResponse(addWishlist, 'Gagal menambah wishlist!') })
     }
 
-    if (!products.isLoading) {
-      switch (products.status) {
-        case Status.SUCCESS :
-          (products.isFound)
-          ? this.setState({ products })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: products.message} })
-          break
-        default:
-          break
-      }
+    if (!isFetching(products)) {
+      this.setState({ products, notification: validateResponse(products, 'Data produk tidak ditemukan!') })
     }
 
-    if (!category.isLoading) {
-      switch (category.status) {
-        case Status.SUCCESS :
-          (category.isFound)
-          ? this.setState({ category })
-          : this.setState({ notification: {status: true, message: 'Data kategori tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: category.message} })
-          break
-        default:
-          break
-      }
+    if (!isFetching(category)) {
+      this.setState({ category, notification: validateResponse(category, 'Data kategori tidak ditemukan!') })
     }
 
     if (!products.isLoading && !category.isLoading) NProgress.done()

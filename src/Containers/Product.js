@@ -24,7 +24,7 @@ import * as expeditionActions from '../actions/expedition'
 import * as locationActions from '../actions/location'
 import * as brandActions from '../actions/brand'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching, Status } from '../Services/Status'
 import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
@@ -57,8 +57,6 @@ class MyProduct extends Component {
       viewActive: 'list',
       selectedSort: null,
       fetching: false,
-      notFound: false,
-      hasMore: true,
       pagination: {
         page: 1,
         limit: 10
@@ -244,146 +242,67 @@ class MyProduct extends Component {
   async componentWillReceiveProps (nextProps) {
     const { productBySearch, subCategory, expeditionServices, provinces, brands, districts, addWishlist } = nextProps
     const { q } = nextProps.query
-    let { notification, notFound, categories } = this.state
+    let { categories } = this.state
     let stateProductBySearch = this.state.productBySearch
-    // reset notification
-    notification = {status: false, message: 'Error, default message.'}
+    let products = []
 
     if (q) this.setState({ q })
 
     // product data
-    if (!productBySearch.isLoading) {
-      NProgress.done()
-      switch (productBySearch.status) {
-        case Status.SUCCESS :
-          if (productBySearch.isFound) {
-            if (productBySearch.products.length < 1 && this.state.productBySearch.products.length < 1) notFound = {status: true, message: 'Produk tidak tersedia'}
-          } else {
-            notification = {status: true, message: 'Data produk tidak ditemukan'}
-          }
-          notFound = (!productBySearch.isFound || productBySearch.products.length < 1)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: productBySearch.message}
-          break
-        default:
-          break
-      }
-
+    if (!isFetching(productBySearch)) {
       if (!this.filterRealizationStatus) {
-        let products = []
         // jika page di state kurang dari page di props maka data products di tambahkan
-        if ((stateProductBySearch.meta.page < productBySearch.meta.page) && productBySearch.products.length > 0) {
+        if (stateProductBySearch.meta.page < productBySearch.meta.page) {
           products = stateProductBySearch.products.concat(productBySearch.products)
         } else {
           products = this.state.productBySearch.products
         }
-        this.setState({ fetching: false, hasMore: (productBySearch.products.length > 0), productBySearch: { ...productBySearch, products }, notification, notFound })
+        this.setState({ fetching: false, productBySearch: { ...productBySearch, products }, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
       } else {
         this.filterRealizationStatus = false
-        this.setState({ productBySearch, notification, notFound })
+        this.setState({ productBySearch, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
       }
     }
 
     // category data
-    if (!subCategory.isLoading) {
-      switch (subCategory.status) {
-        case Status.SUCCESS :
-          if (subCategory.isFound) { categories = subCategory.categories } else { notification = {status: true, message: 'Data kategori tidak ditemukan'} }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: subCategory.message}
-          break
-        default:
-          break
+    if (!isFetching(subCategory)) {
+      if (subCategory.status === Status.SUCCESS && subCategory.isFound) {
+        categories = subCategory.categories
       }
-      this.setState({ categories, notification })
+      this.setState({ categories, notification: validateResponse(subCategory, 'Data sub kategori tidak ditemukan!') })
     }
 
     // expeditionServices data
-    if (!expeditionServices.isLoading) {
-      switch (expeditionServices.status) {
-        case Status.SUCCESS :
-          if (!expeditionServices.isFound) notification = {status: true, message: 'Data ekpedisi tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: expeditionServices.message}
-          break
-        default:
-          break
-      }
-      this.setState({ expeditionServices, notification })
+    if (!isFetching(expeditionServices)) {
+      this.setState({ expeditionServices, notification: validateResponse(expeditionServices, 'Data ekpedisi tidak ditemukan!') })
     }
 
     // provinces data
-    if (!provinces.isLoading) {
-      switch (provinces.status) {
-        case Status.SUCCESS :
-          if (!provinces.isFound) notification = {status: true, message: 'Data provinsi tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: provinces.message}
-          break
-        default:
-          break
-      }
-      this.setState({ provinces, notification })
+    if (!isFetching(provinces)) {
+      this.setState({ provinces, notification: validateResponse(provinces, 'Data provinsi tidak ditemukan!') })
     }
 
-    // districs data
-    if (!districts.isLoading) {
-      switch (districts.status) {
-        case Status.SUCCESS :
-          if (!districts.isFound) notification = {status: true, message: 'Data kabupaten tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: districts.message}
-          break
-        default:
-          break
-      }
-      this.setState({ districts, notification })
+    // districts data
+    if (!isFetching(districts)) {
+      this.setState({ districts, notification: validateResponse(districts, 'Data kabupaten tidak ditemukan!') })
     }
 
     // brands data
-    if (!brands.isLoading) {
-      switch (brands.status) {
-        case Status.SUCCESS :
-          if (!brands.isFound) notification = {status: true, message: 'Data brand tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: brands.message}
-          break
-        default:
-          break
-      }
-      this.setState({ brands, notification })
+    if (!isFetching(brands)) {
+      this.setState({ brands, notification: validateResponse(brands, 'Data brand tidak ditemukan!') })
     }
 
-    if (!addWishlist.isLoading) {
-      switch (addWishlist.status) {
-        case Status.SUCCESS :
-          if (addWishlist.isFound) {
-            if (this.wishlistId && addWishlist.wishlist.id === this.wishlistId) {
-              this.wishlistId = null
-              await this.props.listProductBySearch(this.params)
-            }
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: brands.message}
-          break
-        default:
-          break
+    if (!isFetching(addWishlist)) {
+      if (addWishlist.status === Status.SUCCESS && addWishlist.isFound) {
+        if (this.wishlistId && addWishlist.wishlist.id === this.wishlistId) {
+          this.wishlistId = null
+          await this.props.listProductBySearch(this.params)
+        }
+      } else {
+        this.setState({ notification: validateResponse(brands, 'Gagal menambah produk ke wishlist') })
       }
     }
+
     if (!productBySearch.isLoading && !subCategory.isLoading) NProgress.done()
   }
 
@@ -429,7 +348,7 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, notFound } = this.state
+    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, pagination } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
     let navbar = {
@@ -438,6 +357,9 @@ class MyProduct extends Component {
       textPath: 'Produk',
       searchActive: !!q
     }
+
+    let hasMore = products.length >= pagination.limit
+    let isProductEmpty = productBySearch.isFound && products.length < 1
 
     navbar.textPath = (categories.name) && categories.name
     navbar.textPath = (q) && q
@@ -473,19 +395,16 @@ class MyProduct extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <Section style={{marginBottom: '45px', overflowAnchor: 'none'}}>
+          { isProductEmpty && <ProductEmpty /> }
           {
-            notFound && <EmptyProduct />
-          }
-          {
-            products.length < 1
-            ? null
-            : <InfiniteScroll
+            products.length > 1 &&
+            <InfiniteScroll
               pageStart={0}
               loadMore={_.debounce(this.handleLoadMore.bind(this), 250)}
-              hasMore={this.state.hasMore}
+              hasMore={hasMore}
               loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
-              { listProducts }
-            </InfiniteScroll>
+                { listProducts }
+              </InfiniteScroll>
           }
         </Section>
         <TabbarCategories
@@ -515,7 +434,7 @@ class MyProduct extends Component {
   }
 }
 
-const EmptyProduct = () => {
+const ProductEmpty = () => {
   return (
     <section className='content'>
       <div className='container is-fluid'>
