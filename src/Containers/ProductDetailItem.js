@@ -43,7 +43,7 @@ class ProductDetailItem extends Component {
   }
 
   render () {
-    const { product, rating, ...props } = this.props
+    const { product, rating, commission, ...props } = this.props
     const { wishlist } = this.state
     let wishlistStatus = product.is_liked
     if (wishlist.isFound && (wishlist.wishlist.id === product.id)) wishlistStatus = wishlist.wishlist.is_liked
@@ -53,7 +53,7 @@ class ProductDetailItem extends Component {
         <ProductDetailSlider {...props} />
         <div className='detail-product'>
           <h3>{ product.name }</h3>
-          <span className='price'>Rp { RupiahFormat(product.price) }</span>
+          <span className='price'>Rp { RupiahFormat(product.price) }</span> - <span style={{color: '#47bf7e'}}>Komisi { commission } %</span>
           <span className={`icon-wishlist ${wishlistStatus && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>
