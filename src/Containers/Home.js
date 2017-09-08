@@ -13,6 +13,7 @@ import Notification from '../Components/Notification'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import MyImage from '../Components/MyImage'
+import ModalLoginRegister from '../Components/ModalLoginRegister'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
@@ -21,6 +22,7 @@ import { Status } from '../Services/Status'
 import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
+// import Wrapper from './Wrapper'
 
 class Home extends Component {
   constructor (props) {
@@ -29,6 +31,7 @@ class Home extends Component {
       products: props.products || null,
       category: props.category || null,
       token: null,
+      mustLogin: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -43,23 +46,26 @@ class Home extends Component {
     if (token) {
       products.products.map((myProduct) => {
         if (myProduct.product.id === id) {
-          (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
+          myProduct.product.is_liked ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
           myProduct.product.is_liked = !myProduct.product.is_liked
         }
       })
-      await this.props.dispatch(productActions.addToWishlist({ id }))
+      await this.props.addToWishlist({ id })
       this.setState({ products })
     } else {
-      this.setState({notification: {status: true, message: 'Anda harus login'}})
+      this.setState({ mustLogin: true })
     }
   }
 
   async componentDidMount () {
-    const { products } = this.state.products
-    const { categories } = this.state.category
-    if (products.length < 1 && categories.length < 1) {
+    const { products, category } = this.state
+    if (!products.isFound) {
       NProgress.start()
-      await this.props.dispatch(homeActions.products(this.params)) && this.props.dispatch(homeActions.categoryList())
+      await this.props.getProducts(this.params)
+    }
+    if (!category.isFound) {
+      NProgress.start()
+      this.props.getCategoryList()
     }
     this.setState({ token: await GET_TOKEN.getToken() })
   }
@@ -139,9 +145,8 @@ class Home extends Component {
   }
 
   render () {
-    const { categories } = this.state.category
-    const { products } = this.state.products
-    const { notification } = this.state
+    const { category, products } = this.state
+    const { notification, mustLogin } = this.state
     let settings = {
       autoplay: true,
       dots: false,
@@ -150,7 +155,6 @@ class Home extends Component {
       slidesToShow: 1,
       slidesToScroll: 1
     }
-
     return (
       <Content>
         <Notification
@@ -159,6 +163,7 @@ class Home extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
+        <ModalLoginRegister show={mustLogin} close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
         <Section>
           <Content className='slide-banner'>
             <Slider {...settings}>
@@ -172,7 +177,8 @@ class Home extends Component {
           <SectionTitle title='Kategori Produk' />
           <Content className='columns is-mobile is-multiline custom'>
             {
-              categories.map(category => {
+              category.isFound &&
+              category.categories.map(category => {
                 return (
                   <div
                     className={`column is-one-third effect-display`}
@@ -204,7 +210,7 @@ class Home extends Component {
         <Section>
           <SectionTitle title='Produk Terbaru' />
           <Content className='columns is-mobile is-multiline custom'>
-            { products.length > 0 ? this.renderProductColoumn('grid', products) : '' }
+            { products.isFound && this.renderProductColoumn('grid', products.products) }
             <Content className='column is-paddingless'>
               <Content className='see-all'>
                 <a
@@ -228,12 +234,17 @@ class Home extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.products,
-    category: state.category,
-    addWishlist: state.addWishlist
-  }
-}
+const mapStateToProps = (state) => ({
+  products: state.products,
+  category: state.category,
+  addWishlist: state.addWishlist
+})
 
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = (dispatch) => ({
+  getProducts: (params) => dispatch(homeActions.products(params)),
+  getCategoryList: () => dispatch(homeActions.categoryList()),
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
+// export default connect(mapStateToProps)(Home)

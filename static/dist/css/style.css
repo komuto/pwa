@@ -42,11 +42,11 @@
   font-family: 'nunitoregular', sans-serif;
   font-weight: 400; }
 
-.nunito-semibold, strong, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .box.notif-payment-expiry .media .media-content p strong, .box.notif-payment-waiting .media .media-content p strong, .box.notif-payment-success .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .list-transaction.plus3 > span, .level.nav-bottom .level-item {
+.nunito-semibold, strong, .label-semi, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery .field .control.with-currency .cur-val, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .box.notif-payment-expiry .media .media-content p strong, .box.notif-payment-waiting .media .media-content p strong, .box.notif-payment-success .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .list-transaction.plus3 > span, .level.nav-bottom .level-item {
   font-family: 'nunitosemibold', sans-serif;
   font-weight: 600; }
 
-.nunito-bold, .button, .view-all p, .view-all span, .pin span, .box .media .media-content .content .detail .price, .sort-option .sort-list > p strong, .sort-option .notif-report.add-voucher .header-notif h3, .sort-option .notif-report h3, .sort-option .notif-report .cancel, .notification, .tag, .level.header .nav-left .level-item > span, .user .content .desc strong.bold, .user.user-success .content .btn-action, .modal-filter .modal-card .modal-card-head .modal-card-title, .detail .detail-product .price, .detail .detail-product .remove-item, .summary.at-cart .detail-result .btn-change, .detail .detail-result.detail-price h3, .total-pay .price-pay, .cancel-voucher .cancel, .photo-content a, .edit .text-ask a, .data-wrapper .head-panel h3, .price-unique, .form-seller .btn-address, .eks-name span, .verify-wrapp h4, .user-info p, .confirm-transaction .list-inline li .confirm-btn > div span, .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong, .discuss-title {
+.nunito-bold, .button, .view-all p, .view-all span, .pin span, .box .media .media-content .content .detail .price, .sort-option .sort-list > p strong, .sort-option .notif-report.add-voucher .header-notif h3, .sort-option .notif-report h3, .sort-option .notif-report .cancel, .notification, .tag, .level.header .nav-left .level-item > span, .user .content .desc strong.bold, .user.user-success .content .btn-action, .modal-filter .modal-card .modal-card-head .modal-card-title, .detail .detail-product .price, .detail .detail-product .remove-item, .summary.at-cart .detail-result .btn-change, .detail .detail-result.detail-price h3, .total-pay .price-pay, .cancel-voucher .cancel, .photo-content a, .edit .text-ask a, .data-wrapper .head-panel h3, .price-unique, .form-seller .btn-address, .eks-name span, .verify-wrapp h4, .user-info p, .confirm-transaction .list-inline li .confirm-btn > div span, .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong, .discuss-title, .saldo .saldo-panel p {
   font-family: 'nunitobold', sans-serif;
   font-weight: 700; }
 
@@ -287,6 +287,8 @@
   background-image: url("../../images/komuto-icon/030_trash.svg");
   background-repeat: no-repeat;
   vertical-align: middle; }
+  .icon-trash.white {
+    background-image: url("../../images/komuto-icon/096_icon_trash_white.svg"); }
 
 .icon-selected-sign {
   display: inline-block;
@@ -707,6 +709,22 @@
   width: 24px;
   height: 24px;
   background-image: url("../../images/komuto-icon/093_icon_star_line.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-isi-saldo {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url("../../images/komuto-icon/094_icon_isi_saldo.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-tarik-saldo {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url("../../images/komuto-icon/095_icon_tarik_saldo.svg");
   background-repeat: no-repeat;
   vertical-align: middle; }
 
@@ -5721,6 +5739,12 @@ strong {
 .bg-grey {
   background-color: #f4f5f6; }
 
+.text-green {
+  color: #47bf7e; }
+
+.text-red {
+  color: #ef5656; }
+
 .main {
   padding-top: 64px;
   padding-bottom: 46px;
@@ -6071,6 +6095,12 @@ strong {
         left: -15px; }
   .box .media .media-content.is-right-content .content {
     padding-right: 100px; }
+  .box .media .media-content.middle {
+    -ms-flex-item-align: center;
+        -ms-grid-row-align: center;
+        align-self: center; }
+    .box .media .media-content.middle .content {
+      padding-top: 0; }
   .box .media .media-content .content {
     padding-bottom: 0;
     margin-bottom: 0; }
@@ -6182,17 +6212,21 @@ strong {
     width: 100%; }
     .sort-option .sort-list.catalog-list {
       max-width: 235px;
+      overflow-y: hidden;
       left: 20px;
       bottom: 75px;
       border-radius: 5px; }
-      .sort-option .sort-list.catalog-list ul li {
-        border-bottom: 1px solid #dedede; }
-        .sort-option .sort-list.catalog-list ul li:last-child {
-          border-bottom: none; }
-        .sort-option .sort-list.catalog-list ul li a {
-          padding: 20px;
-          display: block;
-          color: #404852; }
+      .sort-option .sort-list.catalog-list ul {
+        max-height: 241px;
+        overflow-y: scroll; }
+        .sort-option .sort-list.catalog-list ul li {
+          border-bottom: 1px solid #dedede; }
+          .sort-option .sort-list.catalog-list ul li:last-child {
+            border-bottom: none; }
+          .sort-option .sort-list.catalog-list ul li a {
+            padding: 20px;
+            display: block;
+            color: #404852; }
     .sort-option .sort-list p {
       padding: 18px 20px; }
       .sort-option .sort-list p strong {
@@ -6483,10 +6517,12 @@ strong {
     letter-spacing: 0.2px;
     color: #404852;
     font-weight: 400;
-    display: block; }
+    display: block;
+    line-height: 24px; }
   .change-address .radio p {
     margin: 0;
-    padding: 0; }
+    padding: 0;
+    line-height: 24px; }
 
 .change-address .add-new-address {
   text-align: center;
@@ -6637,6 +6673,12 @@ strong.total {
     position: absolute;
     top: 22px;
     right: 20px; }
+  .switch.middle {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
   .switch.grey-style .slider:before {
     background-color: #f1f1f1; }
   .switch.grey-style input:checked + .slider:before {
@@ -6778,10 +6820,12 @@ strong.total {
     top: 10px;
     right: 0;
     box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.15);
-    min-width: 110px; }
+    min-width: 110px;
+    z-index: 2; }
     .menu-top .option-dropdown li {
       background-color: #ffffff;
-      border-bottom: 0.5px solid #dedede; }
+      border-bottom: 0.5px solid #dedede;
+      text-align: left; }
       .menu-top .option-dropdown li:last-child {
         border-bottom: none; }
       .menu-top .option-dropdown li a {
@@ -6853,7 +6897,15 @@ strong.total {
   font-size: 15px;
   letter-spacing: 1px; }
 
-@media handheld, only screen and (max-width: 320px) {
+.form.stock-item {
+  padding-top: 20px; }
+  .form.stock-item .field:not(:last-child) {
+    margin-bottom: 20px; }
+
+.modal-filter.modal-dropship .modal-card .modal-card-body .log-reg {
+  padding: 60px 30px 20px 30px; }
+
+@media screen and (max-width: 319px) {
   .notif-report .button {
     font-size: 12px; } }
 
@@ -6974,16 +7026,15 @@ strong.total {
 .header-search .control {
   position: inherit; }
 
-@media screen and (max-width: 768px) {
-  .nav-menu {
+/* @media screen and (max-width: 768px)
+  .nav-menu
     opacity: 0;
     height: 0px;
-    transition: all 300ms linear; }
-    .nav-menu.is-active {
+    @include transition(all 300ms linear)
+    &.is-active
       opacity: 1;
       height: auto;
-      display: block; } }
-
+      display: block; */
 .main.home {
   background-color: #f4f5f6;
   padding-top: 0; }
@@ -7473,6 +7524,12 @@ strong.total {
   .modal-filter.modal-dropship .modal-card .modal-card-body .section .title {
     padding-top: 20px; }
 
+.modal-filter.modal-dropship .modal-card {
+  padding-bottom: 0; }
+
+.modal-filter.modal-dropship .modal-card-body .edit-data-delivery {
+  padding: 0; }
+
 .filter-option {
   position: absolute;
   top: 0;
@@ -7488,6 +7545,14 @@ strong.total {
     background-color: #ffffff;
     width: 100%;
     min-height: 450px; }
+    .filter-option .sort-list.check-all.top .checkbox .sort-text {
+      margin-top: 4px;
+      margin-bottom: 4px; }
+    .filter-option .sort-list.bg-grey {
+      background-color: #f4f5f6;
+      border-top: 0.5px solid #dedede; }
+      .filter-option .sort-list.bg-grey .input-wrapper {
+        background-color: #ffffff; }
     .filter-option .sort-list p {
       padding: 20px; }
       .filter-option .sort-list p strong {
@@ -7547,7 +7612,7 @@ strong.total {
         .filter-option .sort-list .checkbox .field .select:after {
           display: none; }
 
-@media handheld, only screen and (max-width: 480px) {
+@media screen and (max-width: 479px) {
   .modal-filter .modal-card .modal-card-body {
     padding-left: 145px; }
     .modal-filter .modal-card .modal-card-body .fiter-side {
@@ -8135,6 +8200,10 @@ strong.total {
           padding-bottom: 0; }
           .info-purchase .detail-purchase.summary .detail-result ul.data-delivery li strong {
             display: block; }
+  .info-purchase .detail .detail-result {
+    padding-top: 20px;
+    margin-left: -20px;
+    margin-right: -20px; }
 
 .section.is-error {
   box-shadow: none; }
@@ -8208,6 +8277,18 @@ strong.total {
       color: #a0a3ae; }
     .edit-data-delivery .field .control .input:-ms-input-placeholder {
       color: #a0a3ae; }
+    .edit-data-delivery .field .control.with-currency {
+      position: relative; }
+      .edit-data-delivery .field .control.with-currency .cur-val {
+        position: absolute;
+        top: 40%;
+        left: 0;
+        -webkit-transform: translateY(-40%);
+        transform: translateY(-40%);
+        color: #404852;
+        z-index: 2; }
+      .edit-data-delivery .field .control.with-currency .input {
+        padding-left: 28px; }
   .edit-data-delivery.edit .field .control.detail-address .location-label {
     color: #41475e;
     font-size: 13px; }
@@ -8371,6 +8452,8 @@ strong.total {
     position: relative;
     padding: 20px 80px 20px 0;
     border-bottom: 0.5px solid #dadada; }
+  .set-notify.opsiDropShip li {
+    padding: 30px 80px 30px 0; }
 
 .note-head {
   font-size: 13px;
@@ -8753,7 +8836,7 @@ strong.total {
   font-size: 14px;
   color: #41475e; }
 
-@media handheld, only screen and (max-width: 320px) {
+@media screen and (max-width: 319px) {
   .img-method img {
     max-width: 29%; }
   .list-bank .img-method img {
@@ -8837,6 +8920,14 @@ strong.total {
         border-bottom: none;
         padding-top: 12px;
         padding-bottom: 12px; }
+    .filter-option .sort-list .box {
+      margin-bottom: 0; }
+      .filter-option .sort-list .box .media .media-left .image {
+        width: 35px;
+        height: 35px; }
+      .filter-option .sort-list .box .media .media-content .content p {
+        padding-left: 0;
+        padding-right: 0; }
     .filter-option .sort-list.top .checkbox {
       padding-left: 40px;
       padding-right: 0; }
@@ -8859,7 +8950,7 @@ strong.total {
         display: block;
         margin-bottom: 0; }
       .filter-option .sort-list.left .checkbox .input-wrapper {
-        top: 8px;
+        top: 6px;
         left: 0;
         right: inherit;
         width: 25px;
@@ -8885,6 +8976,28 @@ strong.total {
         transform: translateY(-50%);
         margin-bottom: 0;
         background-position: -1px; }
+    .filter-option .sort-list.item-select .checkbox {
+      border-bottom: 0.5px solid #dedede;
+      margin-right: -20px; }
+    .filter-option .sort-list.item-select .input-wrapper.checked {
+      background-color: #56aaef;
+      border-color: #56aaef; }
+      .filter-option .sort-list.item-select .input-wrapper.checked:after {
+        /*Add another block-level blank space*/
+        content: '';
+        display: block;
+        /*Make it a small rectangle so the border will create an L-shape*/
+        width: 8px;
+        height: 14px;
+        /*Add a white border on the bottom and left, creating that 'L' */
+        border: solid #ffffff;
+        border-width: 0 2px 2px 0;
+        /*Rotate the L 45 degrees to turn it into a checkmark*/
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        top: 3px;
+        left: 7px; }
   .filter-option.right-style .sort-list.top .checkbox {
     margin-right: -20px;
     padding-right: 20px; }
@@ -8895,7 +9008,8 @@ strong.total {
   line-height: 1.62;
   letter-spacing: 0.2px;
   color: #404852;
-  margin-top: -1px; }
+  margin-top: -1px;
+  background-color: #f4f5f6; }
 
 .upload-pict {
   padding: 45px 0; }
@@ -9011,6 +9125,10 @@ strong.total {
     line-height: 1.69;
     letter-spacing: 0.2px;
     color: #56aaef; }
+
+.seller .profile-content {
+  border-bottom: 0.5px solid #dedede;
+  box-shadow: none; }
 
 .add-product {
   padding-top: 30px; }
@@ -9135,6 +9253,8 @@ strong.total {
   position: relative;
   margin-bottom: 8px; }
   .spec-price:last-child {
+    margin-bottom: 0; }
+  .spec-price.no-margin-bottom {
     margin-bottom: 0; }
   .spec-price .columns:last-child {
     margin-bottom: 0; }
@@ -9385,9 +9505,67 @@ strong.total {
   line-height: 1.69;
   border-bottom: 0.5px solid #dedede; }
 
-@media handheld, only screen and (max-width: 600px) {
+@media screen and (max-width: 599px) {
   .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong {
     max-width: 68%; } }
+
+.saldo .saldo-panel {
+  background-color: #ef5656;
+  padding: 10px 0 25px 47px;
+  color: #ffffff; }
+  .saldo .saldo-panel span {
+    font-size: 14px;
+    letter-spacing: 0.2px; }
+  .saldo .saldo-panel p {
+    font-size: 25px;
+    letter-spacing: 0.4px; }
+
+.saldo .payment-detail ul li .label-text > span {
+  margin-right: 8px;
+  vertical-align: middle; }
+
+.saldo .payment-detail ul li .text-green {
+  vertical-align: middle; }
+
+.saldo .payment-detail ul li .columns .column .detail-collapsed > span {
+  margin-top: 0; }
+
+.saldo .payment-detail.bank-transfer {
+  padding: 0 20px; }
+  .saldo .payment-detail.bank-transfer ul li {
+    padding-left: 0;
+    padding-right: 0; }
+    .saldo .payment-detail.bank-transfer ul li:nth-child(2) {
+      border-bottom: none; }
+    .saldo .payment-detail.bank-transfer ul li.collapsed {
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-top: 0.5px solid #efefef; }
+
+.saldo .payment-detail.saldo-history ul li {
+  border-bottom: none; }
+  .saldo .payment-detail.saldo-history ul li .invoice-saldo {
+    margin-right: -20px; }
+    .saldo .payment-detail.saldo-history ul li .invoice-saldo .columns {
+      border-bottom: 0.5px solid #dedede;
+      padding-top: 15px;
+      padding-right: 20px;
+      padding-bottom: 15px; }
+      .saldo .payment-detail.saldo-history ul li .invoice-saldo .columns:last-child {
+        border-bottom: none; }
+      .saldo .payment-detail.saldo-history ul li .invoice-saldo .columns span {
+        font-size: 12px;
+        letter-spacing: 0.2px;
+        color: #a0a3ae; }
+    .saldo .payment-detail.saldo-history ul li .invoice-saldo.detail-transactoin {
+      margin-right: 0; }
+      .saldo .payment-detail.saldo-history ul li .invoice-saldo.detail-transactoin .columns .column .is-left span {
+        color: #666666; }
+
+.saldo .detail .detail-result.detail-price {
+  background-color: #fbfbfb; }
 
 .level.nav-bottom {
   position: fixed;

@@ -123,4 +123,19 @@ export const updateNotifSettings = (data) => {
   return axios.post('users/notifications', data)
 }
 
+export const getResolvedResolutions = () => {
+  const axios = authApiKomuto()
+  return axios.get('users/resolutions?is_closed=true')
+}
+
+export const getUnresolvedResolutions = () => {
+  const axios = authApiKomuto()
+  return axios.get('users/resolutions?is_closed=false')
+}
+
+export const getResolutionDetail = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.get(`users/resolutions/${id}`)
+}
+
 export const logout = () => ({ message: 'LOGOUT SUCCESS', code: 0 })

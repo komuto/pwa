@@ -78,6 +78,9 @@ const user = function * () {
   yield takeEvery(typeReq(userActions.UPDATE_FIREBASE_REG_TOKEN), userSaga.updateFirebaseToken)
   yield takeEvery(typeReq(userActions.GET_NOTIF_SETTINGS), userSaga.getNotifSettings)
   yield takeEvery(typeReq(userActions.UPDATE_NOTIF_SETTINGS), userSaga.updateNotifSettings)
+  yield takeEvery(typeReq(userActions.GET_RESOLVED_RESOLUTIONS), userSaga.getResolvedResolutions)
+  yield takeEvery(typeReq(userActions.GET_UNRESOLVED_RESOLUTIONS), userSaga.getUnresolvedResolutions)
+  yield takeEvery(typeReq(userActions.GET_RESOLUTION_DETAIL), userSaga.getResolutionDetail)
 }
 
 const home = function * () {
@@ -96,7 +99,7 @@ const product = function * () {
   yield takeLatest(typeReq(productActions.LIST_PRODUCT_BY_CATEGORY), productSaga.productByCategory)
   yield takeLatest(typeReq(productActions.LIST_PRODUCT_BY_SEARCH), productSaga.productBySearch)
   yield takeEvery(typeReq(productActions.ADD_TO_WISHLIST), productSaga.addToWishlist)
-  yield takeEvery(typeReq(productActions.ADD_TO_WISHLIST_HOME), productSaga.addToWishlist)
+  yield takeEvery(typeReq(productActions.ADD_TO_WISHLIST_HOME), productSaga.addToWishlistHome)
   yield takeEvery(typeReq(productActions.GET_DISCUSSION), productSaga.getDiscussion)
   yield takeEvery(typeReq(productActions.NEW_DISCUSSION), productSaga.newDiscussion)
   yield takeEvery(typeReq(productActions.GET_COMMENT), productSaga.getComment)
@@ -216,11 +219,11 @@ const other = function * () {
 }
 
 const payment = function * () {
-  yield takeEvery(typeReq(paymentActions.PAY_DOKU), paymentSaga.payDoku)
-  yield takeEvery(typeReq(paymentActions.GET_DOKU_INVOICE), paymentSaga.getDokuInvoice)
   yield takeEvery(typeReq(paymentActions.GET_PAYMENT_METHODS), paymentSaga.getPaymentMethods)
   yield takeEvery(typeReq(paymentActions.CONFIRM_TRANSFER), paymentSaga.confirmTransfer)
   yield takeEvery(typeReq(paymentActions.WITHDRAW), paymentSaga.withdraw)
+  yield takeEvery(typeReq(paymentActions.GET_MIDTRANS_TOKEN), paymentSaga.getMidtransToken)
+  yield takeEvery(typeReq(paymentActions.GET_MIDTRANS_TOKEN_2), paymentSaga.getMidtransToken2)
 }
 
 const review = function * () {

@@ -4,16 +4,15 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Payment from '../src/Containers/Payment'
+import PaymentForMobile from '../src/Containers/PaymentForMobile'
 // style custom
 const params = {
-  style: 'main no-padding-bottom bg-grey',
+  style: 'main no-padding-bottom bg-with',
   header: {
     title: 'Pembayaran'
   },
   navbar: {
     searchBoox: false,
-    path: '/',
     textPath: 'Pembayaran'
   }
 }
@@ -21,7 +20,7 @@ const params = {
 const Index = (props) => {
   return (
     <DefaultLayout params={params}>
-      <Payment query={props.query} />
+      <PaymentForMobile query={props.query} />
     </DefaultLayout>
   )
 }

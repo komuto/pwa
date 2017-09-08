@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import * as purchaseReducers from './purchase'
 import * as storage from 'redux-storage'
+import * as purchaseReducers from './purchase'
 import * as userReducers from './user'
 import * as homeReducers from './home'
 import * as brandReducers from './brand'
@@ -50,7 +50,10 @@ const user = {
   sendOTPBank: userReducers.sendOTPBank,
   wishlist: userReducers.wishlist,
   alterUser: userReducers.alterUser,
-  notifSettings: userReducers.notifSettings
+  notifSettings: userReducers.notifSettings,
+  resolvedResolutions: userReducers.getResolvedResolutions,
+  unresolvedResolutions: userReducers.getUnresolvedResolutions,
+  resolutionDetail: userReducers.getResolutionDetail
 }
 
 const home = {
@@ -180,11 +183,11 @@ const other = {
 }
 
 const payment = {
-  dokuPayment: paymentReducers.payDoku,
-  invoice: paymentReducers.getDokuInvoice,
   paymentMethods: paymentReducers.getPaymentMethods,
   confirmation: paymentReducers.confirmTransfer,
-  withdrawal: paymentReducers.withdraw
+  withdrawal: paymentReducers.withdraw,
+  snapToken: paymentReducers.getMidtransToken,
+  snapToken2: paymentReducers.getMidtransToken2
 }
 
 const review = {

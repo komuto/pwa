@@ -23,10 +23,12 @@ const params = {
   }
 }
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <Home />
-  </DefaultLayout>
-)
+const Index = (props) => {
+  return (
+    <DefaultLayout params={params}>
+      <Home />
+    </DefaultLayout>
+  )
+}
 
 export default ReduxPageWrapper(Index)

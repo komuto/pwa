@@ -156,4 +156,3 @@ class StoreSetting extends Component {
 }
 
 export default StoreSetting
-

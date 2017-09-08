@@ -21,7 +21,7 @@ const styles = {
 class ProductAddStepOne extends Component {
   constructor (props) {
     super(props)
-
+    console.log('props', props)
     let { stepOne } = props.tempCreateProduct
     let images = stepOne.isFound ? stepOne.images : []
 

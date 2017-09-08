@@ -20,9 +20,11 @@ class Payment extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      token: props.query.token || null,
       cart: props.cart || null,
       balance: props.balance || null,
       paymentMethods: props.paymentMethods || null,
+      snapToken: props.snapToken || null,
       submiting: false,
       notification: {
         type: 'is-danger',
@@ -36,6 +38,7 @@ class Payment extends Component {
     await this.props.getBalance()
     await this.props.getPaymentMethods()
     await this.props.getCart()
+    await this.props.getMidtransToken()
   }
 
   paymentRedirect (pm) {
@@ -43,10 +46,52 @@ class Payment extends Component {
     pm.id === 13 && Router.push(`/payment-doku?type=${pm.id}`)
   }
 
+  paymentMidtrans () {
+    const { snapToken } = this.state
+    if (snapToken.isFound) {
+      snap.pay(snapToken.token, {
+        onSuccess: (result) => {
+          console.log('success')
+          console.log(result)
+        },
+        onPending: (result) => {
+          console.log('pending')
+          console.log(result)
+        },
+        onError: (result) => {
+          console.log('error')
+          console.log(result)
+        },
+        onClose: () => {
+          console.log('customer closed the popup without finishing the payment')
+        }
+      })
+    } else {
+      console.log('Token not found!')
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { balance, paymentMethods, cart } = nextProps
+    const { balance, paymentMethods, cart, snapToken } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
+
+    console.log(snapToken)
+
+    if (!snapToken.isLoading) {
+      switch (snapToken.status) {
+        case Status.SUCCESS :
+          if (!snapToken.isFound) notification = {type: 'is-danger', status: true, message: 'Token tidak ditemukan'}
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          notification = {type: 'is-danger', status: true, message: balance.message}
+          break
+        default:
+          break
+      }
+      this.setState({ snapToken, notification })
+    }
 
     if (!balance.isLoading) {
       switch (balance.status) {
@@ -96,11 +141,11 @@ class Payment extends Component {
   }
 
   render () {
-    const { balance, paymentMethods, cart } = this.state
+    const { balance, paymentMethods, cart, token } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
 
-    console.log(paymentMethods)
+    console.log('token', token)
 
     if (!paymentMethods.isFound) return null
 
@@ -140,6 +185,12 @@ class Payment extends Component {
             <span className='icon-arrow-right' />
           </div>
         </div>
+        <div className='box-rounded' onClick={() => this.paymentMidtrans()}>
+          <div className='payment-method'>
+            Midtrans Payment Gateway
+            <span className='icon-arrow-right' />
+          </div>
+        </div>
         {
           paymentMethods.paymentMethods.map((pm) => {
             return (
@@ -163,13 +214,15 @@ class Payment extends Component {
 const mapStateToProps = (state) => ({
   cart: state.cart,
   balance: state.balance,
-  paymentMethods: state.paymentMethods
+  paymentMethods: state.paymentMethods,
+  snapToken: state.snapToken
 })
 
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
   getBalance: () => dispatch(userActions.getBalance()),
-  getPaymentMethods: () => dispatch(paymentActions.getPaymentMethods())
+  getPaymentMethods: () => dispatch(paymentActions.getPaymentMethods()),
+  getMidtransToken: () => dispatch(paymentActions.getMidtransToken())
 })
 
 export default connect(mapStateToProps, mapDiaptchToProps)(Payment)
