@@ -117,6 +117,7 @@ class MyProduct extends Component {
       pagination.page += 1
       this.params.page = pagination.page
       this.params.limit = pagination.limit
+      console.log('params ', this.params)
       await this.props.listProductBySearch(this.params)
       this.setState({ pagination, fetching: true })
     }
@@ -429,6 +430,8 @@ class MyProduct extends Component {
   }
 
   render () {
+    console.log('state ', this.state)
+    console.log('props ', this.props)
     const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, notFound } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
