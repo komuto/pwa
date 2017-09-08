@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+// import NProgress from 'nprogress'
 // Components
 import MyImage from '../Components/MyImage'
-// import Notification from '../Components/Notification'
-import NProgress from 'nprogress'
+import Loading from '../Components/Loading'
+import Notification from '../Components/Notification'
+import Content from '../Components/Content'
 // Themes
 // import Images from '../Themes/Images'
 // actions
@@ -14,140 +16,77 @@ import * as cartActions from '../actions/cart'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 
 class Payment extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      token: props.query.token || null,
       cart: props.cart || null,
       balance: props.balance || null,
-      paymentMethods: props.paymentMethods || null,
-      snapToken: props.snapToken || null,
+      snapToken: {
+        data: props.snapToken || null,
+        submiting: true
+      },
       submiting: false,
       notification: {
         type: 'is-danger',
         status: false,
         message: 'Error, default message.'
-      }
+      },
+      failTransaction: false
     }
+    this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
   }
 
   async componentWillMount () {
     await this.props.getBalance()
-    await this.props.getPaymentMethods()
     await this.props.getCart()
     await this.props.getMidtransToken()
   }
 
-  paymentRedirect (pm) {
-    pm.id === 1 && Router.push(`/payment-bank-transfer?type=${pm.id}`)
-    pm.id === 13 && Router.push(`/payment-doku?type=${pm.id}`)
-  }
-
   paymentMidtrans () {
     const { snapToken } = this.state
-    if (snapToken.isFound) {
-      snap.pay(snapToken.token, {
+    if (snapToken.data.isFound) {
+      snap.pay(snapToken.data.token, {
         onSuccess: (result) => {
-          console.log('success')
-          console.log(result)
+          Router.push('/payment-success')
         },
         onPending: (result) => {
-          console.log('pending')
-          console.log(result)
+          Router.push('/payment-pending')
         },
         onError: (result) => {
-          console.log('error')
-          console.log(result)
+          this.setState({ failTransaction: true })
         },
         onClose: () => {
-          console.log('customer closed the popup without finishing the payment')
+          // console.log('customer closed the popup without finishing the payment')
         }
       })
     } else {
-      console.log('Token not found!')
+      this.setState({ notification: {type: 'is-danger', status: true, message: 'Snap Token tidak ditemukan'} })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { balance, paymentMethods, cart, snapToken } = nextProps
-    let { notification } = this.state
-    notification = {status: false, message: 'Error, default message.'}
+    const { balance, cart, snapToken } = nextProps
 
-    console.log(snapToken)
-
-    if (!snapToken.isLoading) {
-      switch (snapToken.status) {
-        case Status.SUCCESS :
-          if (!snapToken.isFound) notification = {type: 'is-danger', status: true, message: 'Token tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: balance.message}
-          break
-        default:
-          break
-      }
-      this.setState({ snapToken, notification })
+    if (!isFetching(snapToken)) {
+      this.setState({ snapToken: { data: snapToken, submiting: false }, notification: validateResponse(snapToken, 'Snap token tidak ditemukan!') })
     }
 
-    if (!balance.isLoading) {
-      switch (balance.status) {
-        case Status.SUCCESS :
-          if (!balance.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: balance.message}
-          break
-        default:
-          break
-      }
-      this.setState({ balance, notification })
+    if (!isFetching(balance)) {
+      this.setState({ balance, notification: validateResponse(balance, 'Balance tidak ditemukan!') })
     }
 
-    if (!paymentMethods.isLoading) {
-      switch (paymentMethods.status) {
-        case Status.SUCCESS :
-          if (!paymentMethods.isFound) notification = {type: 'is-danger', status: true, message: 'Data payment method tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: paymentMethods.message}
-          break
-        default:
-          break
-      }
-      this.setState({ paymentMethods, notification })
-    }
-
-    if (!cart.isLoading) {
-      NProgress.done()
-      switch (cart.status) {
-        case Status.SUCCESS :
-          if (!cart.isFound) notification = {type: 'is-danger', status: true, message: 'Keranjang belanja kosong!'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: cart.message}
-          break
-        default:
-          break
-      }
-      this.setState({ cart, notification })
+    if (!isFetching(cart)) {
+      this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja tidak ditemukan!') })
     }
   }
 
   render () {
-    const { balance, paymentMethods, cart, token } = this.state
+    const { balance, cart, snapToken, failTransaction, notification } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
-
-    console.log('token', token)
-
-    if (!paymentMethods.isFound) return null
 
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
@@ -158,55 +97,61 @@ class Payment extends Component {
     if (promo) totalPayment = totalPayment - promo.nominal
 
     return (
-      <section className='section payment'>
-        <div className='box-rounded'>
-          <div className='total-detail'>
-            <ul className='list-inline col2'>
-              <li>
-                <span>Total Pembayaran</span>
-                <span className='price'>Rp { RupiahFormat(totalPayment) }</span>
-              </li>
-              <li className='has-text-right'>
-                <a onClick={() => Router.push('/shopping-cart')} className='button is-primary is-outlined full-rounded'>Detail</a>
-              </li>
-            </ul>
-            <div className='text-msg'>
-              Harga sudah termasuk pajak dan biaya lainnya
+      <Content>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+        <section className='section payment'>
+          <div className='box-rounded'>
+            <div className='total-detail'>
+              <ul className='list-inline col2'>
+                <li>
+                  <span>Total Pembayaran</span>
+                  <span className='price'>Rp { RupiahFormat(totalPayment) }</span>
+                </li>
+                <li className='has-text-right'>
+                  <a onClick={() => Router.push('/shopping-cart')} className='button is-primary is-outlined full-rounded'>Detail</a>
+                </li>
+              </ul>
+              <div className='text-msg'>
+                Harga sudah termasuk pajak dan biaya lainnya
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='title-content'>
-          <h3>Pilih Metode Pembayaran</h3>
-        </div>
-        <div className='box-rounded' onClick={() => Router.push('/pay-with-balance')}>
-          <div className='payment-method'>
-            Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
-            <span className='icon-arrow-right' />
+          <div className='title-content'>
+            <h3>Pilih Metode Pembayaran</h3>
+          </div>
+          <div className='box-rounded' onClick={() => Router.push('/pay-with-balance')}>
+            <div className='payment-method'>
+              Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
+              <span className='icon-arrow-right' />
+            </div>
+          </div>
+          <div className='box-rounded' onClick={() => !snapToken.submiting && snapToken.data.isFound && this.paymentMidtrans()}>
+            <div className='payment-method'>
+              Metode Pembayaran Lainnya
+              {
+                snapToken.submiting
+                ? this.loadingSpan
+                : <span className='icon-arrow-right' />
+              }
+            </div>
+          </div>
+        </section>
+        <div className='sort-option' style={{ display: failTransaction ? 'block' : 'none' }}>
+          <div className='notif-report'>
+            <MyImage src='../images/reg-success.svg' />
+            <h3>Pembayaran gagal</h3>
+            <p>Mohon maaf kami tidak berhasil melakukan pembayaran anda!</p>
+            <button className='button is-primary is-large is-fullwidth'>Coba lagi</button>
+            <button onClick={() => !snapToken.submiting && snapToken.data.isFound && this.paymentMidtrans()} className='button is-primary is-large is-fullwidth is-outlined'>Pilih metode pembayaran lainya</button>
           </div>
         </div>
-        <div className='box-rounded' onClick={() => this.paymentMidtrans()}>
-          <div className='payment-method'>
-            Midtrans Payment Gateway
-            <span className='icon-arrow-right' />
-          </div>
-        </div>
-        {
-          paymentMethods.paymentMethods.map((pm) => {
-            return (
-              <div className='box-rounded' key={pm.id} onClick={() => this.paymentRedirect(pm)}>
-                <div className='payment-method'>
-                  { pm.name }
-                  <span className='icon-arrow-right' />
-                </div>
-                <ul className='list-inline pay-method-option'>
-                  <li><a><MyImage src={pm.logo} alt='' style={{ width: '70%' }} /></a></li>
-                </ul>
-              </div>
-            )
-          })
-        }
-      </section>
+      </Content>
     )
   }
 }
@@ -214,14 +159,12 @@ class Payment extends Component {
 const mapStateToProps = (state) => ({
   cart: state.cart,
   balance: state.balance,
-  paymentMethods: state.paymentMethods,
   snapToken: state.snapToken
 })
 
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
   getBalance: () => dispatch(userActions.getBalance()),
-  getPaymentMethods: () => dispatch(paymentActions.getPaymentMethods()),
   getMidtransToken: () => dispatch(paymentActions.getMidtransToken())
 })
 
