@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
 // actions
 import * as actionTypes from '../actions/address'
@@ -62,6 +63,7 @@ class DataAddress extends React.Component {
     const { addAddress, updateAddress, statusDeleteAddress, query } = nextProps
     if (nextProps.listAddress.status === 200) {
       this.setState({ listAddress: nextProps.listAddress })
+      NProgress.done()
     }
     if (query.hasOwnProperty('isSuccess')) {
       if (!addAddress.isLoading) {
@@ -147,6 +149,7 @@ class DataAddress extends React.Component {
 
   componentWillMount () {
     this.props.getListAddress()
+    NProgress.start()
   }
 
   toAddAddress (e) {
