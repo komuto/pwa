@@ -112,6 +112,8 @@ class ProductDetail extends Component {
       moreButton: true,
       productId: productDetail.isFound && detail.product.id
     }
+
+    console.log(productDetail)
     return (
       <Content>
         <Navbar params={navbar} />
@@ -140,7 +142,9 @@ class ProductDetail extends Component {
                 product={detail.product}
                 storeData={detail.store} />
               <ProductDetailRule
-                store={detail.store} />
+                store={detail.store}
+                location={detail.location}
+                 />
               <ProductDetailSuggestions
                 products={detail.other_products}
                 store={detail.store}

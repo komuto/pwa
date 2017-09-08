@@ -90,7 +90,7 @@ class ShippingDetail extends Component {
     this.fetchEstimatedShipping = true
     await this.props.estimatedShipping({
       id: item.item.product.id,
-      origin_id: item.item.product.store.district.ro_id,
+      origin_id: item.item.product.location.district.ro_id,
       destination_id: item.item.shipping.address.district.ro_id,
       weight: 1000
     })
@@ -173,7 +173,7 @@ class ShippingDetail extends Component {
       this.isRedirect = true
       await this.props.addToCart({
         'destination_ro_id': item.item.shipping.address.district.ro_id,
-        'origin_ro_id': item.item.product.store.district.ro_id,
+        'origin_ro_id': item.item.product.location.district.ro_id,
         'service': item.item.shipping.expedition_service.name,
         'product_id': item.item.product.id,
         'expedition_id': item.item.shipping.expedition_service.expedition.id,
@@ -265,7 +265,7 @@ class ShippingDetail extends Component {
           if (item.isFound && expeditionsPackage.data.length < 1 && this.fetchEstimatedShipping) {
             this.props.estimatedShipping({
               id: item.item.product.id,
-              origin_id: item.item.product.store.district.ro_id,
+              origin_id: item.item.product.location.district.ro_id,
               destination_id: item.item.shipping.address.district.ro_id,
               weight: 1000
             })
@@ -284,8 +284,10 @@ class ShippingDetail extends Component {
   }
 
   render () {
+    console.log(this.state.item)
     const { notification, item, address, expeditions, expeditionsPackage, insurance, submiting, id, error } = this.state
     const { product, shipping } = item.item
+    console.log(product)
     const errorStyle = {
       borderBottomColor: 'red',
       color: 'red'

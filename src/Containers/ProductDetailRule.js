@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
-import Img from 'react-image'
+import MyImage from '../Components/MyImage'
 // themes
-import Images from '../Themes/Images'
+// import Images from '../Themes/Images'
 // components
 import Section from '../Components/Section'
 
@@ -17,10 +17,8 @@ class ProductDetailRule extends Component {
   openTerms = () => this.setState({ openTerms: !this.state.openTerms })
 
   render () {
-    const { store } = this.props
+    const { store, location } = this.props
     const { openTerms } = this.state
-    const loader = <img src={Images.loading} />
-    const unloader = <img src={Images.loadingFailed} />
 
     return (
       <Section className='section is-paddingless has-shadow'>
@@ -34,10 +32,7 @@ class ProductDetailRule extends Component {
                       <div className='media-left'>
                         <figure className='image'>
                           <a>
-                            <Img
-                              src={store.logo}
-                              loader={loader}
-                              unloader={unloader} />
+                            <MyImage src={store.logo} />
                           </a>
                         </figure>
                       </div>
@@ -48,7 +43,7 @@ class ProductDetailRule extends Component {
                             <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} />
                           </h4>
                           <div className='detail'>
-                            <p> { store.province.name }</p>
+                            <p> { location.province.name }</p>
                           </div>
                         </div>
                       </div>
