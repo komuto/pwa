@@ -17,7 +17,7 @@ class ProductDetailRule extends Component {
   openTerms = () => this.setState({ openTerms: !this.state.openTerms })
 
   render () {
-    const { store } = this.props
+    const { store, location } = this.props
     const { openTerms } = this.state
     const loader = <img src={Images.loading} />
     const unloader = <img src={Images.loadingFailed} />
@@ -48,7 +48,7 @@ class ProductDetailRule extends Component {
                             <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} />
                           </h4>
                           <div className='detail'>
-                            <p> { store.province.name }</p>
+                            <p> { location.province.name }</p>
                           </div>
                         </div>
                       </div>
