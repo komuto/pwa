@@ -18,9 +18,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <Product />
+    <Product query={props.query} />
   </DefaultLayout>
 )
 

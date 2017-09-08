@@ -3,7 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
-// import Loading from '../Components/Loading'
+import NProgress from 'nprogress'
 // actions
 import * as actionLocationTypes from '../actions/location'
 import * as actionAddressTypes from '../actions/address'
@@ -137,6 +137,7 @@ class EditAddress extends React.Component {
     const { getProvince, query, getAddressDetail } = this.props
     if (query.id !== '') {
       getAddressDetail({id: query.id})
+      NProgress.start()
       this.setState({convertToForm: true})
     }
     if (provinces.data.provinces.length === 0) {
@@ -167,10 +168,9 @@ class EditAddress extends React.Component {
     let aliasAddressRequired = aliasAddress.length > 0
     let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired && nameRequired && phoneNumberRequired && aliasAddressRequired
     if (isValid) {
-      const newSubmitting = { submitting }
+      const newSubmitting = { submitting, validation: false }
       newSubmitting.submitting = true
       this.setState(newSubmitting)
-      this.setState({ validation: false })
       this.proccessCreateAddress()
     } else {
       this.setState({ validation: true })
@@ -214,6 +214,7 @@ class EditAddress extends React.Component {
       if (villages.data.villages.length === 0) {
         this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
       }
+      NProgress.done()
     }
     if (nextProps.provinces.status === 200) {
       const newProvince = { provinces }

@@ -80,17 +80,17 @@ class VerifyNoTelp extends React.Component {
   }
 
   componentWillMount () {
-    if (!this.state.profile.isFound) {
-      this.props.getProfile()
-    }
+    this.props.getProfile()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { stateVerifyPhone, statusSendOTPPhone } = nextProps
+    const { stateVerifyPhone, profile, statusSendOTPPhone } = nextProps
     let { notification, submitOTPPhone, submitting } = this.state
     notification = {status: false, message: 'Error, default message.'}
-    this.setState({ profile: nextProps.profile })
-    if (!stateVerifyPhone.isLoading && submitting) {
+    if (profile.isFound) {
+      this.setState({ profile: nextProps.profile })
+    }
+    if (!stateVerifyPhone.isLoading && stateVerifyPhone.isFound && submitting) {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })

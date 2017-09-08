@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
+import NProgress from 'nprogress'
 // components
 import Link from 'next/link'
 import Router from 'next/router'
@@ -38,11 +39,10 @@ class NomorHandphone extends React.Component {
   }
 
   componentDidMount () {
-    const { profile, notification } = this.state
+    const { notification } = this.state
     const { verifyPhone, query } = this.props
-    if (!profile.isFound) {
-      this.props.getProfile()
-    }
+    this.props.getProfile()
+    NProgress.start()
     if (query.hasOwnProperty('isSuccess')) {
       if (!verifyPhone.isLoading) {
         switch (verifyPhone.status) {
@@ -70,11 +70,14 @@ class NomorHandphone extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    let { notification } = this.state
-    const { statusOTPPhone } = nextProps
+    let { notification, submitting } = this.state
+    const { statusOTPPhone, profile } = nextProps
     notification = {status: false, message: 'Error, default message.'}
-    this.setState({ profile: nextProps.profile })
-    if (!statusOTPPhone.isLoading) {
+    if (profile.isFound) {
+      this.setState({ profile: nextProps.profile })
+      NProgress.done()
+    }
+    if (!statusOTPPhone.isLoading && statusOTPPhone.isFound && submitting) {
       switch (statusOTPPhone.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })

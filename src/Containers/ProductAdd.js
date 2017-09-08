@@ -41,7 +41,7 @@ class ProductAdd extends Component {
                   </div>
                   <span className='icon-arrow-right black' />
                 </li>
-                <li>
+                <li onClick={() => Router.push('/about-dropshipping')}>
                   <div className='box'>
                     <article className='media'>
                       <div className='media-left'>

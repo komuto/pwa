@@ -21,19 +21,20 @@ class ManageBiodata extends React.Component {
     this.state = {
       profile: props.profile,
       formBiodata: {
-        name: '',
-        photo: '',
-        gender: '',
-        place_of_birth: '',
-        date_of_birth: ''
+        name: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.name : '',
+        photo: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.photo : '',
+        gender: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.gender : '',
+        place_of_birth: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.place_of_birth_id : '',
+        date_of_birth: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.date_of_birth : ''
       },
       searchDistrict: {
         name: '',
-        selected: ''
+        selected: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.place_of_birth : ''
       },
       districts: props.districts,
       modalPlaceOfBirth: false,
       submitting: false,
+      uploading: false,
       validation: false,
       notification: {
         status: false,
@@ -139,12 +140,19 @@ class ManageBiodata extends React.Component {
     let dobRequired = dateOfBirth !== null
     let isValid = photoRequired && nameRequired && genderRequired && pobRequired && dobRequired
     if (isValid) {
-      this.setState({ submitting: true })
       this.setState({ validation: false })
       if (formBiodata.photo.hasOwnProperty('preview')) {
-        this.handleUploadImage()
+        this.setState({ uploading: true }, () => {
+          if (this.state.uploading) {
+            this.handleUploadImage()
+          }
+        })
       } else {
-        this.processUpdateUser()
+        this.setState({ submitting: true }, () => {
+          if (this.state.submitting) {
+            this.processUpdateUser()
+          }
+        })
       }
     } else {
       this.setState({ validation: true })
@@ -152,13 +160,12 @@ class ManageBiodata extends React.Component {
   }
 
   processUpdateUser () {
-    const { formBiodata, profile } = this.state
+    const { formBiodata } = this.state
     let photo = formBiodata.photo
     let splitPhoto = photo.split('/')
     let photoFix = splitPhoto[splitPhoto.length - 1]
     const newState = { formBiodata }
     newState.formBiodata['photo'] = photoFix
-    newState.formBiodata['place_of_birth'] = profile.user.user.place_of_birth_id
     this.setState(newState)
     this.props.updateProfile(formBiodata)
   }
@@ -192,55 +199,26 @@ class ManageBiodata extends React.Component {
     this.handleModalPOB(e)
   }
 
-  componentWillMount () {
-    const { formBiodata, profile, districts, searchDistrict } = this.state
+  componentDidMount () {
+    const { districts } = this.state
     if (!districts.isFound) {
       this.props.getDistrict()
     }
-    if (!profile.isFound) {
-      this.props.getProfile()
-    }
-    if (profile.isFound) {
-      const newState = { formBiodata }
-      const newSearchDistrict = { searchDistrict }
-      newSearchDistrict.searchDistrict['selected'] = profile.user.user.place_of_birth
-      newState.formBiodata['name'] = profile.user.user.name
-      newState.formBiodata['photo'] = profile.user.user.photo
-      newState.formBiodata['gender'] = profile.user.user.gender
-      newState.formBiodata['place_of_birth'] = profile.user.user.place_of_birth_id
-      newState.formBiodata['date_of_birth'] = profile.user.user.date_of_birth
-      this.setState(newState)
-      this.setState(newSearchDistrict)
-    }
-  }
-
-  componentDidMount () {
-    NProgress.done()
+    NProgress.start()
+    this.props.getProfile()
   }
 
   componentWillReceiveProps (nextProps) {
     const { districts, upload, statusUpdateProfile, profile } = nextProps
-    const { updateProfile } = this.props
-    const { formBiodata, submitting, notification, searchDistrict } = this.state
-    if (profile.status === 200) {
+    const { formBiodata, submitting, notification, uploading } = this.state
+    if (profile.isFound) {
       this.setState({ profile: nextProps.profile })
-      if (formBiodata.name === '') {
-        const newState = { formBiodata }
-        const newSearchDistrict = { searchDistrict }
-        newState.formBiodata['name'] = profile.user.user.name
-        newState.formBiodata['photo'] = profile.user.user.photo
-        newState.formBiodata['gender'] = profile.user.user.gender
-        newState.formBiodata['place_of_birth'] = profile.user.user.place_of_birth_id
-        newState.formBiodata['date_of_birth'] = profile.user.user.date_of_birth
-        newSearchDistrict.searchDistrict['selected'] = profile.user.user.place_of_birth
-        this.setState(newState)
-        this.setState(newSearchDistrict)
-      }
+      NProgress.done()
     }
-    if (districts.status === 200) {
+    if (districts.isFound) {
       this.setState({ districts: nextProps.districts })
     }
-    if (upload.status === 200 && submitting) {
+    if (upload.isFound && uploading) {
       const logo = upload.payload.images[0].name
       const newData = {
         name: formBiodata.name,
@@ -249,12 +227,16 @@ class ManageBiodata extends React.Component {
         place_of_birth: formBiodata.place_of_birth,
         date_of_birth: formBiodata.date_of_birth
       }
-      updateProfile(newData)
-      this.setState({ submitting: false })
+      this.setState({ uploading: false, submitting: true }, () => {
+        if (this.state.submitting) {
+          this.props.updateProfile(newData)
+        }
+      })
     }
-    if (!statusUpdateProfile.isLoading) {
+    if (!statusUpdateProfile.isLoading && submitting) {
       switch (statusUpdateProfile.status) {
         case Status.SUCCESS: {
+          this.props.getProfile()
           this.setState({ submitting: false })
           const newNotification = { notification }
           newNotification.notification['status'] = true
@@ -330,7 +312,7 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
-    const { formBiodata, searchDistrict, notification, submitting } = this.state
+    const { formBiodata, searchDistrict, notification, submitting, uploading } = this.state
     let photoOrIcon
     if (formBiodata.photo !== '') {
       photoOrIcon = formBiodata.photo
@@ -424,7 +406,7 @@ class ManageBiodata extends React.Component {
               </div>
               <div className='field'>
                 <a
-                  className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+                  className={`button is-primary is-large is-fullwidth ${(submitting || uploading) && 'is-loading'}`}
                   onClick={(e) => this.postUpdateProfile(e)}>Simpan Perubahan
                 </a>
               </div>

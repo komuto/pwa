@@ -102,8 +102,15 @@ class ProductDetail extends Component {
     Router.push(`/discussion?id=${this.state.id}`)
   }
 
+  selectProductDropshipper () {
+    const { id } = this.state
+    this.setState({ submiting: !this.state.submiting })
+    Router.push(`/catalog-add-product?id=${id}&commission=${this.props.query.commission}`)
+  }
+
   render () {
     const { productDetail, notification, token, submiting, submitingDiscussion } = this.state
+    const { query } = this.props
     const { detail } = productDetail
     const navbar = {
       searchBoox: false,
@@ -131,7 +138,8 @@ class ProductDetail extends Component {
                 images={detail.images}
                 product={detail.product}
                 rating={detail.rating}
-                notification={(message) => this.notification(message)} />
+                notification={(message) => this.notification(message)}
+                commission={query.commission} />
               <ProductDetailInformation
                 product={detail.product}
                 category={detail.category} />
@@ -143,8 +151,7 @@ class ProductDetail extends Component {
                 storeData={detail.store} />
               <ProductDetailRule
                 store={detail.store}
-                location={detail.location}
-                 />
+                location={detail.location} />
               <ProductDetailSuggestions
                 products={detail.other_products}
                 store={detail.store}
@@ -153,8 +160,10 @@ class ProductDetail extends Component {
                 {...detail.product}
                 purchaseNow={() => this.purchaseNow()}
                 discussion={() => this.discussion()}
+                selectProductDropshipper={() => this.selectProductDropshipper()}
                 submitingDiscussion={submitingDiscussion}
-                submiting={submiting} />
+                submiting={submiting}
+                query={query} />
               </Content>
           }
 

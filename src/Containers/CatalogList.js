@@ -77,13 +77,15 @@ class CatalogList extends React.Component {
 
   componentDidMount () {
     this.props.getListCatalog()
+    NProgress.start()
   }
 
   componentWillReceiveProps (nextProps) {
     const { notification, listCatalog, deleteCatalogTemp, submitting } = this.state
     const { createCatalog, updateCatalog, statusDeleteCatalog, query } = nextProps
-    if (nextProps.listCatalog.status === 200) {
+    if (nextProps.listCatalog.isFound) {
       this.setState({ listCatalog: nextProps.listCatalog })
+      NProgress.done()
     }
     if (query.hasOwnProperty('isSuccess')) {
       if (!createCatalog.isLoading) {

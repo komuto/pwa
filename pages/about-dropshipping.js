@@ -1,32 +1,26 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ManageBiodata from '../src/Containers/ManageBiodata'
-
-const toManageAccount = () => {
-  Router.push('/manage-account')
-}
+import AboutDropshipping from '../src/Components/AboutDropshipping'
 
 const params = {
-  style: 'main user',
+  style: 'main seller',
   header: {
-    title: 'Kelola Akun'
+    title: 'Tentang Dropshipping'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Kelola Akun'
+    textPath: 'Tentang Dropshipping'
   }
 }
 
-const Index = (props) => (
+const Index = () => (
   <DefaultLayout params={params}>
-    <ManageBiodata query={props.query} />
+    <AboutDropshipping />
   </DefaultLayout>
 )
 

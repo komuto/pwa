@@ -5,28 +5,28 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ManageBiodata from '../src/Containers/ManageBiodata'
+import ProductAddFromDropshipper from '../src/Containers/ProductAddFromDropshipper'
 
-const toManageAccount = () => {
-  Router.push('/manage-account')
+const toProductAdd = () => {
+  Router.push('/product-add')
 }
 
 const params = {
-  style: 'main user',
+  style: 'main',
   header: {
-    title: 'Kelola Akun'
+    title: 'Pilih Barang dari Dropshipper'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Kelola Akun'
+    callBack: () => toProductAdd(),
+    textPath: 'Pilih Barang dari Dropshipper'
   }
 }
 
 const Index = (props) => (
   <DefaultLayout params={params}>
-    <ManageBiodata query={props.query} />
+    <ProductAddFromDropshipper query={props.query} />
   </DefaultLayout>
 )
 

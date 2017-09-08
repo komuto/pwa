@@ -108,7 +108,7 @@ class AddressData extends React.Component {
   }
 
   render () {
-    const { storeAddress, editAddress, notification } = this.state
+    const { storeAddress, editAddress, notification, profile } = this.state
     if (storeAddress.isFound) {
       return (
         <div>
@@ -177,7 +177,7 @@ class AddressData extends React.Component {
                     </div>
                   </div>
                 </div>
-                <a className='link bold'
+                <a className='link bold' style={{display: profile.user.store.is_verified ? 'block' : 'none'}}
                   onClick={(e) => this.modalEditAddress(e)}>
                   Ubah Alamat
                 </a>

@@ -29,7 +29,8 @@ class VerifyNoTelp extends React.Component {
         status: false,
         message: 'Error, default message.'
       },
-      submitting: false
+      submitting: false,
+      submitOTPPhone: false
     }
   }
 
@@ -75,6 +76,7 @@ class VerifyNoTelp extends React.Component {
 
   sendOTPPhone (e) {
     e.preventDefault()
+    this.setState({ submitOTPPhone: true })
     this.props.sendOTPToPhone()
   }
 
@@ -85,7 +87,7 @@ class VerifyNoTelp extends React.Component {
           <img src={Images.verifiedPhone} alt='' />
           <h3>Nomor Telepon Telah Terverifikasi</h3>
           <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
-          <Link href='add-information-store'>
+          <Link href='information-store'>
             <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
           </Link>
         </div>
@@ -93,20 +95,36 @@ class VerifyNoTelp extends React.Component {
     )
   }
 
-  componentWillMount () {
+  componentDidMount () {
     this.props.getProfile()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { stateVerifyPhone } = nextProps
-    let { notification, verify } = this.state
+    const { stateVerifyPhone, profile, statusSendOTPPhone } = nextProps
+    let { notification, verify, submitting, submitOTPPhone } = this.state
     notification = {status: false, message: 'Error, default message.'}
-    this.setState({ profile: nextProps.profile })
-    if (!stateVerifyPhone.isLoading) {
+    if (profile.isFound) {
+      this.setState({ profile: nextProps.profile })
+    }
+    if (!statusSendOTPPhone.isLoading && submitOTPPhone) {
+      switch (statusSendOTPPhone.status) {
+        case Status.SUCCESS:
+          this.setState({ submitOTPPhone: false })
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ submitOTPBank: false })
+          notification = {status: true, message: statusSendOTPPhone.message}
+          break
+        default:
+          break
+      }
+      this.setState({ notification })
+    }
+    if (!stateVerifyPhone.isLoading && submitting) {
       switch (stateVerifyPhone.status) {
         case Status.SUCCESS:
-          this.setState({ submitting: false })
-          this.setState({verify: !verify})
+          this.setState({ submitting: false, verify: !verify })
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -121,7 +139,7 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submitting } = this.state
+    const { formVerify, verify, profile, notification, submitting, submitOTPPhone } = this.state
     return (
       <div>
         <Notification
@@ -205,7 +223,7 @@ class VerifyNoTelp extends React.Component {
                 Verifikasi Nomor Telepon
               </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
-                <a onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+                <a className={submitOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
               </p>
             </form>
           </div>
@@ -219,7 +237,8 @@ class VerifyNoTelp extends React.Component {
 const mapStateToProps = (state) => {
   return {
     stateVerifyPhone: state.verifyPhone,
-    profile: state.profile
+    profile: state.profile,
+    statusSendOTPPhone: state.sendOTPPhone
   }
 }
 

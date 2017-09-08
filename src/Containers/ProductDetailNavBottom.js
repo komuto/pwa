@@ -1,6 +1,21 @@
 import React, { Component } from 'react'
 
 class ProductDetailNavBottom extends Component {
+  handleButton () {
+    const props = this.props
+    if (props.query.type === 'dropship') {
+      return (
+        <a className={`button is-primary is-m-lg is-fullwidth ${props.submiting && 'is-loading'}`}
+          onClick={() => !props.submiting && props.selectProductDropshipper()}>Pilih Barang ini</a>
+      )
+    } else {
+      return (
+        <a className={`button is-primary is-m-lg is-fullwidth ${props.submiting && 'is-loading'}`}
+          onClick={() => !props.submiting && props.purchaseNow()}>Beli Sekarang</a>
+      )
+    }
+  }
+
   render () {
     const props = this.props
     return (
@@ -10,8 +25,7 @@ class ProductDetailNavBottom extends Component {
           { !props.submitingDiscussion && <span className='icon-comment black' /> }
           Diskusi ({props.count_discussion})
         </a>
-        <a className={`button is-primary is-m-lg is-fullwidth ${props.submiting && 'is-loading'}`}
-          onClick={() => !props.submiting && props.purchaseNow()}>Beli Sekarang</a>
+        {this.handleButton()}
       </div>
     )
   }

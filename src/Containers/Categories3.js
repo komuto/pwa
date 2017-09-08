@@ -23,6 +23,7 @@ class Categories3 extends Component {
     this.state = {
       id: props.query.id || null,
       subCategory: props.subCategory || [],
+      type: props.query.type || null,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -32,6 +33,48 @@ class Categories3 extends Component {
   componentDidMount () {
     const { id } = this.state
     if (id) NProgress.start() && this.props.getSubCategory({ id })
+  }
+
+  handleCategoryRouter (categories) {
+    const { type } = this.state
+    if (type === 'dropship') {
+      Router.push(
+        url.format({
+          pathname: '/dropship',
+          query: {id: categories.id, type: 'dropship'}
+        }),
+        `/d/${categories.slug}?id=${categories.id}`
+      )
+    } else {
+      Router.push(
+        url.format({
+          pathname: '/product',
+          query: {id: categories.id}
+        }),
+        `/p/${categories.slug}?id=${categories.id}`
+      )
+    }
+  }
+
+  handleSubCategoryRouter (categories, category) {
+    const { type } = this.state
+    if (type === 'dropship') {
+      Router.push(
+        url.format({
+          pathname: '/dropship',
+          query: {id: category.id}
+        }),
+        `/d/${categories.slug}/${category.slug}/${category.id}`
+      )
+    } else {
+      Router.push(
+        url.format({
+          pathname: '/categories4',
+          query: {id: category.id}
+        }),
+        `/c/${categories.slug}/${category.slug}/${category.id}`
+      )
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -62,15 +105,7 @@ class Categories3 extends Component {
         <Section>
           <CategoriesWrap>
             <List
-              onClick={() => {
-                Router.push(
-                  url.format({
-                    pathname: '/product',
-                    query: {id: categories.id}
-                  }),
-                  `/p/${categories.slug}?id=${categories.id}`
-                )
-              }}
+              onClick={() => this.handleCategoryRouter(categories)}
               icon={`${categories.icon}`}
               name={`Lihat Semua di ${categories.name}`} />
           </CategoriesWrap>
@@ -81,15 +116,7 @@ class Categories3 extends Component {
                 return <List
                   icon={category.icon}
                   key={category.id}
-                  onClick={() => {
-                    Router.push(
-                      url.format({
-                        pathname: '/product',
-                        query: {id: category.id}
-                      }),
-                      `/p/${categories.slug}/${category.slug}?id=${category.id}`
-                    )
-                  }}
+                  onClick={() => this.handleSubCategoryRouter(categories, category)}
                   name={category.name} />
               })
               : null
