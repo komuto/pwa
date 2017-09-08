@@ -37,7 +37,8 @@ const images = {
   vByVisa: '../../static/images/v-by-visa.png',
   visa: '../../static/images/visa.png',
   transaksiDetail: '../../static/images/transaksi-detail.png',
-  notFound: '../../static/images/404.svg'
+  notFound: '../../static/images/404.svg',
+  paymentSuccess: '../../static/images/payment-success.png'
 }
 
 export default images
