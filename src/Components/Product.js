@@ -24,20 +24,37 @@ class Product extends Component {
   }
 
   productPress (product) {
-    Router.push(
-      url.format({
-        pathname: '/product-detail',
-        query: {id: product.id}
-      }),
-      `/product-detail?id=${product.id}`
-    )
-    this.setState({ pressId: product.id })
+    const { type } = this.props
+    const commission = product.commission * 100
+    if (type === 'dropship') {
+      Router.push(
+        url.format({
+          pathname: '/product-detail',
+          query: {id: product.id, type: 'dropship', commission}
+        }),
+        `/product-detail?type=dropship&id=${product.id}&commission=${commission}`
+      )
+      this.setState({ pressId: product.id })
+    } else {
+      Router.push(
+        url.format({
+          pathname: '/product-detail',
+          query: {id: product.id}
+        }),
+        `/product-detail?id=${product.id}`
+      )
+      this.setState({ pressId: product.id })
+    }
   }
 
   render () {
     const { product, store, viewActive } = this.props
     const { pressId } = this.state
-
+    // set commission
+    let commission = null
+    if (product.hasOwnProperty('commission') && product.commission) {
+      commission = product.commission * 100
+    }
     // <Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />
 
     // set pin
@@ -69,12 +86,18 @@ class Product extends Component {
                   <p>{store.name} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
-                  <span className='wish'>
+                  { commission ? <span className='commission'>Komisi { commission } %</span> : <span className='wish'>
                     <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => this.wishlistPress(e, product.id)} />
                     { product.count_like }
                   </span>
+                  }
                 </div>
               </div>
+              { commission ? <div className='total-wishlisted'>
+                <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => this.wishlistPress(e, product.id)} />
+                { product.count_like }
+              </div> : ''
+              }
             </div>
           </div>
         </div>
