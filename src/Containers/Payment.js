@@ -36,6 +36,7 @@ class Payment extends Component {
       },
       failTransaction: false
     }
+    this.checkoutMidtrans = false
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
   }
 
@@ -46,32 +47,41 @@ class Payment extends Component {
   }
 
   paymentMidtrans () {
-    const { snapToken } = this.state
-    if (snapToken.data.isFound) {
-      snap.pay(snapToken.data.token, {
-        onSuccess: (result) => {
-          Router.push('/payment-success')
-        },
-        onPending: (result) => {
-          Router.push('/payment-pending')
-        },
-        onError: (result) => {
-          this.setState({ failTransaction: true })
-        },
-        onClose: () => {
-          // console.log('customer closed the popup without finishing the payment')
-        }
-      })
-    } else {
-      this.setState({ notification: {type: 'is-danger', status: true, message: 'Snap Token tidak ditemukan'} })
-    }
+    this.props.setCheckout()
+    this.checkoutMidtrans = true
+  }
+
+  loadMidtransPayment (token) {
+    snap.pay(token, {
+      onSuccess: (result) => {
+        Router.push('/payment-success')
+      },
+      onPending: (result) => {
+        Router.push('/payment-pending')
+      },
+      onError: (result) => {
+        this.setState({ failTransaction: true })
+      },
+      onClose: () => {
+        // console.log('customer closed the popup without finishing the payment')
+      }
+    })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { balance, cart, snapToken } = nextProps
+    const { balance, cart, snapToken, checkout } = nextProps
+
+    if (!isFetching(checkout)) {
+      if (checkout.isFound && this.checkoutMidtrans) {
+        this.checkoutMidtrans = false
+        this.loadMidtransPayment(snapToken.token)
+      } else {
+        this.setState({ notification: validateResponse(checkout, 'Checkout gagal!') })
+      }
+    }
 
     if (!isFetching(snapToken)) {
-      this.setState({ snapToken: { data: snapToken, submiting: false }, notification: validateResponse(snapToken, 'Snap token tidak ditemukan!') })
+      this.setState({ snapToken: { data: snapToken, submiting: snapToken.isLoading }, notification: validateResponse(snapToken, 'Snap token tidak ditemukan!') })
     }
 
     if (!isFetching(balance)) {
@@ -159,13 +169,15 @@ class Payment extends Component {
 const mapStateToProps = (state) => ({
   cart: state.cart,
   balance: state.balance,
-  snapToken: state.snapToken
+  snapToken: state.snapToken,
+  checkout: state.checkout
 })
 
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
   getBalance: () => dispatch(userActions.getBalance()),
-  getMidtransToken: () => dispatch(paymentActions.getMidtransToken())
+  getMidtransToken: () => dispatch(paymentActions.getMidtransToken()),
+  setCheckout: (params) => dispatch(cartActions.checkout(params))
 })
 
 export default connect(mapStateToProps, mapDiaptchToProps)(Payment)
