@@ -13,7 +13,6 @@ const params = {
   },
   navbar: {
     searchBoox: false,
-    path: '/',
     textPath: 'Transaksi'
   }
 }
