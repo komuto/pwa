@@ -12,14 +12,13 @@ import GET_TOKEN from '../Services/GetToken'
 // actions
 import * as loginAction from '../actions/user'
 // utils
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching } from '../Services/Status'
 
 class Profile extends Component {
   constructor (props) {
     super(props)
     this.state = ({
       profile: props.profile,
-      user: props.user || null,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -31,9 +30,6 @@ class Profile extends Component {
     const { profile } = this.state
     const { query, getProfile } = this.props
     const token = await GET_TOKEN.getToken()
-
-    console.log(token)
-
     if (token) {
       NProgress.start()
       getProfile()
@@ -46,22 +42,10 @@ class Profile extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { user, profile } = nextProps
-    if (!profile.isLoading) {
+    const { profile } = nextProps
+    if (!isFetching(profile)) {
       NProgress.done()
-      switch (profile.status) {
-        case Status.SUCCESS :
-          (profile.isFound)
-          ? this.setState({ profile: profile, user: profile })
-          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: user.message} })
-          break
-        default:
-          break
-      }
+      this.setState({ profile, notification: validateResponse(profile, 'Profile tidak ditemukan') })
     }
   }
 
@@ -85,12 +69,10 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-    profile: state.profile
-  }
-}
+const mapStateToProps = (state) => ({
+  user: state.user,
+  profile: state.profile
+})
 
 const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(loginAction.getProfile())
