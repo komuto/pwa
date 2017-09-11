@@ -31,11 +31,25 @@ class ProductList extends Component {
       },
       tabs: TAB_SHOW_IN_PAGE,
       showListCatalog: false,
+      dropdownSelected: '',
       notification: {
         status: false,
         message: 'Error, default message.'
       }
     }
+  }
+
+  handleDropdown (e, id) {
+    e.preventDefault()
+    const { dropdownSelected } = this.state
+    const newState = { dropdownSelected }
+    newState.dropdownSelected = id
+    this.setState(newState)
+  }
+
+  productDeleteInCatalog (e, id) {
+    e.preventDefault()
+    Router.push(`/product-delete-in-catalog?id=${id}`)
   }
 
   switchTab (e) {
@@ -98,10 +112,14 @@ class ProductList extends Component {
   }
 
   render () {
-    const { tabs, showListCatalog, storeProducts, search, notification } = this.state
+    const { tabs, showListCatalog, storeProducts, search, notification, dropdownSelected } = this.state
+    const toManageStore = () => {
+      Router.push('/manage-store')
+    }
     let navbar = {
       searchBoox: false,
       path: '/',
+      callBack: () => toManageStore(),
       textPath: 'Daftar Produk'
     }
     let catalogProducts = []
@@ -138,7 +156,10 @@ class ProductList extends Component {
           ? <ContentShow
             catalogProducts={catalogProducts}
             showListCatalog={showListCatalog}
-            showListCatalogPress={() => this.showListCatalogPress()} />
+            showListCatalogPress={() => this.showListCatalogPress()}
+            handleDropdown={(e, id) => this.handleDropdown(e, id)}
+            productDeleteInCatalog={(e, id) => this.productDeleteInCatalog(e, id)}
+            dropdownSelected={dropdownSelected} />
           : <ContentHidden />
         }
       </Content>
@@ -167,9 +188,15 @@ const ContentShow = (props) => {
                         <strong>{sp.catalog.name} ({sp.products.length})</strong>
                       </div>
                     </div>
-                    <div className='column is-half'>
-                      <div className='rating-content has-text-right'>
+                    <div className='column is-half' onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
+                      <div className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
                         <a className='option-content'><span /><span /><span /></a>
+                        <ul className='option-dropdown'>
+                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
+                          <li><a className='js-option' onClick={(e) => props.productDeleteInCatalog(e, sp.catalog.id)} >Hapus Barang di Katalog</a></li>
+                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
+                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
+                        </ul>
                       </div>
                     </div>
                   </div>
