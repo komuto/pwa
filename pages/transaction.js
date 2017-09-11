@@ -5,15 +5,21 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Transaction from '../src/Containers/Transaction'
+// utils
+import { TRANSACTION } from '../src/Utils/Constant'
 // style custom
 const params = {
-  style: 'main no-padding-bottom bg-grey',
+  style: 'main transaction-page bg-white',
   header: {
     title: 'Transaksi'
   },
   navbar: {
     searchBoox: false,
     textPath: 'Transaksi'
+  },
+  tabbar: {
+    active: TRANSACTION,
+    isShow: true
   }
 }
 
