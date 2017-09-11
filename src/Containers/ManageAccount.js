@@ -7,7 +7,6 @@ import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../actions/user'
 // services
-import GET_TOKEN from '../Services/GetToken'
 import { Status } from '../Services/Status'
 
 class ManageAccount extends Component {
@@ -74,10 +73,10 @@ class ManageAccount extends Component {
     }
     if (!isLogin.login && submitSignOut) {
       this.setState({ submitSignOut: false })
-        const href = `/profile?isSignOut`
-        const as = 'profile'
-        Router.push(href, as, { shallow: true })
-        NProgress.done()
+      const href = `/profile?isSignOut`
+      const as = 'profile'
+      Router.push(href, as, { shallow: true })
+      NProgress.done()
     }
   }
 
