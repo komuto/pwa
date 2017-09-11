@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
+import Notification from '../Components/Notification'
 import Wizard from '../Components/Wizard'
 // actions
 import * as actionTypes from '../actions/catalog'
@@ -20,7 +21,10 @@ class CatalogAddProduct extends React.Component {
     this.state = {
       productDetail: props.productDetail,
       listCatalog: props.listCatalog,
-      submitting: false,
+      submitting: {
+        submitProduct: false,
+        submitCatalog: false
+      },
       validation: false,
       modalAddCatalog: false,
       selectedCatalog: null,
@@ -41,13 +45,6 @@ class CatalogAddProduct extends React.Component {
     this.setState(newState)
   }
 
-  handleNotification (e) {
-    const { notification } = this.state
-    const newState = { notification }
-    newState.notification['status'] = !notification.status
-    this.setState(newState)
-  }
-
   renderValidation (name, textFailed) {
     const { selectedCatalog, catalog, validation } = this.state
     let catalogValid = name === 'catalog' && catalog.length > 0
@@ -65,11 +62,11 @@ class CatalogAddProduct extends React.Component {
   postCatalog (e) {
     e.preventDefault()
     const { createCatalog } = this.props
-    const { catalog } = this.state
+    const { catalog, submitting } = this.state
     let isValid = catalog.length > 0
     if (isValid) {
       createCatalog({ name: catalog })
-      this.setState({ submitting: true })
+      this.setState({ submitting: { ...submitting, submitCatalog: true } })
     } else {
       this.setState({ validation: true })
     }
@@ -77,10 +74,10 @@ class CatalogAddProduct extends React.Component {
 
   createProduct (e) {
     const { query, addDropshipProducts } = this.props
-    const { selectedCatalog } = this.state
+    const { selectedCatalog, submitting } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submitting: true })
+      this.setState({ submitting: { ...submitting, submitProduct: true } })
       addDropshipProducts({ id: query.id, catalog_id: selectedCatalog })
     } else {
       this.setState({ validation: true })
@@ -106,24 +103,16 @@ class CatalogAddProduct extends React.Component {
     if (productDetail.isFound) {
       this.setState({ productDetail: nextProps.productDetail })
     }
-    if (!statusCreateCatalog.isLoading && submitting) {
+    if (!statusCreateCatalog.isLoading && submitting.submitCatalog) {
       switch (statusCreateCatalog.status) {
         case Status.SUCCESS: {
-          const newNotification = { notification, submitting: false, modalAddCatalog: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusCreateCatalog.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
+          this.setState({ notification: {status: true, message: statusCreateCatalog.message, type: 'is-success'}, submitting: { ...submitting, submitCatalog: false }, modalAddCatalog: false })
           this.props.getListCatalog()
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusCreateCatalog.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
+          this.setState({ notification: {status: true, message: statusCreateCatalog.message, type: 'is-danger'}, submitting: { ...submitting, submitCatalog: false }, modalAddCatalog: false })
           break
         }
         default:
@@ -131,20 +120,16 @@ class CatalogAddProduct extends React.Component {
       }
       this.setState({ notification })
     }
-    if (!statusAddDropshipProducts.isLoading && submitting) {
+    if (!statusAddDropshipProducts.isLoading && submitting.submitProduct) {
       switch (statusAddDropshipProducts.status) {
         case Status.SUCCESS: {
-          this.setState({ submitting: false })
+          this.setState({ submitting: { ...submitting, submitProduct: false } })
           Router.push('/product-add-success')
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusAddDropshipProducts.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
+          this.setState({ notification: {status: true, message: statusAddDropshipProducts.message, type: 'is-danger'}, submitting: { ...submitting, submitCatalog: false } })
           break
         }
         default:
@@ -158,12 +143,12 @@ class CatalogAddProduct extends React.Component {
     const { productDetail, listCatalog, catalog, selectedCatalog, modalAddCatalog, validation, notification, submitting } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow bg-white'>
           <Wizard total={3} active={2} />
           <ul className='product-view'>
@@ -232,7 +217,7 @@ class CatalogAddProduct extends React.Component {
           <div className='payment-detail action'>
             <ul>
               <li>
-                <a className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+                <a className={`button is-primary is-large is-fullwidth ${submitting.submitProduct && 'is-loading'}`}
                   onClick={(e) => this.createProduct(e)} >Lanjutkan</a>
               </li>
             </ul>
@@ -254,7 +239,7 @@ class CatalogAddProduct extends React.Component {
               </p>
               {validation && this.renderValidation('catalog', 'Mohon isi nama katalog')}
             </div>
-            <button className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+            <button className={`button is-primary is-large is-fullwidth ${submitting.submitCatalog && 'is-loading'}`}
               onClick={(e) => this.postCatalog(e)}
               >Buat Katalog Baru
             </button>
