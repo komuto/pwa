@@ -1,10 +1,15 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductList from '../src/Containers/ProductList'
+
+const toManageStore = () => {
+  Router.push('/manage-store')
+}
 
 const params = {
   style: 'categories bg-grey',
@@ -14,6 +19,7 @@ const params = {
   navbar: {
     searchBoox: false,
     path: '/',
+    callBack: () => toManageStore(),
     textPath: 'Daftar Produk'
   }
 }
