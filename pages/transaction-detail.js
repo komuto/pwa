@@ -4,28 +4,26 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Transaction from '../src/Containers/Transaction'
-// utils
-import { TRANSACTION } from '../src/Utils/Constant'
+import TransactionDetail from '../src/Containers/TransactionDetail'
 // style custom
 const params = {
-  style: 'main transaction-page bg-white',
+  style: 'main TransactionDetail-page bg-white',
   header: {
-    title: 'Transaksi'
+    title: 'Transaksi Detail'
   },
   navbar: {
     searchBoox: false,
-    textPath: 'Transaksi'
+    textPath: 'Transaksi Detail'
   },
   tabbar: {
-    active: TRANSACTION,
+    active: TransactionDetail,
     isShow: true
   }
 }
 
 const Index = () => (
   <DefaultLayout params={params}>
-    <Transaction />
+    <TransactionDetail />
   </DefaultLayout>
 )
 

@@ -1,4 +1,4 @@
 export const HOME = 'HOME'
-export const TRANSAKSI = 'TRANSAKSI'
-export const NOTIFIKASI = 'NOTIFIKASI'
+export const TRANSACTION = 'TRANSACTION'
+export const NOTIFICATION = 'NOTIFICATION'
 export const PROFILE = 'PROFILE'

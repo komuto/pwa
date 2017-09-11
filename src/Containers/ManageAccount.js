@@ -7,7 +7,6 @@ import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../actions/user'
 // services
-import GET_TOKEN from '../Services/GetToken'
 import { Status } from '../Services/Status'
 
 class ManageAccount extends Component {
@@ -73,14 +72,11 @@ class ManageAccount extends Component {
       this.setState({ profile })
     }
     if (!isLogin.login && submitSignOut) {
-      const token = await GET_TOKEN.getToken()
       this.setState({ submitSignOut: false })
-      if (token === null) {
-        const href = `/profile?isSignOut`
-        const as = 'profile'
-        Router.push(href, as, { shallow: true })
-        NProgress.done()
-      }
+      const href = `/profile?isSignOut`
+      const as = 'profile'
+      Router.push(href, as, { shallow: true })
+      NProgress.done()
     }
   }
 
@@ -122,13 +118,10 @@ class ManageAccount extends Component {
   }
 
   signOut (e) {
-    const { stateLogin, logout } = this.props
     e.preventDefault()
-    NProgress.start()
-    this.setState({ submitSignOut: true }, () => {
-      stateLogin({ login: false })
-      logout()
-    })
+    this.props.stateLogin({ login: false })
+    this.props.logout()
+    this.setState({ submitSignOut: true })
   }
 
   render () {

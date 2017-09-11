@@ -237,13 +237,13 @@ const ContentShow = (props) => {
         })
       }
 
-      <a className='catalog-button js-option' onClick={() => this.showListCatalogPress()}>
+      <a className='catalog-button js-option' onClick={() => props.showListCatalogPress()}>
         <span className='icon-catalog' /> Daftar Katalog
       </a>
       <a className='sticky-button' onClick={() => Router.push('/product-add')}><span className='txt'>+</span></a>
 
       <div className='sort-option' style={{ display: props.showListCatalog && 'block' }}>
-        <div className='sort-list catalog-list'>
+        <div className='sort-list catalog-list' style={{ overflowY: 'inherit' }}>
           <ul>
             {
               props.catalogProducts.map((sp, index) => {
@@ -251,7 +251,7 @@ const ContentShow = (props) => {
                   <Link activeClass='active' className={String(sp.catalog.id)} to={String(sp.catalog.id)} spy smooth duration={500}>{ sp.catalog.name }</Link>
                 </li>
               })
-          }
+            }
           </ul>
         </div>
         <a className='close-option js-close' onClick={() => props.showListCatalogPress()}>
