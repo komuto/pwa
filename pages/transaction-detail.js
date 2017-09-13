@@ -7,24 +7,22 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import TransactionDetail from '../src/Containers/TransactionDetail'
 // style custom
 const params = {
-  style: 'main TransactionDetail-page bg-white',
+  style: 'main no-padding-bottom bg-grey',
   header: {
-    title: 'Transaksi Detail'
+    title: 'Detail Transaksi'
   },
   navbar: {
     searchBoox: false,
-    textPath: 'Transaksi Detail'
-  },
-  tabbar: {
-    active: TransactionDetail,
-    isShow: true
+    path: '/',
+    textPath: 'Detail Transaksi'
   }
 }
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <TransactionDetail />
-  </DefaultLayout>
-)
-
+const Index = (props) => {
+  return (
+    <DefaultLayout params={params}>
+      <TransactionDetail query={props.query} />
+    </DefaultLayout>
+  )
+}
 export default ReduxPageWrapper(Index)
