@@ -111,7 +111,7 @@ class Discussion extends Component {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src={images[0].file} alt='pict' />
+                        <MyImage src={images[0] && images[0].file} alt='pict' />
                       </figure>
                     </div>
                     <div className='media-content'>
