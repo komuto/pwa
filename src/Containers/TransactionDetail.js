@@ -4,6 +4,7 @@ import NProgress from 'nprogress'
 // componnet
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
+import Notification from '../Components/Notification'
 // actions
 import * as transactionActions from '../actions/transaction'
 // images
@@ -12,16 +13,23 @@ import Images from '../Themes/Images'
 import { validateResponse, isFetching } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+// utils
+import { PAYMENT_STATUS } from '../Utils/Constant'
 
 class TransactionDetail extends Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      transaction: props.transaction || null
+      transaction: props.transaction || null,
+      detailActive: false,
+      notification: {
+        status: false,
+        message: 'Error, default message.'
+      }
     }
-    this.paymentStatus = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
     this.paymentIcon = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
+    this.paymentClass = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
   }
 
   componentDidMount () {
@@ -39,26 +47,50 @@ class TransactionDetail extends Component {
   }
 
   render () {
-    const { transaction } = this.state
+    let { transaction, notification, detailActive } = this.state
     if (!transaction.isFound) return null
-    const { bucket, invoices, summary_transaction } = transaction.transaction
-    let status = bucket.status - 1
-    let icon = this.paymentIcon[bucket.status - 3]
+    let { bucket, invoices, summary_transaction } = transaction.transaction
+    let paymentStatus = bucket.status - 3
+    let paymentIcon = this.paymentIcon[paymentStatus]
+    let paymentClass = this.paymentClass[paymentStatus]
+    let priceAfterPromo = 0
+    let discount = 0
+    if (bucket.promo) {
+      let price = summary_transaction.total_price
+      let percentage = bucket.promo.percentage / 100
+      let nominal = bucket.promo.nominal
+      if (bucket.promo.type === 0) {
+        discount = ((price * (percentage)))
+        priceAfterPromo = price - discount
+      }
+      if (bucket.promo.type === 1) {
+        discount = nominal
+        priceAfterPromo = price - discount
+      }
+    }
+
+    console.log(transaction)
 
     return (
       <Content>
+        <Notification
+          type='is-danger'
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow'>
-          <div className='box notif-payment-waiting'>
+          <div className={`box ${paymentClass}`}>
             <article className='media'>
               <div className='media-left'>
-                <figure className='image user-pict' style={icon === undefined ? { width: 50 } : {}}>
-                  <MyImage src={icon} />
+                <figure className='image user-pict' style={paymentIcon === undefined ? { width: 50 } : {}}>
+                  <MyImage src={paymentIcon} />
                 </figure>
               </div>
               <div className='media-content'>
                 <div className='content'>
                   <p>
-                    <strong>{ this.paymentStatus[status] }</strong>
+                    <strong>{ PAYMENT_STATUS[bucket.status] }</strong>
                   </p>
                 </div>
               </div>
@@ -76,9 +108,65 @@ class TransactionDetail extends Component {
                   <div className='column'>
                     <div className='rating-content is-left has-text-right'>
                       <span>Rp { RupiahFormat(summary_transaction.total_price) }</span>
-                      <a className='detail-collapsed'>Detail <span className='icon-arrow-down blue' /></a>
+                      <a onClick={() => this.setState({ detailActive: !this.state.detailActive })} className='detail-collapsed'>Detail <span className={`icon-arrow-down blue ${detailActive ? 'top' : ''}`} /></a>
                     </div>
                   </div>
+                </div>
+              </li>
+              <li className='collapsed' style={{ display: detailActive ? 'block' : 'none' }}>
+                <div className='payment-detail step-pay'>
+                  <ul className='detail-transaction'>
+                    <li>
+                      <ul className='total-pay'>
+                        <li>
+                          <div className='columns is-mobile is-multiline no-margin-bottom'>
+                            <div className='column'>
+                              <div className='label-text is-left'>
+                                <span>
+                                  Total Belanja
+                                </span>
+                              </div>
+                            </div>
+                            <div className='column is-one-third'>
+                              <div className='has-text-right'>
+                                <span>Rp { RupiahFormat(summary_transaction.total_price) }</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className='columns is-mobile is-multiline no-margin-bottom'>
+                            <div className='column'>
+                              <div className='label-text is-left'>
+                                <span className='pay-code'>
+                                  Kode Voucher { bucket.promo ? bucket.promo.promo_code : '-' }
+                                </span>
+                              </div>
+                            </div>
+                            <div className='column is-one-third'>
+                              <div className='has-text-right'>
+                                <span className='pay-code'> - Rp { RupiahFormat(discount) }</span>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div className='columns is-mobile is-multiline no-margin-bottom'>
+                            <div className='column'>
+                              <div className='label-text is-left'>
+                                <span>
+                                  Sisa Pembayaran
+                                </span>
+                              </div>
+                            </div>
+                            <div className='column is-one-third'>
+                              <div className='has-text-right'>
+                                <span>Rp {RupiahFormat(priceAfterPromo)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
               </li>
             </ul>
@@ -107,7 +195,7 @@ class TransactionDetail extends Component {
                     <div className='columns is-mobile is-multiline no-margin-bottom'>
                       <div className='column'>
                         <div className='box'>
-                          <div className='media list-item'>
+                          <div className='media'>
                             {
                               invoice.items.map((item, index) => {
                                 return index < 4
@@ -126,9 +214,9 @@ class TransactionDetail extends Component {
                                         : null
                               })
                             }
-                            <div className='media-content middle'>
+                            <div className='media-content is-right-content'>
                               <div className='content'>
-                                <h4>{ invoice.items.length < 2 ? invoice.items[0].product.name : '' }</h4>
+                                { invoice.items.length < 2 && <h4>{ invoice.items[0].product.name }</h4> }
                                 <div className='right-top'>
                                   <span className='icon-arrow-right' />
                                 </div>

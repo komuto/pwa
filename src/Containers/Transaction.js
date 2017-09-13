@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // component
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
@@ -11,6 +12,8 @@ import * as transactionActions from '../actions/transaction'
 import { validateResponse, isFetching } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+// utils
+import { PAYMENT_STATUS } from '../Utils/Constant'
 class Transaction extends Component {
   constructor (props) {
     super(props)
@@ -21,8 +24,6 @@ class Transaction extends Component {
         message: 'Error, default message.'
       }
     }
-    // this.paymentStatus = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Menunggu Verifikasi Pembayaran', 'Pembayaran Kadaluarsa', 'Pembayaran Telah diterima & diteruskan ke seller', 'Cancel']
-    this.paymentStatus = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
   }
 
   componentDidMount () {
@@ -42,16 +43,16 @@ class Transaction extends Component {
     const { listTransactions, notification } = this.state
     if (!listTransactions.isFound) return null
 
-    let transactionsWaiting = []
-    let transactionsNotWaiting = []
+    let transWaitPayment = []
+    let transWaitNotPayment = []
 
     if (listTransactions.isFound) {
-      transactionsWaiting = listTransactions.listTransactions.filter((lt) => {
-        return lt.summary_transaction.status === 2
+      transWaitPayment = listTransactions.listTransactions.filter((lt) => {
+        return lt.bucket.status === 3
       })
 
-      transactionsNotWaiting = listTransactions.listTransactions.filter((lt) => {
-        return lt.summary_transaction.status !== 2
+      transWaitNotPayment = listTransactions.listTransactions.filter((lt) => {
+        return lt.bucket.status !== 3
       })
     }
 
@@ -67,18 +68,18 @@ class Transaction extends Component {
           <div className='payment-detail step-pay'>
             <ul>
               {
-                transactionsWaiting.map((tnw) => {
-                  let { products, summary_transaction } = tnw
+                transWaitPayment.map((tnw, index) => {
+                  let { bucket, products, summary_transaction } = tnw
                   return (
-                    <li>
+                    <li key={index}>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
                         <div className='column'>
                           <div className='box'>
-                            <div className='media'>
+                            <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`)}>
                               <div className='media-left'>
                                 <figure className='image list-transaction'>
                                   <a>
-                                    <MyImage src='../images/thumb.jpg' />
+                                    <MyImage src={products[0] && products[0].image} />
                                   </a>
                                 </figure>
                               </div>
@@ -92,7 +93,7 @@ class Transaction extends Component {
                                     <span className='icon-arrow-right' />
                                   </div>
                                   <div className='detail'>
-                                    <p>Sports Stations Shop</p>
+                                    <p>Sports Stations Shop { summary_transaction.status }</p>
                                   </div>
                                 </div>
                               </div>
@@ -121,17 +122,22 @@ class Transaction extends Component {
           </div>
         </section>
         <section className='section is-paddingless'>
+          <div className='container is-fluid'>
+            <div className='title'>
+              <h3>Daftar Barang Yang Dibeli</h3>
+            </div>
+          </div>
           <div className='payment-detail step-pay'>
             <ul>
               {
-                transactionsNotWaiting.map((tnw) => {
+                transWaitNotPayment.map((tnw) => {
                   let { bucket, products, summary_transaction } = tnw
                   return (
                     <li className='' key={bucket.id}>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
                         <div className='column'>
                           <div className='box'>
-                            <div className='media'>
+                            <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`)}>
                               {
                                 products.map((product, index) => {
                                   return index < 2
@@ -155,10 +161,13 @@ class Transaction extends Component {
                               }
                               <div className='media-content is-right-content'>
                                 <div className='content'>
+                                  {
+                                    products.length < 2 && <h4>{ products[0] && products[0].name }</h4>
+                                  }
                                   <div className='right-top'>
                                     <div className='price-items'>
                                       <strong>Rp { RupiahFormat(summary_transaction.total_price) }</strong>
-                                      <p>{ this.paymentStatus[bucket.status - 1] }</p>
+                                      <p>{ PAYMENT_STATUS[bucket.status] }</p>
                                     </div>
                                     <span className='icon-arrow-right' />
                                   </div>
