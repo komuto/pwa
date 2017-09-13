@@ -9,14 +9,16 @@ import Section from '../Components/Section'
 import {Images} from '../Themes'
 // actions
 import * as loginAction from '../actions/user'
+// utils
+import { validateResponse, isFetching } from '../Services/Status'
 
 class Account extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      profile: props.profile,
       verify: false,
-      submitting: false,
-      profile: props.profile
+      submitting: false
     }
   }
 
@@ -49,10 +51,19 @@ class Account extends Component {
     Router.push('/manage-account')
   }
 
+  async componentDidMount () {
+    await this.props.getProfile()
+  }
+
   componentWillReceiveProps (nextProps) {
+    const { profile } = nextProps
     const { submitting } = this.state
     if (nextProps.sendOTPPhone.isFound && submitting) {
       Router.push('/verify-no-telp')
+    }
+
+    if (!isFetching(profile)) {
+      this.setState({ profile, notification: validateResponse(profile, 'Profile tidak ditemukan') })
     }
   }
 
@@ -83,6 +94,7 @@ class Account extends Component {
   renderStore () {
     const { profile } = this.state
     const isHasStoreprofile = profile.user.store.hasOwnProperty('name')
+    if (!profile.isFound) return null
     return (
       <Section className='bg-white'>
         <div className='profile-wrapp'>
@@ -114,8 +126,8 @@ class Account extends Component {
   }
 
   render () {
-    console.log('state ', this.state)
     const { profile } = this.state
+    if (!profile.isFound) return null
     return (
       <Content>
         <Section className='bg-white'>
@@ -218,14 +230,14 @@ class Account extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    sendOTPPhone: state.sendOTPPhone
-  }
-}
+const mapStateToProps = (state) => ({
+  sendOTPPhone: state.sendOTPPhone,
+  profile: state.profile
+})
 
 const mapDispatchToProps = dispatch => ({
-  sendOTPToPhone: () => dispatch(loginAction.sendOTPPhone())
+  sendOTPToPhone: () => dispatch(loginAction.sendOTPPhone()),
+  getProfile: () => dispatch(loginAction.getProfile())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account)
