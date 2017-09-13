@@ -198,10 +198,12 @@ class Wishlist extends Component {
   render () {
     const { search, sortActive, selectedSort, products, notification, viewActive } = this.state
 
-    const navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Wishlist'
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: 'Wishlist'
+      }
     }
 
     let wishlist = []
@@ -210,7 +212,7 @@ class Wishlist extends Component {
 
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <Notification
           type='is-danger'
           isShow={notification.status}

@@ -13,13 +13,11 @@ import Notification from '../Components/Notification'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import MyImage from '../Components/MyImage'
-import ModalLoginRegister from '../Components/ModalLoginRegister'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
 // services
 import { validateResponse, isFetching } from '../Services/Status'
-import GET_TOKEN from '../Services/GetToken'
 // themes
 import Images from '../Themes/Images'
 // import Wrapper from './Wrapper'
@@ -30,7 +28,6 @@ class Home extends Component {
     this.state = {
       products: props.products || null,
       category: props.category || null,
-      token: null,
       mustLogin: false,
       notification: {
         status: false,
@@ -42,8 +39,8 @@ class Home extends Component {
   }
 
   async wishlistPress (id) {
-    let { products, token } = this.state
-    if (token) {
+    let { products } = this.state
+    if (this.props.isLogin) {
       products.products.map((myProduct) => {
         if (myProduct.product.id === id) {
           myProduct.product.is_liked ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
@@ -53,7 +50,7 @@ class Home extends Component {
       await this.props.addToWishlist({ id })
       this.setState({ products })
     } else {
-      this.setState({ mustLogin: true })
+      this.props.alertLogin()
     }
   }
 
@@ -67,7 +64,6 @@ class Home extends Component {
       NProgress.start()
       this.props.getCategoryList()
     }
-    this.setState({ token: await GET_TOKEN.getToken() })
   }
 
   async componentWillReceiveProps (nextProps) {
@@ -110,8 +106,7 @@ class Home extends Component {
   }
 
   render () {
-    const { category, products } = this.state
-    const { notification, mustLogin } = this.state
+    const { category, products, notification } = this.state
     let settings = {
       autoplay: true,
       dots: false,
@@ -128,7 +123,6 @@ class Home extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <ModalLoginRegister show={mustLogin} close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
         <Section>
           <Content className='slide-banner'>
             <Slider {...settings}>

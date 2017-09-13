@@ -25,8 +25,8 @@ const params = {
 
 const Index = (props) => {
   return (
-    <DefaultLayout params={params}>
-      <Home />
+    <DefaultLayout params={params} {...props}>
+      <Home {...props} />
     </DefaultLayout>
   )
 }

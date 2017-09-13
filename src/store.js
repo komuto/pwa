@@ -13,5 +13,6 @@ export function token () {
 
 export {
   sagaMiddleware,
-  store
+  store,
+  reduxStore
 }

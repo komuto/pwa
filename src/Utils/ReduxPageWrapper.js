@@ -3,11 +3,13 @@ import React, {Component} from 'react'
 import dataSaga from '../saga/saga'
 import { sagaMiddleware, store } from '../store'
 import withRedux from 'next-redux-wrapper'
-// import {END} from 'redux-saga'
+import GET_TOKEN from '../Services/GetToken'
+import Content from '../Components/Content'
+import LoginAlert from '../Components/LoginAlert'
 
 let clientTask = null
-
-export default function reduxWrapper (ReduxComponent:Object) {
+let token = null
+export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ req, isServer, query }) {
       if (isServer) {
@@ -19,16 +21,29 @@ export default function reduxWrapper (ReduxComponent:Object) {
       }
     }
 
-    constructor (props:any) {
+    constructor (props) {
       super(props)
       if (!clientTask) {
         clientTask = sagaMiddleware.run(dataSaga)
       }
+      this.state = {
+        token: 'default',
+        mustLogin: false
+      }
+    }
+
+    async componentWillMount () {
+      token = await GET_TOKEN.getToken()
+      this.setState({ token })
     }
 
     render () {
+      const { token, mustLogin } = this.state
       return (
-        <ReduxComponent {...this.props} />
+        <Content>
+          <LoginAlert show={mustLogin} close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
+          <ReduxComponent {...this.props} isLogin={!!token} alertLogin={() => this.setState({ mustLogin: true })} />
+        </Content>
       )
     }
   }

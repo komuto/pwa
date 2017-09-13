@@ -108,11 +108,11 @@ class SignIn extends Component {
     if (response) {
       NProgress.start()
       this.dipatchType = LOGIN_SOCIAL
-      this.props.dispatch(loginAction.loginSocial({
+      this.props.loginSocial({
         provider_name: 'Facebook',
         provider_uid: response.userID,
         access_token: response.accessToken
-      }))
+      })
     }
   }
 
@@ -121,23 +121,26 @@ class SignIn extends Component {
     if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
       NProgress.start()
       this.dipatchType = LOGIN_FORM
-      this.props.dispatch(loginAction.login({
+      this.props.login({
         email: email.value,
         password: password.value
-      }))
+      })
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const { user } = nextProps
 
     if (!user.isLoading) {
       NProgress.done()
       switch (user.status) {
         case Status.SUCCESS :
-          (user.isFound)
-          ? Router.push('/profile')
-          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
+          if (user.isFound) {
+            await this.props.getProfile()
+            Router.push('/profile')
+          } else {
+            this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
+          }
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -198,10 +201,14 @@ class SignIn extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  }
-}
+const mapStateToProps = (state) => ({
+  user: state.user
+})
 
-export default connect(mapStateToProps)(SignIn)
+const mapDispatchToProps = (dispatch) => ({
+  getProfile: () => dispatch(loginAction.getProfile()),
+  login: (params) => dispatch(loginAction.login(params)),
+  loginSocial: (params) => dispatch(loginAction.loginSocial(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

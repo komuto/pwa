@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
-// containers
-// import Search from './Search'
 
 export class Navbar extends PureComponent {
   constructor (props) {
@@ -26,9 +24,25 @@ export class Navbar extends PureComponent {
     this.setState({ activeMoreOptions: !this.state.activeMoreOptions })
   }
 
+  shoppingCartPress () {
+    if (this.props.isLogin) {
+      Router.push('/shopping-cart')
+    } else {
+      this.props.alertLogin()
+    }
+  }
+
+  wishListPress () {
+    if (this.props.isLogin) {
+      Router.push('/wishlist')
+    } else {
+      this.props.alertLogin()
+    }
+  }
+
   render () {
-    const { searchBoox, path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
-    // const { activeSearch, activeMoreOptions } = this.state
+    const { navbar, searchActive, moreButton, productId, callBack } = this.props.params
+    const { path, textPath, searchBoox } = navbar
     const { activeMoreOptions } = this.state
     return (
       <div>
@@ -37,7 +51,7 @@ export class Navbar extends PureComponent {
             <a className='level-item'>
               <span className={(path) ? '' : 'is-paddingless'}>
                 {
-                  (path)
+                  path
                   ? <span className='back' onClick={() => callBack ? callBack() : Router.back()}>
                     <span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} />
                   </span>
@@ -57,8 +71,8 @@ export class Navbar extends PureComponent {
           {
             searchBoox
             ? <div className='nav-right'>
-              <span className='icon-love' onClick={() => Router.push('/wishlist')} />
-              <span className='icon-cart' onClick={() => Router.push('/shopping-cart')}><span className='notif-cart'>4</span></span>
+              <span className='icon-love' onClick={() => this.wishListPress()} />
+              <span className='icon-cart' onClick={() => this.shoppingCartPress()}><span className='notif-cart'>4</span></span>
             </div>
             : null
           }
@@ -71,10 +85,6 @@ export class Navbar extends PureComponent {
             </a>
           }
         </nav>
-        {/* <Search
-          activeSearch={(params) => this.activeSearch(params)}
-          active={activeSearch}
-          backPress={() => this.backPress()} /> */}
         <MoreOptions
           productId={productId}
           onClick={(e) => this.moreButtonPress(e)}
@@ -106,7 +116,6 @@ export class SearchBoox extends PureComponent {
 
   render () {
     const { isSticky, style } = this.props
-    // const { activeSearch } = this.state
     return (
       <div>
         <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
@@ -117,10 +126,6 @@ export class SearchBoox extends PureComponent {
             </span>
           </p>
         </div>
-        {/* <Search
-          activeSearch={(params) => this.activeSearch(params)}
-          active={activeSearch}
-          backPress={() => this.backPress()} /> */}
       </div>
     )
   }
