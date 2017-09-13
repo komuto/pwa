@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import NProgress from 'nprogress'
 // component
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
@@ -20,25 +21,25 @@ class Transaction extends Component {
         message: 'Error, default message.'
       }
     }
-    this.paymentStatus = ['sudah dibayar', 'menunggu pembayaran', 'verifikasi', 'kadaluarsa']
+    // this.paymentStatus = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Menunggu Verifikasi Pembayaran', 'Pembayaran Kadaluarsa', 'Pembayaran Telah diterima & diteruskan ke seller', 'Cancel']
+    this.paymentStatus = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
   }
 
-  componentWillMount () {
+  componentDidMount () {
+    NProgress.start()
     this.props.getListTransactions()
   }
 
   componentWillReceiveProps (nextProps) {
     const { listTransactions } = nextProps
-    console.log(nextProps)
-
     if (!isFetching(listTransactions)) {
+      NProgress.done()
       this.setState({ listTransactions, notification: validateResponse(listTransactions, 'Data transaksi tidak ditemukan') })
     }
   }
 
   render () {
     const { listTransactions, notification } = this.state
-    console.log(listTransactions)
     if (!listTransactions.isFound) return null
 
     let transactionsWaiting = []
@@ -46,11 +47,11 @@ class Transaction extends Component {
 
     if (listTransactions.isFound) {
       transactionsWaiting = listTransactions.listTransactions.filter((lt) => {
-        return lt.summary_invoice.status === 2
+        return lt.summary_transaction.status === 2
       })
 
       transactionsNotWaiting = listTransactions.listTransactions.filter((lt) => {
-        return lt.summary_invoice.status !== 2
+        return lt.summary_transaction.status !== 2
       })
     }
 
@@ -67,7 +68,7 @@ class Transaction extends Component {
             <ul>
               {
                 transactionsWaiting.map((tnw) => {
-                  let { products, summary_invoice } = tnw
+                  let { products, summary_transaction } = tnw
                   return (
                     <li>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
@@ -86,7 +87,7 @@ class Transaction extends Component {
                                   <h4>{ products.name }</h4>
                                   <div className='right-top'>
                                     <div className='price-items'>
-                                      <strong>Rp { RupiahFormat(summary_invoice.total_price) }</strong>
+                                      <strong>Rp { RupiahFormat(summary_transaction.total_price) }</strong>
                                     </div>
                                     <span className='icon-arrow-right' />
                                   </div>
@@ -124,7 +125,7 @@ class Transaction extends Component {
             <ul>
               {
                 transactionsNotWaiting.map((tnw) => {
-                  let { bucket, products, summary_invoice } = tnw
+                  let { bucket, products, summary_transaction } = tnw
                   return (
                     <li className='' key={bucket.id}>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
@@ -156,8 +157,8 @@ class Transaction extends Component {
                                 <div className='content'>
                                   <div className='right-top'>
                                     <div className='price-items'>
-                                      <strong>Rp { RupiahFormat(summary_invoice.total_price) }</strong>
-                                      <p>{ this.paymentStatus[summary_invoice.status + 1] }</p>
+                                      <strong>Rp { RupiahFormat(summary_transaction.total_price) }</strong>
+                                      <p>{ this.paymentStatus[bucket.status - 1] }</p>
                                     </div>
                                     <span className='icon-arrow-right' />
                                   </div>
