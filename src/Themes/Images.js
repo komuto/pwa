@@ -38,7 +38,11 @@ const images = {
   visa: '../../static/images/visa.png',
   transaksiDetail: '../../static/images/transaksi-detail.png',
   notFound: '../../static/images/404.svg',
-  paymentSuccess: '../../static/images/payment-success.png'
+  paymentSuccess: '../../static/images/payment-success.png',
+  paymentDone: '../../static/images/icon-payment-done.svg',
+  paymentExpired: '../../static/images/icon-payment-expired.svg',
+  paymentWaiting: '../../static/images/icon-payment-waiting-payment.svg',
+  paymentVerification: '../../static/images/icon-payment-waiting-verification.svg'
 }
 
 export default images
