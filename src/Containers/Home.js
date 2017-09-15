@@ -68,7 +68,6 @@ class Home extends Component {
 
   async componentWillReceiveProps (nextProps) {
     const { products, addWishlist, category } = nextProps
-
     if (!isFetching(addWishlist)) {
       this.setState({ addWishlist, notification: validateResponse(addWishlist, 'Gagal menambah wishlist!') })
     }
