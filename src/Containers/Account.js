@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
