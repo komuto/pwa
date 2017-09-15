@@ -18,9 +18,9 @@ const params = {
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <AboutDropshipping />
+    <AboutDropshipping query={props.query} />
   </DefaultLayout>
 )
 
