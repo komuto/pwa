@@ -110,7 +110,7 @@ class ManageBiodata extends React.Component {
     let gender = formBiodata.gender
     let placeOfBirth = formBiodata.place_of_birth
     let dateOfBirth = formBiodata.date_of_birth
-    let photoRequired = type === 'photo' && (photo.hasOwnProperty('preview') || photo.length > 0)
+    let photoRequired = type === 'photo' && (photo.hasOwnProperty('preview') || photo !== '')
     let nameRequired = type === 'name' && nameUser.length > 0
     let genderRequired = type === 'gender' && gender.length > 0
     let pobRequired = type === 'place_of_birth' && placeOfBirth !== null

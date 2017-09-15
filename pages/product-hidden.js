@@ -4,23 +4,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import AboutDropshipping from '../src/Components/AboutDropshipping'
+import ProductHidden from '../src/Containers/ProductHidden'
 
 const params = {
   style: 'main seller',
   header: {
-    title: 'Tentang Dropshipping'
+    title: 'Sembunyikan Barang'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    textPath: 'Tentang Dropshipping'
+    textPath: 'Sembunyikan Barang'
   }
 }
 
 const Index = (props) => (
   <DefaultLayout params={params}>
-    <AboutDropshipping query={props.query} />
+    <ProductHidden query={props.query} />
   </DefaultLayout>
 )
 

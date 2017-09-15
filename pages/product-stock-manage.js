@@ -1,26 +1,27 @@
 // @flow
+// import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import AboutDropshipping from '../src/Components/AboutDropshipping'
+import ProductStockManage from '../src/Containers/ProductStockManage'
 
 const params = {
-  style: 'main seller',
+  style: 'main user',
   header: {
-    title: 'Tentang Dropshipping'
+    title: 'Stock Barang'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    textPath: 'Tentang Dropshipping'
+    textPath: 'Stock Barang'
   }
 }
 
 const Index = (props) => (
   <DefaultLayout params={params}>
-    <AboutDropshipping query={props.query} />
+    <ProductStockManage query={props.query} />
   </DefaultLayout>
 )
 
