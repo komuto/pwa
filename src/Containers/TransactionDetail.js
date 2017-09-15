@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // componnet
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
@@ -13,8 +14,14 @@ import Images from '../Themes/Images'
 import { validateResponse, isFetching } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
-// utils
-import { PAYMENT_STATUS } from '../Utils/Constant'
+// payment status
+export const PAYMENT_STATUS = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
+export const PAYMENT_ICON = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
+export const PAYMENT_CLASS = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
+// invoce status
+export const INVOICE_STATUS = ['REJECTED', 'WAITING', 'PROCEED', 'SENDING', 'RECEIVED', 'PROBLEM', 'COMPLAINT_DONE']
+export const INVOICE_CLASS = ['reject', 'waiting', 'process', 'sending', 'accepted', 'has-trouble', 'has-complaint']
+export const INVOICE_MESSAGE = ['Ditolak oleh Seller', 'Menunggu Konfirmasi Seller', 'Diproses oleh Seller', 'Barang sudah dikirim', 'Barang sudah diterima', 'Terdapat barang bermasalah', 'Komplain telah selesai']
 
 class TransactionDetail extends Component {
   constructor (props) {
@@ -28,8 +35,6 @@ class TransactionDetail extends Component {
         message: 'Error, default message.'
       }
     }
-    this.paymentIcon = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
-    this.paymentClass = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
   }
 
   componentDidMount () {
@@ -50,9 +55,9 @@ class TransactionDetail extends Component {
     let { transaction, notification, detailActive } = this.state
     if (!transaction.isFound) return null
     let { bucket, invoices, summary_transaction } = transaction.transaction
-    let paymentStatus = bucket.status - 3
-    let paymentIcon = this.paymentIcon[paymentStatus]
-    let paymentClass = this.paymentClass[paymentStatus]
+    let paymentStatus = bucket.status
+    let paymentIcon = PAYMENT_ICON[paymentStatus - 3]
+    let paymentClass = PAYMENT_CLASS[paymentStatus - 3]
     let priceAfterPromo = 0
     let discount = 0
     if (bucket.promo) {
@@ -68,8 +73,6 @@ class TransactionDetail extends Component {
         priceAfterPromo = price - discount
       }
     }
-
-    console.log(transaction)
 
     return (
       <Content>
@@ -90,7 +93,7 @@ class TransactionDetail extends Component {
               <div className='media-content'>
                 <div className='content'>
                   <p>
-                    <strong>{ PAYMENT_STATUS[bucket.status] }</strong>
+                    <strong>{ PAYMENT_STATUS[paymentStatus] }</strong>
                   </p>
                 </div>
               </div>
@@ -172,67 +175,76 @@ class TransactionDetail extends Component {
             </ul>
           </div>
         </section>
-        <section className='section is-paddingless has-shadow sm-margin'>
-          <div className='container is-fluid'>
-            <div className='title'>
-              <h3>Daftar Barang Yang Dibeli</h3>
-            </div>
-          </div>
-          <div className='payment-detail step-pay'>
-            <ul>
-              {
-              invoices.map((invoice, index) => {
-                let { store } = invoice
-                return (
-                  <li key={index}>
-                    <div className='columns is-mobile is-multiline no-margin-bottom'>
-                      <div className='column'>
-                        <div className='label-text is-left top-middle'>
-                          <span>{ store.name }</span>
+        {
+          invoices.map((invoice, index) => {
+            let { store } = invoice
+            return (
+              <section className='section is-paddingless has-shadow' key={index}>
+                {
+                  index === 0 &&
+                  <div className='container is-fluid'>
+                    <div className='title'>
+                      <h3>Daftar Barang Yang Dibeli</h3>
+                    </div>
+                  </div>
+                }
+                <div className='payment-detail step-pay'>
+                  <ul>
+                    <li onClick={() => Router.push(`/transaction-detail-status?id=${bucket.id}&idInv=${invoice.id}`)}>
+                      <div className='columns is-mobile is-multiline no-margin-bottom'>
+                        <div className='column'>
+                          <div className='label-text is-left top-middle'>
+                            <span>{ store.name }</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className='columns is-mobile is-multiline no-margin-bottom'>
-                      <div className='column'>
-                        <div className='box'>
-                          <div className='media'>
-                            {
-                              invoice.items.map((item, index) => {
-                                return index < 4
-                                      ? <div key={item.id} className='media-left'>
-                                        <figure className='image list-transaction sm'>
-                                          <a><MyImage src={item.product.image} alt='Image' /></a>
-                                        </figure>
-                                      </div>
-                                        : index === 4
-                                          ? <div className='media-left' key={index}>
-                                            <figure className='image list-transaction plus3'>
-                                              <span>+3</span>
-                                              <a><MyImage src={item.product.image} alt='Image' /></a>
-                                            </figure>
-                                          </div>
-                                        : null
-                              })
-                            }
-                            <div className='media-content is-right-content'>
-                              <div className='content'>
-                                { invoice.items.length < 2 && <h4>{ invoice.items[0].product.name }</h4> }
-                                <div className='right-top'>
-                                  <span className='icon-arrow-right' />
+                      <div className='columns is-mobile is-multiline no-margin-bottom'>
+                        <div className='column'>
+                          <div className='box'>
+                            <div className='media'>
+                              {
+                                invoice.items.map((item, index) => {
+                                  return index < 4
+                                        ? <div key={item.id} className='media-left'>
+                                          <figure className='image list-transaction sm'>
+                                            <a><MyImage src={item.product.image} alt='Image' /></a>
+                                          </figure>
+                                        </div>
+                                          : index === 4
+                                            ? <div className='media-left' key={index}>
+                                              <figure className='image list-transaction plus3'>
+                                                <span>+3</span>
+                                                <a><MyImage src={item.product.image} alt='Image' /></a>
+                                              </figure>
+                                            </div>
+                                          : null
+                                })
+                              }
+                              <div className='media-content is-right-content'>
+                                <div className='content'>
+                                  { invoice.items.length < 2 && <h4>{ invoice.items[0].product.name }</h4> }
+                                  <div className='right-top'>
+                                    <span className='icon-arrow-right' />
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                )
-              })
-              }
-            </ul>
-          </div>
-        </section>
+                    </li>
+                  </ul>
+                </div>
+                {
+                  paymentStatus === 6 &&
+                  <div className='block-status has-text-right'>
+                    <div className={`item-status md ${INVOICE_CLASS[paymentStatus]}`}>{INVOICE_MESSAGE[paymentStatus]}</div>
+                  </div>
+                }
+              </section>
+            )
+          })
+        }
       </Content>
     )
   }
