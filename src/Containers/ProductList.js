@@ -161,11 +161,13 @@ class ProductList extends Component {
     const toManageStore = () => {
       Router.push('/manage-store')
     }
-    let navbar = {
-      searchBoox: false,
-      path: '/',
-      callBack: () => toManageStore(),
-      textPath: 'Daftar Produk'
+    let params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        callBack: () => toManageStore(),
+        textPath: 'Daftar Produk'
+      }
     }
     let catalogProducts = []
     let hiddenProducts = []
@@ -185,7 +187,7 @@ class ProductList extends Component {
     }
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <div className='nav-tabs'>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_SHOW_IN_PAGE && 'active'}>Ditampilkan di Toko</a>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_HIDDEN_IN_PAGE && 'active'}>Disembunyikan</a>

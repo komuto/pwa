@@ -58,7 +58,7 @@ class Account extends Component {
   }
 
   async componentDidMount () {
-    NProgress.start()
+    // NProgress.start()
     await this.props.getProfile()
   }
 
@@ -70,7 +70,7 @@ class Account extends Component {
     }
 
     if (!isFetching(profile)) {
-      NProgress.done()
+      // NProgress.done()
       this.setState({ profile, notification: validateResponse(profile, 'Profile tidak ditemukan') })
     }
   }

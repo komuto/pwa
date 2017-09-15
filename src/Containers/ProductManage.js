@@ -64,16 +64,18 @@ class ProductManage extends React.Component {
       // let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
     }
     const productName = productDetail.isFound ? productDetail.detail.product.name : ''
-    let navbar = {
-      searchBoox: false,
-      deleteButton: true,
-      path: '/',
-      callBack: () => toProductList(),
-      textPath: productName
+    let params = {
+      navbar: {
+        searchBoox: false,
+        deleteButton: true,
+        path: '/',
+        callBack: () => toProductList(),
+        textPath: productName
+      }
     }
     return (
       <div>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <section className='section is-paddingless has-shadow'>
           <div className='column is-paddingless' onClick={(e) => this.dropshippingOption(e)}>
             <div className='see-all'>
