@@ -99,10 +99,11 @@ class AboutDropshipping extends React.Component {
           <div className='payment-detail action'>
             <ul>
               <li>
-                <a className='button is-primary is-large is-fullwidth'
+                { this.props.query.type !== 'dropshipOption' ? <a className='button is-primary is-large is-fullwidth'
                   onClick={(e) => this.toProductAddFromDropshipper(e)}>
                   Saya Mengerti, Lanjutkan Proses
-                </a>
+                  </a> : ''
+                }
               </li>
             </ul>
           </div>
