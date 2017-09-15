@@ -108,7 +108,7 @@ export const succState = (action, data = '') => {
 export const failState = (action, data = '', value = false) => {
   const state = {
     message: action.message,
-    status: action.code,
+    status: action.status,
     isLoading: false,
     isFound: false,
     isOnline: action.isOnline

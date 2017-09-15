@@ -17,6 +17,7 @@ import * as paymentReducers from './payment'
 import * as transactionReducers from './transaction'
 import * as messageReducers from './message'
 import * as otherReducers from './other'
+import * as saldoReducers from './saldo'
 
 const purchase = {
   addressSelected: purchaseReducers.addressSelected,
@@ -177,7 +178,8 @@ const message = {
   archiveSellerMessages: messageReducers.getArchiveSellerMessages,
   updateMessage: messageReducers.updateMessage,
   replyMessage: messageReducers.replyMessage,
-  deleteMessage: messageReducers.deleteMessage
+  deleteMessage: messageReducers.deleteMessage,
+  transactionMessage: messageReducers.transactionMessage
 }
 
 const other = {
@@ -187,7 +189,6 @@ const other = {
 const payment = {
   paymentMethods: paymentReducers.getPaymentMethods,
   confirmation: paymentReducers.confirmTransfer,
-  withdrawal: paymentReducers.withdraw,
   snapToken: paymentReducers.getMidtransToken,
   snapToken2: paymentReducers.getMidtransToken2
 }
@@ -199,11 +200,29 @@ const review = {
   sellerReview: reviewReducers.getSellerReview
 }
 
+const saldo = {
+  saldoHistory: saldoReducers.getSaldoHistory,
+  withdrawal: saldoReducers.withdraw,
+  saldoToken: saldoReducers.getSaldoToken,
+  nominals: saldoReducers.getNominals
+}
+
 const transaction = {
   listTransactions: transactionReducers.listTransactions,
   transaction: transactionReducers.getTransaction,
-  saldoHistory: transactionReducers.getSaldoHistory,
-  buyerInvoiceDetail: transactionReducers.getBuyerInvoiceDetail
+  buyerInvoiceDetail: transactionReducers.getBuyerInvoiceDetail,
+  addComplaint: transactionReducers.addComplaint,
+  newOrders: transactionReducers.getNewOrders,
+  newOrderDetail: transactionReducers.getNewOrderDetail,
+  processingOrders: transactionReducers.getProcessingOrders,
+  processingOrderDetail: transactionReducers.getProcessingOrderDetail,
+  updateStatus: transactionReducers.updateStatus,
+  buyerComplainedOrders: transactionReducers.getComplainedOrdersBuyer,
+  sellerComplainedOrders: transactionReducers.getComplainedOrdersSeller,
+  buyerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailBuyer,
+  sellerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailSeller,
+  buyerComplaintDiscussion: transactionReducers.createComplaintDiscussionBuyer,
+  sellerComplaintDiscussion: transactionReducers.createComplaintDiscussionSeller
 }
 
 const komutoApps = storage.reducer(combineReducers({
@@ -223,7 +242,8 @@ const komutoApps = storage.reducer(combineReducers({
   ...payment,
   ...transaction,
   ...message,
-  ...other
+  ...other,
+  ...saldo
 }))
 
 export default komutoApps

@@ -12,6 +12,9 @@ export const BUYER_REPLY_MESSAGE = 'BUYER_REPLY_MESSAGE'
 export const SELLER_REPLY_MESSAGE = 'SELLER_REPLY_MESSAGE'
 export const BUYER_DELETE_MESSAGE = 'BUYER_DELETE_MESSAGE'
 export const SELLER_DELETE_MESSAGE = 'SELLER_DELETE_MESSAGE'
+export const MESSAGE_BUYER = 'MESSAGE_BUYER'
+export const MESSAGE_SELLER = 'MESSAGE_SELLER'
+export const MESSAGE_RESELLER = 'MESSAGE_RESELLER'
 
 /**
  * @params params are the same as the api query
@@ -86,3 +89,24 @@ export const buyerDeleteMessage = params => buildAction(typeReq(BUYER_DELETE_MES
  * @state deleteMessage
  */
 export const sellerDeleteMessage = params => buildAction(typeReq(SELLER_DELETE_MESSAGE), params)
+
+/**
+ * @params id {int} invoice id
+ * @params params are the same as the api
+ * @state transactionMessage
+ */
+export const messageBuyer = params => buildAction(typeReq(MESSAGE_BUYER), params)
+
+/**
+ * @params id {int} invoice id
+ * @params params are the same as the api
+ * @state transactionMessage
+ */
+export const messageSeller = params => buildAction(typeReq(MESSAGE_SELLER), params)
+
+/**
+ * @params id {int} invoice id
+ * @params params are the same as the api
+ * @state transactionMessage
+ */
+export const messageReseller = params => buildAction(typeReq(MESSAGE_RESELLER), params)
