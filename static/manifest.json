@@ -3,36 +3,18 @@
   "short_name": "Komuto",
   "icons": [
     {
-      "src": "img/apple-touch-icon-120x120.png",
-      "sizes": "120x120",
-      "type": "image/png"
-    },
-    {
-      "src": "img/apple-touch-icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png"
-    },
-    {
-      "src": "img/android-chrome-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    },
-    {
-      "src": "img/android-chrome-192x192.png",
+      "src": "/static/img/icons/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "img/splashscreen-icon-384x384.png",
-      "sizes": "384x384",
+      "src": "/static/img/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "start_url": "/",
-  "display": "standalone",
+  "display": "standalone", 
   "theme_color": "#ef5656",
-  "background_color": "#EEE",
-  //"Some browsers will use this to enable push notifications.",
-  //"It is the same for all projects, this is not your project's sender ID",
-  "gcm_sender_id": "103953800507"
+  "background_color": "#fff"
 }
