@@ -12,7 +12,7 @@ import * as productActions from '../actions/product'
 // services
 import { validateResponse, isFetching, Status } from '../Services/Status'
 
-class ProductDeleteInCatalog extends React.Component {
+class ProductHidden extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -21,7 +21,7 @@ class ProductDeleteInCatalog extends React.Component {
       storeProductsByCatalog: props.storeProductsByCatalog || null,
       selectedProducts: [],
       selectAllProduct: false,
-      confirmDelete: false,
+      modalListCatalog: false,
       notification: {
         type: 'is-success',
         status: false,
@@ -30,20 +30,18 @@ class ProductDeleteInCatalog extends React.Component {
     }
   }
 
-  modalShowDelete (e, address) {
+  handleNotification (e) {
     e.preventDefault()
-    const { confirmDelete, selectedProducts } = this.state
+    const { selectedProducts } = this.state
     if (selectedProducts.length === 0) {
-      this.setState({ notification: { type: 'is-danger', status: true, message: 'Mohon pilih barang yang akan dihapus' } })
+      this.setState({ notification: { type: 'is-danger', status: true, message: 'Mohon pilih barang yang akan disembunyikan' } })
     } else {
-      this.setState({ confirmDelete: !confirmDelete })
+      this.setState({ submitting: true }, () => {
+        if (this.state.submitting) {
+          this.props.hideProducts({ product_ids: this.state.selectedProducts })
+        }
+      })
     }
-  }
-
-  deleteProduct (e) {
-    e.preventDefault()
-    this.setState({ submitting: true })
-    this.props.deleteProducts({ product_ids: this.state.selectedProducts })
   }
 
   handleSelectedProducts (e, id) {
@@ -95,25 +93,25 @@ class ProductDeleteInCatalog extends React.Component {
       NProgress.done()
       this.setState({ storeProductsByCatalog, notification: validateResponse(storeProductsByCatalog, 'Data katalog tidak ditemukan!') })
     }
-    if (!alterProducts.isLoading && submitting) {
+    if (alterProducts.isFound && submitting) {
       switch (alterProducts.status) {
         case Status.SUCCESS: {
           let newData = storeProductsByCatalog.products.filter(data => selectedProducts.indexOf(data.id) < 0)
           let newListProduct = {
             ...storeProductsByCatalog, products: newData
           }
-          const newNotification = { storeProductsByCatalog: newListProduct, notification, submitting: false, selectAllProduct: false, confirmDelete: false }
+          const newNotification = { storeProductsByCatalog: newListProduct, notification, submitting: false, selectAllProduct: false }
           newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menghapus Barang'
+          newNotification.notification['message'] = 'Berhasil menyembunyikan Barang'
           newNotification.notification['type'] = 'is-success'
           this.setState(newNotification)
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
-          const newNotif = { notification, submitting: false, selectAllProduct: false, confirmDelete: false }
+          const newNotif = { notification, submitting: false, selectAllProduct: false }
           newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menghapus Barang'
+          newNotif.notification['message'] = 'Gagal menyembunyikan Barang'
           newNotif.notification['type'] = 'is-danger'
           this.setState(newNotif)
           break
@@ -126,7 +124,7 @@ class ProductDeleteInCatalog extends React.Component {
   }
 
   render () {
-    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, confirmDelete, submitting } = this.state
+    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, submitting } = this.state
     const { products } = storeProductsByCatalog
     return (
       <div>
@@ -136,8 +134,12 @@ class ProductDeleteInCatalog extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
+
         { storeProductsByCatalog.products.length !== 0 ? <div>
           <section className='section is-paddingless'>
+            <div className='note'>
+              Barang yang disembunyikan tidak akan muncul di toko Anda. Barang Anda yang terbuka untuk dropshipping tetap dapat di dropship oleh toko lain dan tetap bisa dijual seperti biasa oleh toko lain.
+            </div>
             <div className='filter-option active'>
               <div className='sort-list check-all top bg-grey'>
                 <label className='checkbox' onClick={(e) => this.handleSelectAll(e)}>
@@ -147,40 +149,32 @@ class ProductDeleteInCatalog extends React.Component {
                   </span>
                 </label>
               </div>
-              { products.map((product) => {
-                let isSelected = selectedProducts.filter((id) => {
-                  return id === product.id
-                }).length > 0
-                return (
-                  <SelectProduct
-                    key={product.id}
-                    isSelected={isSelected}
-                    product={product}
-                    handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
-                  />
-                )
-              })
+              {
+                storeProductsByCatalog.isFound && products.map((product) => {
+                  let isSelected = selectedProducts.filter((id) => {
+                    return id === product.id
+                  }).length > 0
+                  return (
+                    <SelectProduct
+                      key={product.id}
+                      isSelected={isSelected}
+                      product={product}
+                      handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
+                    />
+                  )
+                })
               }
             </div>
           </section>
+
           <div className='level nav-bottom nav-button purchase is-mobile'>
-            <a className='button is-primary is-m-lg is-fullwidth btn-add-cart js-option'
-              onClick={(e) => this.modalShowDelete(e)}> Hapus Barang Terpilih
+            <a className={`button is-primary is-m-lg is-fullwidth btn-add-cart js-option ${submitting && 'is-loading'}`}
+              onClick={(e) => this.handleNotification(e)}> Sembunyikan Barang Terpilih
             </a>
           </div>
         </div>
         : <p style={{textAlign: 'center', paddingTop: '20px'}}>Tidak ada barang di katalog ini</p>
         }
-
-        <div className='sort-option' style={{display: confirmDelete && 'block'}}>
-          <div className='notif-report'>
-            <h3>Anda yakin akan menghapus Barang terpilih?</h3>
-            <button
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
-              onClick={(e) => this.deleteProduct(e)}>Ya, Hapus Barang</button>
-            <a className='cancel' onClick={(e) => this.modalShowDelete(e)}>Batal</a>
-          </div>
-        </div>
       </div>
     )
   }
@@ -195,7 +189,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   getStoreProductsByCatalog: (params) => dispatch(storeActions.getStoreProductsByCatalog(params)),
-  deleteProducts: (params) => dispatch(productActions.deleteProducts(params))
+  hideProducts: (params) => dispatch(productActions.hideProducts(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductDeleteInCatalog)
+export default connect(mapStateToProps, mapDispatchToProps)(ProductHidden)

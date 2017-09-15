@@ -27,7 +27,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { searchBoox, path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
+    const { searchBoox, deleteButton, path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
     // const { activeSearch, activeMoreOptions } = this.state
     const { activeMoreOptions } = this.state
     return (
@@ -69,6 +69,12 @@ export class Navbar extends PureComponent {
                 <span className='icon-dots moreButton' />
               </div>
             </a>
+          }
+          {
+            deleteButton &&
+            <div className='button-search js-option'>
+              <span className='icon-trash white' />
+            </div>
           }
         </nav>
         {/* <Search

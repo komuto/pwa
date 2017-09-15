@@ -24,6 +24,7 @@ class ProductList extends Component {
     super(props)
     this.state = {
       storeProducts: props.storeProducts || null,
+      hiddenStoreProducts: props.hiddenStoreProducts || null,
       search: {
         status: false,
         value: '',
@@ -47,13 +48,38 @@ class ProductList extends Component {
     this.setState(newState)
   }
 
+  productHidden (e, id) {
+    e.preventDefault()
+    Router.push(`/product-hidden?id=${id}`)
+  }
+
   productDeleteInCatalog (e, id) {
     e.preventDefault()
     Router.push(`/product-delete-in-catalog?id=${id}`)
   }
 
+  productMoveCatalogOther (e, id) {
+    e.preventDefault()
+    Router.push(`/product-move-catalog-other?id=${id}`)
+  }
+
+  productChangeDropship (e, id) {
+    e.preventDefault()
+    Router.push(`/product-change-dropship?id=${id}`)
+  }
+
+  productDetail (e, product, storeId) {
+    e.preventDefault()
+    if (product.hasOwnProperty('dropship_origin')) {
+      Router.push(`/product-dropship-detail?id=${product.id}.${storeId}&commission=${product.dropship_origin.commission.nominal}&type=detailDropship`)
+    } else {
+      Router.push(`/product-manage?id=${product.id}.${storeId}`)
+    }
+  }
+
   switchTab (e) {
     const { tabs } = this.state
+    this.setState({ search: { status: false, value: '', results: [] } })
     this.setState({ tabs: (tabs === TAB_SHOW_IN_PAGE) ? TAB_HIDDEN_IN_PAGE : TAB_SHOW_IN_PAGE })
   }
 
@@ -62,36 +88,52 @@ class ProductList extends Component {
   componentDidMount () {
     NProgress.start()
     this.props.getStoreProducts({hidden: false})
+    if (!this.props.hiddenStoreProducts.isFound) {
+      this.props.getHiddenStoreProducts()
+    }
   }
 
   searchOnChange (event) {
-    const { search, storeProducts } = this.state
+    const { search, tabs, storeProducts, hiddenStoreProducts } = this.state
     search.status = true
     search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
 
-    if (search.value !== '') {
-      search.status = true
-      search.results = []
-      storeProducts.storeProducts.map((sp) => {
-        let tamProducts = []
-        sp.products.map((product) => {
-          (product.name.toLowerCase().indexOf(search.value) > -1) && tamProducts.push(product)
+    if (tabs === TAB_SHOW_IN_PAGE) {
+      if (search.value !== '') {
+        search.status = true
+        search.results = []
+        storeProducts.storeProducts.map((sp) => {
+          let tamProducts = []
+          sp.products.map((product) => {
+            (product.name.toLowerCase().indexOf(search.value) > -1) && tamProducts.push(product)
+          })
+          if (tamProducts.length > 0) {
+            sp.products = tamProducts
+            search.results.push(sp)
+          }
         })
-        if (tamProducts.length > 0) {
-          sp.products = tamProducts
-          search.results.push(sp)
-        }
-      })
-    } else {
-      search.status = false
-      search.results = []
+      } else {
+        search.status = false
+        search.results = []
+      }
     }
-
+    if (tabs === TAB_HIDDEN_IN_PAGE) {
+      if (search.value !== '') {
+        let filteredData = hiddenStoreProducts.products.filter((x) => {
+          let regex = new RegExp(search.value, 'gi')
+          return regex.test(x.name)
+        })
+        search.results = filteredData
+      } else {
+        search.status = false
+        search.results = []
+      }
+    }
     this.setState({ search })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProducts } = nextProps
+    const { storeProducts, hiddenStoreProducts } = nextProps
     let { notification } = this.state
     notification = {status: false, message: 'Error, default message.'}
     if (!storeProducts.isLoading) {
@@ -109,10 +151,13 @@ class ProductList extends Component {
       }
       this.setState({ storeProducts, notification })
     }
+    if (hiddenStoreProducts.isFound) {
+      this.setState({ hiddenStoreProducts })
+    }
   }
 
   render () {
-    const { tabs, showListCatalog, storeProducts, search, notification, dropdownSelected } = this.state
+    const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
     }
@@ -123,10 +168,20 @@ class ProductList extends Component {
       textPath: 'Daftar Produk'
     }
     let catalogProducts = []
-    if (search.status) {
-      catalogProducts = search.results
-    } else {
-      catalogProducts = storeProducts.isFound ? storeProducts.storeProducts : []
+    let hiddenProducts = []
+    if (tabs === TAB_SHOW_IN_PAGE) {
+      if (search.status) {
+        catalogProducts = search.results
+      } else {
+        catalogProducts = storeProducts.isFound ? storeProducts.storeProducts : []
+      }
+    }
+    if (tabs === TAB_HIDDEN_IN_PAGE) {
+      if (search.status) {
+        hiddenProducts = search.results
+      } else {
+        hiddenProducts = hiddenStoreProducts.isFound ? hiddenStoreProducts.products : []
+      }
     }
     return (
       <Content>
@@ -159,8 +214,13 @@ class ProductList extends Component {
             showListCatalogPress={() => this.showListCatalogPress()}
             handleDropdown={(e, id) => this.handleDropdown(e, id)}
             productDeleteInCatalog={(e, id) => this.productDeleteInCatalog(e, id)}
-            dropdownSelected={dropdownSelected} />
-          : <ContentHidden />
+            productHidden={(e, id) => this.productHidden(e, id)}
+            productMoveCatalogOther={(e, id) => this.productMoveCatalogOther(e, id)}
+            productChangeDropship={(e, id) => this.productChangeDropship(e, id)}
+            dropdownSelected={dropdownSelected}
+            productDetail={(e, product, storeId) => this.productDetail(e, product, storeId)} />
+          : <ContentHidden
+            hiddenProducts={hiddenProducts} />
         }
       </Content>
     )
@@ -168,8 +228,37 @@ class ProductList extends Component {
 }
 
 const ContentHidden = (props) => {
+  if (props.hiddenProducts === undefined) return null
   return (
-    <h1>Content Hidden</h1>
+    <div>
+      {
+        props.hiddenProducts.map((p, i) => {
+          let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+          return (
+            <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
+              <div className='detail-product' key={i}>
+                <div className='remove rightTop'>
+                  <span className='icon-discount-sign' />
+                  <span className='icon-grosir-sign' />
+                </div>
+                <div className='purchase'>
+                  <figure className='img-item xx'>
+                    <MyImage src={p.image} alt='pict' />
+                  </figure>
+                  <div className='content-product'>
+                    <h3>{ p.name }</h3>
+                    { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
+                    { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                    <p>Jumlah Stok : { p.stock }</p>
+                    <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                  </div>
+                </div>
+              </div>
+            </Element>
+          )
+        })
+      }
+    </div>
   )
 }
 
@@ -192,10 +281,10 @@ const ContentShow = (props) => {
                       <div className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
                         <a className='option-content'><span /><span /><span /></a>
                         <ul className='option-dropdown'>
-                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
+                          <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
                           <li><a className='js-option' onClick={(e) => props.productDeleteInCatalog(e, sp.catalog.id)} >Hapus Barang di Katalog</a></li>
-                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
-                          <li><a className='js-option' onClick={(e) => props.handleDropdown(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
+                          <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
+                          <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
                         </ul>
                       </div>
                     </div>
@@ -208,19 +297,19 @@ const ContentShow = (props) => {
                   return (
                     <div className='detail-product' key={i}>
                       <div className='remove rightTop'>
-                        <span className='icon-discount-sign' />
-                        <span className='icon-grosir-sign' />
+                        { p.is_discount && <span className='icon-discount-sign' /> }
+                        { p.is_wholesaler && <span className='icon-grosir-sign' /> }
                       </div>
-                      <div className='purchase'>
+                      <div className='purchase' onClick={(e) => props.productDetail(e, p, sp.catalog.store_id)}>
                         <figure className='img-item xx'>
-                          <MyImage src='../images/pict.jpg' alt='pict' />
+                          <MyImage src={p.image} alt='pict' />
                         </figure>
                         <div className='content-product'>
                           <h3>{ p.name }</h3>
                           { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
-                          { (p.is_dropshipper) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                          { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
-                          <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p> }
                         </div>
                       </div>
                     </div>
@@ -263,11 +352,13 @@ const ContentShow = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  storeProducts: state.storeProducts
+  storeProducts: state.storeProducts,
+  hiddenStoreProducts: state.hiddenStoreProducts
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getStoreProducts: (params) => dispatch(storeActions.getStoreProducts(params))
+  getStoreProducts: (params) => dispatch(storeActions.getStoreProducts(params)),
+  getHiddenStoreProducts: (params) => dispatch(storeActions.getHiddenStoreProducts(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductList)
