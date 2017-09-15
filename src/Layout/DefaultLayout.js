@@ -15,7 +15,7 @@ export default (props: any) => {
     <Content style={{height: '100%', width: '100%', position: 'absolute'}}>
       <Header params={header} />
       <Content className={`main ${style}`}>
-        { (navbar) ? <Navbar params={navbar} /> : null}
+        { (navbar) ? <Navbar params={navbar} {...props} /> : null}
         <StickyContainer>
           { (hero) ? <Hero params={hero} /> : null}
           { (navbar && navbar.searchBoox)
@@ -29,7 +29,7 @@ export default (props: any) => {
             : null
           }
           { children }
-          { (tabbar) ? <Tabbar params={tabbar} /> : null }
+          { (tabbar) && <Tabbar params={tabbar} {...props} /> }
         </StickyContainer>
       </Content>
     </Content>

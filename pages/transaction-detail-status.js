@@ -4,31 +4,25 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Profile from '../src/Containers/Profile'
-// utils
-import { PROFILE } from '../src/Utils/Constant'
-
+import TransactionDetailStatus from '../src/Containers/TransactionDetailStatus'
+// style custom
 const params = {
-  style: 'main user bg-grey',
+  style: 'main detail bg-grey',
   header: {
-    title: 'Profile'
+    title: 'Detail Pesanan'
   },
   navbar: {
     searchBoox: false,
-    textPath: 'Profile'
-  },
-  tabbar: {
-    active: PROFILE,
-    isShow: true
+    path: '/',
+    textPath: 'Detail Pesanan'
   }
 }
 
 const Index = (props) => {
   return (
-    <DefaultLayout params={params} {...props}>
-      <Profile {...props} />
+    <DefaultLayout params={params}>
+      <TransactionDetailStatus query={props.query} />
     </DefaultLayout>
   )
 }
-
 export default ReduxPageWrapper(Index)

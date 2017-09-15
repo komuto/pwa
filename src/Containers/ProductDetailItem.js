@@ -22,7 +22,11 @@ class ProductDetailItem extends Component {
   }
 
   async wishlistPress (id) {
-    (this.props.token) && await this.props.addToWishlist({ id })
+    if (this.props.isLogin) {
+      await this.props.addToWishlist({ id })
+    } else {
+      this.props.alertLogin()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -47,10 +51,12 @@ class ProductDetailItem extends Component {
     const { wishlist } = this.state
     let wishlistStatus = product.is_liked
     if (wishlist.isFound && (wishlist.wishlist.id === product.id)) wishlistStatus = wishlist.wishlist.is_liked
-
+    console.log('images', this.props.images)
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
-        <ProductDetailSlider {...props} />
+        {
+          this.props.images.length > 0 && <ProductDetailSlider {...props} />
+        }
         <div className='detail-product'>
           <h3>{ product.name }</h3>
           <span className='price'>Rp { RupiahFormat(product.price) }</span> - <span style={{color: '#47bf7e'}}>Komisi { commission } %</span>

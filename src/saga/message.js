@@ -14,3 +14,6 @@ export const buyerReplyMessage = buildSaga(apis.buyerReplyMessage, actions.BUYER
 export const sellerReplyMessage = buildSaga(apis.sellerReplyMessage, actions.SELLER_REPLY_MESSAGE)
 export const buyerDeleteMessage = buildSaga(apis.buyerDeleteMessage, actions.BUYER_DELETE_MESSAGE)
 export const sellerDeleteMessage = buildSaga(apis.sellerDeleteMessage, actions.SELLER_DELETE_MESSAGE)
+export const messageBuyer = buildSaga(apis.messageBuyer, actions.MESSAGE_BUYER)
+export const messageSeller = buildSaga(apis.messageSeller, actions.MESSAGE_SELLER)
+export const messageReseller = buildSaga(apis.messageReseller, actions.MESSAGE_RESELLER)

@@ -64,3 +64,17 @@ export const deleteMessage = createReducer(buildInitState())
   .addReducer({
     type: actions.SELLER_DELETE_MESSAGE
   }).run()
+
+export const transactionMessage = createReducer(buildInitState({ message: {} }))
+  .addReducer({
+    type: actions.MESSAGE_BUYER,
+    resultName: 'message'
+  })
+  .addReducer({
+    type: actions.MESSAGE_SELLER,
+    resultName: 'message'
+  })
+  .addReducer({
+    type: actions.MESSAGE_RESELLER,
+    resultName: 'message'
+  }).run()

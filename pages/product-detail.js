@@ -20,8 +20,8 @@ const params = {
 
 const Index = (props) => {
   return (
-    <DynamicNavBarLayout params={params}>
-      <ProductDetail query={props.query} />
+    <DynamicNavBarLayout params={params} {...props}>
+      <ProductDetail {...props} />
     </DynamicNavBarLayout>
   )
 }

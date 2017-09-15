@@ -75,8 +75,8 @@ class ProductDetail extends Component {
   }
 
   async wishlistPress (id) {
-    let { productDetail, token } = this.state
-    if (token) {
+    let { productDetail } = this.state
+    if (this.props.isLogin) {
       productDetail.detail.other_products.map((product) => {
         if (product.id === id) {
           (product.is_liked) ? product.count_like -= 1 : product.count_like += 1
@@ -86,15 +86,19 @@ class ProductDetail extends Component {
       await this.props.addToWishlist({ id })
       this.setState({ productDetail })
     } else {
-      this.setState({notification: {status: true, message: 'Anda harus login'}})
+      this.props.alertLogin()
     }
   }
 
   notification = (message) => this.setState({notification: {status: true, message: message}})
 
   purchaseNow () {
-    this.setState({ submiting: !this.state.submiting })
-    Router.push(`/purchase?id=${this.state.id}`)
+    if (this.props.isLogin) {
+      this.setState({ submiting: !this.state.submiting })
+      Router.push(`/purchase?id=${this.state.id}`)
+    } else {
+      this.props.alertLogin()
+    }
   }
 
   discussion () {
@@ -109,21 +113,21 @@ class ProductDetail extends Component {
   }
 
   render () {
-    const { productDetail, notification, token, submiting, submitingDiscussion } = this.state
+    const { productDetail, notification, submiting, submitingDiscussion } = this.state
     const { query } = this.props
     const { detail } = productDetail
-    const navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Produk Detail',
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: 'Produk Detail'
+      },
       moreButton: true,
       productId: productDetail.isFound && detail.product.id
     }
-
-    console.log(productDetail)
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <Notification
           type='is-danger'
           isShow={notification.status}
@@ -134,7 +138,7 @@ class ProductDetail extends Component {
             productDetail.isFound &&
             <Content>
               <ProductDetailItem
-                token={token}
+                {...this.props}
                 images={detail.images}
                 product={detail.product}
                 rating={detail.rating}

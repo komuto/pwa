@@ -6,7 +6,7 @@ class Modal extends Component {
   render () {
     const { show, title, children, closePress } = this.props
     return (
-      <div className='sort-option' style={{ display: show ? 'block' : 'none' }} onClick={(e) => this.outsideModaPress(e)}>
+      <div className='sort-option' style={{ display: show ? 'block' : 'none', zIndex: 1000 }} onClick={(e) => this.outsideModaPress(e)}>
         <div className='notif-report add-voucher'>
           <div className='header-notif'>
             <h3>{title}</h3>

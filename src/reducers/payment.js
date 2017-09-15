@@ -13,11 +13,6 @@ export const confirmTransfer = createReducer(buildInitState())
     resultName: 'confirmation'
   }).run()
 
-export const withdraw = createReducer(buildInitState())
-  .addReducer({
-    type: actions.WITHDRAW
-  }).run()
-
 export const getMidtransToken = createReducer(buildInitState())
   .addReducer({
     type: actions.GET_MIDTRANS_TOKEN,

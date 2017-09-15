@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="173" height="150" viewBox="0 0 173 150">
+    <defs>
+        <path id="a" d="M0 0h75.75v47.787a2.88 2.88 0 0 1-2.88 2.88H2.88A2.88 2.88 0 0 1 0 47.787V0z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#EEE" d="M2 146h169a2 2 0 0 1 0 4H2a2 2 0 1 1 0-4z"/>
+        <g transform="matrix(-1 0 0 1 55.056 97)">
+            <path fill="#F4F4F4" d="M17.08 38.464c1.897.43 3.891.658 5.948.658 12.718 0 23.028-8.757 23.028-19.56C46.056 8.757 35.746 0 23.028 0 10.31 0 0 8.758 0 19.561c0 7.232 4.62 13.547 11.49 16.932l.583 4.725 5.007-2.754z"/>
+            <path stroke="#E9E9E9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.88" d="M28.764 26.28c-1.535-2.001-3.324-2.739-5.059-2.742-1.735-.002-3.864.867-5.059 2.742"/>
+            <ellipse cx="15.112" cy="16.663" fill="#E9E9E9" rx="2.159" ry="2.173"/>
+            <ellipse cx="32.383" cy="16.663" fill="#E9E9E9" rx="2.159" ry="2.173"/>
+        </g>
+        <path fill="#F4F4F4" d="M160.68 110.327h-43.173a4.32 4.32 0 0 0-4.32 4.32v27.6a4.32 4.32 0 0 0 4.32 4.32h43.173a4.32 4.32 0 0 0 4.32-4.32v-27.6a4.32 4.32 0 0 0-4.32-4.32z"/>
+        <path fill="#E9E9E9" d="M161.707 113.473l-23.027 16.133-21.985-16.133 21.985 12.976z"/>
+        <g transform="translate(49 94.886)">
+            <mask id="b" fill="#fff">
+                <use xlink:href="#a"/>
+            </mask>
+            <use fill="#F7CC72" xlink:href="#a"/>
+            <path fill="#FFD783" d="M-10.197 0h75.75v47.787a2.88 2.88 0 0 1-2.88 2.88h-69.99a2.88 2.88 0 0 1-2.88-2.88V0z" mask="url(#b)"/>
+            <rect width="2.913" height="20.267" x="5.827" y="14.476" fill="#FFF" mask="url(#b)" rx="1.457"/>
+            <path stroke="#606E81" stroke-width="2" d="M46.563 18.907L.579 48.813" mask="url(#b)"/>
+        </g>
+        <path stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M49 94.886h75.75v47.786a2.88 2.88 0 0 1-2.88 2.88H51.88a2.88 2.88 0 0 1-2.88-2.88V94.886z"/>
+        <path fill="#E19F64" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M87.15 71.328l37.545 23.589-37.655 24.488L49.23 94.68z"/>
+        <g stroke="#FD8787" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M37.934 87.518l-4.851-.968M42.084 81.286l-7.272-7.814M48.4 78.897l-.473-5.42"/>
+        </g>
+        <path fill="#606E81" fill-opacity=".2" d="M98.192 107.58c2.938 2.136 6.703 3.42 10.808 3.42 9.389 0 17-6.716 17-15 0-8.284-7.611-15-17-15s-17 6.716-17 15c0 2.96.971 5.719 2.648 8.043l-1.17 4.1 4.714-.564z"/>
+        <g>
+            <path fill="#67BAFF" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M96.708 100.888C100.633 103.462 105.6 105 111 105c12.703 0 23-8.507 23-19s-10.297-19-23-19-23 8.507-23 19c0 3.74 1.308 7.228 3.567 10.168l-1.43 5.597 6.571-.877z"/>
+            <g fill="#FFF" transform="translate(100.938 83.889)">
+                <ellipse cx="2.156" cy="2.111" rx="2.156" ry="2.111"/>
+                <ellipse cx="10.781" cy="2.111" rx="2.156" ry="2.111"/>
+                <ellipse cx="19.406" cy="2.111" rx="2.156" ry="2.111"/>
+            </g>
+        </g>
+        <g transform="translate(38)">
+            <path fill="#89CAFF" d="M41.303 16.204v-2.408a1.796 1.796 0 0 1 3.591 0v2.408h2.409a1.796 1.796 0 1 1 0 3.592h-2.409v2.408a1.796 1.796 0 0 1-3.591 0v-2.408h-2.409a1.796 1.796 0 1 1 0-3.592h2.409z"/>
+            <ellipse cx="1.796" cy="17.4" stroke="#C2E2FC" stroke-width="2.4" rx="1.796" ry="1.8"/>
+            <path fill="#FFDEDE" d="M79.553 2.943V1.257a1.257 1.257 0 1 1 2.514 0v1.686h1.686a1.257 1.257 0 1 1 0 2.514h-1.686v1.686a1.257 1.257 0 0 1-2.514 0V5.457h-1.686a1.257 1.257 0 1 1 0-2.514h1.686z"/>
+            <path fill="#FFD783" d="M64.768 37.323v-1.446a1.077 1.077 0 0 1 2.155 0v1.446h1.445a1.077 1.077 0 1 1 0 2.154h-1.445v1.446a1.077 1.077 0 0 1-2.155 0v-1.446h-1.445a1.077 1.077 0 1 1 0-2.154h1.445z"/>
+            <ellipse cx="24.542" cy="39" stroke="#EDEDED" stroke-width="2.4" rx="2.993" ry="3"/>
+        </g>
+    </g>
+</svg>

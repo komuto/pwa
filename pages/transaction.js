@@ -9,7 +9,7 @@ import Transaction from '../src/Containers/Transaction'
 import { TRANSACTION } from '../src/Utils/Constant'
 // style custom
 const params = {
-  style: 'main transaction-page bg-white',
+  style: 'main no-padding-bottom bg-grey',
   header: {
     title: 'Transaksi'
   },

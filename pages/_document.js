@@ -16,22 +16,7 @@ export default class HomeDocument extends Document {
           <title>Komuto</title>
           <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
-
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
-
-          <script src='https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js' />
-          <link href='https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css' rel='stylesheet' />
-
-          {/* <script src={`${AppConfig.baseURL}static/js/MyDoku.js`} /> */}
-          {/* <link href="http://staging.doku.com/doku-js/assets/css/doku.css" rel="stylesheet" /> */}
-
-          {/* Chrome, Firefox OS and Opera */}
-          <meta name='theme-color' content='#ef5656' />
-          {/* Windows Phone */}
-          <meta name='msapplication-navbutton-color' content='#ef5656' />
-          {/* iOS Safari */}
-          <meta name='apple-mobile-web-app-status-bar-style' content='#ef5656' />
-          <link rel='manifest' href='static/manifest.json' />
         </Head>
         <body>
           <Main />
