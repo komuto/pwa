@@ -16,7 +16,20 @@ export default class HomeDocument extends Document {
           <title>Komuto</title>
           <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.css`} />
+          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
+          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
+          <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
+          {/* Chrome, Firefox OS and Opera */}
+          <meta name='theme-color' content='#ef5656' />
+          {/* Windows Phone */}
+          <meta name='msapplication-navbutton-color' content='#ef5656' />
+          {/* iOS Safari */}
+          <meta name='apple-mobile-web-app-status-bar-style' content='#ef5656' />
+          <link rel='manifest' href={`${AppConfig.baseURL}static/manifest.json`} />
         </Head>
         <body>
           <Main />
