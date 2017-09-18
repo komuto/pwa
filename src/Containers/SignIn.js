@@ -29,6 +29,7 @@ class SignIn extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      localize: props.localize,
       input: {
         email: {
           type: 'email',
@@ -153,7 +154,7 @@ class SignIn extends Component {
   }
 
   render () {
-    const { input, notification } = this.state
+    const { localize, input, notification } = this.state
     return (
       <Content>
         <Notification
@@ -185,13 +186,14 @@ class SignIn extends Component {
                 textHelp={input.password.textHelp} />
               <TermConditions />
               <ButtonFullWidth
-                text='Login'
+                text={localize.signin}
                 onClick={() => this.handleSignInClick()} />
               <div className='has-text-centered'>
-                <Link href='/password-reset'><a>Lupa Password</a></Link>
+                <Link href='/password-reset'><a>{localize.lost_password}</a></Link>
               </div>
-              <HrText text='atau' />
+              <HrText text={localize.or} />
               <LoginFacebook
+                text={localize.login_facebook}
                 responseFacebook={(response) => this.responseFacebook(response)} />
             </form>
           </Containers>
