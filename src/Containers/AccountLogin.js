@@ -2,22 +2,24 @@
 import React from 'react'
 import Link from 'next/link'
 import {Images} from '../Themes'
+import MyImage from '../Components/MyImage'
 
-export default (props:any) => {
+export default (props) => {
+  const { localize } = props
   return (
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <img src={Images.phoneAccount} alt='komuto' />
-          <p><strong>Masuk ke Akun Anda untuk mempermudah proses pembelian</strong></p>
-          <p>Terima Kasih, Anda telah berhasil melakukan pembelian Token Listrik. Untuk melihat Token silahkan menuju bagian Transaksi</p>
+          <MyImage src={Images.phoneAccount} />
+          <p><strong>{localize.signin_info}</strong></p>
+          <p>{localize.signin_sub_info}</p>
         </div>
         <div className='columns is-mobile'>
           <div className='column'>
-            <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>Register</a></Link>
+            <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>{localize.signup}</a></Link>
           </div>
           <div className='column'>
-            <Link href='signin'><a className='button is-primary is-large is-fullwidth'>Login</a></Link>
+            <Link href='signin'><a className='button is-primary is-large is-fullwidth'>{localize.signin}</a></Link>
           </div>
         </div>
       </div>
