@@ -88,14 +88,16 @@ class Categories3 extends Component {
   render () {
     const { subCategory, notification } = this.state
     const { categories } = subCategory
-    const navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: categories.name
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: categories.name
+      }
     }
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar {...params} />
         <Notification
           type='is-warning'
           isShow={notification.status}
