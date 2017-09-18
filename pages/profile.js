@@ -6,26 +6,26 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Profile from '../src/Containers/Profile'
 // utils
-import { PROFILE } from '../src/Utils/Constant'
-
-const params = {
-  style: 'main user bg-grey',
-  header: {
-    title: 'Profile'
-  },
-  navbar: {
-    searchBoox: false,
-    textPath: 'Profile'
-  },
-  tabbar: {
-    active: PROFILE,
-    isShow: true
-  }
-}
+import Menu from '../src/Config/Menu'
 
 const Index = (props) => {
+  const { localize } = props
+  const params = {
+    style: 'main user bg-grey',
+    header: {
+      title: localize.profile
+    },
+    navbar: {
+      searchBoox: false,
+      textPath: localize.profile
+    },
+    tabbar: {
+      active: Menu.PROFILE,
+      isShow: true
+    }
+  }
   return (
-    <DefaultLayout params={params} {...props}>
+    <DefaultLayout {...params} {...props}>
       <Profile {...props} />
     </DefaultLayout>
   )
