@@ -1,22 +1,22 @@
 // @flow
 // layout
-import DynamicNavBarLayout from '../src/Layout/DefaultLayout'
+import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Categories2 from '../src/Containers/Categories2'
-// style custom
-let params = {
-  style: 'categories bg-grey',
-  header: {
-    title: 'Komuto'
-  }
-}
 
 const Index = (props) => {
+  const { localize } = props
+  const params = {
+    style: 'categories bg-grey',
+    header: {
+      title: localize.category
+    }
+  }
   return (
-    <DynamicNavBarLayout params={params}>
-      <Categories2 query={props.query} />
+    <DynamicNavBarLayout {...params} {...props}>
+      <Categories2 {...props} />
     </DynamicNavBarLayout>
   )
 }
