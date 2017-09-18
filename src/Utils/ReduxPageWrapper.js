@@ -6,7 +6,8 @@ import withRedux from 'next-redux-wrapper'
 import GET_TOKEN from '../Services/GetToken'
 import Content from '../Components/Content'
 import LoginAlert from '../Components/LoginAlert'
-
+import Localize from '../Utils/Localize'
+import AppConfig from '../Config/AppConfig'
 let clientTask = null
 let token = null
 export default function reduxWrapper (ReduxComponent) {
@@ -39,10 +40,18 @@ export default function reduxWrapper (ReduxComponent) {
 
     render () {
       const { token, mustLogin } = this.state
+      let localize = Localize(AppConfig.languages)
       return (
         <Content>
-          <LoginAlert show={mustLogin} close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
-          <ReduxComponent {...this.props} isLogin={!!token} alertLogin={() => this.setState({ mustLogin: true })} />
+          <LoginAlert
+            show={mustLogin}
+            localize={localize}
+            close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
+          <ReduxComponent
+            {...this.props}
+            localize={localize}
+            isLogin={!!token}
+            alertLogin={() => this.setState({ mustLogin: true })} />
         </Content>
       )
     }
