@@ -1,6 +1,7 @@
 const express = require('express')
 const next = require('next')
 const path = require('path')
+// const compression = require('compression')
 require('dotenv').config()
 
 // front end
