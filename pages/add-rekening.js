@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import AddRekening from '../src/Containers/AddRekening'
 
-const params = {
-  style: 'main user',
-  header: {
-    title: 'Tambah Data Rekening'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Tambah Data Rekening'
+const Index = (props) => {
+  const params = {
+    style: 'main user',
+    header: {
+      title: 'Tambah Data Rekening'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Tambah Data Rekening'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <AddRekening {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <AddRekening />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)
