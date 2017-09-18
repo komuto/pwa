@@ -6,27 +6,29 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import SignIn from '../src/Containers/SignIn'
 
-const params = {
-  style: 'user login',
-  header: {
-    title: 'Login'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/profile',
-    textPath: 'Login'
-  },
-  hero: {
-    path: '/signup',
-    textPath: 'Daftar Disini',
-    textInfo: 'Belum punya akun ?'
+const Index = (props) => {
+  const { localize } = props
+  const params = {
+    style: 'user login',
+    header: {
+      title: localize.signin
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/profile',
+      textPath: localize.signin
+    },
+    hero: {
+      path: '/signup',
+      textPath: localize.signin_hero_path,
+      textInfo: localize.signin_hero_info
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <SignIn {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <SignIn />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)
