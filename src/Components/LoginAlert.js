@@ -7,17 +7,18 @@ import MyImage from './MyImage'
 import Modal from './Modal'
 
 export default (props) => {
+  const { show, localize } = props
   return (
-    <Modal show={props.show} title='Anda harus login' closePress={() => props.close()}>
+    <Modal show={show} title={localize.signin} closePress={() => props.close()}>
       <div style={{ textAlign: 'center' }}>
         <MyImage src={Images.phoneAccount} />
-        <p>Anda haru login terlebih dahulu!</p>
+        <p>{localize.signin_warning}</p>
         <div className='columns is-mobile'>
           <div className='column is-half'>
-            <a className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/signin')}>LOGIN</a>
+            <a className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/signin')}>{localize.signin}</a>
           </div>
           <div className='column is-half'>
-            <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/signup')}>REGISTER</a>
+            <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/signup')}>{localize.signup}</a>
           </div>
         </div>
       </div>
