@@ -106,6 +106,7 @@ class Home extends Component {
 
   render () {
     const { category, products, notification } = this.state
+    const { localize } = this.props
     let settings = {
       autoplay: true,
       dots: false,
@@ -132,7 +133,7 @@ class Home extends Component {
           </Content>
         </Section>
         <Section>
-          <SectionTitle title='Kategori Produk' />
+          <SectionTitle title={localize.product_category} />
           <Content className='columns is-mobile is-multiline custom'>
             {
               category.isFound &&
@@ -160,13 +161,13 @@ class Home extends Component {
             }
             <Content className='column is-paddingless'>
               <Content className='see-all'>
-                <Link href='categories1' as='c'><a><span className='link'>Lihat semua kategori <span className='icon-arrow-right' /></span></a></Link>
+                <Link href='categories1' as='c'><a><span className='link'>{localize.product_category_all} <span className='icon-arrow-right' /></span></a></Link>
               </Content>
             </Content>
           </Content>
         </Section>
         <Section>
-          <SectionTitle title='Produk Terbaru' />
+          <SectionTitle title={localize.product_new} />
           <Content className='columns is-mobile is-multiline custom'>
             { products.isFound && this.renderProductColoumn('grid', products.products) }
             <Content className='column is-paddingless'>
@@ -181,7 +182,7 @@ class Home extends Component {
                       `/p?sort=newest`
                     )
                   }}>
-                  <span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span>
+                  <span className='link'>{localize.product_new_all} <span className='icon-arrow-right' /></span>
                 </a>
               </Content>
             </Content>
