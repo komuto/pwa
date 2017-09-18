@@ -5,24 +5,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Categories1 from '../src/Containers/Categories1'
-// style custom
-
-const params = {
-  style: 'categories bg-grey',
-  header: {
-    title: 'Semua Kategori'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Kategori'
-  }
-}
 
 const Index = (props) => {
+  const { localize } = props
+  const params = {
+    style: 'categories bg-grey',
+    header: {
+      title: localize.category
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: localize.category
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <Categories1 query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <Categories1 {...props} />
     </DefaultLayout>
   )
 }
