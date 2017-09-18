@@ -1,32 +1,26 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ProductAdd from '../src/Containers/ProductAdd'
-
-const toProductList = () => {
-  Router.push('/product-list')
-}
+import CatalogAddProduct from '../src/Containers/CatalogAddProduct'
 
 const params = {
-  style: 'main no-padding-bottom bg-grey',
+  style: 'main seller bg-grey',
   header: {
-    title: 'Tambah Produk'
+    title: 'Detail Barang Dropshipper'
   },
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toProductList(),
-    textPath: 'Tambah Produk'
+    textPath: 'Detail Barang Dropshipper'
   }
 }
 
-const Index = () => (
+const Index = (props) => (
   <DefaultLayout params={params}>
-    <ProductAdd />
+    <CatalogAddProduct query={props.query} />
   </DefaultLayout>
 )
 

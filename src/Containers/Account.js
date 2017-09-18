@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
 // components
 import Content from '../Components/Content'
 import Section from '../Components/Section'
@@ -58,7 +58,7 @@ class Account extends Component {
   }
 
   async componentDidMount () {
-    NProgress.start()
+    // NProgress.start()
     await this.props.getProfile()
   }
 
@@ -70,7 +70,7 @@ class Account extends Component {
     }
 
     if (!isFetching(profile)) {
-      NProgress.done()
+      // NProgress.done()
       this.setState({ profile, notification: validateResponse(profile, 'Profile tidak ditemukan') })
     }
   }

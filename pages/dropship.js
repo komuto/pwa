@@ -7,8 +7,8 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductAddFromDropshipper from '../src/Containers/ProductAddFromDropshipper'
 
-const toProductAdd = () => {
-  Router.push('/product-add')
+const toProductList = () => {
+  Router.push('/product-list')
 }
 
 const params = {
@@ -19,7 +19,7 @@ const params = {
   navbar: {
     searchBoox: false,
     path: '/',
-    callBack: () => toProductAdd(),
+    callBack: () => toProductList(),
     textPath: 'Pilih Barang dari Dropshipper'
   }
 }

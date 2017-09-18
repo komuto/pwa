@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
+import Notification from '../Components/Notification'
 import Wizard from '../Components/Wizard'
 // actions
 import * as actionTypes from '../actions/catalog'
@@ -18,9 +19,14 @@ class CatalogAddProduct extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      productDetail: props.productDetail,
+      id: props.query.id || null,
+      productDetail: props.productDetail || null,
       listCatalog: props.listCatalog,
-      submitting: false,
+      submitting: {
+        submitProduct: false,
+        submitCatalog: false,
+        submitChangeCatalog: false
+      },
       validation: false,
       modalAddCatalog: false,
       selectedCatalog: null,
@@ -41,13 +47,6 @@ class CatalogAddProduct extends React.Component {
     this.setState(newState)
   }
 
-  handleNotification (e) {
-    const { notification } = this.state
-    const newState = { notification }
-    newState.notification['status'] = !notification.status
-    this.setState(newState)
-  }
-
   renderValidation (name, textFailed) {
     const { selectedCatalog, catalog, validation } = this.state
     let catalogValid = name === 'catalog' && catalog.length > 0
@@ -65,64 +64,102 @@ class CatalogAddProduct extends React.Component {
   postCatalog (e) {
     e.preventDefault()
     const { createCatalog } = this.props
-    const { catalog } = this.state
+    const { catalog, submitting } = this.state
     let isValid = catalog.length > 0
     if (isValid) {
       createCatalog({ name: catalog })
-      this.setState({ submitting: true })
+      this.setState({ submitting: { ...submitting, submitCatalog: true } })
     } else {
       this.setState({ validation: true })
     }
   }
 
   createProduct (e) {
+    e.preventDefault()
     const { query, addDropshipProducts } = this.props
-    const { selectedCatalog } = this.state
+    const { selectedCatalog, submitting } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submitting: true })
+      this.setState({ submitting: { ...submitting, submitProduct: true } })
       addDropshipProducts({ id: query.id, catalog_id: selectedCatalog })
     } else {
       this.setState({ validation: true })
     }
   }
 
-  componentDidMount () {
-    const { query } = this.props
-    this.props.getListCatalog()
-    if (query.id !== '') {
-      this.props.getProduct({ id: query.id })
+  changeCatalogProduct (e) {
+    e.preventDefault()
+    const { query, changeCatalogProducts } = this.props
+    const { selectedCatalog, submitting } = this.state
+    let isValid = selectedCatalog !== null
+    if (isValid) {
+      this.setState({ submitting: { ...submitting, submitChangeCatalog: true } })
+      changeCatalogProducts({ catalog_id: selectedCatalog, product_ids: [query.id.split('.')[0]] })
+    } else {
+      this.setState({ validation: true })
     }
-    NProgress.start()
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { statusCreateCatalog, listCatalog, productDetail, statusAddDropshipProducts } = nextProps
+  async componentDidMount () {
+    const { id, productDetail, listCatalog } = this.state
+    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+      NProgress.start()
+      await this.props.getProduct({ id })
+    }
+    if (!listCatalog.isFound) {
+      this.props.getListCatalog()
+    }
+  }
+
+  async componentWillReceiveProps (nextProps) {
     const { submitting, notification } = this.state
-    if (listCatalog.isFound) {
-      this.setState({ listCatalog: nextProps.listCatalog })
+    const { statusCreateCatalog, listCatalog, productDetail, statusAddDropshipProducts, alterProducts } = nextProps
+    const nextId = nextProps.query.id
+
+    if (!productDetail.isLoading) {
       NProgress.done()
+      switch (productDetail.status) {
+        case Status.SUCCESS :
+          (productDetail.isFound)
+          ? this.setState({ productDetail })
+          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
+
+          if (String(productDetail.detail.product.id) !== String(nextId)) {
+            NProgress.start()
+            await this.props.getProduct({ id: nextId })
+          }
+
+          break
+        case Status.OFFLINE :
+        case Status.FAILED :
+          this.setState({ notification: {status: true, message: productDetail.message} })
+          break
+        default:
+          break
+      }
     }
-    if (productDetail.isFound) {
-      this.setState({ productDetail: nextProps.productDetail })
+    if (listCatalog.isFound) {
+      this.setState({ listCatalog })
     }
-    if (!statusCreateCatalog.isLoading && submitting) {
+    if (!statusCreateCatalog.isLoading && submitting.submitCatalog) {
       switch (statusCreateCatalog.status) {
         case Status.SUCCESS: {
-          const newNotification = { notification, submitting: false, modalAddCatalog: false }
+          const newNotification = { notification, submitting, modalAddCatalog: false }
           newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusCreateCatalog.message
-          newNotification.notification['color'] = 'is-success'
+          newNotification.notification['message'] = 'Berhasil menambahkan katalog'
+          newNotification.notification['type'] = 'is-success'
+          newNotification.submitting['submitCatalog'] = false
           this.setState(newNotification)
           this.props.getListCatalog()
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
+          const newNotif = { notification, submitting, modalAddCatalog: false }
           newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusCreateCatalog.message
-          newNotif.notification['color'] = 'is-danger'
+          newNotif.notification['message'] = 'Gagal menambahkan katalog'
+          newNotif.notification['type'] = 'is-danger'
+          newNotif.submitting['submitCatalog'] = false
           this.setState(newNotif)
           break
         }
@@ -131,19 +168,41 @@ class CatalogAddProduct extends React.Component {
       }
       this.setState({ notification })
     }
-    if (!statusAddDropshipProducts.isLoading && submitting) {
+    if (!statusAddDropshipProducts.isLoading && submitting.submitProduct) {
       switch (statusAddDropshipProducts.status) {
         case Status.SUCCESS: {
-          this.setState({ submitting: false })
+          this.setState({ submitting: { ...submitting, submitProduct: false } })
           Router.push('/product-add-success')
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
+          this.setState({ notification: {status: true, message: statusAddDropshipProducts.message, type: 'is-danger'}, submitting: { ...submitting, submitCatalog: false } })
+          break
+        }
+        default:
+          break
+      }
+      this.setState({ notification })
+    }
+    if (!alterProducts.isLoading && submitting.submitChangeCatalog) {
+      switch (alterProducts.status) {
+        case Status.SUCCESS: {
+          const newNotification = { notification, submitting }
+          newNotification.notification['status'] = true
+          newNotification.notification['message'] = 'Berhasil memindahkan Barang'
+          newNotification.notification['type'] = 'is-success'
+          newNotification.submitting['submitChangeCatalog'] = false
+          this.setState(newNotification)
+          break
+        }
+        case Status.OFFLINE :
+        case Status.FAILED : {
+          const newNotif = { notification, submitting }
           newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusAddDropshipProducts.message
-          newNotif.notification['color'] = 'is-danger'
+          newNotif.notification['message'] = 'Gagal memindahkan Barang'
+          newNotif.notification['type'] = 'is-danger'
+          newNotif.submitting['submitChangeCatalog'] = false
           this.setState(newNotif)
           break
         }
@@ -152,42 +211,100 @@ class CatalogAddProduct extends React.Component {
       }
       this.setState({ notification })
     }
+    console.log('nextProps ', nextProps)
+  }
+
+  renderProductDetail () {
+    const { productDetail } = this.state
+    if (productDetail.isFound) {
+      return (
+        <li>
+          <div className='box is-paddingless'>
+            <article className='media'>
+              <div className='media-left'>
+                <figure className='image product-pict'>
+                  <img src={productDetail.detail.images[0].file}
+                    style={{width: '50px', height: '50px'}} alt='pict' />
+                </figure>
+              </div>
+              <div className='media-content'>
+                <div className='content'>
+                  <p className='products-name'>
+                    <strong>{productDetail.detail.product.name}</strong>
+                    <br />
+                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission}%</span>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </li>
+      )
+    } else {
+      return (
+        <div style={{textAlign: 'center', paddingTop: '20px'}}>Product Tidak ada</div>
+      )
+    }
+  }
+
+  handleSelectedCatalog (e, id) {
+    e.preventDefault()
+    this.setState({ selectedCatalog: id })
+  }
+
+  renderListCatalog () {
+    const { listCatalog, selectedCatalog } = this.state
+    if (listCatalog.isFound && listCatalog.catalogs.length > 0) {
+      return listCatalog.catalogs.map((catalog, i) => {
+        return (
+          <label
+            className={`radio ${selectedCatalog === catalog.id && 'checked'}`}
+            key={i}>
+            <input
+              type='radio'
+              name='report'
+              onClick={(e) => this.handleSelectedCatalog(e, catalog.id)} />
+            {catalog.name}
+          </label>
+        )
+      })
+    } else {
+      return (<p style={{textAlign: 'center', paddingTop: '20px'}}>Katalog Kosong</p>)
+    }
+  }
+
+  handleButton () {
+    const { submitting } = this.state
+    const { query } = this.props
+    if (query.type === 'detailDropship') {
+      return (
+        <a className={`button is-primary is-large is-fullwidth ${submitting.submitChangeCatalog && 'is-loading'}`}
+          onClick={(e) => this.changeCatalogProduct(e)} >Simpan Perubahan</a>
+      )
+    } else {
+      return (
+        <a className={`button is-primary is-large is-fullwidth ${submitting.submitProduct && 'is-loading'}`}
+          onClick={(e) => this.createProduct(e)} >Lanjutkan</a>
+      )
+    }
   }
 
   render () {
-    const { productDetail, listCatalog, catalog, selectedCatalog, modalAddCatalog, validation, notification, submitting } = this.state
+    console.log('state ', this.state)
+    console.log('props ', this.props)
+    const { catalog, modalAddCatalog, validation, notification, submitting } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow bg-white'>
-          <Wizard total={3} active={2} />
+          { this.props.query.type === 'detailDropship' ? '' : <Wizard total={3} active={2} /> }
           <ul className='product-view'>
-            { !productDetail.isFound ? <p>Product Tidak ada</p> : <li>
-              <div className='box is-paddingless'>
-                <article className='media'>
-                  <div className='media-left'>
-                    <figure className='image product-pict'>
-                      <img src={productDetail.detail.images[0].file}
-                        style={{width: '50px', height: '50px'}} alt='pict' />
-                    </figure>
-                  </div>
-                  <div className='media-content'>
-                    <div className='content'>
-                      <p className='products-name'>
-                        <strong>{productDetail.detail.product.name}</strong>
-                        <br />
-                        Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission}%</span>
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              </div>
-            </li>}
+            {this.renderProductDetail()}
           </ul>
         </section>
         <section className='section is-paddingless has-shadow'>
@@ -205,21 +322,7 @@ class CatalogAddProduct extends React.Component {
                 <form action='#' className='form'>
                   <div className='field'>
                     <p className='control'>
-                      { listCatalog.catalogs.length !== 0 ? listCatalog.catalogs.map(catalog => {
-                        return (
-                          <label
-                            className={`radio ${selectedCatalog === catalog.id && 'checked'}`}
-                            key={catalog.id}>
-                            <input
-                              type='radio'
-                              name='report'
-                              onClick={() => this.setState({ selectedCatalog: catalog.id })} />
-                            {catalog.name}
-                          </label>
-                        )
-                      }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>
-                        Katalog Kosong</p>
-                      }
+                      { this.renderListCatalog() }
                     </p>
                     {validation && this.renderValidation('selectCatalog', 'Mohon pilih katalog yang sesuai dengan produk Anda')}
                   </div>
@@ -232,8 +335,7 @@ class CatalogAddProduct extends React.Component {
           <div className='payment-detail action'>
             <ul>
               <li>
-                <a className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
-                  onClick={(e) => this.createProduct(e)} >Lanjutkan</a>
+                {this.handleButton()}
               </li>
             </ul>
           </div>
@@ -254,7 +356,7 @@ class CatalogAddProduct extends React.Component {
               </p>
               {validation && this.renderValidation('catalog', 'Mohon isi nama katalog')}
             </div>
-            <button className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+            <button className={`button is-primary is-large is-fullwidth ${submitting.submitCatalog && 'is-loading'}`}
               onClick={(e) => this.postCatalog(e)}
               >Buat Katalog Baru
             </button>
@@ -265,25 +367,12 @@ class CatalogAddProduct extends React.Component {
   }
 }
 
-// const EmptyProduct = () => {
-//   return (
-//     <section className='content'>
-//       <div className='container is-fluid'>
-//         <div className='desc has-text-centered'>
-//           <MyImage src={Images.notFound} alt='komuto' />
-//           <p><strong>Produk tidak ditemukan</strong></p>
-//           <p>Kami tidak bisa menemukan barang yang anda inginkan</p>
-//         </div>
-//       </div>
-//     </section>
-//   )
-// }
-
 const mapStateToProps = (state) => {
   return {
     listCatalog: state.getListCatalog,
     statusCreateCatalog: state.createCatalog,
     productDetail: state.productDetail,
+    alterProducts: state.alterProducts,
     statusAddDropshipProducts: state.addDropshipProducts
   }
 }
@@ -292,6 +381,7 @@ const mapDispatchToProps = dispatch => ({
   getListCatalog: () => dispatch(actionTypes.getListCatalog()),
   createCatalog: (params) => dispatch(actionTypes.createCatalog(params)),
   addDropshipProducts: (params) => dispatch(productActions.addDropshipProducts(params)),
+  changeCatalogProducts: (params) => dispatch(productActions.changeCatalogProducts(params)),
   getProduct: (params) => dispatch(productActions.getProduct(params))
 })
 

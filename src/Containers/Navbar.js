@@ -41,8 +41,11 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { navbar, searchActive, moreButton, productId, callBack } = this.props
+    const { deleteButton, navbar, searchActive, moreButton, productId, callBack } = this.props.params
     const { path, textPath, searchBoox } = navbar
+    // const { searchBoox, , path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
+    // const { activeSearch, activeMoreOptions } = this.state
+
     const { activeMoreOptions } = this.state
     return (
       <div>
@@ -83,6 +86,12 @@ export class Navbar extends PureComponent {
                 <span className='icon-dots moreButton' />
               </div>
             </a>
+          }
+          {
+            deleteButton &&
+            <div className='button-search js-option'>
+              <span className='icon-trash white' />
+            </div>
           }
         </nav>
         <MoreOptions
