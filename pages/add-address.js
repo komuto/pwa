@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import AddAddress from '../src/Containers/AddAddress'
 
-const params = {
-  style: 'main detail edit-data bg-grey',
-  header: {
-    title: 'Tambah Alamat'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Tambah Alamat'
+const Index = (props) => {
+  const params = {
+    style: 'main detail edit-data bg-grey',
+    header: {
+      title: 'Tambah Alamat'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Tambah Alamat'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <AddAddress />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <AddAddress />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)
