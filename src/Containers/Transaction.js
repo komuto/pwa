@@ -13,7 +13,7 @@ import { validateResponse, isFetching } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // utils
-import { PAYMENT_STATUS } from '../Utils/Constant'
+import { PAYMENT_STATUS } from './TransactionDetail'
 class Transaction extends Component {
   constructor (props) {
     super(props)
