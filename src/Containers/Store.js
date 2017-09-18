@@ -182,10 +182,12 @@ class Store extends Component {
   render () {
     const { store, tabs, boxSeller, showListCatalog, notification } = this.state
     const myStore = store.store
-    const navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: store.isFound && myStore.name
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: store.isFound && myStore.name
+      }
     }
     let settings = {
       className: 'slider variable-width',
@@ -198,7 +200,7 @@ class Store extends Component {
     }
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <Notification
           type='is-danger'
           isShow={notification.status}
