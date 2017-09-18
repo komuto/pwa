@@ -8,28 +8,27 @@ import { StickyContainer, Sticky } from 'react-sticky'
 // Components
 import Content from '../Components/Content'
 
-export default (props: any) => {
-  const { children } = props
-  const { style, header, navbar, hero, tabbar } = props.params
+export default (props) => {
+  const { style, header, navbar, hero, tabbar, children } = props
   return (
-    <Content style={{height: '100%', width: '100%', position: 'absolute'}}>
-      <Header params={header} />
+    <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
+      <Header {...header} />
       <Content className={`main ${style}`}>
-        { (navbar) ? <Navbar params={navbar} {...props} /> : null}
+        { (navbar) ? <Navbar {...props} /> : null}
         <StickyContainer>
-          { (hero) ? <Hero params={hero} /> : null}
+          { (hero) ? <Hero {...props.hero} /> : null}
           { (navbar && navbar.searchBoox)
             ? <Sticky>
               {
                   ({ isSticky, wasSticky, style, distanceFromTop, distanceFromBottom, calculatedHeight }) => {
-                    return <SearchBoox style={style} isSticky={isSticky} />
+                    return <SearchBoox sbStyle={style} isSticky={isSticky} {...props} />
                   }
                 }
             </Sticky>
             : null
           }
           { children }
-          { (tabbar) && <Tabbar params={tabbar} {...props} /> }
+          { (tabbar) && <Tabbar {...props} /> }
         </StickyContainer>
       </Content>
     </Content>
