@@ -5,27 +5,27 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // container
 import Home from '../src/Containers/Home'
-// utils
-import { HOME } from '../src/Utils/Constant'
-
-const params = {
-  style: 'home bg-grey',
-  header: {
-    title: 'Home'
-  },
-  navbar: {
-    searchBoox: true,
-    textPath: 'Galaksi Parabola'
-  },
-  tabbar: {
-    active: HOME,
-    isShow: true
-  }
-}
+// config
+import Menu from '../src/Config/Menu'
 
 const Index = (props) => {
+  const { localize } = props
+  const params = {
+    style: 'home bg-grey',
+    header: {
+      title: localize.home
+    },
+    navbar: {
+      searchBoox: true,
+      textPath: 'Galaksi Parabola'
+    },
+    tabbar: {
+      active: Menu.HOME,
+      isShow: true
+    }
+  }
   return (
-    <DefaultLayout params={params} {...props}>
+    <DefaultLayout {...params} {...props}>
       <Home {...props} />
     </DefaultLayout>
   )
