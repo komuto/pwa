@@ -41,7 +41,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { navbar, searchActive, moreButton, productId, callBack } = this.props.params
+    const { navbar, searchActive, moreButton, productId, callBack } = this.props
     const { path, textPath, searchBoox } = navbar
     const { activeMoreOptions } = this.state
     return (
@@ -115,12 +115,12 @@ export class SearchBoox extends PureComponent {
   }
 
   render () {
-    const { isSticky, style } = this.props
+    const { isSticky, sbStyle, localize } = this.props
     return (
       <div>
-        <div className={`field search-form is-clearfix sticky ${isSticky ? 'floating' : ''}`} style={{ ...style, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
+        <div className={`field search-form is-clearfix sticky ${isSticky && 'floating'}`} style={{ ...sbStyle, zIndex: 1, overflow: 'auto', marginBottom: 0 }}>
           <p className='control has-icons-left'>
-            <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onFocus={() => this.onFocus()} />
+            <input className='input is-medium' type='text' value='' placeholder={localize.search_placeholder} onFocus={() => this.onFocus()} />
             <span className='icon is-left'>
               <span className='icon-search' />
             </span>
@@ -148,7 +148,7 @@ export class MoreOptions extends PureComponent {
 }
 
 export const Hero = (props) => {
-  const { path, textPath, textInfo } = props.params
+  const { path, textPath, textInfo } = props
   return (
     <section className='hero'>
       <div className='container is-fluid'>
