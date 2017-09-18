@@ -7,9 +7,9 @@ import Account from './Account'
 class Profile extends Component {
   render () {
     if (this.props.isLogin) {
-      return <Account />
+      return <Account {...this.props} />
     } else {
-      return <AccountLogin />
+      return <AccountLogin {...this.props} />
     }
   }
 }
