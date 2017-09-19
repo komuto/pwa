@@ -10,11 +10,11 @@ export default class HomeDocument extends Document {
 
   render () {
     return (
-      <html>
+      <html lang='id'>
         <Head>
           <meta charset='UTF-8' />
           <title>Komuto</title>
-          <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
+          <meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
           <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.css`} />
           <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.css`} />
