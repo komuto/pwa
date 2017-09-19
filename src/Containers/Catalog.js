@@ -43,16 +43,17 @@ class Catalog extends Component {
   render () {
     const { storeCatalogProducts } = this.state
     const { catalog, products } = storeCatalogProducts.storeCatalogProducts
-    let navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: storeCatalogProducts.isFound && catalog.name
+    let params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: storeCatalogProducts.isFound && catalog.name
+      }
     }
-
     console.log(storeCatalogProducts)
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
