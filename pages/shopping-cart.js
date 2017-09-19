@@ -7,15 +7,16 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import ShoppingCart from '../src/Containers/ShoppingCart'
 
 const Index = (props) => {
+  const { localize } = props
   const params = {
     style: 'main detail bg-grey',
     header: {
-      title: 'Keranjang Belanja'
+      title: localize.shopping_cart
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Karanjang Belanja'
+      textPath: localize.shopping_cart
     }
   }
   return (
