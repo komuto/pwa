@@ -13,7 +13,7 @@ import * as cartActions from '../actions/cart'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching, Status } from '../Services/Status'
 // validations
 import * as inputValidations from '../Validations/Input'
 // themes
@@ -23,6 +23,7 @@ class ShoppingCart extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      localize: props.localize,
       cart: props.cart || null,
       promo: props.promo || null,
       deleteItem: {
@@ -135,7 +136,6 @@ class ShoppingCart extends Component {
       switch (cart.status) {
         case Status.SUCCESS :
           if (statesDeleteItem.productClick) {
-            console.log('cart', cart)
             let tam = cart.cart.items.filter((item) => {
               return item.id !== statesDeleteItem.productClick
             })
@@ -154,19 +154,8 @@ class ShoppingCart extends Component {
       this.setState({ deleteItem: statesDeleteItem, cart, notification })
     }
 
-    if (!rsCheckout.isLoading) {
-      switch (cart.status) {
-        case Status.SUCCESS :
-          console.log(rsCheckout)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: cart.message}
-          break
-        default:
-          break
-      }
-      this.setState({ rsCheckout, notification })
+    if (!isFetching(rsCheckout)) {
+      this.setState({ rsCheckout, notification: validateResponse(rsCheckout, 'Gagal checkout') })
     }
 
     if (!rsAddToCart.isLoading) {
@@ -197,20 +186,10 @@ class ShoppingCart extends Component {
       this.setState({ notification })
     }
 
-    if (!cart.isLoading) {
+    if (!isFetching(cart)) {
       NProgress.done()
-      switch (cart.status) {
-        case Status.SUCCESS :
-          if (!cart.isFound) notification = {type: 'is-danger', status: true, message: 'Keranjang belanja kosong!'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: cart.message}
-          break
-        default:
-          break
-      }
-      this.setState({ cart, notification })
+      NProgress.done()
+      this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja kosong!') })
     }
 
     if (!promo.isLoading) {
@@ -234,30 +213,21 @@ class ShoppingCart extends Component {
       this.setState({ promo, cart, voucher })
     }
 
-    if (!cancelPromo.isLoading) {
-      switch (cancelPromo.status) {
-        case Status.SUCCESS :
-          if (!cancelPromo.isFound) {
-            notification = {type: 'is-danger', status: true, message: 'Hapus promo gagal!'}
-          } else {
-            if (this.state.cancelPromo.submitting) {
-              cart.cart.promo = null
-            }
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: cart.message}
-          break
-        default:
-          break
+    if (!isFetching(cancelPromo)) {
+      if (cancelPromo.status === Status.SUCCESS) {
+        if (this.state.cancelPromo.submitting) {
+          cart.cart.promo = null
+        }
       }
-      this.setState({ cancelPromo: { ...this.state.cancelPromo, submitting: false }, cart, notification })
+      this.setState({
+        cancelPromo: { ...this.state.cancelPromo, submitting: false },
+        cart,
+        notification: validateResponse(cancelPromo, 'Hapus promo gagal!') })
     }
   }
 
   render () {
-    const { cart, voucher, notification, rsAddToCart, cancelPromo, deleteItem, submitting } = this.state
+    const { localize, cart, voucher, notification, rsAddToCart, cancelPromo, deleteItem, submitting } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
 
@@ -303,7 +273,7 @@ class ShoppingCart extends Component {
                   {
                     deleteItem.submitting && deleteItem.productClick === item.id
                     ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' />
-                    : <a onClick={() => this.deleteProductPress(item)} className='remove-item'>Hapus</a>
+                    : <a onClick={() => this.deleteProductPress(item)} className='remove-item'>{localize.delete}</a>
                   }
                 </div>
                 <div className='info-purchase'>
@@ -311,7 +281,7 @@ class ShoppingCart extends Component {
                     <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
                       <div className='column is-half'>
                         <div className='rating-content is-left'>
-                          <strong>Harga Satuan</strong>
+                          <strong>{localize.price_piece}</strong>
                         </div>
                       </div>
                       <div className='column is-half'>
@@ -327,7 +297,7 @@ class ShoppingCart extends Component {
                     <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
                       <div className='column is-half is-paddingless'>
                         <div className='rating-content is-left'>
-                          <strong>Jumlah</strong>
+                          <strong>{localize.amount}</strong>
                         </div>
                       </div>
                       <div className='column is-half is-paddingless'>
@@ -341,14 +311,14 @@ class ShoppingCart extends Component {
                   </div>
                 </div>
                 <div className='see-all' onClick={() => Router.push('/shipping-detail?id=' + item.id)}>
-                  <span className='link'>Detail Pengiriman <span className='icon-arrow-right' /></span>
+                  <span className='link'>{localize.delivery} <span className='icon-arrow-right' /></span>
                 </div>
                 <div className='info-purchase'>
                   <div className='detail-rate is-purchase'>
                     <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
                       <div className='column is-half'>
                         <div className='rating-content is-left'>
-                          <strong>Subtotal</strong>
+                          <strong>{localize.sub_total}</strong>
                         </div>
                       </div>
                       <div className='column is-half'>
@@ -368,10 +338,10 @@ class ShoppingCart extends Component {
             <div className='detail-rate is-purchase'>
               <div className='columns code-voucher is-mobile is-multiline no-margin-bottom'>
                 <div className='column is-half is-paddingless'>
-                  <p>Punya Kode Voucher?</p>
+                  <p>{localize.have_voucher_code}</p>
                 </div>
                 <div className='column is-half is-paddingless has-text-right'>
-                  <a onClick={() => this.voucherShow()} className='js-option' data-target='#voucherCode'>Gunakan Kode</a>
+                  <a onClick={() => this.voucherShow()} className='js-option' data-target='#voucherCode'>{localize.use_voucher_code}</a>
                 </div>
               </div>
             </div>
@@ -400,7 +370,7 @@ class ShoppingCart extends Component {
             <div className='detail-rate is-purchase'>
               <div className='columns total-pay is-mobile is-multiline no-margin-bottom'>
                 <div className='column is-half is-paddingless'>
-                  <p>Total Pembayaran</p>
+                  <p>{localize.total_payment}</p>
                   <p className='price-pay'>Rp { RupiahFormat(totalPayment) }</p>
                 </div>
                 <div className='column is-half is-paddingless has-text-right'>
@@ -413,11 +383,11 @@ class ShoppingCart extends Component {
         <div className='sort-option' style={{ display: voucher.show && 'block' }}>
           <div className='notif-report add-voucher'>
             <div className='header-notif'>
-              <h3>Gunakan Kode Voucher</h3>
+              <h3>{localize.use_voucher_code}</h3>
               <span onClick={() => this.voucherShow()} className='icon-close' />
             </div>
             <div className='field'>
-              <label className='label' style={voucher.invalid ? errorStyle : {}}>Masukan Kode Voucher</label>
+              <label className='label' style={voucher.invalid ? errorStyle : {}}>{localize.input_voucher_code}</label>
               <p className='control'>
                 <input style={voucher.invalid ? errorStyle : {}} className='input' type='text' onChange={(e) => this.voucherOnChange(e)} value={voucher.code} />
                 <br />
@@ -425,7 +395,7 @@ class ShoppingCart extends Component {
                 <span style={errorStyle}>{ voucher.message }</span>
               </p>
             </div>
-            <button onClick={() => !voucher.submitting && this.voucherSubmit()} className={`button is-primary is-large is-fullwidth ${voucher.submitting && 'is-loading'}`}>Gunakan Kode Voucher</button>
+            <button onClick={() => !voucher.submitting && this.voucherSubmit()} className={`button is-primary is-large is-fullwidth ${voucher.submitting && 'is-loading'}`}>{localize.use_voucher_code}</button>
           </div>
         </div>
       </Section>

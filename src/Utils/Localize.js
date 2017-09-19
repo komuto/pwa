@@ -28,7 +28,19 @@ export default (active = 'ID') => {
     'signup_hero_info': ['Sudah punya akun?', 'Do you have account?'][index],
     'or': ['atau', 'or'][index],
     'lost_password': ['Lupa password', 'Lost password'][index],
-    'login_facebook': ['Login dengan facebook', 'Login with facebook'][index]
+    'login_facebook': ['Login dengan facebook', 'Login with facebook'][index],
+    // shopping cart
+    'shopping_cart': ['Keranjang belanja', 'Shopping cart'][index],
+    'delete': ['Hapus', 'Delete'][index],
+    'price_piece': ['Harga Satuan', 'Price Pieces'][index],
+    'amount': ['Jumlah', 'Amount'][index],
+    'delivery': ['Detail Pengiriman', 'Delivery services'][index],
+    'sub_total': ['Subtotal', 'Subtotal'][index],
+    'have_voucher_code': ['Punya Kode Voucher?', 'Got Promo Code?'][index],
+    'use_voucher_code': ['Gunakan Kode Voucher', 'Use Promo Code?'][index],
+    'total_payment': ['Total Pembayaran', 'Total Payment'][index],
+    'input_voucher_code': ['Masukan Kode Voucher', 'Input Promo Code'][index],
+    'idr': ['RP ', 'IDR'][index]
 
   }
 }
