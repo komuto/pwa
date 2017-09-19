@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Element, Link } from 'react-scroll'
+import { Element, Link, Events } from 'react-scroll'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // containers
@@ -91,6 +91,9 @@ class ProductList extends Component {
     if (!this.props.hiddenStoreProducts.isFound) {
       this.props.getHiddenStoreProducts()
     }
+    Events.scrollEvent.register('end', (to, element) => {
+      this.setState({ showListCatalog: !this.state.showListCatalog })
+    })
   }
 
   searchOnChange (event) {

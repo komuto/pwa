@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Element, Link } from 'react-scroll'
+import { Element, Link, Events } from 'react-scroll'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
@@ -58,15 +58,17 @@ class Store extends Component {
       NProgress.start()
       await this.props.dispatch(storeActions.getStores({ id }))
     }
+
     this.setState({ token: await GET_TOKEN.getToken() })
+
+    Events.scrollEvent.register('end', (to, element) => {
+      this.setState({ showListCatalog: !this.state.showListCatalog })
+    })
   }
 
   favouritePress = () => console.log('favouritePress()')
 
   showListCatalogPress = () => { this.setState({ showListCatalog: !this.state.showListCatalog }) }
-
-  // scrollToElement = (id) => scrollToComponent(this.Blue, { offset: 0, align: 'middle', duration: 500, ease: 'inCirc'})
-  scrollToElement = (id) => console.log('scrollToElement()')
 
   tabSelected = (selected) => {
     Router.push(`/store?id=${this.state.id}&tab=${selected}`)
@@ -166,7 +168,7 @@ class Store extends Component {
                     { priceBeforeDiscount }
                     <span className='price'>Rp { RupiahFormat(priceAfterDiscount) } </span>
                     <span className='wish'>
-                      <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked ? 'wishlisted' : ''}`} onClick={(e) => this.wishlistPress(e, product.id)} />
+                      <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked ? 'solid' : ''}`} onClick={(e) => this.wishlistPress(e, product.id)} />
                       { product.count_like }
                     </span>
                   </div>
@@ -221,8 +223,7 @@ class Store extends Component {
                     myStore={myStore}
                     showListCatalog={showListCatalog}
                     itemCatalog={(product, index) => this.itemCatalog(product, index)}
-                    showListCatalogPress={() => this.showListCatalogPress()}
-                    scrollToElement={(id) => console.log(id)} />
+                    showListCatalogPress={() => this.showListCatalogPress()} />
                 }
                 {
                   tabs.selected === 'Profile' &&
