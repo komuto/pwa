@@ -3,7 +3,7 @@ import React from 'react'
 import {Images} from '../Themes'
 import { NotificationPage } from '../Components/Notification'
 
-export default (props:any) => {
+export default (props) => {
   return <NotificationPage
     icon={Images.regSuccess}
     title='Selamat Datang di Komuto'

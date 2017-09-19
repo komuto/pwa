@@ -94,11 +94,13 @@ class TransactionDetailBankTransfer extends Component {
 
     console.log(komutoAccounts)
 
-    const navbar = {
-      searchBoox: false,
-      path: '/',
-      callBack: () => this.callBackPress(),
-      textPath: 'Detail Transaksi'
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        callBack: () => this.callBackPress(),
+        textPath: 'Detail Transaksi'
+      }
     }
 
     let isPromo = false
@@ -117,7 +119,7 @@ class TransactionDetailBankTransfer extends Component {
 
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar {...params} />
         {
           transaction.isFound &&
             <Section>

@@ -350,7 +350,7 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, pagination, hasMore } = this.state
+    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, hasMore } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
     let params = {

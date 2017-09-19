@@ -127,7 +127,7 @@ class ProductDetail extends Component {
     }
     return (
       <Content>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <Notification
           type='is-danger'
           isShow={notification.status}

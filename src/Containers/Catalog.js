@@ -53,7 +53,7 @@ class Catalog extends Component {
     console.log(storeCatalogProducts)
     return (
       <Content>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>

@@ -99,7 +99,7 @@ class Categories2 extends Component {
 
     return (
       <Content>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <Notification
           type='is-warning'
           isShow={notification.status}
