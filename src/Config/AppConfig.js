@@ -2,7 +2,7 @@ const AppConfig = {
   DEBUG: true,
   baseURL: 'http://localhost:8889/',
   apiURL: 'http://localhost:8889/',
-  languages: 'EN', // ID , EN
+  languages: 'ID', // ID , EN
   midTrans: {
     BASE_URL: 'https://app.sandbox.midtrans.com/snap/snap.js',
     ACCESS_KEY: {
