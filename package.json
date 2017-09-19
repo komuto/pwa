@@ -22,6 +22,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "apisauce": "^0.8.0",
+    "css-loader": "^0.28.7",
     "dotenv": "^4.0.0",
     "email-validator": "^1.0.7",
     "express": "^4.15.3",
