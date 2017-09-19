@@ -259,7 +259,7 @@ class Purchase extends Component {
         notification
       })
     }
-    console.log(addToCart)
+
     if (!addToCart.isLoading) {
       switch (addToCart.status) {
         case Status.SUCCESS :
@@ -308,7 +308,12 @@ class Purchase extends Component {
 
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
-    const insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
+    let insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
+    let deliveryPrice = 0
+    if (expeditionsPackage.selected.cost) {
+      deliveryPrice = expeditionsPackage.selected.cost
+    }
+    console.log('expeditionsPackage', expeditionsPackage)
 
     return (
       <Content style={{paddingBottom: 0}}>
@@ -509,7 +514,7 @@ class Purchase extends Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><span>Ongkos Kirim</span></div>
-                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(expeditionsPackage.selected.cost) }</span></div>
+                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(deliveryPrice) }</span></div>
                     </div>
                   </li>
                   <li>
@@ -522,8 +527,8 @@ class Purchase extends Component {
                 <ul className='total'>
                   <li>
                     <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Harga Barang</strong></div>
-                      <div className='column is-half has-text-right'><strong>Rp {RupiahFormat(product.price * amountProduct + expeditionsPackage.selected.cost)}</strong></div>
+                      <div className='column is-half'><strong>Total Harga Barang</strong></div>
+                      <div className='column is-half has-text-right'><strong>Rp {RupiahFormat(product.price * amountProduct + deliveryPrice)}</strong></div>
                     </div>
                   </li>
                 </ul>
