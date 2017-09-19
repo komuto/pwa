@@ -59,9 +59,13 @@ class ProductManage extends React.Component {
     const toProductList = () => {
       Router.push('/product-list')
     }
-    if (productDetail.isFound) {
-      // const p = productDetail.detail.product
-      // let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+    const priceAfterDiscount = () => {
+      if (productDetail.isFound) {
+        const p = productDetail.detail.product
+        return (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+      } else {
+        return '-'
+      }
     }
     const productName = productDetail.isFound ? productDetail.detail.product.name : ''
     let params = {
@@ -203,7 +207,7 @@ class ProductManage extends React.Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><strong>Uang yang akan Anda terima</strong></div>
-                      <div className='column is-half has-text-right'><span className='text-green'>Rp 1.633.500</span></div>
+                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
                     </div>
                   </li>
                 </ul>

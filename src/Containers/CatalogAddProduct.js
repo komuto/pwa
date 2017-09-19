@@ -10,7 +10,7 @@ import Wizard from '../Components/Wizard'
 import * as actionTypes from '../actions/catalog'
 import * as productActions from '../actions/product'
 // services
-import { Status } from '../Services/Status'
+import { validateResponse, isFetching, Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // themes
@@ -138,8 +138,8 @@ class CatalogAddProduct extends React.Component {
           break
       }
     }
-    if (listCatalog.isFound) {
-      this.setState({ listCatalog })
+    if (!isFetching(listCatalog)) {
+      this.setState({ listCatalog, notification: validateResponse(listCatalog, 'Daftar katalog tidak ditemukan') })
     }
     if (!statusCreateCatalog.isLoading && submitting.submitCatalog) {
       switch (statusCreateCatalog.status) {
@@ -321,9 +321,9 @@ class CatalogAddProduct extends React.Component {
               <div className='field'>
                 <form action='#' className='form'>
                   <div className='field'>
-                    <p className='control'>
+                    <div className='control'>
                       { this.renderListCatalog() }
-                    </p>
+                    </div>
                     {validation && this.renderValidation('selectCatalog', 'Mohon pilih katalog yang sesuai dengan produk Anda')}
                   </div>
                 </form>
