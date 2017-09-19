@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductMoveCatalogOther from '../src/Containers/ProductMoveCatalogOther'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Pindahkan ke Katalog Lain'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Pindahkan ke Katalog Lain'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Pindahkan ke Katalog Lain'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Pindahkan ke Katalog Lain'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductMoveCatalogOther {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <ProductMoveCatalogOther query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

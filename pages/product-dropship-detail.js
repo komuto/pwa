@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import CatalogAddProduct from '../src/Containers/CatalogAddProduct'
 
-const params = {
-  style: 'main seller bg-grey',
-  header: {
-    title: 'Detail Barang Dropshipper'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Detail Barang Dropshipper'
+const Index = (props) => {
+  const params = {
+    style: 'main seller bg-grey',
+    header: {
+      title: 'Detail Barang Dropshipper'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Detail Barang Dropshipper'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <CatalogAddProduct {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <CatalogAddProduct query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

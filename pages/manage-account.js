@@ -7,27 +7,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ManageAccount from '../src/Containers/ManageAccount'
 
-const toProfile = () => {
-  Router.push('/profile')
-}
-
-const params = {
-  style: 'main detail edit-data bg-grey',
-  header: {
-    title: 'Kelola Akun'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toProfile(),
-    textPath: 'Kelola Akun'
+const Index = (props) => {
+  const params = {
+    style: 'main detail edit-data bg-grey',
+    header: {
+      title: 'Kelola Akun'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/profile'),
+      textPath: 'Kelola Akun'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ManageAccount {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <ManageAccount query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

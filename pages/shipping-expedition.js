@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ShippingExpedition from '../src/Containers/ShippingExpedition'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Ekspedisi Pengiriman'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Ekspedisi Pengiriman'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Ekspedisi Pengiriman'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Ekspedisi Pengiriman'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ShippingExpedition {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <ShippingExpedition query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

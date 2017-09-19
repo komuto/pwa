@@ -6,22 +6,21 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import DiscussionDetail from '../src/Containers/DiscussionDetail'
 
-const params = {
-  style: 'main user bg-white',
-  header: {
-    title: 'Diskusi'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Diskusi'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'main user bg-white',
+    header: {
+      title: 'Diskusi'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Diskusi'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <DiscussionDetail query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <DiscussionDetail {...props} />
     </DefaultLayout>
   )
 }

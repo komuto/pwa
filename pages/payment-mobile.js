@@ -5,22 +5,22 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import PaymentForMobile from '../src/Containers/PaymentForMobile'
-// style custom
-const params = {
-  style: 'main no-padding-bottom bg-with',
-  header: {
-    title: 'Pembayaran'
-  },
-  navbar: {
-    searchBoox: false,
-    textPath: 'Pembayaran'
-  }
-}
 
 const Index = (props) => {
+  const params = {
+    style: 'main no-padding-bottom bg-with',
+    header: {
+      title: 'Pembayaran'
+    },
+    navbar: {
+      searchBoox: false,
+      textPath: 'Pembayaran'
+    }
+  }
+
   return (
-    <DefaultLayout params={params}>
-      <PaymentForMobile query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <PaymentForMobile {...props} />
     </DefaultLayout>
   )
 }

@@ -75,7 +75,7 @@ class ProductManage extends React.Component {
     }
     return (
       <div>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <section className='section is-paddingless has-shadow'>
           <div className='column is-paddingless' onClick={(e) => this.dropshippingOption(e)}>
             <div className='see-all'>

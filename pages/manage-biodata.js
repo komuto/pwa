@@ -7,27 +7,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ManageBiodata from '../src/Containers/ManageBiodata'
 
-const toManageAccount = () => {
-  Router.push('/manage-account')
-}
-
-const params = {
-  style: 'main user',
-  header: {
-    title: 'Kelola Akun'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Kelola Akun'
+const Index = (props) => {
+  const params = {
+    style: 'main user',
+    header: {
+      title: 'Kelola Akun'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/manage-account'),
+      textPath: 'Kelola Akun'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ManageBiodata {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <ManageBiodata query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

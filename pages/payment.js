@@ -5,23 +5,22 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Payment from '../src/Containers/Payment'
-// style custom
-const params = {
-  style: 'main no-padding-bottom bg-grey',
-  header: {
-    title: 'Pembayaran'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Pembayaran'
-  }
-}
 
 const Index = (props) => {
+  const params = {
+    style: 'main no-padding-bottom bg-grey',
+    header: {
+      title: 'Pembayaran'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Pembayaran'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <Payment query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <Payment {...props} />
     </DefaultLayout>
   )
 }

@@ -5,23 +5,22 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import PaymentDoku from '../src/Containers/PaymentDoku'
-// style custom
-const params = {
-  style: 'main detail bg-grey',
-  header: {
-    title: 'Doku Wallet'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Doku Wallet'
-  }
-}
 
 const Index = (props) => {
+  const params = {
+    style: 'main detail bg-grey',
+    header: {
+      title: 'Doku Wallet'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Doku Wallet'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <PaymentDoku query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <PaymentDoku {...props} />
     </DefaultLayout>
   )
 }

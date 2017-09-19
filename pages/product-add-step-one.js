@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductAddStepOne from '../src/Containers/ProductAddStepOne'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Upload Photo'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Upload Photo'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Upload Photo'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Upload Photo'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductAddStepOne {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <ProductAddStepOne />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

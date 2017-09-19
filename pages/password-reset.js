@@ -5,23 +5,24 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import PasswordReset from '../src/Containers/PasswordReset'
-// style custom
-const params = {
-  style: 'user',
-  header: {
-    title: 'Lupa Password'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/signin',
-    textPath: 'Lupa Password'
-  }
-}
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <PasswordReset />
-  </DefaultLayout>
-)
+const Index = (props) => {
+  const params = {
+    style: 'user',
+    header: {
+      title: 'Lupa Password'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/signin',
+      textPath: 'Lupa Password'
+    }
+  }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <PasswordReset {...props} />
+    </DefaultLayout>
+  )
+}
 
 export default ReduxPageWrapper(Index)

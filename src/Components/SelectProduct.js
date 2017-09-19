@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 class SelectProduct extends Component {
-
   render () {
     const { product, isSelected, handleSelectedProducts } = this.props
     return (

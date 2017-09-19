@@ -6,22 +6,21 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Purchase from '../src/Containers/Purchase'
 
-const params = {
-  style: 'main detail bg-grey',
-  header: {
-    title: 'Proses Pembelian'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Proses Pembelian'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'main detail bg-grey',
+    header: {
+      title: 'Proses Pembelian'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Proses Pembelian'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <Purchase query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <Purchase {...props} />
     </DefaultLayout>
   )
 }

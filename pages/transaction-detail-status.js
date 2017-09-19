@@ -5,23 +5,22 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import TransactionDetailStatus from '../src/Containers/TransactionDetailStatus'
-// style custom
-const params = {
-  style: 'main detail bg-grey',
-  header: {
-    title: 'Detail Pesanan'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Detail Pesanan'
-  }
-}
 
 const Index = (props) => {
+  const params = {
+    style: 'main detail bg-grey',
+    header: {
+      title: 'Detail Pesanan'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Detail Pesanan'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <TransactionDetailStatus query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <TransactionDetailStatus {...props} />
     </DefaultLayout>
   )
 }

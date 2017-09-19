@@ -5,17 +5,17 @@ import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import PaymentSuccess from '../src/Containers/PaymentSuccess'
-const params = {
-  style: 'main user user-success',
-  header: {
-    title: 'Pembayaran berhasil'
-  }
-}
 
 const Index = (props) => {
+  const params = {
+    style: 'main user user-success',
+    header: {
+      title: 'Pembayaran berhasil'
+    }
+  }
   return (
-    <DynamicNavBarLayout params={params}>
-      <PaymentSuccess />
+    <DynamicNavBarLayout {...params} {...props}>
+      <PaymentSuccess {...props} />
     </DynamicNavBarLayout>
   )
 }

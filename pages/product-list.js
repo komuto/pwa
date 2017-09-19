@@ -7,27 +7,22 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductList from '../src/Containers/ProductList'
 
-const toManageStore = () => {
-  Router.push('/manage-store')
-}
-
-const params = {
-  style: 'categories bg-grey',
-  header: {
-    title: 'Daftar Produk'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toManageStore(),
-    textPath: 'Daftar Produk'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'categories bg-grey',
+    header: {
+      title: 'Daftar Produk'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/manage-store'),
+      textPath: 'Daftar Produk'
+    }
+  }
   return (
-    <DynamicNavBarLayout params={params}>
-      <ProductList query={props.query} />
+    <DynamicNavBarLayout {...params} {...props}>
+      <ProductList {...props} />
     </DynamicNavBarLayout>
   )
 }

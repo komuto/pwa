@@ -7,27 +7,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import DataAddress from '../src/Containers/DataAddress'
 
-const toManageAccount = () => {
-  Router.push('/manage-account')
-}
-
-const params = {
-  style: 'main no-padding-bottom bg-grey',
-  header: {
-    title: 'Data Alamat'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toManageAccount(),
-    textPath: 'Data Alamat'
+const Index = (props) => {
+  const params = {
+    style: 'main no-padding-bottom bg-grey',
+    header: {
+      title: 'Data Alamat'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/manage-account'),
+      textPath: 'Data Alamat'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <DataAddress {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <DataAddress query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

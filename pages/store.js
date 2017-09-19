@@ -6,17 +6,16 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Store from '../src/Containers/Store'
 
-const params = {
-  style: 'main seller-info bg-grey',
-  header: {
-    title: 'Komuto'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'main seller-info bg-grey',
+    header: {
+      title: 'Komuto'
+    }
+  }
   return (
-    <DynamicNavBarLayout params={params}>
-      <Store query={props.query} />
+    <DynamicNavBarLayout {...params} {...props}>
+      <Store {...props} />
     </DynamicNavBarLayout>
   )
 }

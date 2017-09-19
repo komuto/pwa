@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import AddEditCatalog from '../src/Containers/AddEditCatalog'
 
-const params = {
-  style: 'main user',
-  header: {
-    title: 'Tambah Katalog'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Tambah Katalog'
+const Index = (props) => {
+  const params = {
+    style: 'main user',
+    header: {
+      title: 'Tambah Katalog'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Tambah Katalog'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <AddEditCatalog {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <AddEditCatalog />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

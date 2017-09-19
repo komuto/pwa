@@ -6,29 +6,25 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import InformationStore from '../src/Containers/InformationStore'
-// utils
 
-const toProfile = () => {
-  Router.push('/profile')
-}
-
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Informasi Toko'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toProfile(),
-    textPath: 'Informasi Toko'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Informasi Toko'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/profile'),
+      textPath: 'Informasi Toko'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <InformationStore {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <InformationStore query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

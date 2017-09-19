@@ -6,17 +6,18 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import PasswordResetVerification from '../src/Containers/PasswordResetVerification'
 
-const params = {
-  style: 'user',
-  header: {
-    title: 'Verifikasi Email'
+const Index = (props) => {
+  const params = {
+    style: 'user',
+    header: {
+      title: 'Verifikasi Email'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <PasswordResetVerification {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <PasswordResetVerification />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

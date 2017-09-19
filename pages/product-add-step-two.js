@@ -6,22 +6,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductAddStepTwo from '../src/Containers/ProductAddStepTwo'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Nama dan Kategori Produk'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Nama dan Kategori Produk'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Nama dan Kategori Produk'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Nama dan Kategori Produk'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductAddStepTwo {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <ProductAddStepTwo />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

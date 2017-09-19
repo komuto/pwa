@@ -6,17 +6,18 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Wishlist from '../src/Containers/Wishlist'
 
-const params = {
-  style: 'main wishlist',
-  header: {
-    title: 'Search'
+const Index = (props) => {
+  const params = {
+    style: 'main wishlist',
+    header: {
+      title: 'Search'
+    }
   }
+  return (
+    <DynamicNavBarLayout {...params} {...props}>
+      <Wishlist {...props} />
+    </DynamicNavBarLayout>
+  )
 }
-
-const Index = () => (
-  <DynamicNavBarLayout params={params}>
-    <Wishlist />
-  </DynamicNavBarLayout>
-)
 
 export default ReduxPageWrapper(Index)

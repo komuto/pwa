@@ -7,22 +7,23 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductStockManage from '../src/Containers/ProductStockManage'
 
-const params = {
-  style: 'main user',
-  header: {
-    title: 'Stock Barang'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Stock Barang'
+const Index = (props) => {
+  const params = {
+    style: 'main user',
+    header: {
+      title: 'Stock Barang'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Stock Barang'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductStockManage {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <ProductStockManage query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

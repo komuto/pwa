@@ -6,21 +6,20 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductDetail from '../src/Containers/ProductDetail'
 
-const params = {
-  style: 'categories detail bg-grey',
-  header: {
-    title: 'Produk Detail'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Produk Detail'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'categories detail bg-grey',
+    header: {
+      title: 'Produk Detail'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Produk Detail'
+    }
+  }
   return (
-    <DynamicNavBarLayout params={params} {...props}>
+    <DynamicNavBarLayout {...params} {...props}>
       <ProductDetail {...props} />
     </DynamicNavBarLayout>
   )

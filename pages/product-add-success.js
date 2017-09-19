@@ -6,17 +6,18 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductAddSuccess from '../src/Containers/ProductAddSuccess'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Produk berhasil ditambah'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Produk berhasil ditambah'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductAddSuccess {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <ProductAddSuccess />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

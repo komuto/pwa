@@ -6,22 +6,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import OwnerInformation from '../src/Containers/OwnerInformation'
 
-const params = {
-  style: 'main seller',
-  header: {
-    title: 'Info Pemilik'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Info Pemilik'
+const Index = (props) => {
+  const params = {
+    style: 'main seller',
+    header: {
+      title: 'Info Pemilik'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Info Pemilik'
+    }
   }
-}
 
-const Index = () => (
-  <DefaultLayout params={params}>
-    <OwnerInformation />
-  </DefaultLayout>
-)
+  return (
+    <DefaultLayout {...params} {...props}>
+      <OwnerInformation {...props} />
+    </DefaultLayout>
+  )
+}
 
 export default ReduxPageWrapper(Index)

@@ -6,22 +6,21 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Reviews from '../src/Containers/Report'
 
-const params = {
-  style: 'main user bg-white',
-  header: {
-    title: 'Laporkan Barang'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Laporkan Barang'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'main user bg-white',
+    header: {
+      title: 'Laporkan Barang'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Laporkan Barang'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <Reviews query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <Reviews {...props} />
     </DefaultLayout>
   )
 }

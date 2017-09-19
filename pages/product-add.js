@@ -7,27 +7,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductAdd from '../src/Containers/ProductAdd'
 
-const toProductList = () => {
-  Router.push('/product-list')
-}
-
-const params = {
-  style: 'main no-padding-bottom bg-grey',
-  header: {
-    title: 'Tambah Produk'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toProductList(),
-    textPath: 'Tambah Produk'
+const Index = (props) => {
+  const params = {
+    style: 'main no-padding-bottom bg-grey',
+    header: {
+      title: 'Tambah Produk'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/product-list'),
+      textPath: 'Tambah Produk'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <ProductAdd {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = () => (
-  <DefaultLayout params={params}>
-    <ProductAdd />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

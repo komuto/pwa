@@ -7,27 +7,24 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import CatalogList from '../src/Containers/CatalogList'
 
-const toStoreSetting = () => {
-  Router.push('/store-setting')
-}
-
-const params = {
-  style: 'main detail edit-data',
-  header: {
-    title: 'Katalog'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    callBack: () => toStoreSetting(),
-    textPath: 'Katalog'
+const Index = (props) => {
+  const params = {
+    style: 'main detail edit-data',
+    header: {
+      title: 'Katalog'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      callBack: () => Router.push('/store-setting'),
+      textPath: 'Katalog'
+    }
   }
+  return (
+    <DefaultLayout {...params} {...props}>
+      <CatalogList {...props} />
+    </DefaultLayout>
+  )
 }
-
-const Index = (props) => (
-  <DefaultLayout params={params}>
-    <CatalogList query={props.query} />
-  </DefaultLayout>
-)
 
 export default ReduxPageWrapper(Index)

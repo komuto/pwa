@@ -6,22 +6,21 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ShoppingCart from '../src/Containers/ShoppingCart'
 
-const params = {
-  style: 'main detail bg-grey',
-  header: {
-    title: 'Keranjang Belanja'
-  },
-  navbar: {
-    searchBoox: false,
-    path: '/',
-    textPath: 'Karanjang Belanja'
-  }
-}
-
 const Index = (props) => {
+  const params = {
+    style: 'main detail bg-grey',
+    header: {
+      title: 'Keranjang Belanja'
+    },
+    navbar: {
+      searchBoox: false,
+      path: '/',
+      textPath: 'Karanjang Belanja'
+    }
+  }
   return (
-    <DefaultLayout params={params}>
-      <ShoppingCart query={props.query} />
+    <DefaultLayout {...params} {...props}>
+      <ShoppingCart {...props} />
     </DefaultLayout>
   )
 }
