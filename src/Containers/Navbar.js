@@ -41,7 +41,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { deleteButton, navbar, searchActive, moreButton, productId, callBack } = this.props.params
+    const { deleteButton, navbar, searchActive, moreButton, productId, callBack } = this.props
     const { path, textPath, searchBoox } = navbar
     // const { searchBoox, , path, textPath, searchActive, moreButton, productId, callBack } = this.props.params
     // const { activeSearch, activeMoreOptions } = this.state
