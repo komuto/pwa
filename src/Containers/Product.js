@@ -351,34 +351,36 @@ class MyProduct extends Component {
     const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, pagination } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
-    let navbar = {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Produk',
-      searchActive: !!q
+    let params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: 'Produk',
+        searchActive: !!q
+      }
     }
 
     let hasMore = products.length >= pagination.limit
     let isProductEmpty = productBySearch.isFound && products.length < 1
 
-    navbar.textPath = (categories.name) && categories.name
-    navbar.textPath = (q) && q
+    params.navbar.textPath = (categories.name) && categories.name
+    params.navbar.textPath = (q) && q
     if (sort !== undefined) {
       switch (sort) {
         case 'newest':
-          navbar.textPath = 'Produk Terbaru'
+          params.navbar.textPath = 'Produk Terbaru'
           break
         case 'cheapest':
-          navbar.textPath = 'Produk Termurah'
+          params.navbar.textPath = 'Produk Termurah'
           break
         case 'expensive':
-          navbar.textPath = 'Produk Termahal'
+          params.navbar.textPath = 'Produk Termahal'
           break
         case 'selling':
-          navbar.textPath = 'Produk Terlaris'
+          params.navbar.textPath = 'Produk Terlaris'
           break
         default:
-          navbar.textPath = 'Produk'
+          params.navbar.textPath = 'Produk'
           break
       }
     }
@@ -387,7 +389,7 @@ class MyProduct extends Component {
 
     return (
       <Content>
-        <Navbar params={navbar} />
+        <Navbar params={params} />
         <Notification
           type='is-danger'
           isShow={notification.status}
