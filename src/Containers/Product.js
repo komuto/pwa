@@ -56,6 +56,7 @@ class MyProduct extends Component {
       filterActive: false,
       viewActive: 'list',
       selectedSort: null,
+      hasMore: true,
       fetching: false,
       pagination: {
         page: 1,
@@ -250,6 +251,7 @@ class MyProduct extends Component {
 
     // product data
     if (!isFetching(productBySearch)) {
+      let hasMore = productBySearch.products.length > 0
       if (!this.filterRealizationStatus) {
         // jika page di state kurang dari page di props maka data products di tambahkan
         if (stateProductBySearch.meta.page < productBySearch.meta.page) {
@@ -257,10 +259,10 @@ class MyProduct extends Component {
         } else {
           products = this.state.productBySearch.products
         }
-        this.setState({ fetching: false, productBySearch: { ...productBySearch, products }, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
+        this.setState({ fetching: false, hasMore, productBySearch: { ...productBySearch, products }, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
       } else {
         this.filterRealizationStatus = false
-        this.setState({ productBySearch, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
+        this.setState({ productBySearch, hasMore, notification: validateResponse(productBySearch, 'Data produk tidak ditemukan') })
       }
     }
 
@@ -348,7 +350,7 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, pagination } = this.state
+    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, pagination, hasMore } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
     let params = {
@@ -360,7 +362,6 @@ class MyProduct extends Component {
       }
     }
 
-    let hasMore = products.length >= pagination.limit
     let isProductEmpty = productBySearch.isFound && products.length < 1
 
     params.navbar.textPath = (categories.name) && categories.name
@@ -389,7 +390,7 @@ class MyProduct extends Component {
 
     return (
       <Content>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <Notification
           type='is-danger'
           isShow={notification.status}
