@@ -187,7 +187,7 @@ class ProductList extends Component {
     }
     return (
       <Content>
-        <Navbar params={params} />
+        <Navbar {...params} />
         <div className='nav-tabs'>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_SHOW_IN_PAGE && 'active'}>Ditampilkan di Toko</a>
           <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_HIDDEN_IN_PAGE && 'active'}>Disembunyikan</a>
