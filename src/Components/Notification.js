@@ -2,6 +2,11 @@
 import React from 'react'
 import { ButtonFullWidthLink } from './Button'
 
+export const FieldError = (props) => {
+  let message = props.message !== undefined ? props.message : '* wajib diisi'
+  return <i style={{ color: 'red' }}>{message}</i>
+}
+
 export const NotificationPage = (props) => {
   return (
     <div className='main user user-success'>
@@ -28,7 +33,7 @@ export const NotificationPage = (props) => {
  // type : is-primary, is-info, is-success, is-warning, is-danger
  // isType : true/false
  // message : message
-export default (props:any) => {
+export default (props) => {
   if (!props.isShow) return null
   return (
     <div className={`notification ${props.type}`}>

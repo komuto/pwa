@@ -2,10 +2,13 @@ import React from 'react'
 import Rating from 'react-rating'
 // themes
 import Images from '../Themes/Images'
+// component
+import MyImage from './MyImage'
 
-export default (props:any) => {
+export default (props) => {
+  let size = props.size !== undefined ? props.size : 16
   return <Rating
     {...props}
-    empty={<img src={Images.startDisabled} style={{width: '16px', height: '16px'}} className='icon' />}
-    full={<img src={Images.startEnabled} style={{width: '16px', height: '16px'}} className='icon' />} />
+    empty={<MyImage src={Images.startDisabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />}
+    full={<MyImage src={Images.startEnabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />} />
 }

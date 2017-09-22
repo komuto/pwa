@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import moment from 'moment'
+import Router from 'next/router'
 // actions
 import * as transactionActions from '../actions/transaction'
 // component
@@ -10,7 +11,7 @@ import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
 // services
 import { validateResponse, isFetching } from '../Services/Status'
-import { INVOICE_MESSAGE } from './TransactionDetail'
+import { INVOICE_TRANSACTION_CLASS, INVOICE_TRANSACTION_MESSAGE, SHIPPING_SENDER_STATUS } from './TransactionDetail'
 
 class TransactionDetailStatus extends Component {
   constructor (props) {
@@ -42,9 +43,10 @@ class TransactionDetailStatus extends Component {
   }
 
   render () {
-    const { buyerInvoiceDetail, notification } = this.state
+    const { buyerInvoiceDetail, id, invoiceId, notification } = this.state
     const { invoice } = buyerInvoiceDetail
-    console.log(invoice)
+    if (!buyerInvoiceDetail.isFound) return null
+    let invoiceStatus = invoice.transaction_status
     return (
       <Content>
         <div className='nav-tabs'>
@@ -58,116 +60,185 @@ class TransactionDetailStatus extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            buyerInvoiceDetail.isFound &&
-            <div>
-              <section className='section is-paddingless has-shadow'>
-                <div className='container is-fluid'>
-                  <div className='title'>
-                    <br />
-                    <h3>Info Penjual</h3>
-                  </div>
+          // barang sudah dikirim
+          invoiceStatus === 3 &&
+          <div className='box notif-payment-waiting'>
+            <article className='media'>
+              <div className='media-left top'>
+                <i className='icon-info-blue' />
+              </div>
+              <div className='media-content'>
+                <div className='content'>
+                  <p>
+                    <strong>Barang sudah dikirim oleh Seller. Jika dalam waktu 14 hari Anda tidak mengkonfirmasi menerima barang. Maka otomatis uang Anda akan diteruskan ke Seller.</strong>
+                  </p>
                 </div>
-                <div className='payment-detail step-pay'>
-                  <ul>
-                    <li>
-                      <div className='columns is-mobile is-multiline no-margin-bottom'>
-                        <div className='column'>
-                          <div className='box'>
-                            <div className='media'>
-                              <div className='media-left is-full-bordered'>
-                                <figure className='image list-transaction sm'>
-                                  <a><MyImage src={invoice.store.logo} alt='Image' /></a>
-                                </figure>
-                              </div>
-                              <div className='media-content middle is-right-content'>
-                                <div className='content'>
-                                  <h4>{invoice.store.name}</h4>
-                                </div>
-                              </div>
-                              <div className='right-top'>
-                                <a className='button is-primary is-outlined'>Kirim Pesan</a>
-                              </div>
-                            </div>
+              </div>
+            </article>
+            </div>
+        }
+        <section className='section is-paddingless has-shadow'>
+          <div className='container is-fluid'>
+            <div className='title'>
+              <br />
+              <h3>Info Penjual</h3>
+            </div>
+          </div>
+          <div className='payment-detail step-pay'>
+            <ul>
+              <li>
+                <div className='columns is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <div className='box'>
+                      <div className='media'>
+                        <div className='media-left is-full-bordered'>
+                          <figure className='image list-transaction sm'>
+                            <a><MyImage src={invoice.store.logo} alt='Image' /></a>
+                          </figure>
+                        </div>
+                        <div className='media-content middle is-right-content'>
+                          <div className='content'>
+                            <h4>{invoice.store.name}</h4>
                           </div>
                         </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </section>
-              <section className='section is-paddingless has-shadow'>
-                <div className='container is-fluid'>
-                  <div className='title'>
-                    <h3>Info Status</h3>
-                  </div>
-                </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>No Invoice</strong>
-                        </div>
-                      </div>
-                      <div className='column is-half'>
-                        <div className='rating-content item-qty has-text-right'>
-                          <span className='has-text-left'>{invoice.invoice_number}</span>
+                        <div className='right-top'>
+                          <a className='button is-primary is-outlined'>Kirim Pesan</a>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>Tanggal Transaksi</strong>
-                        </div>
-                      </div>
-                      <div className='column is-half'>
-                        <div className='rating-content item-qty has-text-right'>
-                          <span className='has-text-left'>{moment.unix(invoice.created_at).format('Do MMMM YYYY')}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>Status Barang</strong>
-                        </div>
-                      </div>
-                      <div className='column is-half'>
-                        <div className='rating-content item-qty has-text-right'>
-                          <div className='item-status md right reject'>{INVOICE_MESSAGE[invoice.status]}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column'>
-                        <div className='rating-content is-left'>
-                          <span>Dana untuk pembelian barang ini telah dikembalikan ke saldo Anda. Silahkan memeriksa Saldo Anda.</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <section className='section is-paddingless'>
-                <div className='container is-fluid'>
-                  <a className='button is-primary is-outlined is-large is-fullwidth'>Lihat Saldo</a>
-                </div>
-              </section>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section className='section is-paddingless has-shadow'>
+          <div className='container is-fluid'>
+            <div className='title'>
+              <h3>Info Status</h3>
             </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>No Invoice</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span className='has-text-left'>{invoice.invoice_number}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Tanggal Transaksi</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <span className='has-text-left'>{moment.unix(invoice.created_at).format('Do MMMM YYYY')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Status Barang</strong>
+                  </div>
+                </div>
+                <div className='column is-half'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <div className={`item-status md right ${INVOICE_TRANSACTION_CLASS[invoice.transaction_status]}`}>{INVOICE_TRANSACTION_MESSAGE[invoice.transaction_status]}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {
+            // barang reejected
+            invoiceStatus === 0 &&
+            <div className='info-purchase'>
+              <div className='detail-rate is-purchase'>
+                <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <div className='rating-content is-left'>
+                      <span>Dana untuk pembelian barang ini telah dikembalikan ke saldo Anda. Silahkan memeriksa Saldo Anda.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
           }
+        </section>
+        {
+          // barang reejected
+          invoiceStatus === 0 &&
+          <section className='section is-paddingless'>
+            <div className='container is-fluid'>
+              <a className='button is-primary is-outlined is-large is-fullwidth'>Lihat Saldo</a>
+            </div>
+            </section>
+        }
+        {
+          invoiceStatus === 3 &&
+          <div>
+            <section className='section is-paddingless'>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half'>
+                      <div className='rating-content is-left'>
+                        <strong>No Resi</strong>
+                      </div>
+                    </div>
+                    <div className='column is-half'>
+                      <div className='rating-content item-qty has-text-right'>
+                        <span className='no-resi is-delivered'>{invoice.shipping.airway_bill}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half'>
+                      <div className='rating-content is-left'>
+                        <strong>Status Resi</strong>
+                      </div>
+                    </div>
+                    <div className='column is-half'>
+                      <div className='rating-content item-qty has-text-right'>
+                        <span>{SHIPPING_SENDER_STATUS[invoice.shipping.sender_status]}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section className='section is-paddingless'>
+              <div className='payment-detail action'>
+                <ul>
+                  <li>
+                    <a onClick={() => Router.push(`/transaction-confirmation?id=${id}&idInv=${invoiceId}`)} className='button is-primary is-large is-fullwidth'>Barang sudah saya terima</a>
+                  </li>
+                </ul>
+              </div>
+            </section>
+            </div>
+        }
       </Content>
     )
   }

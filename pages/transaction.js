@@ -11,7 +11,7 @@ import Menu from '../src/Config/Menu'
 const Index = (props) => {
   const { localize } = props
   const params = {
-    style: 'main no-padding-bottom bg-grey',
+    style: 'main transaction-page bg-white',
     header: {
       title: localize.transaction
     },

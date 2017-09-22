@@ -19,9 +19,11 @@ export const PAYMENT_STATUS = ['add', 'checkout', 'delete', 'Menunggu Pembayaran
 export const PAYMENT_ICON = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
 export const PAYMENT_CLASS = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
 // invoce status
-export const INVOICE_STATUS = ['REJECTED', 'WAITING', 'PROCEED', 'SENDING', 'RECEIVED', 'PROBLEM', 'COMPLAINT_DONE']
-export const INVOICE_CLASS = ['reject', 'waiting', 'process', 'sending', 'accepted', 'has-trouble', 'has-complaint']
-export const INVOICE_MESSAGE = ['Ditolak oleh Seller', 'Menunggu Konfirmasi Seller', 'Diproses oleh Seller', 'Barang sudah dikirim', 'Barang sudah diterima', 'Terdapat barang bermasalah', 'Komplain telah selesai']
+export const INVOICE_TRANSACTION_STATUS = ['REJECTED', 'WAITING', 'PROCEED', 'SENDING', 'RECEIVED', 'PROBLEM', 'COMPLAINT_DONE']
+export const INVOICE_TRANSACTION_CLASS = ['reject', 'waiting', 'process', 'delivered', 'accepted', 'has-trouble', 'has-complaint']
+export const INVOICE_TRANSACTION_MESSAGE = ['Ditolak oleh Seller', 'Menunggu Konfirmasi Seller', 'Diproses oleh Seller', 'Barang sudah dikirim', 'Barang sudah diterima', 'Terdapat barang bermasalah', 'Komplain telah selesai']
+// shipping
+export const SHIPPING_SENDER_STATUS = ['DEFAULT', 'ACCEPT', 'DECLINE', 'SENT']
 
 class TransactionDetail extends Component {
   constructor (props) {
@@ -58,10 +60,10 @@ class TransactionDetail extends Component {
     let paymentStatus = bucket.status
     let paymentIcon = PAYMENT_ICON[paymentStatus - 3]
     let paymentClass = PAYMENT_CLASS[paymentStatus - 3]
-    let priceAfterPromo = 0
+    let price = summary_transaction.total_price
+    let priceAfterPromo = price
     let discount = 0
     if (bucket.promo) {
-      let price = summary_transaction.total_price
       let percentage = bucket.promo.percentage / 100
       let nominal = bucket.promo.nominal
       if (bucket.promo.type === 0) {
@@ -73,6 +75,8 @@ class TransactionDetail extends Component {
         priceAfterPromo = price - discount
       }
     }
+
+    console.log('transaction', transaction)
 
     return (
       <Content>
@@ -238,7 +242,7 @@ class TransactionDetail extends Component {
                 {
                   paymentStatus === 6 &&
                   <div className='block-status has-text-right'>
-                    <div className={`item-status md ${INVOICE_CLASS[paymentStatus]}`}>{INVOICE_MESSAGE[paymentStatus]}</div>
+                    <div className={`item-status md ${INVOICE_TRANSACTION_CLASS[invoice.transaction_status]}`}>{INVOICE_TRANSACTION_MESSAGE[invoice.transaction_status]}</div>
                   </div>
                 }
               </section>
