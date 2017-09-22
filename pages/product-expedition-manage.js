@@ -1,28 +1,26 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import CatalogAddProduct from '../src/Containers/CatalogAddProduct'
+import ProductExpeditionManage from '../src/Containers/ProductExpeditionManage'
 
 const Index = (props) => {
   const params = {
-    style: 'main seller bg-grey',
+    style: 'main seller',
     header: {
-      title: 'Tempatkan di Katalog'
+      title: 'Ekspedisi Pengiriman'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      callBack: () => Router.push('/dropship'),
-      textPath: 'Tempatkan di Katalog'
+      textPath: 'Ekspedisi Pengiriman'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <CatalogAddProduct {...props} />
+      <ProductExpeditionManage {...props} />
     </DefaultLayout>
   )
 }
