@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Router from 'next/router'
 import NProgress from 'nprogress'
 // component
 import Notification from '../Components/Notification'
@@ -117,7 +116,7 @@ class ProductUpdateNameCategory extends Component {
       return
     }
     this.submiting = true
-    const brandId = form.hasOwnProperty('brand_id') ? form.brand_id : ''
+    const brandId = form.hasOwnProperty('brand_id') ? form.brand_id : 0
     const params = {
       id: this.state.id.split('.')[0],
       name: form.name,
@@ -149,7 +148,7 @@ class ProductUpdateNameCategory extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { storeProductDetail, form, convertToForm } = this.state
-    const { category, alterProducts, subCategory, subCategory2, subCategory3, brands, tempCreateProduct } = nextProps
+    const { category, alterProducts, subCategory, subCategory2, subCategory3, brands } = nextProps
 
     if (!category.isLoading) {
       NProgress.done()
@@ -175,11 +174,6 @@ class ProductUpdateNameCategory extends Component {
       NProgress.done()
       if (brands.status === Status.SUCCESS) this.setState({ brands })
       if (brands.status === Status.OFFLINE || brands.status === Status.FAILED) this.setState({ notification: {status: true, message: brands.message} })
-    }
-
-    if (this.submiting && tempCreateProduct.stepTwo.isFound) {
-      this.submiting = false
-      Router.push('/product-add-step-three')
     }
 
     if (nextProps.storeProductDetail.isFound && convertToForm) {
@@ -209,7 +203,8 @@ class ProductUpdateNameCategory extends Component {
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
-      this.setState({ submiting: false, notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Photo', 'Gagal memperbarui Photo') })
+      this.submiting = false
+      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Photo', 'Gagal memperbarui Photo') })
     }
   }
 
