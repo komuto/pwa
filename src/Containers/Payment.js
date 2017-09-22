@@ -40,7 +40,7 @@ class Payment extends Component {
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
     this.submiting = {
       balance: false,
-      cart: false,
+      cart: false
     }
   }
 
