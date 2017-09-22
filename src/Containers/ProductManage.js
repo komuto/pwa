@@ -6,7 +6,7 @@ import Router from 'next/router'
 import { Navbar } from './Navbar'
 import NProgress from 'nprogress'
 // actions
-import * as productActions from '../actions/product'
+import * as storesActions from '../actions/stores'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -15,7 +15,7 @@ class ProductManage extends React.Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      storeProductDetail: props.storeProductDetail || null,
       submitting: false
     }
   }
@@ -35,18 +35,39 @@ class ProductManage extends React.Component {
     Router.push(`/product-status-manage?id=${this.state.id}`)
   }
 
+  changeCatalog (e) {
+    e.preventDefault()
+    Router.push(`/product-catalog-manage?id=${this.state.id}`)
+  }
+
+  updatePhoto (e) {
+    e.preventDefault()
+    Router.push(`/product-photo-manage?id=${this.state.id}`)
+  }
+
+  updateExpedition (e) {
+    e.preventDefault()
+    Router.push(`/product-expedition-manage?id=${this.state.id}`)
+  }
+
+  productUpdateNamaCategory (e) {
+    e.preventDefault()
+    Router.push(`/product-update-name-category?id=${this.state.id}`)
+  }
+
   componentDidMount () {
     const { id } = this.state
     if (id !== '') {
-      this.props.getProduct({ id })
+      const productId = id.split('.')[0]
+      this.props.getStoreProductDetail({ id: productId })
     }
     NProgress.start()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail } = nextProps
-    if (productDetail.isFound) {
-      this.setState({ productDetail })
+    const { storeProductDetail } = nextProps
+    if (storeProductDetail.isFound) {
+      this.setState({ storeProductDetail })
       NProgress.done()
     }
     console.log('nextProps ', nextProps)
@@ -55,19 +76,62 @@ class ProductManage extends React.Component {
   render () {
     console.log('state ', this.state)
     console.log('props ', this.props)
-    const { productDetail } = this.state
+    const { storeProductDetail } = this.state
     const toProductList = () => {
       Router.push('/product-list')
     }
-    const priceAfterDiscount = () => {
-      if (productDetail.isFound) {
-        const p = productDetail.detail.product
-        return (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+    const discount = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        return (p.is_discount) ? p.discount : 0
       } else {
-        return '-'
+        return ''
       }
     }
-    const productName = productDetail.isFound ? productDetail.detail.product.name : ''
+    const priceAfterDiscount = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        return (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+      } else {
+        return ''
+      }
+    }
+    const commision = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        const priceDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+        return priceDiscount * (10 / 100)
+      } else {
+        return ''
+      }
+    }
+    const moneyReceive = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        const priceDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+        const commision = priceDiscount * (10 / 100)
+        return priceDiscount - commision
+      } else {
+        return ''
+      }
+    }
+    const productType = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        return (p.condition === 1) ? 'Baru' : 'Bekas'
+      } else {
+        return ''
+      }
+    }
+    const insuranceType = () => {
+      if (storeProductDetail.isFound) {
+        const p = storeProductDetail.storeProductDetail.product
+        return (p.is_insurance) ? 'Wajib' : 'Optional'
+      } else {
+        return ''
+      }
+    }
+    const productName = storeProductDetail.isFound ? storeProductDetail.storeProductDetail.product.name : ''
     let params = {
       navbar: {
         searchBoox: false,
@@ -84,16 +148,16 @@ class ProductManage extends React.Component {
           <div className='column is-paddingless' onClick={(e) => this.dropshippingOption(e)}>
             <div className='see-all'>
               <span className='link black js-option'>Dropshipping
-                <span className='kurir'>{productDetail.isFound && productDetail.detail.product.is_dropship ? 'Ya' : 'Tidak'}</span>
-                <span className={`${productDetail.isLoading ? 'button self right is-loading' : 'icon-arrow-right'}`} />
+                <span className='kurir'>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.product.is_dropship ? 'Ya' : 'Tidak'}</span>
+                <span className={`${storeProductDetail.isLoading ? 'button self right is-loading' : 'icon-arrow-right'}`} />
               </span>
             </div>
             <p className='error-msg'>Mohon pilih status drop shipping terlebih dahulu</p>
           </div>
           <div className='column is-paddingless' onClick={(e) => this.changeStock(e)}>
             <div className='see-all'>
-              <span className='link black js-option' >Stock
-                <span className='kurir'>{productDetail.isFound && productDetail.detail.product.stock}</span>
+              <span className='link black js-option'>Stock
+                <span className='kurir'>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.product.stock}</span>
                 <span className='icon-arrow-right' />
               </span>
             </div>
@@ -102,7 +166,7 @@ class ProductManage extends React.Component {
           <div className='column is-paddingless' onClick={(e) => this.changeStatus(e)}>
             <div className='see-all'>
               <span className='link black js-option'>Status
-                <span className='kurir'>{productDetail.isFound && productDetail.detail.product.status === 1 ? 'Ditampilkan di Toko' : 'Disembunyikan di Toko'}</span>
+                <span className='kurir'>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.product.status === 1 ? 'Ditampilkan di Toko' : 'Disembunyikan di Toko'}</span>
                 <span className='icon-arrow-right' />
               </span>
             </div>
@@ -113,10 +177,10 @@ class ProductManage extends React.Component {
           <div className='info-purchase'>
             <div className='detail-purchase summary'>
               <h3>Foto barang yang diterima</h3>
-              <a className='btn-change js-option'>Ganti</a>
+              <a className='btn-change js-option' onClick={(e) => this.updatePhoto(e)}>Ganti</a>
               <div className='list-items'>
                 <div className='columns is-mobile is-multiline'>
-                  { productDetail.isFound && productDetail.detail.images.map(image => {
+                  { storeProductDetail.isFound && storeProductDetail.storeProductDetail.images.map(image => {
                     return (
                       <div className='column' key={image.id}>
                         <img src={image.file} alt='komuto' />
@@ -128,7 +192,7 @@ class ProductManage extends React.Component {
             </div>
           </div>
         </section>
-        <section className='section is-paddingless has-shadow'>
+        <section className='section is-paddingless has-shadow' onClick={(e) => this.productUpdateNamaCategory(e)}>
           <div className='info-purchase'>
             <div className='detail-purchase summary'>
               <h3>Nama dan Kategori</h3>
@@ -139,7 +203,7 @@ class ProductManage extends React.Component {
                     <div className='columns custom is-mobile'>
                       <div className='column'>
                         <strong>Nama Produk</strong>
-                        <span>{productDetail.isFound && productDetail.detail.product.name}</span>
+                        <span>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.product.name}</span>
                       </div>
                     </div>
                   </li>
@@ -147,7 +211,7 @@ class ProductManage extends React.Component {
                     <div className='columns custom is-mobile'>
                       <div className='column'>
                         <strong>Kategori</strong>
-                        <span>{productDetail.isFound && productDetail.detail.category.name}</span>
+                        <span>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.category.full_name}</span>
                       </div>
                     </div>
                   </li>
@@ -155,7 +219,7 @@ class ProductManage extends React.Component {
                     <div className='columns custom is-mobile'>
                       <div className='column'>
                         <strong>Brand</strong>
-                        <span>{productDetail.isFound && productDetail.detail.product.brand_id}</span>
+                        <span>{storeProductDetail.isFound && storeProductDetail.storeProductDetail.brand.name}</span>
                       </div>
                     </div>
                   </li>
@@ -164,7 +228,7 @@ class ProductManage extends React.Component {
                       <div className='column'>
                         <strong>Deskripsi Produk</strong>
                         <span>
-                          {productDetail.isFound && productDetail.detail.product.description}
+                          {storeProductDetail.isFound && storeProductDetail.storeProductDetail.product.description}
                         </span>
                       </div>
                     </div>
@@ -175,160 +239,104 @@ class ProductManage extends React.Component {
           </div>
         </section>
         <section className='section is-paddingless has-shadow'>
-          <div className='info-purchase'>
-            <div className='detail-purchase summary'>
-              <h3>Harga dan Spesifikasi</h3>
-              <a className='btn-change js-option'>Ganti</a>
-            </div>
-            <div className='product-spec'>
-              <ul>
-                <li>
-                  <strong>Rp { RupiahFormat(productDetail.isFound && productDetail.detail.product.price)}</strong>
-                  <span />
-                </li>
-              </ul>
-            </div>
-            <div className='detail'>
-              <div className='detail-result'>
-                <h3 className='title-content'>Rincian Penerimaan</h3>
-                <ul>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Harga Jual</strong></div>
-                      <div className='column is-half has-text-right'><span>Rp 1.650.000</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Komisi  (10%  dari Rp 1.650.000)</strong></div>
-                      <div className='column is-half has-text-right'><span>Rp 16.500</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Uang yang akan Anda terima</strong></div>
-                      <div className='column is-half has-text-right'><span>Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
-                    </div>
-                  </li>
-                </ul>
+          <div className='content-header'>
+            <h3>Harga dan Spesifikasi</h3>
+            <a className='btn-change'>Ubah</a>
+          </div>
+          <div className='content-body'>
+            <div className='columns left-style is-mobile'>
+              <div className='column is-half'><strong>Harga</strong></div>
+              <div className='column is-half has-text-right'>
+                <span>Rp { RupiahFormat(storeProductDetail.isFound ? storeProductDetail.storeProductDetail.product.price : '')}</span>
               </div>
+            </div>
+            <div className='columns left-style is-mobile'>
+              <div className='column is-half'><strong>Diskon</strong></div>
+              <div className='column is-half has-text-right'><span>{discount()} %</span></div>
+            </div>
+            <div className='info-purchase'>
+              <div className='detail'>
+                <div className='detail-result'>
+                  <h3 className='title-content'>Rincian Penerimaan</h3>
+                  <ul>
+                    <li>
+                      <div className='columns custom is-mobile'>
+                        <div className='column is-half'><span>Harga Jual</span></div>
+                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(priceAfterDiscount()) }</strong></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div className='columns custom is-mobile'>
+                        <div className='column is-half'><span>Komisi  (10%  dari Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
+                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision()) }</strong></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div className='columns custom is-mobile'>
+                        <div className='column is-half'><span>Uang yang akan Anda terima</span></div>
+                        <div className='column is-half has-text-right'>
+                          <strong className='text-green'>Rp { RupiahFormat(moneyReceive()) }</strong>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className='columns left-style no-border is-mobile'>
+              <div className='column is-half'><strong>Berat</strong></div>
+              <div className='column is-half has-text-right'><span>{storeProductDetail.isFound ? storeProductDetail.storeProductDetail.product.weight : ''} Kg</span></div>
+            </div>
+            <div className='columns left-style is-mobile'>
+              <div className='column is-half'><strong>Jenis Produk</strong></div>
+              <div className='column is-half has-text-right'><span>{productType()}</span></div>
+            </div>
+            <div className='columns left-style is-mobile'>
+              <div className='column is-half'><strong>Asuransi</strong></div>
+              <div className='column is-half has-text-right'><span>{insuranceType()}</span></div>
             </div>
           </div>
         </section>
         <section className='section is-paddingless has-shadow'>
-          <div className='column is-paddingless'>
-            <div className='see-all'>
-              <span className='link black js-option' >Kurir Pengiriman <span className='kurir'>JNE</span><span className='icon-arrow-down' /></span>
-            </div>
-            <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
+          <div className='content-header'>
+            <h3>Katalog</h3>
+            <a className='btn-change' onClick={(e) => this.changeCatalog(e)}>Ubah</a>
           </div>
-          <div className='column is-paddingless'>
-            <div className='see-all'>
-              <span className='link black js-option'>Pilih Paket Pengiriman <span className='kurir'>Reguler</span><span className='icon-arrow-down' /></span>
-            </div>
-            <p className='error-msg'>Mohon Pilih Paket Pengiriman terlebih dahulu</p>
-          </div>
-          <div className='column is-paddingless'>
-            <div className='see-all'>
-              <span className='link black js-option'>Asuransi <span className='kurir'>Tidak</span><span className='icon-arrow-down' /></span>
-            </div>
-            <p className='error-msg'>Mohon Pilih Paket Pengiriman terlebih dahulu</p>
+          <div className='content-body'>
+            <strong>{storeProductDetail.isFound ? storeProductDetail.storeProductDetail.catalog.name : ''}</strong>
           </div>
         </section>
         <section className='section is-paddingless has-shadow'>
-          <div className='info-purchase'>
-            <div className='detail-purchase remark'>
-              <h3>Catatan (Optional)</h3>
-              <div className='field'>
-                <p className='control'>
-                  <textarea className='textarea' placeholder='Contoh: Saya pesan barang yang warna merah' rows='2' />
-                </p>
-              </div>
-            </div>
+          <div className='content-header'>
+            <h3>Grosir</h3>
+            <a className='btn-change'>Ubah</a>
+          </div>
+          <div className='content-body'>
+            { storeProductDetail.isFound && storeProductDetail.storeProductDetail.wholesaler.map(p => {
+              return (
+                <div className='columns left-style is-mobile' key={p.id}>
+                  <div className='column is-half'><strong>{p.min} - {p.max} Barang</strong></div>
+                  <div className='column is-half has-text-right'><span>{p.price} / barang</span></div>
+                </div>
+              )
+            })}
           </div>
         </section>
         <section className='section is-paddingless has-shadow'>
-          <div className='info-purchase'>
-            <div className='detail-purchase summary'>
-              <h3>Ringkasan Pemesanan</h3>
-              <div className='detail-result white'>
-                <ul>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Harga Barang</span></div>
-                      <div className='column is-half has-text-right'><span>Rp 380.000</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Ongkos Kirim</span></div>
-                      <div className='column is-half has-text-right'><span>-</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Asuransi</span></div>
-                      <div className='column is-half has-text-right'><span>-</span></div>
-                    </div>
-                  </li>
-                </ul>
-                <ul className='total'>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Harga Barang</strong></div>
-                      <div className='column is-half has-text-right'><strong>Rp 380.000</strong></div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          <div className='content-header'>
+            <h3>Ekspedisi Pengiriman</h3>
+            <a className='btn-change' onClick={(e) => this.updateExpedition(e)}>Ubah</a>
+          </div>
+          <div className='content-body'>
+            <ul className='list'>
+              { storeProductDetail.isFound && storeProductDetail.storeProductDetail.expedition_services.map((expedition, index) => {
+                return (
+                  <li key={index}>{expedition}</li>
+                )
+              })}
+            </ul>
           </div>
         </section>
-        <div className='level nav-bottom nav-button purchase is-mobile'>
-          <a className='button is-primary is-m-lg is-fullwidth btn-add-cart js-option'>Masukan Ke Keranjang</a>
-        </div>
-        <section className='section is-paddingless has-shadow'>
-          <div className='info-purchase'>
-            <div className='detail-purchase summary'>
-              <h3>Ringkasan Pemesanan</h3>
-              <div className='detail-result white'>
-                <ul>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Harga Barang</span></div>
-                      <div className='column is-half has-text-right'><span>Rp 380.000</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Ongkos Kirim</span></div>
-                      <div className='column is-half has-text-right'><span>-</span></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><span>Asuransi</span></div>
-                      <div className='column is-half has-text-right'><span>-</span></div>
-                    </div>
-                  </li>
-                </ul>
-                <ul className='total'>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'><strong>Harga Barang</strong></div>
-                      <div className='column is-half has-text-right'><strong>Rp 380.000</strong></div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div className='level nav-bottom nav-button purchase is-mobile'>
-          <a className='button is-primary is-m-lg is-fullwidth btn-add-cart js-option'>
-            Masukan Ke Keranjang
-          </a>
-        </div>
       </div>
     )
   }
@@ -336,12 +344,12 @@ class ProductManage extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    productDetail: state.productDetail
+    storeProductDetail: state.storeProductDetail
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProduct: (params) => dispatch(productActions.getProduct(params))
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductManage)

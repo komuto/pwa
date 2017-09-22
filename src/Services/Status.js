@@ -24,6 +24,23 @@ export const validateResponse = (params, errorMessage) => {
   }
 }
 
+export const validateResponseAlter = (params, okMessage, failMessage) => {
+  switch (params.status) {
+    case Status.SUCCESS:
+      return { type: 'is-success', status: true, message: okMessage }
+    case Status.FAILED:
+      return { type: 'is-danger', status: true, message: failMessage }
+    case Status.UNAUTHORIZED:
+    case Status.BAD_GATEWAY:
+    case Status.OFFLINE:
+    case Status.TIMEOUT:
+    case Status.UNKNOWN:
+      return {type: 'is-danger', status: true, message: failMessage}
+    default:
+      break
+  }
+}
+
 export const isFetching = (params) => {
   return params.isLoading && params.status === 0
 }
