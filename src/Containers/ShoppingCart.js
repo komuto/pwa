@@ -78,7 +78,7 @@ class ShoppingCart extends Component {
 
     await this.props.addToCart({
       'destination_ro_id': item.shipping.address.district.ro_id,
-      'origin_ro_id': item.product.store.district.ro_id,
+      'origin_ro_id': item.product.location.district.ro_id,
       'service': item.shipping.expedition_service.name,
       'product_id': item.product.id,
       'expedition_id': item.shipping.expedition_service.expedition.id,
@@ -187,7 +187,6 @@ class ShoppingCart extends Component {
     }
 
     if (!isFetching(cart)) {
-      NProgress.done()
       NProgress.done()
       this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja kosong!') })
     }

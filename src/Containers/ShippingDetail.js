@@ -284,10 +284,8 @@ class ShippingDetail extends Component {
   }
 
   render () {
-    console.log(this.state.item)
     const { notification, item, address, expeditions, expeditionsPackage, insurance, submiting, id, error } = this.state
     const { product, shipping } = item.item
-    console.log(product)
     const errorStyle = {
       borderBottomColor: 'red',
       color: 'red'

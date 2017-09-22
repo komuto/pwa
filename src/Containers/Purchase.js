@@ -313,7 +313,6 @@ class Purchase extends Component {
     if (expeditionsPackage.selected.cost) {
       deliveryPrice = expeditionsPackage.selected.cost
     }
-    console.log('expeditionsPackage', expeditionsPackage)
 
     return (
       <Content style={{paddingBottom: 0}}>
