@@ -16,7 +16,13 @@ class ProductUpdateNameCategory extends Component {
   constructor (props) {
     super(props)
     const { storeProductDetail } = props.storeProductDetail
-    // let name = props.storeProductDetail.isFound ? props.storeProductDetail.storeProductDetail.category
+    let name = props.storeProductDetail.isFound ? storeProductDetail.product.name : ''
+    let categoryOne = props.storeProductDetail.isFound ? storeProductDetail.category.parents[0].id : ''
+    let categoryTwo = props.storeProductDetail.isFound ? storeProductDetail.category.parents[1].id : ''
+    let categoryThree = props.storeProductDetail.isFound ? storeProductDetail.category.parents[2].id : ''
+    let categoryId = props.storeProductDetail.isFound ? storeProductDetail.category.id : ''
+    let brandId = props.storeProductDetail.isFound ? storeProductDetail.brand.id : ''
+    let description = props.storeProductDetail.isFound ? storeProductDetail.product.description : ''
     this.state = {
       id: props.query.id || null,
       storeProductDetail: props.storeProductDetail || null,
@@ -26,17 +32,18 @@ class ProductUpdateNameCategory extends Component {
       subCategory2: props.subCategory2 || null,
       subCategory3: props.subCategory3 || null,
       form: {
-        name: props.storeProductDetail.isFound ? storeProductDetail.category.name : '',
-        categoryOne: props.storeProductDetail.isFound ? storeProductDetail.category.parents[0].name : '',
-        categoryTwo: props.storeProductDetail.isFound ? storeProductDetail.category.parents[1].name : '',
-        categoryThree: props.storeProductDetail.isFound ? storeProductDetail.category.parents[3].name : '',
-        category_id: '',
-        brand_id: '',
-        description: ''
+        name,
+        categoryOne,
+        categoryTwo,
+        categoryThree,
+        category_id: categoryId,
+        brand_id: brandId,
+        description
       },
       includeBrand: false,
       error: null,
       submiting: false,
+      convertToForm: false,
       notification: {
         status: false,
         type: 'is-success',
@@ -110,7 +117,15 @@ class ProductUpdateNameCategory extends Component {
       return
     }
     this.submiting = true
-    this.props.updateProduct()
+    const brandId = form.hasOwnProperty('brand_id') ? form.brand_id : ''
+    const params = {
+      id: this.state.id.split('.')[0],
+      name: form.name,
+      catalog_id: form.catalog_id,
+      brand_id: brandId,
+      description: form.description
+    }
+    this.props.updateProduct(params)
   }
 
   async componentDidMount () {
@@ -119,13 +134,13 @@ class ProductUpdateNameCategory extends Component {
       NProgress.start()
       const productId = id.split('.')[0]
       await this.props.getStoreProductDetail({ id: productId })
+      this.setState({convertToForm: true})
     }
     if (!category.isFound) {
       NProgress.start()
       // fetch category level 1
       await this.props.getCategory()
     }
-
     if (!brands.isFound) {
       NProgress.start()
       await this.props.getBrand()
@@ -133,7 +148,7 @@ class ProductUpdateNameCategory extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProductDetail } = this.state
+    const { storeProductDetail, form, convertToForm } = this.state
     const { category, alterProducts, subCategory, subCategory2, subCategory3, brands, tempCreateProduct } = nextProps
 
     if (!category.isLoading) {
@@ -167,12 +182,22 @@ class ProductUpdateNameCategory extends Component {
       Router.push('/product-add-step-three')
     }
 
-    if (!nextProps.storeProductDetail.isLoading) {
+    if (nextProps.storeProductDetail.isFound && convertToForm) {
       switch (nextProps.storeProductDetail.status) {
         case Status.SUCCESS :
-          const newState = { storeProductDetail }
+          const newState = { storeProductDetail, form, convertToForm: false }
+          newState.form['name'] = nextProps.storeProductDetail.storeProductDetail.product.name
+          newState.form['categoryOne'] = nextProps.storeProductDetail.storeProductDetail.category.parents[0].id
+          newState.form['categoryTwo'] = nextProps.storeProductDetail.storeProductDetail.category.parents[1].id
+          newState.form['categoryThree'] = nextProps.storeProductDetail.storeProductDetail.category.parents[2].id
+          newState.form['category_id'] = nextProps.storeProductDetail.storeProductDetail.category.id
+          newState.form['brand_id'] = nextProps.storeProductDetail.storeProductDetail.brand.id
+          newState.form['description'] = nextProps.storeProductDetail.storeProductDetail.product.description
           newState.storeProductDetail = nextProps.storeProductDetail
           this.setState(newState)
+          this.props.getSubCategory({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[0].id })
+          this.props.getSubCategory2({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[1].id })
+          this.props.getSubCategory3({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[2].id })
           NProgress.done()
           break
         case Status.OFFLINE :
