@@ -38,12 +38,19 @@ class Payment extends Component {
     }
     this.checkoutMidtrans = false
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
+    this.submiting = {
+      balance: false,
+      cart: false,
+    }
   }
 
   async componentWillMount () {
+    this.submiting = {
+      balance: true,
+      cart: true
+    }
     await this.props.getBalance()
     await this.props.getCart()
-    await this.props.getMidtransToken()
   }
 
   paymentMidtrans () {
@@ -63,7 +70,7 @@ class Payment extends Component {
         this.setState({ failTransaction: true })
       },
       onClose: () => {
-        // console.log('customer closed the popup without finishing the payment')
+        Router.push('/transaction')
       }
     })
   }
@@ -88,7 +95,15 @@ class Payment extends Component {
       this.setState({ balance, notification: validateResponse(balance, 'Balance tidak ditemukan!') })
     }
 
-    if (!isFetching(cart)) {
+    if (this.submiting.cart && !isFetching(cart)) {
+      if (cart.isFound) {
+        this.submiting = {
+          ...this.submiting,
+          cart: false
+        }
+        console.log(cart.cart.id)
+        this.props.getMidtransToken({ id: cart.cart.id })
+      }
       this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja tidak ditemukan!') })
     }
   }
@@ -97,6 +112,8 @@ class Payment extends Component {
     const { balance, cart, snapToken, failTransaction, notification } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
+
+    console.log(snapToken)
 
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
@@ -176,7 +193,7 @@ const mapStateToProps = (state) => ({
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
   getBalance: () => dispatch(userActions.getBalance()),
-  getMidtransToken: () => dispatch(paymentActions.getMidtransToken()),
+  getMidtransToken: (params) => dispatch(paymentActions.getMidtransToken(params)),
   setCheckout: (params) => dispatch(cartActions.checkout(params))
 })
 
