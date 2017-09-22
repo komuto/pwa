@@ -10,7 +10,7 @@ export const confirmTransfer = ({ id, ...action }) => {
   return axios.post(`buckets/${id}/bank`, action)
 }
 
-export const getMidtransToken = ({ token } = {}) => {
+export const getMidtransToken = ({ token, id } = {}) => {
   const axios = authApiKomuto(token, 50000)
-  return axios.get(`payments`)
+  return axios.get(`transactions/${id}/token`)
 }

@@ -20,12 +20,14 @@ export const getPaymentMethods = () => buildAction(typeReq(GET_PAYMENT_METHODS))
 export const confirmTransfer = params => buildAction(typeReq(CONFIRM_TRANSFER), params)
 
 /**
+ * @params id {int} transaction id
  * @params token {string} optional
  * @state snapToken
  */
 export const getMidtransToken = params => buildAction(typeReq(GET_MIDTRANS_TOKEN), params)
 
 /**
+ * @params id {int} transaction id
  * @params token {string} optional
  * @state snapToken2
  */

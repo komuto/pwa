@@ -1,9 +1,10 @@
 import { authApiKomuto } from './api'
 import { buildQuery } from '../config'
 
-export const listTransactions = () => {
+export const listTransactions = (data) => {
   const axios = authApiKomuto()
-  return axios.get('transactions')
+  const query = buildQuery(data)
+  return axios.get(`transactions?${query}`)
 }
 
 export const getTransaction = ({ id }) => {
@@ -21,9 +22,10 @@ export const addComplaint = ({ id, invoiceId, ...data }) => {
   return axios.post(`transactions/${id}/invoices/${invoiceId}/dispute`, data)
 }
 
-export const getNewOrders = () => {
+export const getNewOrders = (data) => {
   const axios = authApiKomuto()
-  return axios.get('new-orders')
+  const query = buildQuery(data)
+  return axios.get(`new-orders?${query}`)
 }
 
 export const getNewOrderDetail = ({ id }) => {
@@ -31,9 +33,10 @@ export const getNewOrderDetail = ({ id }) => {
   return axios.get(`invoices/${id}/new-order-detail`)
 }
 
-export const getProcessingOrders = () => {
+export const getProcessingOrders = (data) => {
   const axios = authApiKomuto()
-  return axios.get('processing-orders')
+  const query = buildQuery(data)
+  return axios.get(`processing-orders?${query}`)
 }
 
 export const getProcessingOrderDetail = ({ id }) => {
@@ -91,4 +94,25 @@ export const createComplaintDiscussionSeller = ({ id, ...data }) => {
 export const updateAirwayBill = ({ id, ...data }) => {
   const axios = authApiKomuto()
   return axios.put(`users/store/disputes/${id}/airway-bill`, data)
+}
+
+export const buyerDisputeReceived = ({ id, data }) => {
+  const axios = authApiKomuto()
+  return axios.post(`users/disputes/${id}/received`, data)
+}
+
+export const sellerDisputeReceived = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.put(`users/store/disputes/${id}/received`)
+}
+
+export const getSales = (data) => {
+  const axios = authApiKomuto()
+  const query = buildQuery(data)
+  return axios.get(`sales/?${query}`)
+}
+
+export const getSaleDetail = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.get(`invoices/${id}/sale-detail`)
 }

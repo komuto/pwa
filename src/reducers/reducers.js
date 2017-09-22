@@ -204,7 +204,9 @@ const saldo = {
   saldoHistory: saldoReducers.getSaldoHistory,
   withdrawal: saldoReducers.withdraw,
   saldoToken: saldoReducers.getSaldoToken,
-  nominals: saldoReducers.getNominals
+  nominals: saldoReducers.getNominals,
+  topupStatus: saldoReducers.getTopupStatus,
+  withdrawStatus: saldoReducers.getWithdrawStatus
 }
 
 const transaction = {
@@ -222,7 +224,11 @@ const transaction = {
   buyerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailBuyer,
   sellerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailSeller,
   buyerComplaintDiscussion: transactionReducers.createComplaintDiscussionBuyer,
-  sellerComplaintDiscussion: transactionReducers.createComplaintDiscussionSeller
+  sellerComplaintDiscussion: transactionReducers.createComplaintDiscussionSeller,
+  buyerReceived: transactionReducers.buyerDisputeReceived,
+  sellerReceived: transactionReducers.sellerDisputeReceived,
+  sales: transactionReducers.getSales,
+  saleDetail: transactionReducers.getSaleDetail
 }
 
 const komutoApps = storage.reducer(combineReducers({

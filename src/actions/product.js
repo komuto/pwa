@@ -19,7 +19,8 @@ export const GET_PRODUCT_EXPEDITIONS = 'GET_PRODUCT_EXPEDITIONS'
 export const ADD_DROPSHIP_PRODUCTS = 'ADD_DROPSHIP_PRODUCTS'
 export const GET_DROPSHIP_PRODUCTS = 'GET_DROPSHIP_PRODUCTS'
 export const UPDATE_DROPSHIP_STATUS = 'UPDATE_DROPSHIP_STATUS'
-export const GET_DROPSHIP_PRODUCT_DETAIL = 'GET_DROPSHIP_PRODUCT_DETAIL'
+export const GET_DROPSHIP_PRODUCT_FOR_ADD = 'GET_DROPSHIP_PRODUCT_FOR_ADD'
+export const GET_DROPSHIP_PRODUCT_FOR_MANAGE = 'GET_DROPSHIP_PRODUCT_FOR_MANAGE'
 
 /**
  * @params id {int} product id
@@ -156,4 +157,10 @@ export const updateDropshipStatus = params => buildAction(typeReq(UPDATE_DROPSHI
  * @params id {int} product id
  * @state productDetail
  */
-export const getDropshipProductDetail = params => buildAction(typeReq(GET_DROPSHIP_PRODUCT_DETAIL), params)
+export const getDropshipProductForAdd = params => buildAction(typeReq(GET_DROPSHIP_PRODUCT_FOR_ADD), params)
+
+/**
+ * @params id {int} product id
+ * @state productDetail
+ */
+export const getDropshipProductForManage = params => buildAction(typeReq(GET_DROPSHIP_PRODUCT_FOR_MANAGE), params)

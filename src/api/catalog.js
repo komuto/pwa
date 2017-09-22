@@ -22,5 +22,5 @@ export const getListCatalog = () => {
 
 export const deleteCatalog = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.delete(`users/store/catalogs/${id}`, { data: {} })
+  return axios.delete(`users/store/catalogs/${id}`)
 }

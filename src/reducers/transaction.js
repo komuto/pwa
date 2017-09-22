@@ -98,3 +98,27 @@ export const createComplaintDiscussionSeller = createReducer(buildInitState({ di
     type: actions.CREATE_COMPLAINT_DISCUSSION_SELLER,
     resultName: 'discussion'
   }).run()
+
+export const buyerDisputeReceived = createReducer(buildInitState({ reviews: [] }))
+  .addReducer({
+    type: actions.BUYER_DISPUTE_RECEIVED,
+    resultName: 'reviews'
+  }).run()
+
+export const sellerDisputeReceived = createReducer(buildInitState({ dispute: {} }))
+  .addReducer({
+    type: actions.SELLER_DISPUTE_RECEIVED,
+    resultName: 'dispute'
+  }).run()
+
+export const getSales = createReducer(buildInitState({ sales: [] }))
+  .addReducer({
+    type: actions.GET_SALES,
+    resultName: 'sales'
+  }).run()
+
+export const getSaleDetail = createReducer(buildInitState({ sale: {} }))
+  .addReducer({
+    type: actions.GET_SALE_DETAIL,
+    resultName: 'sale'
+  }).run()
