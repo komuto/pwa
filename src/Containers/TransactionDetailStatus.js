@@ -47,6 +47,7 @@ class TransactionDetailStatus extends Component {
     const { invoice } = buyerInvoiceDetail
     if (!buyerInvoiceDetail.isFound) return null
     let invoiceStatus = invoice.transaction_status
+    console.log('buyerInvoiceDetail', buyerInvoiceDetail)
     return (
       <Content>
         <div className='nav-tabs'>
@@ -239,6 +240,77 @@ class TransactionDetailStatus extends Component {
             </section>
             </div>
         }
+        <section className='section is-paddingless has-shadow'>
+          <div className='container is-fluid'>
+            <div className='title'>
+              <h3>Barang bermasalah</h3>
+            </div>
+          </div>
+          <div className='info-purchase space-left'>
+            <div className='box'>
+              <div className='media'>
+                <div className='media-left is-full-bordered'>
+                  <figure className='image list-transaction sm'>
+                    <a><img src='../images/thumb.jpg' alt='Image' /></a>
+                  </figure>
+                </div>
+                <div className='media-content middle'>
+                  <div className='content'>
+                    <h4>Sepatu Jogging Nike Hitam </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase space-left'>
+            <div className='box'>
+              <div className='media'>
+                <div className='media-left is-full-bordered'>
+                  <figure className='image list-transaction sm'>
+                    <a><img src='../images/thumb.jpg' alt='Image' /></a>
+                  </figure>
+                </div>
+                <div className='media-content middle'>
+                  <div className='content'>
+                    <h4>Sepatu Jogging Nike Hitam </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase space-left'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-one-quarter'>
+                  <div className='rating-content is-left'>
+                    <strong>Masalah</strong>
+                  </div>
+                </div>
+                <div className='column'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <div className='item-status md right'>Barang tidak sesuai deskripsi, Produk tidak lengkap, Barang rusak</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='info-purchase space-left'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column is-half'>
+                  <div className='rating-content is-left'>
+                    <strong>Pilihan Solusi</strong>
+                  </div>
+                </div>
+                <div className='column'>
+                  <div className='rating-content item-qty has-text-right'>
+                    <div className='item-status md right'>Refund Dana</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </Content>
     )
   }
