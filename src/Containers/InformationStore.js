@@ -12,7 +12,7 @@ import * as actionUserTypes from '../actions/user'
 // services
 import { Status } from '../Services/Status'
 
-var FormData = require('form-data')
+let FormData = require('form-data')
 
 class InformationStore extends React.Component {
   constructor (props) {
