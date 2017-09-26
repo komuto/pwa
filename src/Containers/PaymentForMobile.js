@@ -26,16 +26,16 @@ class PaymentForMobile extends Component {
     } else {
       snap.pay(token, {
         onSuccess: (result) => {
-          Router.push('/payment-mobile-success')
+          Router.push('/payment-mobile?type=success')
         },
         onPending: (result) => {
-          Router.push('/payment-mobile-pending')
+          Router.push('/payment-mobile?type=pending')
         },
         onError: (result) => {
-          Router.push('/payment-mobile-error')
+          Router.push('/payment-mobile?type=error')
         },
         onClose: () => {
-          Router.push('/payment-mobile-close')
+          Router.push('/payment-mobile?type=close')
         }
       })
     }

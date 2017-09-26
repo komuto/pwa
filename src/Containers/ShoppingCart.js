@@ -235,7 +235,7 @@ class ShoppingCart extends Component {
       borderBottomColor: 'red'
     }
 
-    if (!cart.isFound) return null
+    if (!cart.isFound) return <EmptyCart />
 
     if (cart.cart.items && cart.cart.items.length < 1) { return <EmptyCart /> }
 
@@ -411,7 +411,7 @@ const EmptyCart = () => {
           <p><strong>Belum ada barang di Keranjang Belanja</strong></p>
           <p>Anda belum memasukkan barang ke keranjang belanja Anda</p>
         </div>
-        <a onClick={() => Router.push('/p')} className='button is-primary is-large is-fullwidth'>Belanja Sekarang</a>
+        <a onClick={() => Router.push('/product')} className='button is-primary is-large is-fullwidth'>Belanja Sekarang</a>
       </div>
     </section>
   )

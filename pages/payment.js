@@ -1,28 +1,59 @@
 // @flow
 // layout
+import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import Payment from '../src/Containers/Payment'
+import PaymentPending from '../src/Containers/PaymentPending'
+import PaymentSuccess from '../src/Containers/PaymentSuccess'
 
 const Index = (props) => {
-  const params = {
-    style: 'main no-padding-bottom bg-grey',
-    header: {
-      title: 'Pembayaran'
-    },
-    navbar: {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Pembayaran'
+  let { type } = props.query
+
+  if (type === 'success') {
+    let params = {
+      style: 'main user user-success',
+      header: {
+        title: 'Pembayaran berhasil'
+      }
     }
+    return (
+      <DynamicNavBarLayout {...params} {...props}>
+        <PaymentSuccess {...props} />
+      </DynamicNavBarLayout>
+    )
+  } else if (type === 'pending') {
+    let params = {
+      style: 'main user user-success',
+      header: {
+        title: 'Pembayaran ditunda'
+      }
+    }
+    return (
+      <DynamicNavBarLayout {...params} {...props}>
+        <PaymentPending {...props} />
+      </DynamicNavBarLayout>
+    )
+  } else {
+    let params = {
+      style: 'main no-padding-bottom bg-grey',
+      header: {
+        title: 'Pembayaran'
+      },
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        textPath: 'Pembayaran'
+      }
+    }
+    return (
+      <DefaultLayout {...params} {...props}>
+        <Payment {...props} />
+      </DefaultLayout>
+    )
   }
-  return (
-    <DefaultLayout {...params} {...props}>
-      <Payment {...props} />
-    </DefaultLayout>
-  )
 }
 
 export default ReduxPageWrapper(Index)

@@ -7,7 +7,9 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import PaymentForMobile from '../src/Containers/PaymentForMobile'
 
 const Index = (props) => {
-  const params = {
+  let { type } = props.query
+  let content = type ? <PaymentForMobile {...props} /> : null
+  let params = {
     style: 'main no-padding-bottom bg-with',
     header: {
       title: 'Pembayaran'
@@ -17,10 +19,9 @@ const Index = (props) => {
       textPath: 'Pembayaran'
     }
   }
-
   return (
     <DefaultLayout {...params} {...props}>
-      <PaymentForMobile {...props} />
+      { content }
     </DefaultLayout>
   )
 }

@@ -54,17 +54,17 @@ class Payment extends Component {
   }
 
   paymentMidtrans () {
-    this.props.setCheckout()
+    this.props.setCheckout({'is_wallet': false})
     this.checkoutMidtrans = true
   }
 
   loadMidtransPayment (token) {
     snap.pay(token, {
       onSuccess: (result) => {
-        Router.push('/payment-success')
+        Router.push('/payment?type=success')
       },
       onPending: (result) => {
-        Router.push('/payment-pending')
+        Router.push('/payment?type=pending')
       },
       onError: (result) => {
         this.setState({ failTransaction: true })
@@ -77,7 +77,6 @@ class Payment extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { balance, cart, snapToken, checkout } = nextProps
-
     if (!isFetching(checkout)) {
       if (checkout.isFound && this.checkoutMidtrans) {
         this.checkoutMidtrans = false
@@ -101,7 +100,6 @@ class Payment extends Component {
           ...this.submiting,
           cart: false
         }
-        console.log(cart.cart.id)
         this.props.getMidtransToken({ id: cart.cart.id })
       }
       this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja tidak ditemukan!') })
@@ -112,8 +110,6 @@ class Payment extends Component {
     const { balance, cart, snapToken, failTransaction, notification } = this.state
     const { promo } = cart.cart
     let totalPayment = 0
-
-    console.log(snapToken)
 
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
