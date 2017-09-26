@@ -26,7 +26,7 @@ class TransactionDetailStatus extends Component {
       invoiceId: props.query.idInv || null,
       tab: props.query.tab || TABS[0],
       buyerInvoiceDetail: props.buyerInvoiceDetail || null,
-      isActiveMessage: false,
+      showModalMessage: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -39,6 +39,10 @@ class TransactionDetailStatus extends Component {
     const { id, invoiceId } = this.state
     Router.push(`/transaction-detail-status?id=${id}&idInv=${invoiceId}&tab=${tab}`)
     this.setState({ tab })
+  }
+
+  modalMessage () {
+    this.setState({ showModalMessage: !this.state.showModalMessage })
   }
 
   componentDidMount () {
@@ -76,6 +80,7 @@ class TransactionDetailStatus extends Component {
         {
             tab === TABS[0]
             ? <TabsStatusContent
+              onClickModalMessage={() => this.modalMessage()}
               buyerInvoiceDetail={buyerInvoiceDetail}
               invoiceStatus={invoiceStatus} />
             : <TabsDataContent
@@ -85,7 +90,8 @@ class TransactionDetailStatus extends Component {
 
         <ModalMessage
           {...this.state}
-          onClose={() => this.setState({ isActiveMessage: !this.state.isActiveMessage })} />
+          buyerInvoiceDetail={buyerInvoiceDetail}
+          onClose={() => this.modalMessage()} />
       </Content>
     )
   }
@@ -234,7 +240,7 @@ const TabsDataContent = (props) => {
 }
 
 const TabsStatusContent = (props) => {
-  const { buyerInvoiceDetail, invoiceStatus, id, invoiceId } = props
+  const { buyerInvoiceDetail, invoiceStatus, id, invoiceId, onClickModalMessage } = props
   const { invoice } = buyerInvoiceDetail
   return (
     <Content>
@@ -281,7 +287,7 @@ const TabsStatusContent = (props) => {
                         </div>
                       </div>
                       <div className='right-top'>
-                        <a className='button is-primary is-outlined'>Kirim Pesan</a>
+                        <a onClick={() => onClickModalMessage()} className='button is-primary is-outlined'>Kirim Pesan</a>
                       </div>
                     </div>
                   </div>
@@ -493,9 +499,9 @@ const TabsStatusContent = (props) => {
 }
 
 const ModalMessage = (props) => {
-  const { isActiveMessage, onClose } = props
+  const { showModalMessage, onClose } = props
   return (
-    <div className={`modal modal-filter modal-dropship ${isActiveMessage ? 'is-active' : ''}`}>
+    <div className={`modal modal-filter modal-dropship ${showModalMessage ? 'is-active' : ''}`}>
       <div className='modal-background' />
       <div className='modal-card'>
         <header className='modal-card-head bg-red'>

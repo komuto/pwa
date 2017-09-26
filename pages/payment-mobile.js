@@ -8,22 +8,25 @@ import PaymentForMobile from '../src/Containers/PaymentForMobile'
 
 const Index = (props) => {
   let { type } = props.query
-  let content = type ? <PaymentForMobile {...props} /> : null
-  let params = {
-    style: 'main no-padding-bottom bg-with',
-    header: {
-      title: 'Pembayaran'
-    },
-    navbar: {
-      searchBoox: false,
-      textPath: 'Pembayaran'
+  if (type) {
+    return null
+  } else {
+    let params = {
+      style: 'main no-padding-bottom bg-with',
+      header: {
+        title: 'Pembayaran'
+      },
+      navbar: {
+        searchBoox: false,
+        textPath: 'Pembayaran'
+      }
     }
+    return (
+      <DefaultLayout {...params} {...props}>
+        <PaymentForMobile {...props} />
+      </DefaultLayout>
+    )
   }
-  return (
-    <DefaultLayout {...params} {...props}>
-      { content }
-    </DefaultLayout>
-  )
 }
 
 export default ReduxPageWrapper(Index)
