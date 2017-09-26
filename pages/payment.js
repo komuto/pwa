@@ -8,11 +8,12 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import Payment from '../src/Containers/Payment'
 import PaymentPending from '../src/Containers/PaymentPending'
 import PaymentSuccess from '../src/Containers/PaymentSuccess'
+import PaymentError from '../src/Containers/PaymentError'
 
 const Index = (props) => {
   let { type } = props.query
 
-  if (type === 'success') {
+  if (type === 'finish') {
     let params = {
       style: 'main user user-success',
       header: {
@@ -24,16 +25,28 @@ const Index = (props) => {
         <PaymentSuccess {...props} />
       </DynamicNavBarLayout>
     )
-  } else if (type === 'pending') {
+  } else if (type === 'unfinish') {
     let params = {
       style: 'main user user-success',
       header: {
-        title: 'Pembayaran ditunda'
+        title: 'Pembayaran unfinish'
       }
     }
     return (
       <DynamicNavBarLayout {...params} {...props}>
         <PaymentPending {...props} />
+      </DynamicNavBarLayout>
+    )
+  } else if (type === 'error') {
+    let params = {
+      style: 'main user user-success',
+      header: {
+        title: 'Pembayaran error'
+      }
+    }
+    return (
+      <DynamicNavBarLayout {...params} {...props}>
+        <PaymentError {...props} />
       </DynamicNavBarLayout>
     )
   } else {

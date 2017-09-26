@@ -61,13 +61,14 @@ class Payment extends Component {
   loadMidtransPayment (token) {
     snap.pay(token, {
       onSuccess: (result) => {
-        Router.push('/payment?type=success')
+        Router.push('/payment?type=finish')
       },
       onPending: (result) => {
-        Router.push('/payment?type=pending')
+        Router.push('/payment?type=unfinish')
       },
       onError: (result) => {
-        this.setState({ failTransaction: true })
+        Router.push('/payment?type=error')
+        // this.setState({ failTransaction: true })
       },
       onClose: () => {
         Router.push('/transaction')
