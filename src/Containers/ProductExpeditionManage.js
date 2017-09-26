@@ -5,7 +5,7 @@ import NProgress from 'nprogress'
 // components
 import Notification from '../Components/Notification'
 // actions
-import * as storesTypes from '../actions/stores'
+import * as storesActions from '../actions/stores'
 import * as productActions from '../actions/product'
 // services
 import { Status, isFetching, validateResponseAlter } from '../Services/Status'
@@ -15,7 +15,7 @@ class ProductExpeditionManage extends React.Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      storeProductDetail: props.storeProductDetail || null,
       expeditions: props.expeditions,
       selectedExpeditions: [],
       selectedServices: [],
@@ -24,7 +24,7 @@ class ProductExpeditionManage extends React.Component {
         type: 'is-success',
         message: 'Error, default message.'
       },
-      setStart: false,
+      convertToForm: false,
       submiting: false
     }
   }
@@ -84,7 +84,6 @@ class ProductExpeditionManage extends React.Component {
             let statusSelected = isSelected ? 1 : 2
             newExpedition.push({expedition_service_id: idService, status: statusSelected})
           })
-          console.log('newExpedition ', newExpedition)
           this.props.updateProduct({ expeditions: newExpedition, id: id.split('.')[0] })
         }
       })
@@ -98,56 +97,40 @@ class ProductExpeditionManage extends React.Component {
   }
 
   async componentDidMount () {
-    const { expeditions, id, productDetail } = this.state
+    const { expeditions, id, storeProductDetail } = this.state
     if (!expeditions.isFound) {
       this.props.storeExpeditionList()
     }
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
       NProgress.start()
-      this.setState({ setStart: true })
-      await this.props.getProduct({ id })
+      const productId = id.split('.')[0]
+      await this.props.getStoreProductDetail({ id: productId })
+      this.setState({convertToForm: true})
     }
-    // else {
-    //   let serviceId = []
-    //   productDetail.detail.expeditions.map(exp => {
-    //     return exp.services.map(service => {
-    //       serviceId.push(service.id)
-    //     })
-    //   })
-    //   const newService = { selectedServices }
-    //   newService.selectedServices = serviceId
-    //   this.setState(newService)
-    // }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { productDetail, submiting, selectedServices, setStart } = this.state
+    const { storeProductDetail, submiting, selectedServices, convertToForm } = this.state
     const { expeditions, alterProducts } = nextProps
-    const nextId = nextProps.query.id
     if (!isFetching(expeditions)) {
       this.setState({ expeditions: expeditions })
       NProgress.done()
     }
-    if (!nextProps.productDetail.isLoading && setStart) {
-      switch (nextProps.productDetail.status) {
+    if (!nextProps.storeProductDetail.isLoading && convertToForm) {
+      switch (nextProps.storeProductDetail.status) {
         case Status.SUCCESS :
           let serviceId = []
-          nextProps.productDetail.detail.expeditions.map(exp => {
+          nextProps.storeProductDetail.storeProductDetail.expedition_services.map(exp => {
             return serviceId.push(exp.id)
           })
-          const newService = { selectedServices }
+          const newService = { selectedServices, convertToForm: false }
           newService.selectedServices = serviceId
           this.setState(newService)
-
-          if (String(nextProps.productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
           NProgress.done()
           break
         case Status.OFFLINE :
         case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
+          this.setState({ notification: {status: true, message: storeProductDetail.message} })
           break
         default:
           break
@@ -159,22 +142,22 @@ class ProductExpeditionManage extends React.Component {
   }
 
   renderProductDetail () {
-    const { productDetail } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={productDetail.detail.images[0].file}
+                  <img src={storeProductDetail.storeProductDetail.images[0].file}
                     style={{width: '50px', height: '50px'}} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
                 <div className='content'>
                   <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
+                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
                   </p>
                 </div>
               </div>
@@ -190,7 +173,6 @@ class ProductExpeditionManage extends React.Component {
   }
 
   render () {
-    console.log('state ', this.state)
     const { expeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
     return (
       <div>
@@ -277,14 +259,14 @@ class ProductExpeditionManage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     expeditions: state.expeditionListStore,
-    productDetail: state.productDetail,
+    storeProductDetail: state.storeProductDetail,
     alterProducts: state.alterProducts
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  storeExpeditionList: () => dispatch(storesTypes.storeExpeditionList()),
-  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  storeExpeditionList: () => dispatch(storesActions.storeExpeditionList()),
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
   updateProduct: (params) => dispatch(productActions.updateProduct(params))
 })
 
