@@ -5,6 +5,7 @@ import moment from 'moment'
 import Router from 'next/router'
 // actions
 import * as transactionActions from '../actions/transaction'
+import * as storeActions from '../actions/stores'
 // component
 import Content from '../Components/Content'
 import MyImage from '../Components/MyImage'
@@ -27,6 +28,7 @@ class TransactionDetailStatus extends Component {
       tab: props.query.tab || TABS[0],
       buyerInvoiceDetail: props.buyerInvoiceDetail || null,
       showModalMessage: false,
+      formMessage: {},
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -57,6 +59,17 @@ class TransactionDetailStatus extends Component {
       NProgress.done()
       this.setState({ buyerInvoiceDetail, notification: validateResponse(buyerInvoiceDetail, 'Data transaksi dengan invoice tersebut tidak ditemukan') })
     }
+  }
+
+  onChangeMessageText (e) {
+    e.preventDefault()
+    let { value } = e.target
+    let { invoice } = this.state.buyerInvoiceDetail
+    let { formMessage } = this.state
+
+    formMessage.content = value
+    formMessage.subject = invoice.invoice_number
+    this.setState({ formMessage })
   }
 
   render () {
@@ -95,6 +108,65 @@ class TransactionDetailStatus extends Component {
       </Content>
     )
   }
+}
+
+const ModalMessage = (props) => {
+  const { buyerInvoiceDetail, showModalMessage, onClose } = props
+  const { invoice } = buyerInvoiceDetail
+  return (
+    <div className={`modal modal-filter modal-dropship ${showModalMessage ? 'is-active' : ''}`}>
+      <div className='modal-background' />
+      <div className='modal-card'>
+        <header className='modal-card-head bg-red'>
+          <p className='modal-card-title'>Kirim Pesan</p>
+          <button onClick={() => onClose()} className='delete icon-close white' />
+        </header>
+        <section className='modal-card-body is-paddingless'>
+          <div className='profile-wrapp border-bottom'>
+            <ul>
+              <li>
+                <div className='box is-paddingless'>
+                  <article className='media'>
+                    <div className='media-left'>
+                      <figure className='image product-pict' style={{ width: 40 }}>
+                        <MyImage src={invoice.store.logo} alt='pict' />
+                      </figure>
+                    </div>
+                    <div className='media-content'>
+                      <div className='content'>
+                        <p className='products-name'>
+                          <strong>{ invoice.store.name }</strong>
+                          <br />
+                          <span>Jakarta Selatan, DKI Jakarta</span>
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div className='add-discussion'>
+            <div className='field'>
+              <label>Judul Pesan</label>
+              <p className='control'>
+                <input defaultValue={invoice.invoice_number} readOnly type='text' className='input' placeholder='Tulis Judul' />
+              </p>
+            </div>
+            <div className='field'>
+              <label>Pertanyaan Anda</label>
+              <p className='control'>
+                <textarea className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
+              </p>
+              <p className='control'>
+                <button className='button is-primary is-large is-fullwidth'>Kirim Pesan</button>
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  )
 }
 
 const TabsDataContent = (props) => {
@@ -498,70 +570,13 @@ const TabsStatusContent = (props) => {
   )
 }
 
-const ModalMessage = (props) => {
-  const { showModalMessage, onClose } = props
-  return (
-    <div className={`modal modal-filter modal-dropship ${showModalMessage ? 'is-active' : ''}`}>
-      <div className='modal-background' />
-      <div className='modal-card'>
-        <header className='modal-card-head bg-red'>
-          <p className='modal-card-title'>Kirim Pesan</p>
-          <button onClick={() => onClose()} className='delete icon-close white' />
-        </header>
-        <section className='modal-card-body is-paddingless'>
-          <div className='profile-wrapp border-bottom'>
-            <ul>
-              <li>
-                <div className='box is-paddingless'>
-                  <article className='media'>
-                    <div className='media-left'>
-                      <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src='../images/pict.jpg' alt='pict' />
-                      </figure>
-                    </div>
-                    <div className='media-content'>
-                      <div className='content'>
-                        <p className='products-name'>
-                          <strong>Blue Training Kit Machester United</strong>
-                          <br />
-                          <span>Jakarta Selatan, DKI Jakarta</span>
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div className='add-discussion'>
-            <div className='field'>
-              <label>Judul Pesan</label>
-              <p className='control'>
-                <input type='text' className='input' placeholder='Tulis Judul' />
-              </p>
-            </div>
-            <div className='field'>
-              <label>Pertanyaan Anda</label>
-              <p className='control'>
-                <textarea className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
-              </p>
-              <p className='control'>
-                <button className='button is-primary is-large is-fullwidth'>Kirim Pesan</button>
-              </p>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  )
-}
-
 const mapStateToProps = (state) => ({
   buyerInvoiceDetail: state.buyerInvoiceDetail
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getBuyerInvoiceDetail: (params) => dispatch(transactionActions.getBuyerInvoiceDetail(params))
+  getBuyerInvoiceDetail: (params) => dispatch(transactionActions.getBuyerInvoiceDetail(params)),
+  sendMessageStore: (params) => dispatch(storeActions.sendMessageStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransactionDetailStatus)
