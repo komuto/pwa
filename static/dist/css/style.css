@@ -690,7 +690,7 @@
   display: inline-block;
   width: 40px;
   height: 40px;
-  background-image: url("../../images/komuto-icon/089_icon_tidak_-red.png");
+  background-image: url("../../images/komuto-icon/089_icon_tidak_red.png");
   background-repeat: no-repeat;
   vertical-align: middle; }
   .icon-tidak.white {
@@ -746,6 +746,38 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     color: #47bf7e; }
+
+.icon-pesanan-baru {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/097_icon_pesanan_baru.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-konfirmasi-pengiriman {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/098_icon_konfirmasi_pengiriman.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-daftar-penjualan {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/099_icon_daftar_penjualan.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+
+.icon-kpmplain-barang {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/100_icon_komplain_barang.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
 
 @-webkit-keyframes spinAround {
   from {
@@ -5778,12 +5810,17 @@ strong {
     padding-bottom: 0; }
   .main.detail {
     padding-bottom: 66px; }
+    .main.detail.lg {
+      padding-bottom: 100px; }
   .main.bg-grey section {
     margin-bottom: 20px; }
     .main.bg-grey section.sm-margin {
       margin-bottom: 15px; }
     .main.bg-grey section.xs-margin {
       margin-bottom: 10px; }
+    .main.bg-grey section.xs-margin-top {
+      margin-top: 10px;
+      margin-bottom: 0; }
     .main.bg-grey section.list-order {
       margin: 10px 10px 0 10px;
       border-radius: 3px;
@@ -6114,6 +6151,8 @@ strong {
       -ms-flex-item-align: center;
           -ms-grid-row-align: center;
           align-self: center; }
+      .box .media .media-left.md-margin {
+        margin-right: 10px; }
       .box .media .media-left.sm-margin {
         margin-right: 1px; }
       .box .media .media-left.top {
@@ -6240,6 +6279,9 @@ strong {
   display: block;
   text-align: center;
   line-height: 22px; }
+  .notif-akun.right {
+    float: right;
+    color: #ffffff; }
 
 .sort-option {
   display: none;
@@ -6910,6 +6952,9 @@ strong.total {
   position: absolute;
   top: 0;
   right: 0; }
+  .right-top.topR {
+    top: 20px;
+    right: 20px; }
 
 .right-middle {
   position: absolute;
@@ -7010,6 +7055,17 @@ strong.total {
   height: 1px;
   border-bottom: 1px dashed #cccccc;
   margin: 10px 0 20px 0; }
+
+.notif-inside {
+  background-color: #ffffff;
+  padding: 20px;
+  border-bottom: 1px solid #dedede; }
+  .notif-inside .notif-info {
+    background-color: #ebf2fc;
+    border-radius: 6px;
+    padding: 20px; }
+    .notif-inside .notif-info span {
+      color: #6ca2e8; }
 
 @media screen and (max-width: 319px) {
   .notif-report .button {
@@ -7537,6 +7593,11 @@ strong.total {
       background-color: transparent; }
       .modal-filter .modal-card .modal-card-head .delete:before, .modal-filter .modal-card .modal-card-head .delete:after {
         display: none; }
+    .modal-filter .modal-card .modal-card-head.bg-red {
+      background-color: #ef5656;
+      box-shadow: none; }
+      .modal-filter .modal-card .modal-card-head.bg-red .modal-card-title {
+        color: #ffffff; }
   .modal-filter .modal-card .modal-card-foot {
     border-radius: 0;
     padding: 10px;
@@ -7622,6 +7683,9 @@ strong.total {
 
 .modal-filter.modal-dropship .modal-card .modal-card-head {
   box-shadow: 0 2px 6px 0 #eaedef; }
+  .modal-filter.modal-dropship .modal-card .modal-card-head.bg-red {
+    box-shadow: none;
+    border-bottom: none; }
 
 .modal-filter.modal-dropship .modal-card .modal-card-body {
   margin-left: 0;
@@ -8533,6 +8597,8 @@ strong.total {
     .content-body .info-purchase .detail-result {
       border-top: 0.5px solid #dedede;
       border-bottom: 0.5px solid #dedede; }
+  .content-body .input {
+    border-bottom: none; }
 
 .photo-content {
   margin-top: 0;
@@ -9654,6 +9720,9 @@ strong.total {
   .list-trans-product li:last-child {
     border-bottom: none; }
 
+.list-trans-product .columns.custom .column {
+  position: relative; }
+
 .info-purchase.space-left {
   padding: 0;
   border-bottom: none; }
@@ -9692,6 +9761,8 @@ strong.total {
       font-size: 12px;
       letter-spacing: 0.2px;
       color: #a0a3ae; }
+      .customer-order li .columns.custom .column span.notif-akun {
+        color: #ffffff; }
 
 .seller-items {
   position: absolute;
@@ -9758,13 +9829,13 @@ strong.total {
       margin-bottom: 0; }
 
 .discuss .notif-detail li .box .media .media-content .time-discuss {
-  right: 0;
+  right: 20px;
   top: 2px; }
 
 .discuss .conversation {
   margin-right: 0; }
   .discuss .conversation li {
-    border-bottom: 0.5px solid #dedede; }
+    border-bottom: none; }
     .discuss .conversation li .box .media .media-left.sm .user-pict {
       width: 30px;
       height: 30px; }
@@ -9785,8 +9856,10 @@ strong.total {
           font-size: 12px;
           opacity: 0.5; }
     .discuss .conversation li .box .media .media-content .time-discuss {
-      right: 0;
+      right: 20px;
       top: 2px; }
+  .discuss .conversation.bordered li {
+    border-bottom: 0.5px solid #dedede; }
 
 .discuss-title {
   padding: 20px;
@@ -10064,6 +10137,17 @@ strong.total {
     color: #ffffff; }
     .sticky-button span.txt {
       font-size: 30px; }
+
+.btn-wrapp {
+  padding: 20px;
+  background-color: #ffffff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto; }
+  .btn-wrapp .columns {
+    width: 100%; }
 
 .catalog-button {
   color: #ffffff;
