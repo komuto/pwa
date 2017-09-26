@@ -23,6 +23,7 @@ class Payment extends Component {
     super(props)
     this.state = {
       cart: props.cart || null,
+      type: props.query.type || false,
       balance: props.balance || null,
       snapToken: {
         data: props.snapToken || null,
@@ -108,8 +109,8 @@ class Payment extends Component {
   }
 
   render () {
-    const { balance, cart, snapToken, failTransaction, notification } = this.state
-    const { promo } = cart.cart
+    let { balance, cart, snapToken, failTransaction, type, notification } = this.state
+    let { promo } = cart.cart
     let totalPayment = 0
 
     if (cart.cart.items) {
@@ -119,6 +120,10 @@ class Payment extends Component {
     }
 
     if (promo) totalPayment = totalPayment - promo.nominal
+
+    if (type && type === 'error') {
+      failTransaction = true
+    }
 
     return (
       <Content>
