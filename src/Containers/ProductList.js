@@ -160,7 +160,6 @@ class ProductList extends Component {
   }
 
   render () {
-    console.log('state ', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')

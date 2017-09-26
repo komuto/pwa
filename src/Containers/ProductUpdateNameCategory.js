@@ -204,7 +204,7 @@ class ProductUpdateNameCategory extends Component {
     }
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
-      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Photo', 'Gagal memperbarui Photo') })
+      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Nama dan Kategori', 'Gagal memperbarui Nama dan Kategori') })
     }
   }
 
@@ -240,8 +240,6 @@ class ProductUpdateNameCategory extends Component {
   }
 
   render () {
-    console.log('state ', this.state)
-    console.log('props ', this.props)
     const { form, category, subCategory, subCategory2, subCategory3, brands, error, notification } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
