@@ -19,6 +19,9 @@ import { INVOICE_TRANSACTION_CLASS, INVOICE_TRANSACTION_MESSAGE } from './Transa
 import MatchingContent from './TransactionConfirmationMContent'
 import NotMatchingContent from './TransactionConfirmationNMContent'
 
+export const PROBLEMS = ['Barang tidak sesuai deskripsi', 'Barang rusak', 'Produk tidak lengkap', 'Kurir Pengiriman Berbeda']
+export const SOLUTIONS = ['Refund', 'Tukar Baru']
+
 class TransactionConfirmation extends Component {
   constructor (props) {
     super(props)
@@ -29,25 +32,25 @@ class TransactionConfirmation extends Component {
       isMatching: null,
       problems: [
         {
-          name: 'Barang tidak sesuai deskripsi',
+          name: PROBLEMS[0],
           selected: false
         },
         {
-          name: 'Barang rusak',
+          name: PROBLEMS[1],
           selected: false
         },
         {
-          name: 'Produk tidak lengkap',
+          name: PROBLEMS[2],
           selected: false
         },
         {
-          name: 'Kurir Pengiriman Berbeda',
+          name: PROBLEMS[3],
           selected: false
         }
       ],
       solution: {
         selected: null,
-        data: ['Refund', 'Tukar Baru']
+        data: SOLUTIONS
       },
       note: {
         complaint: '',
@@ -548,4 +551,5 @@ const mapDispatchToProps = (dispatch) => ({
   setAddReviews: (params) => dispatch(reviewActions.addReviews(params)),
   photoUpload: (params) => dispatch(storesActions.photoUpload({ data: params }))
 })
+
 export default connect(mapStateToProps, mapDispatchToProps)(TransactionConfirmation)
