@@ -49,6 +49,22 @@ export const isFound = (status, errorMessage = null) => {
   return {type: 'is-danger', status: !status, message: errorMessage}
 }
 
-export const isError = (status, errorMessage = null) => {
-  return {type: 'is-danger', status: status, message: errorMessage}
+export const isError = ({ status, isFound }) => {
+  if (status === Status.SUCCESS && !isFound) {
+    return true
+  } else if (status === Status.FAILED) {
+    return true
+  } else if (status === Status.UNAUTHORIZED) {
+    return true
+  } else if (status === Status.BAD_GATEWAY) {
+    return true
+  } else if (status === Status.OFFLINE) {
+    return true
+  } else if (status === Status.TIMEOUT) {
+    return true
+  } else if (status === Status.UNKNOWN) {
+    return true
+  } else {
+    return false
+  }
 }
