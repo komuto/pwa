@@ -12,7 +12,7 @@ import {Images} from '../Themes'
 // actions
 import * as loginAction from '../actions/user'
 // utils
-import { validateResponse, isFetching } from '../Services/Status'
+import { isFetching, isError } from '../Services/Status'
 
 class Account extends Component {
   constructor (props) {
@@ -71,7 +71,11 @@ class Account extends Component {
 
     if (!isFetching(profile)) {
       // NProgress.done()
-      this.setState({ profile, notification: validateResponse(profile, 'Profile tidak ditemukan') })
+      if (isError({ ...profile })) {
+        this.setState({ profile, notification: { status: true, message: 'Profile tidak ditemukan' } })
+      } else {
+        this.setState({ profile })
+      }
     }
   }
 
@@ -135,6 +139,7 @@ class Account extends Component {
 
   render () {
     const { profile, notification } = this.state
+    console.log(notification)
     return (
       <Content>
         <Notification
