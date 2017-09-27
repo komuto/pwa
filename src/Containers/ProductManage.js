@@ -55,6 +55,16 @@ class ProductManage extends React.Component {
     Router.push(`/product-update-name-category?id=${this.state.id}`)
   }
 
+  productPriceSpecificationManage (e) {
+    e.preventDefault()
+    Router.push(`/product-price-specification-manage?id=${this.state.id}`)
+  }
+
+  productWholesaleManage (e) {
+    e.preventDefault()
+    Router.push(`/product-wholesale-manage?id=${this.state.id}`)
+  }
+
   componentDidMount () {
     const { id } = this.state
     if (id !== '') {
@@ -70,12 +80,9 @@ class ProductManage extends React.Component {
       this.setState({ storeProductDetail })
       NProgress.done()
     }
-    console.log('nextProps ', nextProps)
   }
 
   render () {
-    console.log('state ', this.state)
-    console.log('props ', this.props)
     const { storeProductDetail } = this.state
     const toProductList = () => {
       Router.push('/product-list')
@@ -241,7 +248,7 @@ class ProductManage extends React.Component {
         <section className='section is-paddingless has-shadow'>
           <div className='content-header'>
             <h3>Harga dan Spesifikasi</h3>
-            <a className='btn-change'>Ubah</a>
+            <a className='btn-change' onClick={(e) => this.productPriceSpecificationManage(e)}>Ubah</a>
           </div>
           <div className='content-body'>
             <div className='columns left-style is-mobile'>
@@ -309,7 +316,7 @@ class ProductManage extends React.Component {
         <section className='section is-paddingless has-shadow'>
           <div className='content-header'>
             <h3>Grosir</h3>
-            <a className='btn-change'>Ubah</a>
+            <a className='btn-change' onClick={(e) => this.productWholesaleManage(e)}>Ubah</a>
           </div>
           <div className='content-body'>
             { storeProductDetail.isFound && storeProductDetail.storeProductDetail.wholesaler.map(p => {
@@ -331,7 +338,7 @@ class ProductManage extends React.Component {
             <ul className='list'>
               { storeProductDetail.isFound && storeProductDetail.storeProductDetail.expedition_services.map((expedition, index) => {
                 return (
-                  <li key={index}>{expedition}</li>
+                  <li key={index}>{expedition.full_name}</li>
                 )
               })}
             </ul>
