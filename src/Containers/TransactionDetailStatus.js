@@ -13,7 +13,7 @@ import Notification from '../Components/Notification'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { validateResponse, isFetching } from '../Services/Status'
+import { validateResponseAlter, isFetching, isError } from '../Services/Status'
 import { INVOICE_TRANSACTION_CLASS, INVOICE_TRANSACTION_MESSAGE, SHIPPING_SENDER_STATUS } from './TransactionDetail'
 import { PROBLEMS, SOLUTIONS } from './TransactionConfirmation'
 
@@ -27,8 +27,10 @@ class TransactionDetailStatus extends Component {
       invoiceId: props.query.idInv || null,
       tab: props.query.tab || TABS[0],
       buyerInvoiceDetail: props.buyerInvoiceDetail || null,
+      sendMessageStore: null,
       showModalMessage: false,
       formMessage: {},
+      submitMessage: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -44,7 +46,7 @@ class TransactionDetailStatus extends Component {
   }
 
   modalMessage () {
-    this.setState({ showModalMessage: !this.state.showModalMessage })
+    this.setState({ sendMessageStore: null, showModalMessage: !this.state.showModalMessage })
   }
 
   componentDidMount () {
@@ -54,10 +56,19 @@ class TransactionDetailStatus extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { buyerInvoiceDetail } = nextProps
+    const { buyerInvoiceDetail, sendMessageStore } = nextProps
+    let { submitMessage } = this.state
     if (!isFetching(buyerInvoiceDetail)) {
       NProgress.done()
-      this.setState({ buyerInvoiceDetail, notification: validateResponse(buyerInvoiceDetail, 'Data transaksi dengan invoice tersebut tidak ditemukan') })
+      if (isError(buyerInvoiceDetail)) {
+        this.setState({ buyerInvoiceDetail, notification: { type: 'is-danger', status: true, message: 'Data pesanan tidak ditemukan' } })
+      } else {
+        this.setState({ buyerInvoiceDetail })
+      }
+    }
+
+    if (submitMessage && !isFetching(sendMessageStore)) {
+      this.setState({ sendMessageStore, submitMessage: false, notification: validateResponseAlter(sendMessageStore, 'Berhasil mengirim pesan', 'Gagal mengirim pesan') })
     }
   }
 
@@ -67,17 +78,28 @@ class TransactionDetailStatus extends Component {
     let { invoice } = this.state.buyerInvoiceDetail
     let { formMessage } = this.state
 
-    formMessage.content = value
+    formMessage.id = invoice.store.id
     formMessage.subject = invoice.invoice_number
+    formMessage.content = value
     this.setState({ formMessage })
   }
 
+  onClickSendMessage (e) {
+    e.preventDefault()
+    let { formMessage } = this.state
+    this.props.setSendMessageStore(formMessage)
+    this.setState({ submitMessage: true })
+  }
+
   render () {
-    const { buyerInvoiceDetail, tab, notification } = this.state
-    const { invoice } = buyerInvoiceDetail
-    if (!buyerInvoiceDetail.isFound) return null
+    let { buyerInvoiceDetail, sendMessageStore, submitMessage, showModalMessage, tab, notification } = this.state
+    let { invoice } = buyerInvoiceDetail
     let invoiceStatus = invoice.transaction_status
-    console.log('buyerInvoiceDetail', buyerInvoiceDetail)
+
+    if (sendMessageStore !== null && sendMessageStore.status === 200 && sendMessageStore.isFound) {
+      showModalMessage = false
+    }
+
     return (
       <Content>
         <div className='nav-tabs'>
@@ -85,12 +107,15 @@ class TransactionDetailStatus extends Component {
           <a className={tab === TABS[1] ? 'active' : ''} onClick={() => this.onChangeTab(TABS[1])}><span className='text'>Data Pembelian</span></a>
         </div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
+          buyerInvoiceDetail.isFound &&
+          <Content>
+            {
             tab === TABS[0]
             ? <TabsStatusContent
               onClickModalMessage={() => this.modalMessage()}
@@ -101,17 +126,22 @@ class TransactionDetailStatus extends Component {
               invoiceStatus={invoiceStatus} />
           }
 
-        <ModalMessage
-          {...this.state}
-          buyerInvoiceDetail={buyerInvoiceDetail}
-          onClose={() => this.modalMessage()} />
+            <ModalMessage
+              showModalMessage={showModalMessage}
+              buyerInvoiceDetail={buyerInvoiceDetail}
+              submitMessage={submitMessage}
+              onClose={() => this.modalMessage()}
+              onChangeMessageText={(e) => this.onChangeMessageText(e)}
+              onClickSendMessage={(e) => this.onClickSendMessage(e)} />
+          </Content>
+        }
       </Content>
     )
   }
 }
 
 const ModalMessage = (props) => {
-  const { buyerInvoiceDetail, showModalMessage, onClose } = props
+  const { buyerInvoiceDetail, showModalMessage, submitMessage, onClose } = props
   const { invoice } = buyerInvoiceDetail
   return (
     <div className={`modal modal-filter modal-dropship ${showModalMessage ? 'is-active' : ''}`}>
@@ -156,10 +186,10 @@ const ModalMessage = (props) => {
             <div className='field'>
               <label>Pertanyaan Anda</label>
               <p className='control'>
-                <textarea className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
+                <textarea onChange={(e) => props.onChangeMessageText(e)} className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
               </p>
               <p className='control'>
-                <button className='button is-primary is-large is-fullwidth'>Kirim Pesan</button>
+                <button onClick={(e) => props.onClickSendMessage(e)} className={`button is-primary is-large is-fullwidth ${submitMessage ? 'id-loading' : ''}`}>  Kirim Pesan</button>
               </p>
             </div>
           </div>
@@ -571,12 +601,13 @@ const TabsStatusContent = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  buyerInvoiceDetail: state.buyerInvoiceDetail
+  buyerInvoiceDetail: state.buyerInvoiceDetail,
+  sendMessageStore: state.sendMessageStore
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getBuyerInvoiceDetail: (params) => dispatch(transactionActions.getBuyerInvoiceDetail(params)),
-  sendMessageStore: (params) => dispatch(storeActions.sendMessageStore(params))
+  setSendMessageStore: (params) => dispatch(storeActions.sendMessageStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransactionDetailStatus)
