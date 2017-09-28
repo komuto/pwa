@@ -12,7 +12,7 @@ export const ButtonFullWidth = (props) => {
   return (
     <button
       type='button'
-      className='button is-primary is-large is-fullwidth'
+      className={`button is-primary is-large is-fullwidth ${props.isLoading ? 'is-loading' : ''}`}
       onClick={props.onClick}>
       {props.text}
     </button>
