@@ -51,7 +51,13 @@ class ProductDetailItem extends Component {
     const { wishlist } = this.state
     let wishlistStatus = product.is_liked
     if (wishlist.isFound && (wishlist.wishlist.id === product.id)) wishlistStatus = wishlist.wishlist.is_liked
-    console.log('images', this.props.images)
+    let comission = () => {
+      if (commission !== undefined || null) {
+        return (
+          <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
+        )
+      }
+    }
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
         {
@@ -59,7 +65,7 @@ class ProductDetailItem extends Component {
         }
         <div className='detail-product'>
           <h3>{ product.name }</h3>
-          <span className='price'>Rp { RupiahFormat(product.price) }</span> - <span style={{color: '#47bf7e'}}>Komisi { commission } %</span>
+          <span className='price'>Rp { RupiahFormat(product.price) }</span>{comission()}
           <span className={`icon-wishlist ${wishlistStatus && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>

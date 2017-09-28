@@ -42,7 +42,8 @@ const images = {
   paymentDone: '../../static/images/icon-payment-done.svg',
   paymentExpired: '../../static/images/icon-payment-expired.svg',
   paymentWaiting: '../../static/images/icon-payment-waiting-payment.svg',
-  paymentVerification: '../../static/images/icon-payment-waiting-verification.svg'
+  paymentVerification: '../../static/images/icon-payment-waiting-verification.svg',
+  emptyStatesMessage: '../../static/images/empty-states-percakapan.svg'
 }
 
 export default images
