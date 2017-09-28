@@ -16,7 +16,7 @@ import * as cartActions from '../actions/cart'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { validateResponse, isFetching } from '../Services/Status'
+import { isFetching, isError, isFound, notifError } from '../Services/Status'
 
 class Payment extends Component {
   constructor (props) {
@@ -25,28 +25,22 @@ class Payment extends Component {
       cart: props.cart || null,
       type: props.query.type || false,
       balance: props.balance || null,
-      snapToken: {
-        data: props.snapToken || null,
-        submiting: true
-      },
-      submiting: false,
-      notification: {
-        type: 'is-danger',
-        status: false,
-        message: 'Error, default message.'
-      },
+      snapToken: props.snapToken || null,
+      notification: props.notification || null,
       failTransaction: false
     }
-    this.checkoutMidtrans = false
-    this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
     this.submiting = {
       balance: false,
-      cart: false
+      cart: false,
+      snapToken: false,
+      checkoutMidtrans: false,
+      checkoutBalance: false
     }
   }
 
   async componentWillMount () {
     this.submiting = {
+      ...this.submiting,
       balance: true,
       cart: true
     }
@@ -55,8 +49,14 @@ class Payment extends Component {
   }
 
   paymentMidtrans () {
+    this.submiting = {...this.submiting, checkoutMidtrans: true}
     this.props.setCheckout({'is_wallet': false})
-    this.checkoutMidtrans = true
+  }
+
+  paymentBalance () {
+    this.submiting = {...this.submiting, checkoutBalance: true}
+    this.props.setCheckout({'is_wallet': true})
+    // Router.push('/pay-with-balance')
   }
 
   loadMidtransPayment (token) {
@@ -69,7 +69,6 @@ class Payment extends Component {
       },
       onError: (result) => {
         Router.push('/payment?type=error')
-        // this.setState({ failTransaction: true })
       },
       onClose: () => {
         Router.push('/transaction')
@@ -78,33 +77,52 @@ class Payment extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { balance, cart, snapToken, checkout } = nextProps
-    if (!isFetching(checkout)) {
-      if (checkout.isFound && this.checkoutMidtrans) {
-        this.checkoutMidtrans = false
+    let { balance, cart, snapToken, checkout } = nextProps
+
+    // handling state set checkout
+    if (!isFetching(checkout) && this.submiting.checkoutMidtrans) {
+      if (isError(checkout)) {
+        this.setState({ notification: notifError(checkout.message) })
+      }
+      if (isFound(checkout)) {
+        this.submiting = {...this.submiting, checkoutMidtrans: false}
         this.loadMidtransPayment(snapToken.token)
-      } else {
-        this.setState({ notification: validateResponse(checkout, 'Checkout gagal!') })
       }
     }
 
-    if (!isFetching(snapToken)) {
-      this.setState({ snapToken: { data: snapToken, submiting: snapToken.isLoading }, notification: validateResponse(snapToken, 'Snap token tidak ditemukan!') })
-    }
-
-    if (!isFetching(balance)) {
-      this.setState({ balance, notification: validateResponse(balance, 'Balance tidak ditemukan!') })
-    }
-
-    if (this.submiting.cart && !isFetching(cart)) {
-      if (cart.isFound) {
-        this.submiting = {
-          ...this.submiting,
-          cart: false
-        }
-        this.props.getMidtransToken({ id: cart.cart.id })
+    // handling state get snapToken
+    if (!isFetching(snapToken) && this.submiting.snapToken) {
+      console.log(snapToken)
+      if (isError(snapToken)) {
+        this.setState({ notification: notifError(snapToken.message) })
       }
-      this.setState({ cart, notification: validateResponse(cart, 'Keranjang belanja tidak ditemukan!') })
+      if (isFound(snapToken)) {
+        this.submiting = {...this.submiting, snapToken: false}
+        this.setState({ snapToken })
+      }
+    }
+
+    // handling state get balance
+    if (!isFetching(balance) && this.submiting.balance) {
+      if (isError(balance)) {
+        this.setState({ notification: notifError(balance.message) })
+      }
+      if (isFound(balance)) {
+        this.submiting = {...this.submiting, balance: false}
+        this.setState({ balance })
+      }
+    }
+
+    // handling state get cart
+    if (!isFetching(cart) && this.submiting.cart) {
+      if (isError(cart)) {
+        this.setState({ notification: notifError(cart.message) })
+      }
+      if (isFound(cart)) {
+        this.submiting = { ...this.submiting, cart: false, snapToken: true }
+        this.props.getMidtransToken({ id: cart.cart.id, platform: 'pwa' })
+        this.setState({ cart })
+      }
     }
   }
 
@@ -112,7 +130,7 @@ class Payment extends Component {
     let { balance, cart, snapToken, failTransaction, type, notification } = this.state
     let { promo } = cart.cart
     let totalPayment = 0
-
+    console.log(snapToken)
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
         totalPayment += item.total_price
@@ -154,18 +172,18 @@ class Payment extends Component {
           <div className='title-content'>
             <h3>Pilih Metode Pembayaran</h3>
           </div>
-          <div className='box-rounded' onClick={() => Router.push('/pay-with-balance')}>
+          <div className='box-rounded' onClick={() => this.paymentBalance()}>
             <div className='payment-method'>
               Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
               <span className='icon-arrow-right' />
             </div>
           </div>
-          <div className='box-rounded' onClick={() => !snapToken.submiting && snapToken.data.isFound && this.paymentMidtrans()}>
+          <div className='box-rounded' onClick={() => !this.submiting.snapToken && snapToken.isFound && this.paymentMidtrans()}>
             <div className='payment-method'>
               Metode Pembayaran Lainnya
               {
-                snapToken.submiting
-                ? this.loadingSpan
+                this.submiting.snapToken
+                ? <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
                 : <span className='icon-arrow-right' />
               }
             </div>
@@ -177,7 +195,7 @@ class Payment extends Component {
             <h3>Pembayaran gagal</h3>
             <p>Mohon maaf kami tidak berhasil melakukan pembayaran anda!</p>
             <button className='button is-primary is-large is-fullwidth'>Coba lagi</button>
-            <button onClick={() => !snapToken.submiting && snapToken.data.isFound && this.paymentMidtrans()} className='button is-primary is-large is-fullwidth is-outlined'>Pilih metode pembayaran lainya</button>
+            <button onClick={() => !this.submiting.snapToken && snapToken.data.isFound && this.paymentMidtrans()} className='button is-primary is-large is-fullwidth is-outlined'>Pilih metode pembayaran lainya</button>
           </div>
         </div>
       </Content>
