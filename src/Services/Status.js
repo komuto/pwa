@@ -50,8 +50,8 @@ export const validateResponseAlter = (params, okMessage, failMessage) => {
   }
 }
 
-export const isFetching = (params) => {
-  return params.isLoading && params.status === 0
+export const isFetching = ({ isLoading, status }) => {
+  return status === 0
 }
 
 export const isFound = ({ isFound }) => {
@@ -78,6 +78,10 @@ export const isError = ({ status, isFound }) => {
   } else if (isFound) {
     return false
   }
+}
+
+export const isFinish = (params) => {
+  return isFound(params) || isError(params)
 }
 
 export const notifError = (message) => {

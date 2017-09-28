@@ -26,7 +26,7 @@ class Payment extends Component {
       type: props.query.type || false,
       balance: props.balance || null,
       snapToken: props.snapToken || null,
-      notification: props.notification || null,
+      notification: props.notification,
       failTransaction: false
     }
     this.submiting = {
@@ -92,7 +92,6 @@ class Payment extends Component {
 
     // handling state get snapToken
     if (!isFetching(snapToken) && this.submiting.snapToken) {
-      console.log(snapToken)
       if (isError(snapToken)) {
         this.setState({ notification: notifError(snapToken.message) })
       }
@@ -130,7 +129,6 @@ class Payment extends Component {
     let { balance, cart, snapToken, failTransaction, type, notification } = this.state
     let { promo } = cart.cart
     let totalPayment = 0
-    console.log(snapToken)
     if (cart.cart.items) {
       cart.cart.items.map((item) => {
         totalPayment += item.total_price

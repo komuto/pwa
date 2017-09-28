@@ -83,10 +83,7 @@ class Home extends Component {
 
     // handling state set wishlist
     if (!isFetching(addWishlist) && this.submitting.addWishlist) {
-      this.submitting = {
-        ...this.submitting,
-        addToWishlist: false
-      }
+      this.submitting = { ...this.submitting, addToWishlist: false }
       if (isError(addWishlist)) {
         this.setState({ notification: notifError(addWishlist.message) })
       }
@@ -97,10 +94,7 @@ class Home extends Component {
 
     // handling state get product
     if (!isFetching(products) && this.submitting.products) {
-      this.submitting = {
-        ...this.submitting,
-        products: false
-      }
+      this.submitting = { ...this.submitting, products: false }
       if (isError(products)) {
         this.setState({ notification: notifError(products.message) })
       }
@@ -111,10 +105,7 @@ class Home extends Component {
 
     // handling state get category
     if (!isFetching(category) && this.submitting.category) {
-      this.submitting = {
-        ...this.submitting,
-        category: false
-      }
+      this.submitting = { ...this.submitting, category: false }
       if (isError(category)) {
         this.setState({ notification: notifError(category.message) })
       }
@@ -133,15 +124,12 @@ class Home extends Component {
       <ProductContainers>
         {
           products.map((myProduct) => {
-            const { images, product, store } = myProduct
             return (
               <Product
-                key={product.id}
+                key={myProduct.product.id}
+                {...myProduct}
                 viewActive={viewActive}
-                images={images}
-                store={store}
-                wishlistPress={(id) => this.wishlistPress(id)}
-                product={product} />
+                wishlistPress={(id) => this.wishlistPress(id)} />
             )
           })
         }
@@ -160,7 +148,6 @@ class Home extends Component {
       slidesToShow: 1,
       slidesToScroll: 1
     }
-    console.log('render()')
     return (
       <Content>
         <Notification
