@@ -69,9 +69,21 @@ export const getComplainedOrdersBuyer = createReducer(buildInitState({ orders: [
     resultName: 'orders'
   }).run()
 
+export const getComplainedOrdersBuyer2 = createReducer(buildInitState({ orders: [] }))
+  .addReducer({
+    type: actions.GET_COMPLAINED_ORDERS_BUYER_2,
+    resultName: 'orders'
+  }).run()
+
 export const getComplainedOrdersSeller = createReducer(buildInitState({ orders: [] }))
   .addReducer({
     type: actions.GET_COMPLAINED_ORDERS_SELLER,
+    resultName: 'orders'
+  }).run()
+
+export const getComplainedOrdersSeller2 = createReducer(buildInitState({ orders: [] }))
+  .addReducer({
+    type: actions.GET_COMPLAINED_ORDERS_SELLER_2,
     resultName: 'orders'
   }).run()
 
@@ -114,6 +126,12 @@ export const sellerDisputeReceived = createReducer(buildInitState({ dispute: {} 
 export const getSales = createReducer(buildInitState({ sales: [] }))
   .addReducer({
     type: actions.GET_SALES,
+    resultName: 'sales'
+  }).run()
+
+export const getSales2 = createReducer(buildInitState({ sales: [] }))
+  .addReducer({
+    type: actions.GET_SALES_2,
     resultName: 'sales'
   }).run()
 

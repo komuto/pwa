@@ -117,6 +117,10 @@ export const alterProducts = createReducer(buildInitState({ product: {} }))
   .addReducer({
     type: actions.UPDATE_DROPSHIP_STATUS,
     add: { type: 'dropship_status' }
+  })
+  .addReducer({
+    type: actions.DELETE_DROPSHIP,
+    add: { type: 'delete_dropship' }
   }).run()
 
 export const getProductExpeditions = createReducer(buildInitState({ productExpeditions: [] }))

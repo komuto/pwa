@@ -40,6 +40,7 @@ export const getPromo = params => buildAction(typeReq(GET_PROMO), params)
 export const cancelPromo = () => buildAction(typeReq(CANCEL_PROMO))
 
 /**
+ * @params paymentType {string} [balance, midtrans]
  * @params params are the same as the api
  * @state checkout
  */

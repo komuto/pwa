@@ -35,3 +35,9 @@ export const getWithdrawStatus = createReducer(buildInitState({ statuses: [] }))
     type: actions.GET_WITHDRAW_STATUS,
     resultName: 'statuses'
   }).run()
+
+export const getSaldoHistoryDetail = createReducer(buildInitState({ historyDetail: {} }))
+  .addReducer({
+    type: actions.GET_SALDO_HISTORY_DETAIL,
+    resultName: 'historyDetail'
+  }).run()

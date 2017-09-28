@@ -12,7 +12,8 @@ export const cart = createReducer(buildInitState({ cart: [] }))
 export const checkout = createReducer(buildInitState({ checkout: {} }))
   .addReducer({
     type: actions.CHECKOUT,
-    resultName: 'checkout'
+    resultName: 'checkout',
+    keepParams: ['paymentType']
   }).run()
 
 export const addToCart = createReducer(buildInitState({ addToCart: {} }))

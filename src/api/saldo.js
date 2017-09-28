@@ -1,9 +1,10 @@
 import { authApiKomuto } from './api'
 import { buildQuery } from '../config'
 
-export const getSaldoToken = ({ id }) => {
+export const getSaldoToken = ({ id, ...data }) => {
   const axios = authApiKomuto()
-  return axios.get(`saldo/nominal/${id}/token`)
+  const query = buildQuery(data)
+  return axios.get(`saldo/nominal/${id}/token?${query}`)
 }
 
 export const getNominals = () => {
@@ -11,9 +12,10 @@ export const getNominals = () => {
   return axios.get('saldo/nominal')
 }
 
-export const getSaldoHistory = () => {
+export const getSaldoHistory = (data) => {
   const axios = authApiKomuto()
-  return axios.get('users/saldo/history')
+  const query = buildQuery(data)
+  return axios.get(`users/saldo/history?${query}`)
 }
 
 export const withdraw = (data) => {
@@ -31,4 +33,9 @@ export const getWithdrawStatus = (data) => {
   const axios = authApiKomuto()
   const query = buildQuery(data)
   return axios.get(`users/saldo/withdraw?${query}`)
+}
+
+export const getSaldoHistoryDetail = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.get(`users/saldo/history/${id}`)
 }

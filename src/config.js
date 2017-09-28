@@ -241,7 +241,8 @@ const composeReducer = (initState, sagaReducer) => (state = initState, { type, .
   const actionType = buildType(type)
   let resultState = {}
   const check = sagaReducer.some((options) => {
-    const { resultName, type: reducerType, add, includeNonSaga, resetPrevState } = options
+    const { resultName, type: reducerType, add = {}, includeNonSaga, resetPrevState, keepParams = [] } = options
+    keepParams.forEach((param) => { add[param] = data[param] })
     const customState = [options.customReqState, options.customSuccState, options.customFailState]
     if (actionType === reducerType) {
       // For _REQUEST/_SUCCESS/_FAILURE action type
@@ -278,6 +279,7 @@ export const createReducer = (initState) => {
      * @options add {object} other objects to add to the state
      * @options includeNonSaga {boolean} non saga reducer operation [RESET || TEMP]
      * @options resetPrevState {object} change prev state with the provided object
+     * @options keepParams {[string]}
      * @options customReqState {function}
      * @options customSuccState {function}
      * @options customfailState {function}

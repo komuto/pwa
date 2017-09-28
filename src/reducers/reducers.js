@@ -206,7 +206,8 @@ const saldo = {
   saldoToken: saldoReducers.getSaldoToken,
   nominals: saldoReducers.getNominals,
   topupStatus: saldoReducers.getTopupStatus,
-  withdrawStatus: saldoReducers.getWithdrawStatus
+  withdrawStatus: saldoReducers.getWithdrawStatus,
+  saldoHistoryDetail: saldoReducers.getSaldoHistoryDetail
 }
 
 const transaction = {
@@ -221,6 +222,8 @@ const transaction = {
   updateStatus: transactionReducers.updateStatus,
   buyerComplainedOrders: transactionReducers.getComplainedOrdersBuyer,
   sellerComplainedOrders: transactionReducers.getComplainedOrdersSeller,
+  buyerComplainedOrders2: transactionReducers.getComplainedOrdersBuyer2,
+  sellerComplainedOrders2: transactionReducers.getComplainedOrdersSeller2,
   buyerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailBuyer,
   sellerComplainedOrderDetail: transactionReducers.getComplainedOrderDetailSeller,
   buyerComplaintDiscussion: transactionReducers.createComplaintDiscussionBuyer,
@@ -228,6 +231,7 @@ const transaction = {
   buyerReceived: transactionReducers.buyerDisputeReceived,
   sellerReceived: transactionReducers.sellerDisputeReceived,
   sales: transactionReducers.getSales,
+  sales2: transactionReducers.getSales2,
   saleDetail: transactionReducers.getSaleDetail
 }
 

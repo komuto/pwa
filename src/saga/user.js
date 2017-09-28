@@ -5,9 +5,10 @@ import { errorHandling, typeSucc, typeFail, buildSaga, storage } from '../config
 
 export const register = function * (action) {
   try {
-    const {data} = yield apis.register(action)
-    yield storage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(actions.USER_REGISTER), ...data })
+    const result = yield apis.register(action)
+    if (!result.ok) throw result
+    yield storage.setItem('token', result.data.data.token)
+    yield put({ type: typeSucc(actions.USER_REGISTER), ...result.data })
   } catch (e) {
     yield errorHandling(typeFail(actions.USER_REGISTER), e)
   }
@@ -15,10 +16,12 @@ export const register = function * (action) {
 
 export const login = function * login (action) {
   try {
-    const {data} = yield apis.login(action)
-    yield storage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(actions.USER_LOGIN), ...data })
+    const result = yield apis.login(action)
+    if (!result.ok) throw result
+    yield storage.setItem('token', result.data.data.token)
+    yield put({ type: typeSucc(actions.USER_LOGIN), ...result.data })
   } catch (e) {
+    console.log(e)
     yield errorHandling(typeFail(actions.USER_LOGIN), e)
   }
 }
@@ -39,9 +42,10 @@ export const logout = function * (action) {
 
 export const loginSocial = function * login (action) {
   try {
-    const {data} = yield apis.loginSocial(action)
-    yield storage.setItem('token', data.data.token)
-    yield put({ type: typeSucc(actions.LOGIN_SOCIAL), ...data })
+    const result = yield apis.loginSocial(action)
+    if (!result.ok) throw result
+    yield storage.setItem('token', result.data.data.token)
+    yield put({ type: typeSucc(actions.LOGIN_SOCIAL), ...result.data })
   } catch (e) {
     yield errorHandling(typeFail(actions.LOGIN_SOCIAL), e)
   }

@@ -12,7 +12,7 @@ export const updateAddress = (action) => {
 
 export const deleteAddress = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.delete(`users/addresses/${id}`)
+  return axios.delete(`users/addresses/${id}`, {}, { data: {} })
 }
 
 export const getAddressDetail = ({ id }) => {

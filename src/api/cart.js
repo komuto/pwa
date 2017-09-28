@@ -32,7 +32,7 @@ export const checkout = (action = {}) => {
 
 export const deleteItem = ({ id }) => {
   const axios = authApiKomuto()
-  return axios.delete(`buckets/items/${id}`)
+  return axios.delete(`buckets/items/${id}`, {}, { data: {} })
 }
 
 export const getItem = ({ id }) => {

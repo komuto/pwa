@@ -73,7 +73,7 @@ export const hideProducts = ({ product_ids }) => {
 
 export const deleteProducts = ({ product_ids }) => {
   const axios = authApiKomuto()
-  return axios.post('users/store/products', { product_ids })
+  return axios.post('users/store/products', { product_ids }, {}, { data: {} })
 }
 
 export const changeCatalogProducts = (action) => {
@@ -105,4 +105,9 @@ export const getDropshipProducts = (data) => {
 export const updateDropshipStatus = (data) => {
   const axios = authApiKomuto()
   return axios.post('users/store/products/dropships', data)
+}
+
+export const deleteDropship = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.delete(`users/store/products/${id}`, {}, { data: {} })
 }

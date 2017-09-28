@@ -121,6 +121,7 @@ const product = function * () {
   yield takeEvery(typeReq(productActions.UPDATE_DROPSHIP_STATUS), productSaga.updateDropshipStatus)
   yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCT_FOR_ADD), productSaga.getDropshipProductForAdd)
   yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCT_FOR_MANAGE), productSaga.getDropshipProductForManage)
+  yield takeEvery(typeReq(productActions.DELETE_DROPSHIP), productSaga.deleteDropship)
 }
 
 const store = function * () {
@@ -249,6 +250,7 @@ const saldo = function * () {
   yield takeEvery(typeReq(saldoActions.GET_NOMINALS), saldoSaga.getNominals)
   yield takeEvery(typeReq(saldoActions.GET_TOPUP_STATUS), saldoSaga.getTopupStatus)
   yield takeEvery(typeReq(saldoActions.GET_WITHDRAW_STATUS), saldoSaga.getWithdrawStatus)
+  yield takeEvery(typeReq(saldoActions.GET_SALDO_HISTORY_DETAIL), saldoSaga.getSaldoHistoryDetail)
 }
 
 const transaction = function * () {
@@ -274,6 +276,9 @@ const transaction = function * () {
   yield takeEvery(typeReq(transactionActions.SELLER_DISPUTE_RECEIVED), transactionSaga.sellerDisputeReceived)
   yield takeEvery(typeReq(transactionActions.GET_SALES), transactionSaga.getSales)
   yield takeEvery(typeReq(transactionActions.GET_SALE_DETAIL), transactionSaga.getSaleDetail)
+  yield takeEvery(typeReq(transactionActions.GET_COMPLAINED_ORDERS_BUYER_2), transactionSaga.getComplainedOrdersBuyer2)
+  yield takeEvery(typeReq(transactionActions.GET_COMPLAINED_ORDERS_SELLER_2), transactionSaga.getComplainedOrdersSeller2)
+  yield takeEvery(typeReq(transactionActions.GET_SALES_2), transactionSaga.getSales2)
 }
 
 export default dataSaga
