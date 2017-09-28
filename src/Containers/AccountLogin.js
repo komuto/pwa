@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import Link from 'next/link'
+import Router from 'next/router'
 import {Images} from '../Themes'
 import MyImage from '../Components/MyImage'
 
@@ -19,7 +20,7 @@ export default (props) => {
             <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>{localize.signup}</a></Link>
           </div>
           <div className='column'>
-            <Link href='signin'><a className='button is-primary is-large is-fullwidth'>{localize.signin}</a></Link>
+            <a onClick={() => Router.push('/signin')} className='button is-primary is-large is-fullwidth'>{localize.signin}</a>
           </div>
         </div>
       </div>
