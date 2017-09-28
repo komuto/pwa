@@ -139,7 +139,6 @@ class Account extends Component {
 
   render () {
     const { profile, notification } = this.state
-    console.log(notification)
     return (
       <Content>
         <Notification

@@ -16,8 +16,6 @@ import MyImage from '../Components/MyImage'
 // actions
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
-// services
-import { validateResponse, isFetching } from '../Services/Status'
 // themes
 import Images from '../Themes/Images'
 // import Wrapper from './Wrapper'
@@ -28,11 +26,12 @@ class Home extends Component {
     this.state = {
       products: props.products || null,
       category: props.category || null,
-      mustLogin: false,
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      }
+      notification: props.notification
+    }
+    this.submitting = {
+      products: false,
+      category: false,
+      addWishlist: false
     }
     this.wishlistId = null
     this.params = {sort: 'newest', page: 1, limit: 6}
@@ -41,6 +40,10 @@ class Home extends Component {
   async wishlistPress (id) {
     let { products } = this.state
     if (this.props.isLogin) {
+      this.submitting = {
+        ...this.submitting,
+        addToWishlist: true
+      }
       products.products.map((myProduct) => {
         if (myProduct.product.id === id) {
           myProduct.product.is_liked ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
@@ -58,29 +61,71 @@ class Home extends Component {
     const { products, category } = this.state
     if (!products.isFound) {
       NProgress.start()
+      this.submitting = {
+        ...this.submitting,
+        products: true
+      }
       await this.props.getProducts(this.params)
     }
     if (!category.isFound) {
       NProgress.start()
+      this.submitting = {
+        ...this.submitting,
+        category: true
+      }
       this.props.getCategoryList()
     }
   }
 
   async componentWillReceiveProps (nextProps) {
     const { products, addWishlist, category } = nextProps
-    if (!isFetching(addWishlist)) {
-      this.setState({ addWishlist, notification: validateResponse(addWishlist, 'Gagal menambah wishlist!') })
+    const { isFetching, isError, isFound, notifError } = this.props
+
+    // handling state set wishlist
+    if (!isFetching(addWishlist) && this.submitting.addWishlist) {
+      this.submitting = {
+        ...this.submitting,
+        addToWishlist: false
+      }
+      if (isError(addWishlist)) {
+        this.setState({ notification: notifError(addWishlist.message) })
+      }
+      if (isFound(addWishlist)) {
+        this.setState({ addWishlist })
+      }
     }
 
-    if (!isFetching(products)) {
-      this.setState({ products, notification: validateResponse(products, 'Data produk tidak ditemukan!') })
+    // handling state get product
+    if (!isFetching(products) && this.submitting.products) {
+      this.submitting = {
+        ...this.submitting,
+        products: false
+      }
+      if (isError(products)) {
+        this.setState({ notification: notifError(products.message) })
+      }
+      if (isFound(products)) {
+        this.setState({ products })
+      }
     }
 
-    if (!isFetching(category)) {
-      this.setState({ category, notification: validateResponse(category, 'Data kategori tidak ditemukan!') })
+    // handling state get category
+    if (!isFetching(category) && this.submitting.category) {
+      this.submitting = {
+        ...this.submitting,
+        category: false
+      }
+      if (isError(category)) {
+        this.setState({ notification: notifError(category.message) })
+      }
+      if (isFound(category)) {
+        this.setState({ category })
+      }
     }
 
-    if (!products.isLoading && !category.isLoading) NProgress.done()
+    if (!isFetching(products) && !isFetching(category)) {
+      NProgress.done()
+    }
   }
 
   renderProductColoumn (viewActive, products) {
@@ -115,6 +160,7 @@ class Home extends Component {
       slidesToShow: 1,
       slidesToScroll: 1
     }
+    console.log('render()')
     return (
       <Content>
         <Notification

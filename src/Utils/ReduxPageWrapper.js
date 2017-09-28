@@ -8,6 +8,7 @@ import Content from '../Components/Content'
 import LoginAlert from '../Components/LoginAlert'
 import Localize from '../Utils/Localize'
 import AppConfig from '../Config/AppConfig'
+import * as handlingState from '../Services/Status'
 let clientTask = null
 let token = null
 export default function reduxWrapper (ReduxComponent) {
@@ -54,6 +55,7 @@ export default function reduxWrapper (ReduxComponent) {
             close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
           <ReduxComponent
             {...this.props}
+            {...handlingState}
             notification={notification}
             localize={localize}
             isLogin={!!token}
