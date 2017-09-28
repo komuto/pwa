@@ -211,7 +211,6 @@ class CatalogAddProduct extends React.Component {
       }
       this.setState({ notification })
     }
-    console.log('nextProps ', nextProps)
   }
 
   renderProductDetail () {
@@ -290,8 +289,6 @@ class CatalogAddProduct extends React.Component {
   }
 
   render () {
-    console.log('state ', this.state)
-    console.log('props ', this.props)
     const { catalog, modalAddCatalog, validation, notification, submitting } = this.state
     return (
       <div>

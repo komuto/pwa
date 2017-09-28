@@ -7,7 +7,8 @@ export class Navbar extends PureComponent {
     super(props)
     this.state = {
       activeSearch: false,
-      activeMoreOptions: false
+      activeMoreOptions: false,
+      openMessageOptions: false
     }
   }
 
@@ -22,6 +23,16 @@ export class Navbar extends PureComponent {
   moreButtonPress (e) {
     if (!e.target.className.includes('moreButton')) return
     this.setState({ activeMoreOptions: !this.state.activeMoreOptions })
+  }
+
+  messageButtonPress (e) {
+    e.preventDefault()
+    this.setState({ openMessageOptions: !this.state.openMessageOptions })
+  }
+
+  moveToConversationOrArceive () {
+    this.setState({ openMessageOptions: !this.state.openMessageOptions })
+    this.props.moveToConversationOrArceive()
   }
 
   shoppingCartPress () {
@@ -41,9 +52,9 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { deleteButton, navbar, searchActive, moreButton, productId, callBack } = this.props
-    const { path, textPath, searchBoox } = navbar
-    const { activeMoreOptions } = this.state
+    const { deleteButton, messageType, navbar, searchActive, moreButton, messageButton, productId } = this.props
+    const { path, textPath, searchBoox, callBack } = navbar
+    const { activeMoreOptions, openMessageOptions } = this.state
     return (
       <div>
         <nav className={`level header is-fullwidth ${searchActive ? 'bg-white' : ''}`}>
@@ -83,6 +94,16 @@ export class Navbar extends PureComponent {
                 <span className='icon-dots moreButton' />
               </div>
             </a>
+          }
+          {
+            messageButton &&
+            <div className={`button-search menu-top ${openMessageOptions && 'open'}`}>
+              <span className='icon-dots' onClick={(e) => this.messageButtonPress(e)} />
+              <ul className='option-dropdown'>
+                <li><a className='js-option' onClick={() => this.moveToConversationOrArceive()}>{`Pindahkan ke ${messageType === 'conversation' ? 'Arsip' : 'Percakapan'}`}</a></li>
+                <li><a className='js-option' onClick={() => this.props.deleteMessage()}>Hapus Selamanya</a></li>
+              </ul>
+            </div>
           }
           {
             deleteButton &&
