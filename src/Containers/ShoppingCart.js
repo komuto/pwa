@@ -13,6 +13,7 @@ import Content from '../Components/Content'
 import * as cartActions from '../actions/cart'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+import Promo from '../Lib/Promo'
 // services
 import { isFetching, isError, isFound, notifError } from '../Services/Status'
 // validations
@@ -244,17 +245,22 @@ const Cart = (props) => {
   let { localize, cart, voucher, rsAddToCart, cancelPromo, deleteItem, submitting } = props
   let data = cart.data
   let totalPayment = 0
-  let promo = null
+  let promoCode = '-'
+  let pricePromo = 0
   let errorStyle = {
     color: 'red',
     borderBottomColor: 'red'
   }
 
-  promo = data.cart.promo
   data.cart.items.map((item) => {
     totalPayment += item.total_price
   })
-  totalPayment = totalPayment - ((promo) ? promo.nominal : 0)
+
+  if (data.cart.promo) {
+    pricePromo = Promo({ ...data.cart, totalPayment })
+    promoCode = data.cart.promo.promo_code
+  }
+
   return (
     <Content>
       {
@@ -348,23 +354,23 @@ const Cart = (props) => {
           </div>
         </div>
         {
-            promo &&
-            <div className='detail-purchase summary'>
-              <div className='detail-result cancel-voucher'>
-                <ul>
-                  <li>
-                    <div className='columns custom is-mobile'>
-                      <div className='column is-half'>
-                        <span>{ promo.promo_code }</span>
-                        <br />
-                        <span className='voucher-credit'>- Rp { RupiahFormat(promo.nominal) }</span></div>
-                      <div className='column is-half has-text-right'><a onClick={() => props.voucherCancel()} className='cancel'> { cancelPromo.submitting ? <Loading size={14} type='ovals' color='#ef5656' className='is-fullwidth' /> : 'Batal' } </a></div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              </div>
-          }
+          promoCode !== '-' &&
+          <div className='detail-purchase summary'>
+            <div className='detail-result cancel-voucher'>
+              <ul>
+                <li>
+                  <div className='columns custom is-mobile'>
+                    <div className='column is-half'>
+                      <span>{ promoCode }</span>
+                      <br />
+                      <span className='voucher-credit'>- Rp { RupiahFormat(pricePromo) }</span></div>
+                    <div className='column is-half has-text-right'><a onClick={() => props.voucherCancel()} className='cancel'> { cancelPromo.submitting ? <Loading size={14} type='ovals' color='#ef5656' className='is-fullwidth' /> : 'Batal' } </a></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        }
       </section>
       <section className='section is-paddingless has-shadow bg-white'>
         <div className='info-purchase'>
@@ -372,7 +378,7 @@ const Cart = (props) => {
             <div className='columns total-pay is-mobile is-multiline no-margin-bottom'>
               <div className='column is-half is-paddingless'>
                 <p>{localize.total_payment}</p>
-                <p className='price-pay'>Rp { RupiahFormat(totalPayment) }</p>
+                <p className='price-pay'>Rp { RupiahFormat(totalPayment - pricePromo) }</p>
               </div>
               <div className='column is-half is-paddingless has-text-right'>
                 <button onClick={() => !submitting && props.payNow()} className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}>Bayar Sekarang</button>
