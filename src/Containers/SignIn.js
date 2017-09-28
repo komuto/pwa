@@ -20,7 +20,7 @@ import * as constraints from '../Validations/Auth'
 // actions
 import * as loginAction from '../actions/user'
 // utils
-import { Status } from '../Services/Status'
+import { isFetching, isError, isFound, notifError } from '../Services/Status'
 
 const LOGIN_SOCIAL = 'LOGIN_SOCIAL'
 const LOGIN_FORM = 'LOGIN_FORM'
@@ -53,6 +53,7 @@ class SignIn extends Component {
         message: 'Error, default message.'
       }
     }
+    this.submitting = false
     this.dipatchType = null
     this.onChange = this.onChange.bind(this)
   }
@@ -121,6 +122,7 @@ class SignIn extends Component {
     let { email, password } = this.state.input
     if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
       NProgress.start()
+      this.submitting = true
       this.dipatchType = LOGIN_FORM
       this.props.login({
         email: email.value,
@@ -129,26 +131,19 @@ class SignIn extends Component {
     }
   }
 
-  async componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps) {
     const { user } = nextProps
-
-    if (!user.isLoading) {
+    // handling state get login
+    if (!isFetching(user) && this.submitting) {
       NProgress.done()
-      switch (user.status) {
-        case Status.SUCCESS :
-          if (user.isFound) {
-            await this.props.getProfile()
-            Router.push('/profile')
-          } else {
-            this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: user.message} })
-          break
-        default:
-          break
+      this.submitting = false
+      if (isError(user)) {
+        this.setState({ notification: notifError(user.message) })
+      }
+
+      if (isFound(user)) {
+        this.props.getProfile()
+        Router.push('/profile')
       }
     }
   }
@@ -167,26 +162,17 @@ class SignIn extends Component {
           <Containers>
             <form action='#' className='form'>
               <Input
-                type={input.email.type}
-                placeholder={input.email.placeholder}
-                name={input.email.name}
-                classInfo={input.email.classInfo}
-                value={input.email.value}
+                {...input.email}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.email.textHelp} />
+                hasIconsRight />
               <Input
-                type={input.password.type}
-                placeholder={input.password.placeholder}
-                name={input.password.name}
-                classInfo={input.password.classInfo}
-                value={input.password.value}
+                {...input.password}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.password.textHelp} />
+                hasIconsRight />
               <TermConditions />
               <ButtonFullWidth
                 text={localize.signin}
+                isLoading={this.submitting}
                 onClick={() => this.handleSignInClick()} />
               <div className='has-text-centered'>
                 <Link href='/password-reset'><a>{localize.lost_password}</a></Link>
