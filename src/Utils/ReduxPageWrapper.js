@@ -39,8 +39,13 @@ export default function reduxWrapper (ReduxComponent) {
     }
 
     render () {
-      const { token, mustLogin } = this.state
+      let { token, mustLogin } = this.state
       let localize = Localize(AppConfig.languages)
+      let notification = {
+        type: 'is-danger',
+        status: false,
+        message: 'Error, default message.'
+      }
       return (
         <Content>
           <LoginAlert
@@ -49,6 +54,7 @@ export default function reduxWrapper (ReduxComponent) {
             close={() => this.setState({ mustLogin: !this.state.mustLogin })} />
           <ReduxComponent
             {...this.props}
+            notification={notification}
             localize={localize}
             isLogin={!!token}
             alertLogin={() => this.setState({ mustLogin: true })} />
