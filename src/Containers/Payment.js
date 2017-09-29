@@ -11,15 +11,23 @@ import Content from '../Components/Content'
 import * as userActions from '../actions/user'
 import * as paymentActions from '../actions/payment'
 import * as cartActions from '../actions/cart'
+import * as transactionActions from '../actions/transaction'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+
+/**
+ * paymentType=[bucket, transaction]
+ */
 
 class Payment extends Component {
   constructor (props) {
     super(props)
     this.state = {
       cart: props.cart || null,
+      transaction: props.transaction || null,
       type: props.query.type || false,
+      paymentType: props.query.paymentType || null,
+      idT: props.query.idT || null,
       balance: props.balance || null,
       snapToken: props.snapToken || null,
       notification: props.notification,
@@ -29,19 +37,28 @@ class Payment extends Component {
       balance: false,
       cart: false,
       snapToken: false,
-      checkout: false
+      checkout: false,
+      transaction: false
     }
   }
 
   async componentDidMount () {
-    this.submitting = {
-      ...this.submitting,
-      balance: true,
-      cart: true
-    }
+    let { paymentType, idT } = this.state
+
     NProgress.start()
+
+    if (paymentType === 'bucket') {
+      this.submitting = { ...this.submitting, cart: true }
+      await this.props.getCart()
+    }
+
+    if (paymentType === 'transaction') {
+      this.submitting = { ...this.submitting, transaction: true }
+      await this.props.getTransaction({ id: idT })
+    }
+
+    this.submitting = { ...this.submitting, balance: true }
     await this.props.getBalance()
-    await this.props.getCart()
   }
 
   paymentMidtrans () {
@@ -67,7 +84,7 @@ class Payment extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    let { balance, cart, snapToken, checkout } = nextProps
+    let { balance, cart, transaction, snapToken, checkout } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
 
     // handling state set checkout
@@ -115,12 +132,35 @@ class Payment extends Component {
         this.setState({ cart })
       }
     }
+
+    // handling state get transaction
+    if (!isFetching(transaction) && this.submitting.transaction) {
+      NProgress.done()
+      if (isError(transaction)) {
+        this.setState({ notification: notifError(transaction.message) })
+      }
+      if (isFound(transaction)) {
+        this.submitting = { ...this.submitting, transaction: false, snapToken: true }
+        this.props.getMidtransToken({ id: transaction.transaction.bucket.id, platform: 'pwa' })
+        this.setState({ transaction })
+      }
+    }
   }
 
   render () {
-    let { cart, failTransaction, type, notification } = this.state
+    let { cart, transaction, paymentType, failTransaction, type, notification } = this.state
+    let status = false
+
     if (type && type === 'error') {
       failTransaction = true
+    }
+
+    if (paymentType === 'bucket') {
+      status = cart.isFound
+    }
+
+    if (paymentType === 'transaction') {
+      status = transaction.isFound
     }
 
     return (
@@ -131,24 +171,31 @@ class Payment extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { cart.isFound &&
+        { status &&
         <Paymentcontent
           {...this.state}
           failTransaction={failTransaction}
           submitting={this.submitting}
           paymentMidtrans={() => this.paymentMidtrans()} />
-          }
+        }
       </Content>
     )
   }
 }
 
 const Paymentcontent = (props) => {
-  let { cart, snapToken, balance, submitting, failTransaction } = props
+  let { cart, transaction, paymentType, idT, snapToken, balance, submitting, failTransaction } = props
   let totalPayment = 0
-  cart.cart.items.map((item) => {
-    totalPayment += item.total_price
-  })
+
+  if (paymentType === 'bucket') {
+    cart.cart.items.map((item) => {
+      totalPayment += item.total_price
+    })
+  }
+
+  if (paymentType === 'transaction') {
+    totalPayment = transaction.transaction.summary_transaction.total_price
+  }
 
   return (
     <Content>
@@ -161,7 +208,7 @@ const Paymentcontent = (props) => {
                 <span className='price'>Rp { RupiahFormat(totalPayment) }</span>
               </li>
               <li className='has-text-right'>
-                <a onClick={() => Router.push('/shopping-cart')} className='button is-primary is-outlined full-rounded'>Detail</a>
+                <a onClick={() => paymentType === 'bucket' ? Router.push('/shopping-cart') : Router.push(`/transaction-detail?id=${idT}`)} className='button is-primary is-outlined full-rounded'>Detail</a>
               </li>
             </ul>
             <div className='text-msg'>
@@ -172,7 +219,7 @@ const Paymentcontent = (props) => {
         <div className='title-content'>
           <h3>Pilih Metode Pembayaran</h3>
         </div>
-        <div className='box-rounded' onClick={() => !submitting.balance && balance.isFound && Router.push('/payment-balance')}>
+        <div className='box-rounded' onClick={() => !submitting.balance && balance.isFound && Router.push(`/payment-balance?paymentType=${paymentType}&idT=${idT}`)}>
           <div className='payment-method'>
             Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
             {
@@ -208,6 +255,7 @@ const Paymentcontent = (props) => {
 
 const mapStateToProps = (state) => ({
   cart: state.cart,
+  transaction: state.transaction,
   balance: state.balance,
   snapToken: state.snapToken,
   checkout: state.checkout
@@ -215,6 +263,7 @@ const mapStateToProps = (state) => ({
 
 const mapDiaptchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
+  getTransaction: (params) => dispatch(transactionActions.getTransaction(params)),
   getBalance: () => dispatch(userActions.getBalance()),
   getMidtransToken: (params) => dispatch(paymentActions.getMidtransToken(params)),
   setCheckout: (params) => dispatch(cartActions.checkout(params))
