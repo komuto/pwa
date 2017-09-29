@@ -78,8 +78,8 @@ class Home extends Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { products, addWishlist, category } = nextProps
-    const { isFetching, isError, isFound, notifError } = this.props
+    let { products, addWishlist, category } = nextProps
+    let { isFetching, isError, isFound, notifError } = this.props
 
     // handling state set wishlist
     if (!isFetching(addWishlist) && this.submitting.addWishlist) {
