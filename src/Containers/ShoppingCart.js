@@ -111,7 +111,7 @@ class ShoppingCart extends Component {
   }
 
   payNow () {
-    Router.push('/payment')
+    Router.push('/payment?paymentType=bucket')
     this.setState({ submitting: true })
   }
 
