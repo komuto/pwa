@@ -1,26 +1,28 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import NotificationSeller from '../src/Containers/NotificationSeller'
+import ResolutionCenter from '../src/Containers/ResolutionCenter'
 
 const Index = (props) => {
   const params = {
-    style: 'main no-padding-bottom bg-white',
+    style: 'main detail resolusi bg-grey',
     header: {
-      title: 'Notifikasi'
+      title: 'Pusat Resolusi'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Notifikasi'
+      textPath: 'Pusat Resolusi',
+      callBack: () => Router.push('/notification')
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <NotificationSeller {...props} />
+      <ResolutionCenter {...props} />
     </DefaultLayout>
   )
 }

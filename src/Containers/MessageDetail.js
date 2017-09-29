@@ -3,6 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import moment from 'moment'
 // components
 import { Navbar } from './Navbar'
 import Images from '../Themes/Images'
@@ -69,14 +70,7 @@ class MessageDetail extends React.Component {
 
   deleteMessageForever () {
     this.deleteMessage = true
-    console.log('id', this.state.id)
     this.props.buyerDeleteMessage({ id: this.state.id })
-    // if (messageType === 'conversation') {
-    //   this.props.buyerDeleteMessage({ id: this.state.id, messageType: 'archive' })
-    // }
-    // if (messageType === 'archive') {
-    //   this.props.buyerDeleteMessage({ id: this.state.id, messageType: 'conversation' })
-    // }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -108,20 +102,19 @@ class MessageDetail extends React.Component {
     }
     if (!isFetching(deleteMessage) && this.deleteMessage) {
       this.deleteMessage = false
-      // if (this.state.messageType === 'conversation') {
-      //   Router.push(`/messages?archeived=${deleteMessage.deleteMessage.id}`)
-      // }
-      // if (this.state.messageType === 'archive') {
-      //   Router.push(`/messages?conversation=${deleteMessage.deleteMessage.id}`)
-      // }
-      console.log('delete', deleteMessage)
+      if (this.state.messageType === 'conversation') {
+        Router.push(`/messages?deleteArcheive=${deleteMessage.status}`)
+      }
+      if (this.state.messageType === 'archive') {
+        Router.push(`/messages?deleteConversation=${deleteMessage.status}`)
+      }
     }
-    console.log('nextProps', nextProps)
   }
 
   renderListMessages () {
     const { buyerDetailMessage } = this.state
     if (buyerDetailMessage.isFound && buyerDetailMessage.buyerDetailMessage.detail_messages.length > 0) {
+      moment.locale('id')
       return buyerDetailMessage.buyerDetailMessage.detail_messages.map((message, i) => {
         return (
           <li key={i}>
@@ -139,7 +132,7 @@ class MessageDetail extends React.Component {
                       {message.content}
                     </p>
                   </div>
-                  <span className='time-discuss'>{message.created_at}</span>
+                  <span className='time-discuss'>{moment.unix(message.created_at).format('DD MMM YYYY h:mm')}</span>
                 </div>
               </article>
             </div>
@@ -161,7 +154,6 @@ class MessageDetail extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { notification, buyerDetailMessage, message, id, messageType } = this.state
     const messageTypes = buyerDetailMessage.isFound ? messageType : 'conversation'
     const params = {

@@ -18,6 +18,11 @@ class Notification extends React.Component {
     Router.push('/messages')
   }
 
+  toDiscussionProduct (e) {
+    e.preventDefault()
+    Router.push('/discussion-product')
+  }
+
   render () {
     return (
       <section className='section is-paddingless'>
@@ -43,7 +48,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li>
+              <li onClick={(e) => this.toDiscussionProduct(e)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -62,7 +67,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li>
+              <li onClick={() => Router.push(`/review-products`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -81,7 +86,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li>
+              <li onClick={() => Router.push(`/resolution-center`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>

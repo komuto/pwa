@@ -43,7 +43,10 @@ const images = {
   paymentExpired: '../../static/images/icon-payment-expired.svg',
   paymentWaiting: '../../static/images/icon-payment-waiting-payment.svg',
   paymentVerification: '../../static/images/icon-payment-waiting-verification.svg',
-  emptyStatesMessage: '../../static/images/empty-states-percakapan.svg'
+  emptyStatesMessage: '../../static/images/empty-states-percakapan.svg',
+  emptyStatesDiscussion: '../../static/images/empty-states.svg',
+  review: '../../static/images/review.svg',
+  emptyStatesResolusi: '../../static/images/empty-states-resolusi.svg'
 }
 
 export default images
