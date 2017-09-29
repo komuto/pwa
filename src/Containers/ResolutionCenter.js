@@ -9,7 +9,7 @@ import Notification from '../Components/Notification'
 // actions
 import * as transactionAction from '../actions/transaction'
 // services
-import { isFetching, validateResponse, validateResponseAlter } from '../Services/Status'
+import { isFetching, validateResponse } from '../Services/Status'
 
 const TAB_RESOLUTION_WAIT = 'TAB_RESOLUTION_WAIT'
 const TAB_RESOLUTION_DONE = 'TAB_RESOLUTION_DONE'
@@ -44,7 +44,7 @@ class ResolutionCenter extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { query } = this.props
+    // const { query } = this.props
     const { buyerComplainedOrders, buyerComplainedOrders2 } = nextProps
     if (!isFetching(buyerComplainedOrders)) {
       this.setState({ buyerComplainedOrders: nextProps.buyerComplainedOrders, notification: validateResponse(buyerComplainedOrders, buyerComplainedOrders.message) })
