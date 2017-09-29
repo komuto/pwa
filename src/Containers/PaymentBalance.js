@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 // Component
 import Content from '../Components/Content'
 import Notification from '../Components/Notification'
 // actions
 import * as cartActions from '../actions/cart'
 import * as userActions from '../actions/user'
+import * as transactionActions from '../actions/transaction'
 // libs
 import RupiahFormat from '../Lib/RupiahFormat'
 import Promo from '../Lib/Promo'
@@ -16,6 +18,9 @@ class PaymentBalance extends Component {
     super(props)
     this.state = {
       cart: props.cart || null,
+      transaction: props.transaction || null,
+      paymentType: props.query.paymentType || null,
+      idT: props.query.idT || null,
       balance: props.balance || null,
       checkout: props.checkout || null,
       notification: props.notification
@@ -23,14 +28,28 @@ class PaymentBalance extends Component {
     this.submitting = {
       balance: false,
       cart: false,
-      checkout: false
+      checkout: false,
+      transaction: false
     }
   }
 
-  async componentWillMount () {
-    this.submitting = { ...this.submitting, balance: true, cart: true }
+  async componentDidMount () {
+    let { paymentType, idT } = this.state
+
+    NProgress.start()
+
+    if (paymentType === 'bucket') {
+      this.submitting = { ...this.submitting, cart: true }
+      await this.props.getCart()
+    }
+
+    if (paymentType === 'transaction') {
+      this.submitting = { ...this.submitting, transaction: true }
+      await this.props.getTransaction({ id: idT })
+    }
+
+    this.submitting = { ...this.submitting, balance: true }
     await this.props.getBalance()
-    await this.props.getCart()
   }
 
   paymentBalance () {
@@ -40,7 +59,7 @@ class PaymentBalance extends Component {
 
   componentWillReceiveProps (nextProps) {
     let { isFetching, isError, isFound, notifError } = this.props
-    let { cart, balance, checkout } = nextProps
+    let { cart, transaction, balance, checkout } = nextProps
 
     // handling state set checkout
     if (!isFetching(checkout) && this.submitting.checkout) {
@@ -55,6 +74,7 @@ class PaymentBalance extends Component {
 
     // handling state get cart
     if (!isFetching(cart) && this.submitting.cart) {
+      NProgress.done()
       this.submitting = {...this.submitting, cart: false}
       if (isError(cart)) {
         this.setState({ notification: notifError(cart.message) })
@@ -73,10 +93,32 @@ class PaymentBalance extends Component {
         this.setState({ balance })
       }
     }
+
+    // handling state get transaction
+    if (!isFetching(transaction) && this.submitting.transaction) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, transaction: false }
+      if (isError(transaction)) {
+        this.setState({ notification: notifError(transaction.message) })
+      }
+      if (isFound(transaction)) {
+        this.setState({ transaction })
+      }
+    }
   }
 
   render () {
-    let { cart, balance, notification } = this.state
+    let { cart, paymentType, transaction, notification } = this.state
+    let status = false
+
+    if (paymentType === 'bucket') {
+      status = cart.isFound
+    }
+
+    if (paymentType === 'transaction') {
+      status = transaction.isFound
+    }
+
     return (
       <Content>
         <Notification
@@ -86,10 +128,9 @@ class PaymentBalance extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            cart.isFound &&
+            status &&
               <PaymentBalanceContent
-                {...cart}
-                {...balance}
+                {...this.state}
                 submitting={this.submitting}
                 paymentBalance={() => this.paymentBalance()} />
           }
@@ -99,18 +140,33 @@ class PaymentBalance extends Component {
 }
 
 const PaymentBalanceContent = (props) => {
-  let { cart, submitting } = props
+  let { cart, transaction, paymentType, submitting } = props
   let totalPayment = 0
   let promoCode = '-'
   let pricePromo = 0
 
-  cart.items.map((item) => {
-    totalPayment += item.total_price
-  })
+  if (paymentType === 'bucket') {
+    let myCart = cart.cart
 
-  if (cart.promo) {
-    pricePromo = Promo({...cart, totalPayment})
-    promoCode = cart.promo.promo_code
+    myCart.items.map((item) => {
+      totalPayment += item.total_price
+    })
+
+    if (myCart.promo) {
+      pricePromo = Promo({...myCart, totalPayment})
+      promoCode = myCart.promo.promo_code
+    }
+  }
+
+  if (paymentType === 'transaction') {
+    let { summary_transaction, bucket } = transaction.transaction
+
+    totalPayment = summary_transaction.total_price
+
+    if (bucket.promo) {
+      pricePromo = Promo({...bucket, totalPayment})
+      promoCode = bucket.promo.promo_code
+    }
   }
 
   return (
@@ -196,12 +252,14 @@ const PaymentBalanceContent = (props) => {
 
 const mapStateToProps = (state) => ({
   cart: state.cart,
+  transaction: state.transaction,
   balance: state.balance,
   checkout: state.checkout
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getCart: () => dispatch(cartActions.getCart()),
+  getTransaction: (params) => dispatch(transactionActions.getTransaction(params)),
   getBalance: () => dispatch(userActions.getBalance()),
   setCheckout: (params) => dispatch(cartActions.checkout(params))
 })
