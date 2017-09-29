@@ -111,7 +111,7 @@ class Discussion extends Component {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src={images[0] && images[0].file} alt='pict' />
+                        <MyImage src={images[0] && images[0].file} alt={product.name} />
                       </figure>
                     </div>
                     <div className='media-content'>
@@ -151,7 +151,7 @@ class Discussion extends Component {
                               <article className={`media`}>
                                 <div className='media-left'>
                                   <figure className='image user-pict'>
-                                    <MyImage src={discussion.user.photo} alt='pict' />
+                                    <MyImage src={discussion.user.photo} alt={discussion.user.name} />
                                   </figure>
                                 </div>
                                 <div className='media-content'>

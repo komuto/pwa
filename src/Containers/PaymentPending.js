@@ -9,7 +9,7 @@ export default () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={null} />
+          <MyImage src={null} alt='imageNull' />
           <p><strong>Pembayaran anda belum selesai[unfinish: close, pending] </strong></p>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
         </div>

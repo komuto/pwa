@@ -183,7 +183,7 @@ class ProductAddStepFour extends Component {
                     <div className='eks-name'>
                       <span>{expedition.name}</span>
                       <span>
-                        <MyImage src={expedition.logo} alt='' />
+                        <MyImage src={expedition.logo} alt={expedition.name} />
                       </span>
                     </div>
                   </div>

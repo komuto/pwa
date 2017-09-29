@@ -97,7 +97,7 @@ const TransactionContent = (props) => {
                               <div className='media-left'>
                                 <figure className='image list-transaction'>
                                   <a>
-                                    <MyImage src={products[0] && products[0].image} />
+                                    <MyImage src={products[0] && products[0].image} alt={products.name} />
                                   </a>
                                 </figure>
                               </div>

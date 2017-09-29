@@ -11,7 +11,7 @@ export default (props) => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.phoneAccount} />
+          <MyImage src={Images.phoneAccount} alt='phoneAccount' />
           <p><strong>{localize.signin_info}</strong></p>
           <p>{localize.signin_sub_info}</p>
         </div>

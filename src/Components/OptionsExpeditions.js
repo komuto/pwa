@@ -12,7 +12,7 @@ const OptionsExpeditions = (props) => {
                   return (
                     <label key={expedition.id} className={`radio ${props.selected.id === expedition.id && 'checked'}`} onClick={(e) => props.expeditionSelected(e, expedition)}>
                       <input type='radio' name='expedisi' />
-                      <MyImage src={expedition.logo} />
+                      <MyImage alt='expeditionLogo' src={expedition.logo} />
                       { expedition.name }
                     </label>
                   )

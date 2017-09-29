@@ -326,7 +326,7 @@ class Purchase extends Component {
           <div className='detail-product'>
             <div className='purchase'>
               <figure className='img-item' style={{ width: 30 }}>
-                <MyImage src={images[0].file} alt='pict' />
+                <MyImage src={images[0].file} alt={store.name} />
               </figure>
               <h3>{ product.name }</h3>
               <span className='price'>{ store.name }</span>
@@ -558,7 +558,7 @@ class Purchase extends Component {
           insuranceSelected={(e, selected) => this.insuranceSelected(e, selected)} />
         <div className='sort-option' id='addCartNotif' style={{ display: cartNotification && 'block' }}>
           <div className='notif-report add-cart-notif'>
-            <MyImage src={Images.phoneAccount} />
+            <MyImage src={Images.phoneAccount} alt='phoneAccout' />
             <p>Produk telah berhasil dimasukkan ke Keranjang Belanja</p>
             <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/shopping-cart')}>Lihat Keranjang Belanja</button>
             <button className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/')}>Kembali Belanja</button>

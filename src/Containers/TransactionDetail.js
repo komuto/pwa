@@ -114,7 +114,7 @@ const TransactionDetailContent = (props) => {
           <article className='media'>
             <div className='media-left'>
               <figure className='image user-pict' style={paymentIcon === undefined ? { width: 50 } : {}}>
-                <MyImage src={paymentIcon} />
+                <MyImage src={paymentIcon} alt='paymentIcon' />
               </figure>
             </div>
             <div className='media-content'>

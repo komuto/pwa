@@ -185,7 +185,7 @@ class Home extends Component {
                       )
                     }} >
                     <div className='has-text-centered'>
-                      <MyImage src={category.icon} />
+                      <MyImage src={category.icon} alt={category.name} />
                       <p> {category.name} </p>
                     </div>
                   </div>

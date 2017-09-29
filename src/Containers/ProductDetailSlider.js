@@ -20,7 +20,7 @@ class ProductDetailSlider extends Component {
       {
               images.map((image, index) => {
                 return <div style={imgStyle} key={index}>
-                  <MyImage src={image.file} alt='Image' />
+                  <MyImage src={image.file} alt='sliderImage' />
                 </div>
               })
             }

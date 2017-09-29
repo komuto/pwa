@@ -157,7 +157,7 @@ class Store extends Component {
             <div className='media'>
               <div className='media-left'>
                 <figure className='image'>
-                  <a><MyImage src={product.image} alt='Image' /></a>
+                  <a><MyImage src={product.image} alt={product.name} /></a>
                   { pin }
                 </figure>
               </div>
@@ -284,7 +284,7 @@ const ContentPenilaian = (store) => {
                         <article className='media'>
                           <div className='media-left'>
                             <figure className='image user-pict'>
-                              <MyImage src={review.user.photo} />
+                              <MyImage src={review.user.photo} alt={review.user.name} />
                             </figure>
                           </div>
                           <div className='media-content'>
@@ -310,7 +310,7 @@ const ContentPenilaian = (store) => {
                         <article className='media'>
                           <div className='media-left'>
                             <figure className='image'>
-                              <MyImage src={review.product.image} />
+                              <MyImage src={review.product.image} alt={review.product.name} />
                             </figure>
                           </div>
                           <div className='media-content'>
@@ -534,7 +534,7 @@ const BoxSeller = (props) => {
         <div className='media-left'>
           <figure className='image'>
             <a>
-              <MyImage src='../images/thumb.jpg' alt='Image' />
+              <MyImage src='../images/thumb.jpg' alt='thumbs' />
             </a>
           </figure>
         </div>

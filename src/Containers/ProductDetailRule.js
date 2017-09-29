@@ -32,7 +32,7 @@ class ProductDetailRule extends Component {
                       <div className='media-left'>
                         <figure className='image'>
                           <a>
-                            <MyImage src={store.logo} />
+                            <MyImage src={store.logo} alt='logo' />
                           </a>
                         </figure>
                       </div>

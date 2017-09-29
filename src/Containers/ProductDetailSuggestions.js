@@ -44,7 +44,7 @@ class ProductDetailSuggestions extends Component {
                       <div className='media-left' style={{width: '40%'}}>
                         <figure className='image'>
                           <a>
-                            <MyImage src={product.image} />
+                            <MyImage src={product.image} alt={product.name} />
                           </a>
                           { pin }
                         </figure>

@@ -272,7 +272,7 @@ const Cart = (props) => {
                 <div className='detail-product'>
                   <div className='purchase'>
                     <figure className='img-item' style={{ width: 50 }}>
-                      <MyImage src={item.product.image} alt='pict' />
+                      <MyImage src={item.product.image} alt={item.product.store.name} />
                     </figure>
                     <h3>{item.product.name}</h3>
                     <span className='price'>{item.product.store.name}</span>
@@ -414,7 +414,7 @@ const EmptyCart = () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='komuto' />
+          <MyImage src={Images.notFound} alt='notFound' />
           <p><strong>Belum ada barang di Keranjang Belanja</strong></p>
           <p>Anda belum memasukkan barang ke keranjang belanja Anda</p>
         </div>

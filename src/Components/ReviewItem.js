@@ -16,7 +16,7 @@ export default (props) => {
                 <article className='media'>
                   <div className='media-left'>
                     <figure className='image user-pict'>
-                      <MyImage src={props.user.photo} />
+                      <MyImage src={props.user.photo} alt={props.user.name} />
                     </figure>
                   </div>
                   <div className='media-content'>

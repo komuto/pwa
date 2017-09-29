@@ -126,7 +126,7 @@ class Report extends Component {
                     <article className='media'>
                       <div className='media-left'>
                         <figure className='image product-pict' style={{ width: 40, height: 40 }}>
-                          <MyImage src={images[0].file} />
+                          <MyImage src={images[0].file} alt={product.name} />
                         </figure>
                       </div>
                       <div className='media-content'>
@@ -175,7 +175,7 @@ class Report extends Component {
         }
         <div className='sort-option' style={{ display: notifReport && 'block' }}>
           <div className='notif-report'>
-            <MyImage src={Images.phoneAccount} />
+            <MyImage src={Images.phoneAccount} alt='phoneAccount' />
             <h3>Laporan Terkirim</h3>
             <p>Laporan Anda telah berhasil dikirim. Kami akan menindaklanjuti laporan Anda.</p>
             <button

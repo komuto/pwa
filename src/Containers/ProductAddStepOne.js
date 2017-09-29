@@ -142,7 +142,7 @@ class ProductAddStepOne extends Component {
                         <div className='photo-product'>
                           <a onClick={() => this.removeImage(picture)} className='del-photo'><span className='icon-cross-circle' /></a>
                           <div className='photo-wrapp'>
-                            <MyImage src={picture.preview} alt='' />
+                            <MyImage src={picture.preview} alt='preview' />
                           </div>
                         </div>
                       </li>

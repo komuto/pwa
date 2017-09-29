@@ -248,7 +248,7 @@ const ContentHidden = (props) => {
                 </div>
                 <div className='purchase'>
                   <figure className='img-item xx'>
-                    <MyImage src={p.image} alt='pict' />
+                    <MyImage src={p.image} alt='image' />
                   </figure>
                   <div className='content-product'>
                     <h3>{ p.name }</h3>
@@ -307,7 +307,7 @@ const ContentShow = (props) => {
                       </div>
                       <div className='purchase' onClick={(e) => props.productDetail(e, p, sp.catalog.store_id)}>
                         <figure className='img-item xx'>
-                          <MyImage src={p.image} alt='pict' />
+                          <MyImage src={p.image} alt='image' />
                         </figure>
                         <div className='content-product'>
                           <h3>{ p.name }</h3>

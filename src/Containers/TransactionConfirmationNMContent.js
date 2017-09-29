@@ -95,7 +95,7 @@ const NotMatchingContent = (props) => {
                         <div className='photo-product'>
                           <a onClick={() => props.removeImage(picture)} className='del-photo'><span className='icon-cross-circle' /></a>
                           <div className='photo-wrapp'>
-                            <MyImage src={picture.preview} alt='' />
+                            <MyImage src={picture.preview} alt='preview' />
                           </div>
                         </div>
                       </li>

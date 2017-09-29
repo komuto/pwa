@@ -9,6 +9,6 @@ export default (props) => {
   let size = props.size !== undefined ? props.size : 16
   return <Rating
     {...props}
-    empty={<MyImage src={Images.startDisabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />}
-    full={<MyImage src={Images.startEnabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />} />
+    empty={<MyImage alt='ratingEmpty' src={Images.startDisabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />}
+    full={<MyImage alt='ratingFull' src={Images.startEnabled} style={{width: size + 'px', height: size + 'px'}} className='icon' />} />
 }

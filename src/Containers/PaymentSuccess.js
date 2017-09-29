@@ -9,7 +9,7 @@ export default () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.paymentSuccess} />
+          <MyImage src={Images.paymentSuccess} alt='paymentSuccess' />
           <p><strong>Pembayaran Telah Berhasil </strong></p>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
         </div>

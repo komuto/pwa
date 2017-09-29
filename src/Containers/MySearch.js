@@ -132,7 +132,7 @@ const EmptySearch = (props) => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='komuto' />
+          <MyImage src={Images.notFound} alt='notFound' />
           <p><strong>Hasil Pencarian tidak ditemukan</strong></p>
           <p>Kami tidak bisa menemukan barang dari kata kunci yang Anda masukkan</p>
         </div>

@@ -170,7 +170,7 @@ const ModalMessage = (props) => {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src={invoice.store.logo} alt='pict' />
+                        <MyImage src={invoice.store.logo} alt={invoice.store.name} />
                       </figure>
                     </div>
                     <div className='media-content'>
@@ -391,7 +391,7 @@ const TabsStatusContent = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><MyImage src={invoice.store.logo} alt='Image' /></a>
+                          <a><MyImage src={invoice.store.logo} alt={invoice.store.name} /></a>
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>

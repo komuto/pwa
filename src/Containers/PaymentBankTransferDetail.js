@@ -264,7 +264,7 @@ class TransactionDetailBankTransfer extends Component {
                                         </li>
                                         <li>
                                           <div className='has-text-right img-method'>
-                                            <MyImage src={account.bank.logo} alt='' />
+                                            <MyImage src={account.bank.logo} alt={account.bank_branch_office_name} />
                                           </div>
                                         </li>
                                       </ul>

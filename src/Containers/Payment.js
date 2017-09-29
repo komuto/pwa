@@ -242,7 +242,7 @@ const Paymentcontent = (props) => {
       </section>
       <div className='sort-option' style={{ display: failTransaction ? 'block' : 'none' }}>
         <div className='notif-report'>
-          <MyImage src='../images/reg-success.svg' />
+          <MyImage src='../images/reg-success.svg' alt='regSuccess' />
           <h3>Pembayaran gagal</h3>
           <p>Mohon maaf kami tidak berhasil melakukan pembayaran anda!</p>
           <button className='button is-primary is-large is-fullwidth'>Coba lagi</button>

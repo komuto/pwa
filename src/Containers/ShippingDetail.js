@@ -334,7 +334,7 @@ class ShippingDetail extends Component {
           <div className='detail-product'>
             <div className='purchase'>
               <figure className='img-item'>
-                <MyImage src='../images/pict.jpg' alt='pict' />
+                <MyImage src='../images/pict.jpg' alt={product.store.name} />
               </figure>
               <h3>{ product.name }</h3>
               <span className='price'>{ product.store.name }</span>

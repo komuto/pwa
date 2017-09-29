@@ -177,7 +177,7 @@ class HeadContainer extends Component {
     } else {
       return (<Head>
         <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport' />
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport' />
         <meta name='apple-mobile-web-app-status-bar-style' content='black' />
         <meta name='theme-color' content='#F36525' />
         <meta name='msapplication-navbutton-color' content='#F36525' />
