@@ -15,39 +15,36 @@ import { Navbar } from './Navbar'
 // actions
 import * as userActions from '../actions/user'
 import * as productActions from '../actions/product'
-// services
-import { Status } from '../Services/Status'
-import GET_TOKEN from '../Services/GetToken'
 
 class Wishlist extends Component {
   constructor (props) {
     super(props)
-
     this.state = {
       products: props.products || null,
+      addWishlist: props.addWishlist || null,
       viewActive: 'list',
       sortActive: false,
       selectedSort: null,
-      token: null,
       search: {
         status: false,
         value: '',
         results: []
       },
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      }
+      notification: props.notification
     }
-    this.wishlistId = null
+    this.submitting = {
+      addWishlist: false,
+      products: false
+    }
   }
+
   viewOnClick () {
-    let { viewActive } = this.state
-    viewActive = viewActive === 'list' ? 'grid' : 'list'
-    this.setState({ viewActive })
+    this.setState({ viewActive: this.state.viewActive === 'list' ? 'grid' : 'list' })
   }
-  // sort button event
-  sortOnClick = () => this.setState({ sortActive: true })
+
+  sortOnClick () {
+    this.setState({ sortActive: !this.state.sortActive })
+  }
 
   sortSelected (selectedSort) {
     let { products } = this.state
@@ -73,13 +70,12 @@ class Wishlist extends Component {
   searchOnChange = (event) => {
     let { products, search } = this.state
     search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    search.status = false
+    search.results = []
 
-    if (search.value !== '') {
+    if (search.value) {
       search.status = true
       search.results = _.filter(products.wishlist, (wishlist) => { return wishlist.product.name.toLowerCase().indexOf(search.value) > -1 })
-    } else {
-      search.status = false
-      search.results = []
     }
 
     this.setState({ search })
@@ -87,67 +83,55 @@ class Wishlist extends Component {
 
   async componentDidMount () {
     NProgress.start()
-    await this.props.dispatch(userActions.wishlist())
-    this.setState({ token: await GET_TOKEN.getToken() })
+    this.submitting = { ...this.submitting, products: true }
+    await this.props.wishlist()
   }
 
   async wishlistPress (id) {
-    let { products, token } = this.state
-    if (token) {
-      products.wishlist.map((myProduct) => {
+    let { products } = this.state
+    if (this.props.isLogin) {
+      products.wishlist.some((myProduct) => {
         if (myProduct.product.id === id) {
           (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
           myProduct.product.is_liked = !myProduct.product.is_liked
+          return true
         }
       })
-      await this.props.dispatch(productActions.addToWishlist({ id }))
+      this.submitting = { ...this.submitting, addWishlist: true }
+      await this.props.addToWishlist({ id })
       this.setState({ products })
     } else {
-      this.setState({notification: {status: true, message: 'Anda harus login'}})
+      this.props.alertLogin()
     }
   }
 
-  async componentWillReceiveProps (nextProps) {
-    const { products, addWishlist } = nextProps
-    let { notification } = this.state
-    // reset notification
-    notification = {status: false, message: 'Error, default message.'}
+  componentWillReceiveProps (nextProps) {
+    let { isFetching, isError, isFound, notifError } = this.props
+    let { products, addWishlist } = nextProps
 
-    if (!addWishlist.isLoading) {
-      switch (addWishlist.status) {
-        case Status.SUCCESS :
-          (addWishlist.isFound)
-          ? this.setState({ addWishlist })
-          : this.setState({ notification: {status: true, message: 'Gagal menambah wishlist'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: addWishlist.message} })
-          break
-        default:
-          break
+    // handling state set wishlist
+    if (!isFetching(addWishlist) && this.submitting.addWishlist) {
+      this.submitting = { ...this.submitting, addWishlist: false }
+      if (isError(addWishlist)) {
+        this.setState({ notification: notifError(addWishlist.message) })
+      }
+
+      if (isFound(addWishlist)) {
+        this.setState({ addWishlist })
       }
     }
-    // product data
-    if (!products.isLoading) {
+
+    // handling state get products
+    if (!isFetching(products) && this.submitting.products) {
       NProgress.done()
-      switch (products.status) {
-        case Status.SUCCESS :
-          if (products.isFound) {
-            if (products.wishlist.length < 1) notification = {status: true, message: 'Produk tidak tersedia'}
-          } else {
-            notification = {status: true, message: 'Data produk tidak ditemukan'}
-          }
-          break
-        case Status.OFFLINE :
-        case Status.UNAUTHORIZED :
-        case Status.FAILED :
-          notification = {status: true, message: products.message}
-          break
-        default:
-          break
+      this.submitting = { ...this.submitting, products: false }
+      if (isError(products)) {
+        this.setState({ notification: notifError(products.message) })
       }
-      this.setState({ products, notification })
+
+      if (isFound(products)) {
+        this.setState({ products })
+      }
     }
   }
 
@@ -155,19 +139,15 @@ class Wishlist extends Component {
     return (
       <Content>
         {
-          products.map((myProduct) => {
-            let { images, product, store } = myProduct
-
-            return product.is_liked
-                   ? <ProductContainers key={product.id}>
-                     <Product
-                       viewActive={viewActive}
-                       images={images}
-                       store={store}
-                       product={product}
-                       wishlistPress={(id) => this.wishlistPress(id)} />
-                   </ProductContainers>
-                    : null
+          products.map((myProduct, index) => {
+            if (myProduct.product.is_liked) {
+              return <ProductContainers key={index}>
+                <Product
+                  {...myProduct}
+                  viewActive={viewActive}
+                  wishlistPress={(id) => this.wishlistPress(id)} />
+              </ProductContainers>
+            }
           })
         }
       </Content>
@@ -178,17 +158,14 @@ class Wishlist extends Component {
     return (
       <ProductContainers>
         {
-          products.map((myProduct) => {
-            const { images, product, store } = myProduct
-            return product.is_liked
-                   ? <Product
-                     key={product.id}
-                     viewActive={viewActive}
-                     images={images}
-                     store={store}
-                     product={product}
-                     wishlistPress={(id) => this.wishlistPress(id)} />
-                    : null
+          products.map((myProduct, index) => {
+            if (myProduct.product.is_liked) {
+              return <Product
+                {...myProduct}
+                key={index}
+                viewActive={viewActive}
+                wishlistPress={(id) => this.wishlistPress(id)} />
+            }
           })
         }
       </ProductContainers>
@@ -196,19 +173,17 @@ class Wishlist extends Component {
   }
 
   render () {
-    const { search, sortActive, selectedSort, products, notification, viewActive } = this.state
-
-    const params = {
+    let { search, products, notification, viewActive } = this.state
+    let params = {
       navbar: {
         searchBoox: false,
         path: '/',
         textPath: 'Wishlist'
       }
     }
-
     let wishlist = []
     if (products.wishlist) wishlist = search.status ? search.results : products.wishlist
-    const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, wishlist) : this.renderProductColoumn(viewActive, wishlist)
+    let listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, wishlist) : this.renderProductColoumn(viewActive, wishlist)
 
     return (
       <Content>
@@ -241,19 +216,22 @@ class Wishlist extends Component {
           viewOnClick={() => this.viewOnClick()}
           viewActive={viewActive} />
         <Sort
-          isShow={sortActive}
-          selected={selectedSort}
+          {...this.state}
+          sortOnClick={(e) => this.sortOnClick(e)}
           sortSelected={(data) => this.sortSelected(data)} />
       </Content>
     )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    products: state.wishlist,
-    addWishlist: state.addWishlist
-  }
-}
+const mapStateToProps = (state) => ({
+  products: state.wishlist,
+  addWishlist: state.addWishlist
+})
 
-export default connect(mapStateToProps)(Wishlist)
+const mapDispatchToProps = (dispatch) => ({
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
+  wishlist: () => dispatch(userActions.wishlist())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wishlist)
