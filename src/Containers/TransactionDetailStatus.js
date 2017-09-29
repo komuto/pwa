@@ -13,7 +13,6 @@ import Notification from '../Components/Notification'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { validateResponseAlter, isFetching, isError } from '../Services/Status'
 import { INVOICE_TRANSACTION_CLASS, INVOICE_TRANSACTION_MESSAGE, SHIPPING_SENDER_STATUS } from './TransactionDetail'
 import { PROBLEMS, SOLUTIONS } from './TransactionConfirmation'
 
@@ -30,11 +29,14 @@ class TransactionDetailStatus extends Component {
       sendMessageStore: null,
       showModalMessage: false,
       formMessage: {},
-      submitMessage: false,
       notification: {
         status: false,
         message: 'Error, default message.'
       }
+    }
+    this.submitting = {
+      message: false,
+      buyerInvoiceDetail: false
     }
     moment.locale('id')
   }
@@ -46,29 +48,41 @@ class TransactionDetailStatus extends Component {
   }
 
   modalMessage () {
-    this.setState({ sendMessageStore: null, showModalMessage: !this.state.showModalMessage })
+    this.setState({ showModalMessage: !this.state.showModalMessage })
   }
 
   componentDidMount () {
     const { id, invoiceId } = this.state
     NProgress.start()
+    this.submitting = { ...this.submitting, buyerInvoiceDetail: true }
     this.props.getBuyerInvoiceDetail({ id, invoiceId })
   }
 
   componentWillReceiveProps (nextProps) {
     const { buyerInvoiceDetail, sendMessageStore } = nextProps
-    let { submitMessage } = this.state
-    if (!isFetching(buyerInvoiceDetail)) {
+    const { isFetching, isError, isFound, notifError, notifSuccess } = this.props
+
+    // handling state get invoices detail
+    if (!isFetching(buyerInvoiceDetail) && this.submitting.buyerInvoiceDetail) {
       NProgress.done()
+      this.submitting = { ...this.submitting, buyerInvoiceDetail: false }
       if (isError(buyerInvoiceDetail)) {
-        this.setState({ buyerInvoiceDetail, notification: { type: 'is-danger', status: true, message: 'Data pesanan tidak ditemukan' } })
-      } else {
+        this.setState({ notification: notifError(buyerInvoiceDetail.message) })
+      }
+      if (isFound(buyerInvoiceDetail)) {
         this.setState({ buyerInvoiceDetail })
       }
     }
 
-    if (submitMessage && !isFetching(sendMessageStore)) {
-      this.setState({ sendMessageStore, submitMessage: false, notification: validateResponseAlter(sendMessageStore, 'Berhasil mengirim pesan', 'Gagal mengirim pesan') })
+    // handling state set message
+    if (!isFetching(sendMessageStore) && this.submitting.message) {
+      this.submitting = { ...this.submitting, message: false }
+      if (isError(sendMessageStore)) {
+        this.setState({ notification: notifError(sendMessageStore) })
+      }
+      if (isFound(sendMessageStore)) {
+        this.setState({ sendMessageStore, showModalMessage: false, notification: notifSuccess('Berhasil mengirim pesan') })
+      }
     }
   }
 
@@ -87,18 +101,16 @@ class TransactionDetailStatus extends Component {
   onClickSendMessage (e) {
     e.preventDefault()
     let { formMessage } = this.state
-    this.props.setSendMessageStore(formMessage)
-    this.setState({ submitMessage: true })
+    if (formMessage.content !== '' && formMessage.content !== undefined) {
+      this.submitting = { ...this.submitting, message: true }
+      this.props.setSendMessageStore(formMessage)
+    }
   }
 
   render () {
-    let { buyerInvoiceDetail, sendMessageStore, submitMessage, showModalMessage, tab, notification } = this.state
+    let { buyerInvoiceDetail, tab, notification } = this.state
     let { invoice } = buyerInvoiceDetail
     let invoiceStatus = invoice.transaction_status
-
-    if (sendMessageStore !== null && sendMessageStore.status === 200 && sendMessageStore.isFound) {
-      showModalMessage = false
-    }
 
     return (
       <Content>
@@ -127,9 +139,8 @@ class TransactionDetailStatus extends Component {
           }
 
             <ModalMessage
-              showModalMessage={showModalMessage}
-              buyerInvoiceDetail={buyerInvoiceDetail}
-              submitMessage={submitMessage}
+              {...this.state}
+              submitting={this.submitting}
               onClose={() => this.modalMessage()}
               onChangeMessageText={(e) => this.onChangeMessageText(e)}
               onClickSendMessage={(e) => this.onClickSendMessage(e)} />
@@ -141,7 +152,7 @@ class TransactionDetailStatus extends Component {
 }
 
 const ModalMessage = (props) => {
-  const { buyerInvoiceDetail, showModalMessage, submitMessage, onClose } = props
+  const { buyerInvoiceDetail, showModalMessage, submitting, onClose } = props
   const { invoice } = buyerInvoiceDetail
   return (
     <div className={`modal modal-filter modal-dropship ${showModalMessage ? 'is-active' : ''}`}>
@@ -189,7 +200,7 @@ const ModalMessage = (props) => {
                 <textarea onChange={(e) => props.onChangeMessageText(e)} className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
               </p>
               <p className='control'>
-                <button onClick={(e) => props.onClickSendMessage(e)} className={`button is-primary is-large is-fullwidth ${submitMessage ? 'id-loading' : ''}`}>  Kirim Pesan</button>
+                <button onClick={(e) => !submitting.message && props.onClickSendMessage(e)} className={`button is-primary is-large is-fullwidth ${submitting.message ? 'is-loading' : ''}`}>Kirim Pesan</button>
               </p>
             </div>
           </div>
