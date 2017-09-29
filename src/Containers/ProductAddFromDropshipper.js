@@ -470,7 +470,7 @@ class ProductAddFromDropshipper extends React.Component {
   }
 
   render () {
-    const { dropshipProducts, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, notFound } = this.state
+    const { dropshipProducts, expeditionServices, provinces, brands, districts, notification, filterActive, viewActive, notFound } = this.state
     const { products } = dropshipProducts
     const listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, products) : this.renderProductColoumn(viewActive, products)
     return (
@@ -553,8 +553,7 @@ class ProductAddFromDropshipper extends React.Component {
             viewOnClick={() => this.viewOnClick()}
             viewActive={viewActive} />
           <Sort
-            isShow={sortActive}
-            selected={selectedSort}
+            {...this.state}
             sortOnClick={(e) => this.sortOnClick(e)}
             sortSelected={(data) => this.sortSelected(data)} />
           <Filter

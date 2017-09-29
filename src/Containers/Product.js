@@ -350,7 +350,7 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, sortActive, filterActive, selectedSort, viewActive, hasMore } = this.state
+    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, filterActive, viewActive, hasMore } = this.state
     const { q, sort } = this.state.query
     const { products } = productBySearch
     let params = {
@@ -419,8 +419,7 @@ class MyProduct extends Component {
           viewOnClick={() => this.viewOnClick()}
           viewActive={viewActive} />
         <Sort
-          isShow={sortActive}
-          selected={selectedSort}
+          {...this.state}
           sortOnClick={(e) => this.sortOnClick(e)}
           sortSelected={(data) => this.sortSelected(data)} />
         <Filter
