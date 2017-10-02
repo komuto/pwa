@@ -110,7 +110,7 @@ class ShippingDetail extends Component {
 
   async expeditionSelected (e, selected) {
     e.preventDefault()
-    const { item } = this.state
+    let { item } = this.state
     item.item.shipping.expedition_service = {
       ...item.item.shipping.expedition_service,
       expedition: selected
@@ -126,7 +126,7 @@ class ShippingDetail extends Component {
 
   async expeditionsPackageSelected (e, selected) {
     e.preventDefault()
-    const { item } = this.state
+    let { item } = this.state
     item.item.shipping.expedition_service = {
       ...item.item.shipping.expedition_service,
       ...selected
@@ -142,7 +142,7 @@ class ShippingDetail extends Component {
 
   async insuranceSelected (e, selected) {
     e.preventDefault()
-    const { item } = this.state
+    let { item } = this.state
     item.item.shipping.is_insurance = selected === 'Ya'
     this.setState({ item, insurance: { ...this.state.insurance, selected, show: false }, error: this.state.error === 'insurance' && null })
   }
