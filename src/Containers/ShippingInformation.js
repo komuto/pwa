@@ -106,7 +106,7 @@ class ShippingInformation extends Component {
     const { id, productDetail } = this.state
     const params = {
       id,
-      origin_id: productDetail.detail.store.district.ro_id,
+      origin_id: productDetail.detail.location.district.ro_id,
       destination_id: selected.ro_id,
       weight: 1000
     }

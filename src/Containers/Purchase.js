@@ -170,6 +170,8 @@ class Purchase extends Component {
     e.preventDefault()
     const { productDetail, id, amountProduct, address, expeditions, expeditionsPackage, insurance, noted } = this.state
 
+    console.log(insurance)
+
     if (!address.selected.status) {
       this.setState({ error: 'addressSelected' })
       return
@@ -201,7 +203,7 @@ class Purchase extends Component {
       'qty': amountProduct,
       'note': noted,
       'address_id': address.selected.id,
-      'is_insurance': insurance === 'Ya'
+      'is_insurance': insurance.selected === 'Ya'
     })
   }
   async componentDidMount () {
@@ -308,11 +310,35 @@ class Purchase extends Component {
 
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
-    let insurancePrice = (expeditions.selected.insurance_fee * product.price * amountProduct) / 100
+    let price = 0
+    let insurancePrice = 0
     let deliveryPrice = 0
-    if (expeditionsPackage.selected.cost) {
-      deliveryPrice = expeditionsPackage.selected.cost
+    let subTotalPrice = 0
+    let totalPrice = 0
+
+    // real price
+    if (product) {
+      price = product.price
     }
+
+    // price after discount
+    if (product.is_discount) {
+      price = price - (price * (product.discount / 100))
+    }
+
+    // delevery price
+    if (expeditionsPackage.selected.cost) {
+      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000)) * amountProduct
+    }
+
+    // insurance price
+    if (insurance.selected === 'Ya') {
+      insurancePrice = (expeditions.selected.insurance_fee * price * amountProduct) / 100
+    }
+
+    subTotalPrice = price * amountProduct
+    // total price
+    totalPrice = (price * amountProduct) + deliveryPrice + insurancePrice
 
     return (
       <Content style={{paddingBottom: 0}}>
@@ -342,7 +368,7 @@ class Purchase extends Component {
                 </div>
                 <div className='column is-half'>
                   <div className='rating-content item-qty has-text-right'>
-                    <span>Rp {RupiahFormat(product.price)}</span>
+                    <span>Rp {RupiahFormat(price)}</span>
                   </div>
                 </div>
               </div>
@@ -376,7 +402,7 @@ class Purchase extends Component {
                 </div>
                 <div className='column is-half'>
                   <div className='rating-content item-qty has-text-right'>
-                    <span>Rp {RupiahFormat(product.price * amountProduct)}</span>
+                    <span>Rp {RupiahFormat(subTotalPrice)}</span>
                   </div>
                 </div>
               </div>
@@ -507,7 +533,7 @@ class Purchase extends Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><span>Harga Barang</span></div>
-                      <div className='column is-half has-text-right'><span>Rp {RupiahFormat(product.price * amountProduct)}</span></div>
+                      <div className='column is-half has-text-right'><span>{amountProduct} x Rp {RupiahFormat(price)}</span></div>
                     </div>
                   </li>
                   <li>
@@ -527,7 +553,7 @@ class Purchase extends Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column is-half'><strong>Total Harga Barang</strong></div>
-                      <div className='column is-half has-text-right'><strong>Rp {RupiahFormat(product.price * amountProduct + deliveryPrice)}</strong></div>
+                      <div className='column is-half has-text-right'><strong>Rp {RupiahFormat(totalPrice)}</strong></div>
                     </div>
                   </li>
                 </ul>

@@ -18,8 +18,6 @@ import * as addressActions from '../actions/address'
 // import * as purchaseActions from '../actions/purchase'
 // import * as locationActions from '../actions/location'
 import * as expeditionActions from '../actions/expedition'
-// services
-import { Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // validations
@@ -73,6 +71,14 @@ class ShippingDetail extends Component {
 
     this.isRedirect = false
     this.fetchEstimatedShipping = true
+
+    this.submitting = {
+      item: false,
+      estimatedShipping: false,
+      listAddress: false,
+      estimatedCharges: false,
+      goToShoppingCartPage: false
+    }
   }
 
   // address event
@@ -81,19 +87,22 @@ class ShippingDetail extends Component {
     this.setState({ address: { ...this.state.address, show: !this.state.address.show } })
   }
 
+  // handling address selected
   async addressSelected (e, selected) {
     e.preventDefault()
-    const { item } = this.state
+    let { item } = this.state
     item.item.shipping.address = selected
     item.item.shipping.expedition_service = null
 
-    this.fetchEstimatedShipping = true
-    await this.props.estimatedShipping({
+    this.submitting = { ...this.submitting, estimatedCharges: true }
+    let params = {
       id: item.item.product.id,
       origin_id: item.item.product.location.district.ro_id,
       destination_id: item.item.shipping.address.district.ro_id,
-      weight: 1000
-    })
+      weight: item.item.weight * item.item.qty
+    }
+    // handling get estimate charges
+    await this.props.estimatedShipping(params)
     this.setState({
       item,
       address: { ...this.state.address, show: false, selected, submiting: true },
@@ -160,7 +169,7 @@ class ShippingDetail extends Component {
   // submit event
   async onSubmit (e) {
     e.preventDefault()
-    const { item } = this.state
+    let { item } = this.state
     if (item.item.shipping.expedition_service) {
       if (item.item.shipping.expedition_service.id === undefined) {
         this.setState({ error: 'services' })
@@ -170,8 +179,9 @@ class ShippingDetail extends Component {
         this.setState({ error: 'expeditions' })
         return
       }
-      this.isRedirect = true
-      await this.props.addToCart({
+
+      this.submitting = {...this.submitting, goToShoppingCartPage: true}
+      let params = {
         'destination_ro_id': item.item.shipping.address.district.ro_id,
         'origin_ro_id': item.item.product.location.district.ro_id,
         'service': item.item.shipping.expedition_service.name,
@@ -182,8 +192,8 @@ class ShippingDetail extends Component {
         'note': item.item.note,
         'address_id': item.item.shipping.address.id,
         'is_insurance': item.item.shipping.is_insurance
-      })
-      this.setState({ submiting: true })
+      }
+      await this.props.addToCart(params)
     } else {
       this.setState({ error: 'expeditions' })
     }
@@ -191,95 +201,81 @@ class ShippingDetail extends Component {
 
   async componentDidMount () {
     const { id, listAddress } = this.state
-    // const { item } = this.state
 
+    // fething product item by id
+    this.submitting = { ...this.submitting, item: true, estimatedShipping: true }
     await this.props.getItem({ id })
+
+    // fething list address
     if (!listAddress.isFound) {
       NProgress.start()
+      this.submitting = { ...this.submitting, listAddress: true }
       await this.props.getListAddress()
     }
-
-    // console.log(item)
   }
 
   componentWillReceiveProps (nextProps) {
-    const { item, listAddress, rsAddToCart, estimatedCharges } = nextProps
-    let { notification, expeditionsPackage } = this.state
-    notification = {status: false, message: 'Error, default message.'}
+    let { item, listAddress, rsAddToCart, estimatedCharges } = nextProps
+    let { isFetching, isError, isFound, notifError } = this.props
 
-    if (!rsAddToCart.isLoading) {
-      switch (rsAddToCart.status) {
-        case Status.SUCCESS :
-          this.isRedirect && Router.push('/shopping-cart')
-          this.isRedirect = false
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: rsAddToCart.message}
-          this.setState({ rsAddToCart, notification, submiting: false })
-          break
-        default:
-          break
+    // handling state update cart
+    if (!isFetching(rsAddToCart) && this.submitting.goToShoppingCartPage) {
+      this.submitting = {...this.submitting, goToShoppingCartPage: false}
+      if (isError(rsAddToCart)) {
+        this.setState({ notification: notifError(rsAddToCart.message) })
+      }
+
+      if (isFound(rsAddToCart)) {
+        Router.push('/shopping-cart')
       }
     }
 
-    if (!estimatedCharges.isLoading) {
-      switch (estimatedCharges.status) {
-        case Status.SUCCESS :
-          if (!estimatedCharges.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: estimatedCharges.message}
-          break
-        default:
-          break
+    // handling state get estimatedCharges
+    if (!isFetching(estimatedCharges) && this.submitting.estimatedCharges) {
+      this.submitting = { ...this.submitting, estimatedCharges: false }
+      if (isError(estimatedCharges)) {
+        this.setState({ notification: notifError(estimatedCharges.message) })
       }
-      this.setState({
-        expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
-        expeditions: { ...this.state.expeditions, submiting: false },
-        notification
-      })
+      if (isFound(estimatedCharges)) {
+        this.setState({
+          expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
+          expeditions: { ...this.state.expeditions, submiting: false }
+        })
+      }
     }
 
-    if (!listAddress.isLoading) {
+    // handling state get listaddress
+    if (!isFetching(listAddress) && this.submitting.listAddress) {
       NProgress.done()
-      switch (listAddress.status) {
-        case Status.SUCCESS :
-          if (!listAddress.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: listAddress.message}
-          break
-        default:
-          break
+      if (isError(listAddress)) {
+        this.setState({ notification: notifError(listAddress.message) })
       }
-      this.setState({ listAddress, address: { ...this.state.address, data: listAddress.address }, notification })
+      if (isFound(listAddress)) {
+        this.setState({ listAddress, address: { ...this.state.address, data: listAddress.address } })
+      }
     }
 
-    if (!item.isLoading) {
-      switch (item.status) {
-        case Status.SUCCESS :
-          if (!item.isFound) notification = {type: 'is-danger', status: true, message: 'Keranjang belanja kosong!'}
-          if (item.isFound && expeditionsPackage.data.length < 1 && this.fetchEstimatedShipping) {
-            this.props.estimatedShipping({
-              id: item.item.product.id,
-              origin_id: item.item.product.location.district.ro_id,
-              destination_id: item.item.shipping.address.district.ro_id,
-              weight: 1000
-            })
-            this.fetchEstimatedShipping = false
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: item.message}
-          break
-        default:
-          break
+    // handling state get item
+    if (!isFetching(item) && this.submitting.item) {
+      this.submitting = { ...this.submitting, item: false }
+      if (isError(item)) {
+        this.setState({ notification: notifError(item.message) })
       }
-      this.setState({ item, expeditions: { ...this.state.expeditions, data: item.item.product.expeditions }, notification })
+      if (isFound(item)) {
+        if (this.submitting.estimatedShipping) {
+          this.submitting = { ...this.submitting, estimatedShipping: false, estimatedCharges: true }
+          let params = {
+            id: item.item.product.id,
+            origin_id: item.item.product.location.district.ro_id,
+            destination_id: item.item.shipping.address.district.ro_id,
+            weight: item.item.weight * item.item.qty
+          }
+          this.props.estimatedShipping(params)
+        }
+
+        console.log('INI >>>> ', item)
+        this.setState({ item, expeditions: { ...this.state.expeditions, data: item.item.product.expeditions, selected: item.item.shipping.expedition_service.expedition } })
+      }
     }
   }
 
@@ -290,7 +286,9 @@ class ShippingDetail extends Component {
       borderBottomColor: 'red',
       color: 'red'
     }
+
     if (!item.isFound) return null
+
     // cost service / 1000 gram
     let estimatedCost = 0
     if (expeditionsPackage.data.length > 0 && shipping.expedition_service) {
@@ -300,8 +298,12 @@ class ShippingDetail extends Component {
       estimatedCost = filterEstimatedCost.length > 0 ? filterEstimatedCost[0].cost : 0
     }
 
+    // console.log('item', item)
+    // console.log('expeditionsPackage', expeditionsPackage)
+    // console.log('expeditions', expeditions)
+
     let price = product.price
-    let weight = product.weight
+    // let weight = product.weight
     let qty = item.item.qty
     let isInsurance = shipping.is_insurance
     let insuranceFee = 0
@@ -311,13 +313,17 @@ class ShippingDetail extends Component {
     let expeditionName = '-'
     let serviceName = '-'
 
+    if (product.is_discount) {
+      price = price - (price * (product.discount / 100))
+    }
+
     if (shipping.expedition_service) {
       if (shipping.expedition_service.expedition) {
         insuranceFee = shipping.expedition_service.expedition.insurance_fee
         expeditionName = shipping.expedition_service.expedition.name
       }
       insurancePrice = isInsurance ? (insuranceFee * price * qty) / 100 : 0
-      shippingCost = Math.ceil(((qty * weight) / 1000)) * estimatedCost
+      shippingCost = estimatedCost
       totalPrice = (price * qty) + shippingCost + insurancePrice
       serviceName = shipping.expedition_service.name
     }
@@ -454,26 +460,22 @@ class ShippingDetail extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    rsAddToCart: state.addToCart,
-    item: state.item,
-    listAddress: state.listAddress,
-    courierExpedition: state.courierExpedition,
-    packageExpedition: state.packageExpedition,
-    estimatedCharges: state.estimatedCharges,
-    insurance: state.insurance,
-    noted: state.noted
-  }
-}
+const mapStateToProps = (state) => ({
+  rsAddToCart: state.addToCart,
+  item: state.item,
+  listAddress: state.listAddress,
+  courierExpedition: state.courierExpedition,
+  packageExpedition: state.packageExpedition,
+  estimatedCharges: state.estimatedCharges,
+  insurance: state.insurance,
+  noted: state.noted
+})
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addToCart: (params) => dispatch(cartActions.addToCart(params)),
-    getItem: (id) => dispatch(cartActions.getItem(id)),
-    getListAddress: () => dispatch(addressActions.getListAddress()),
-    estimatedShipping: (params) => dispatch(expeditionActions.estimatedShipping(params))
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  addToCart: (params) => dispatch(cartActions.addToCart(params)),
+  getItem: (id) => dispatch(cartActions.getItem(id)),
+  getListAddress: () => dispatch(addressActions.getListAddress()),
+  estimatedShipping: (params) => dispatch(expeditionActions.estimatedShipping(params))
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShippingDetail)

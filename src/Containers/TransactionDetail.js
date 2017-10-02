@@ -124,13 +124,13 @@ const TransactionDetailContent = (props) => {
                   <br />
                   {
                     paymentStatus === 3 &&
-                    <span>
-                      {days} hari  :
-                      {hours} jam  :
-                      {minutes} menit
-                    </span>
+                      <span>
+                        {days} hari  :
+                        {hours} jam  :
+                        {minutes} menit
+                      </span>
                   }
-                  </p>
+                </p>
               </div>
             </div>
           </article>
