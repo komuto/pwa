@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
+// libs
+import RupiahFormat from '../Lib/RupiahFormat'
 
 export class Navbar extends PureComponent {
   constructor (props) {
@@ -52,7 +54,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { deleteButton, messageType, navbar, searchActive, moreButton, messageButton, productId } = this.props
+    const { deleteButton, messageType, navbar, productDetail, productImages, searchActive, moreButton, messageButton, productId } = this.props
     const { path, textPath, searchBoox, callBack } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
@@ -71,6 +73,28 @@ export class Navbar extends PureComponent {
                 {textPath}
               </span>
             </a>
+            {
+              productDetail
+              ? <div className='box is-paddingless'>
+                <article className='media'>
+                  <div className='media-left'>
+                    <figure className='image product-pict'>
+                      <img style={{width: '40', height: '40'}} src={productImages[0].file} alt='pict' />
+                    </figure>
+                  </div>
+                  <div className='media-content'>
+                    <div className='content'>
+                      <p className='products-name' style={{paddingRight: '10'}}>
+                        <strong>{productDetail.name}</strong>
+                        <br />
+                        Rp { RupiahFormat(productDetail.price) }
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              : null
+            }
           </div>
           {
             searchActive

@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 // components
 import Router from 'next/router'
 import Images from '../Themes/Images'
@@ -44,7 +45,7 @@ class Messages extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { query } = this.props
-    const { buyerMessages, archiveBuyerMessages, updateMessage } = nextProps
+    const { buyerMessages, archiveBuyerMessages, updateMessage, deleteMessage } = nextProps
     if (!isFetching(buyerMessages)) {
       this.setState({ buyerMessages: nextProps.buyerMessages, notification: validateResponse(buyerMessages, buyerMessages.message) })
     }
@@ -52,18 +53,16 @@ class Messages extends React.Component {
       this.setState({ archiveBuyerMessages: nextProps.archiveBuyerMessages, notification: validateResponse(archiveBuyerMessages, archiveBuyerMessages.message) })
     }
     if (query.hasOwnProperty('archeived')) {
-      if (updateMessage.isFound) {
-        this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Arsip', 'Gagal memindahkan ke Arsip') })
-      } else {
-        this.setState({ notification: validateResponse(updateMessage, 'Gagal memindahkan ke Arsip') })
-      }
+      this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Arsip', 'Gagal memindahkan ke Arsip') })
     }
     if (query.hasOwnProperty('conversation')) {
-      if (updateMessage.isFound) {
-        this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Percakapan', 'Gagal memindahkan ke Percakapan') })
-      } else {
-        this.setState({ notification: validateResponse(updateMessage, 'Gagal memindahkan ke Percakapan') })
-      }
+      this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Percakapan', 'Gagal memindahkan ke Percakapan') })
+    }
+    if (query.hasOwnProperty('deleteArcheive')) {
+      this.setState({ notification: validateResponseAlter(deleteMessage, 'Berhasil menghapus Pesan', 'Gagal menghapus Pesan') })
+    }
+    if (query.hasOwnProperty('deleteConversation')) {
+      this.setState({ notification: validateResponseAlter(deleteMessage, 'Berhasil menghapus Pesan', 'Gagal menghapus Pesan') })
     }
     console.log('nextPropsMes', nextProps)
   }
@@ -105,6 +104,7 @@ class Messages extends React.Component {
 const ListConversationMessages = (props) => {
   const { buyerMessages } = props
   if (buyerMessages === undefined) return null
+  moment.locale('id')
   return (
     <div>
       {
@@ -129,7 +129,7 @@ const ListConversationMessages = (props) => {
                         {message.detail_message.content}
                       </p>
                     </div>
-                    <span className='time-discuss'>{message.detail_message.created_at}</span>
+                    <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
                   </div>
                 </article>
               </div>
@@ -145,6 +145,7 @@ const ListConversationMessages = (props) => {
 const ListArcheiveMessages = (props) => {
   const { archiveBuyerMessages } = props
   if (archiveBuyerMessages === undefined) return null
+  moment.locale('id')
   return (
     <div>
       {
@@ -169,7 +170,7 @@ const ListArcheiveMessages = (props) => {
                         {message.detail_message.content}
                       </p>
                     </div>
-                    <span className='time-discuss'>{message.detail_message.created_at}</span>
+                    <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
                   </div>
                 </article>
               </div>
@@ -199,7 +200,8 @@ const mapStateToProps = (state) => {
   return {
     buyerMessages: state.buyerMessages,
     archiveBuyerMessages: state.archiveBuyerMessages,
-    updateMessage: state.updateMessage
+    updateMessage: state.updateMessage,
+    deleteMessage: state.deleteMessage
   }
 }
 
