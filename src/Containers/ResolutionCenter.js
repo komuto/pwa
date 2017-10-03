@@ -2,72 +2,130 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import InfiniteScroll from 'react-infinite-scroller'
+import _ from 'lodash'
+import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
+import Loading from '../Components/Loading'
 import Images from '../Themes/Images'
 import Notification from '../Components/Notification'
 // actions
-import * as transactionAction from '../actions/transaction'
+import * as userAction from '../actions/user'
 // services
-import { isFetching, validateResponse } from '../Services/Status'
+import { isFetching, validateResponse, validateResponseAlter } from '../Services/Status'
 
-const TAB_RESOLUTION_WAIT = 'TAB_RESOLUTION_WAIT'
-const TAB_RESOLUTION_DONE = 'TAB_RESOLUTION_DONE'
+const TAB_UNRESOLVED_RESOLUTION = 'TAB_UNRESOLVED_RESOLUTION'
+const TAB_RESOLVED_RESOLUTION = 'TAB_RESOLVED_RESOLUTION'
 
 class ResolutionCenter extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      buyerComplainedOrders: props.buyerComplainedOrders || null,
-      buyerComplainedOrders2: props.buyerComplainedOrders2 || null,
-      tabs: TAB_RESOLUTION_WAIT,
+      unresolvedResolutions: props.unresolvedResolutions || null,
+      resolvedResolutions: props.resolvedResolutions || null,
+      tabs: TAB_UNRESOLVED_RESOLUTION,
+      hasMore: true,
+      fetchUnresolved: false,
+      fetchingFirst: false,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.isAddNewUnresolved = false
   }
 
   switchTab (e) {
     const { tabs } = this.state
-    this.setState({ tabs: (tabs === TAB_RESOLUTION_WAIT) ? TAB_RESOLUTION_DONE : TAB_RESOLUTION_WAIT })
+    this.setState({ tabs: (tabs === TAB_UNRESOLVED_RESOLUTION) ? TAB_RESOLVED_RESOLUTION : TAB_UNRESOLVED_RESOLUTION })
   }
 
   resolutionDetail (id) {
     Router.push(`/resolution-detail?id=${id}`)
   }
 
+  topicType (topic) {
+    switch (topic) {
+      case 1: {
+        return 'Umum'
+      }
+      case 2: {
+        return 'Info'
+      }
+      case 3: {
+        return 'Transaksi'
+      }
+      case 4: {
+        return 'Lainnya'
+      }
+      default:
+        break
+    }
+  }
+
+  async loadMoreUnresolvedResolutions () {
+    let { pagination, fetchUnresolved } = this.state
+    if (!fetchUnresolved) {
+      const newState = { pagination, fetchUnresolved: true }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      await this.props.getUnresolvedResolutions({ page: 2, limit: 10 })
+    }
+  }
+
   componentDidMount () {
-    this.props.getComplainedOrdersBuyer({ is_closed: false })
-    this.props.getComplainedOrdersBuyer2()
+    NProgress.start()
+    this.setState({ fetchingFirst: true })
+    this.props.getUnresolvedResolutions({ page: 1, limit: 10 })
+    this.props.getResolvedResolutions(this.state.pagination)
   }
 
   componentWillReceiveProps (nextProps) {
-    // const { query } = this.props
-    const { buyerComplainedOrders, buyerComplainedOrders2 } = nextProps
-    if (!isFetching(buyerComplainedOrders)) {
-      this.setState({ buyerComplainedOrders: nextProps.buyerComplainedOrders, notification: validateResponse(buyerComplainedOrders, buyerComplainedOrders.message) })
+    const { query } = this.props
+    let stateUnresolvedResolutions = this.state.unresolvedResolutions
+    const { unresolvedResolutions, resolvedResolutions, createResolution } = nextProps
+    if (!isFetching(unresolvedResolutions) && this.state.fetchingFirst) {
+      this.setState({ unresolvedResolutions: unresolvedResolutions, fetchingFirst: false, notification: validateResponse(unresolvedResolutions, unresolvedResolutions.message) })
     }
-    if (!isFetching(buyerComplainedOrders2)) {
-      this.setState({ buyerComplainedOrders2: nextProps.buyerComplainedOrders2, notification: validateResponse(buyerComplainedOrders2, buyerComplainedOrders2.message) })
+    if (!isFetching(unresolvedResolutions) && this.state.fetchUnresolved) {
+      this.setState({ fetchUnresolved: false, hasMore: false })
+      if (unresolvedResolutions.resolutions.length === 0) {
+        this.setState({ hasMore: false })
+      } else {
+        stateUnresolvedResolutions.resolutions.concat(unresolvedResolutions.resolutions)
+        this.setState({ unresolvedResolutions: stateUnresolvedResolutions, notification: validateResponse(unresolvedResolutions, unresolvedResolutions.message) })
+      }
+    }
+    if (!isFetching(resolvedResolutions)) {
+      NProgress.done()
+
+      this.setState({ resolvedResolutions: nextProps.resolvedResolutions, notification: validateResponse(resolvedResolutions, resolvedResolutions.message) })
+    }
+    if (query.hasOwnProperty('create')) {
+      this.setState({ notification: validateResponseAlter(createResolution, 'Berhasil menambahkan Resolusi', 'Gagal menambahkan Resolusi') })
     }
     console.log('nextPropsMes', nextProps)
   }
 
   render () {
     console.log('state', this.state)
-    const { notification, tabs, buyerComplainedOrders, buyerComplainedOrders2 } = this.state
+    const { notification, tabs, unresolvedResolutions, resolvedResolutions, hasMore } = this.state
     return (
       <div>
         <div className='nav-tabs'>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_RESOLUTION_WAIT && 'active'}>
-            <span className='text'>Percakapan<span className='notif-complaint'>
-              <span>{buyerComplainedOrders.isFound && buyerComplainedOrders.orders.length}</span></span></span>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_UNRESOLVED_RESOLUTION && 'active'}>
+            <span className='text'>Menunggu</span>
           </a>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_RESOLUTION_DONE && 'active'}>
-            <span className='text'>Arsip<span className='notif-complaint'>
-              <span>{buyerComplainedOrders2.isFound && buyerComplainedOrders2.orders.length}</span></span></span>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_RESOLVED_RESOLUTION && 'active'}>
+            <span className='text'>Terselesaikan
+              {resolvedResolutions.isFound && <span className='notif-complaint'><span> {resolvedResolutions.resolutions.length} </span></span>}
+            </span>
           </a>
         </div>
         <Notification
@@ -78,15 +136,20 @@ class ResolutionCenter extends React.Component {
           message={notification.message} />
         <section className='section is-paddingless'>
           <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
+            <ul className='notif-detail conversation bresolutioned'>
               {
-                tabs === TAB_RESOLUTION_WAIT
-                ? <ListWaitResolution
-                  buyerComplainedOrders={buyerComplainedOrders}
-                  resolutionDetail={(id) => this.resolutionDetail(id)} />
-                : <ListDoneResolution
-                  buyerComplainedOrders2={buyerComplainedOrders2}
-                  resolutionDetail={(id) => this.resolutionDetail(id)} />
+                tabs === TAB_UNRESOLVED_RESOLUTION
+                ? <ListUnresolvedResolution
+                  unresolvedResolutions={unresolvedResolutions}
+                  hasMore={hasMore}
+                  isAddNewUnresolved={this.isAddNewUnresolved}
+                  loadMoreUnresolvedResolution={() => this.loadMoreUnresolvedResolutions()}
+                  resolutionDetail={(id) => this.resolutionDetail(id)}
+                  topicType={(topic) => this.topicType(topic)} />
+                : <ListResolvedResolution
+                  resolvedResolutions={resolvedResolutions}
+                  resolutionDetail={(id) => this.resolutionDetail(id)}
+                  topicType={(topic) => this.topicType(topic)} />
               }
             </ul>
           </div>
@@ -97,57 +160,66 @@ class ResolutionCenter extends React.Component {
   }
 }
 
-const ListWaitResolution = (props) => {
-  const { buyerComplainedOrders } = props
-  if (buyerComplainedOrders === undefined) return null
+const ListUnresolvedResolution = (props) => {
+  const { unresolvedResolutions } = props
+  if (unresolvedResolutions === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        buyerComplainedOrders.orders.length > 0
-        ? buyerComplainedOrders.orders.map((order, i) => {
-          return (
-            <section className='section is-paddingless has-shadow' key={i}>
-              <div className='discuss' onClick={() => this.resolutionDetail(order.id)}>
-                <ul className='main-discuss notif-detail'>
-                  <li>
-                    <div className='box is-paddingless'>
-                      <article className='media'>
-                        <div className='media-content'>
-                          <div className='content'>
-                            <p className='user-name'>
-                              {order.problems}
-                            </p>
-                          </div>
-                          <label className='transaction'>Transaksi</label>
-                          <span className='date-trans'>{moment.unix(order.response_at).format('DD MMMM YYYY')}</span>
+        unresolvedResolutions.resolutions.length > 0
+        ? <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMoreUnresolvedResolution.bind(this), 500)}
+          hasMore={props.hasMore}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            unresolvedResolutions.resolutions.map((resolution, i) => {
+              let sttNewUnresolved = props.isAddNewUnresolved && i === 0
+              return (
+                <section className='section is-paddingless has-shadow' key={i}>
+                  <div className='discuss' onClick={() => props.resolutionDetail(resolution.id)}>
+                    <ul className='main-discuss notif-detail'>
+                      <li>
+                        <div className={`box is-paddingless ${sttNewUnresolved && 'effect-slide-down'}`}>
+                          <article className='media'>
+                            <div className='media-content'>
+                              <div className='content'>
+                                <p className='user-name'>
+                                  {resolution.title}
+                                </p>
+                              </div>
+                              <label className='transaction'>{props.topicType(resolution.topic)}</label>
+                              <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMMM YYYY')}</span>
+                            </div>
+                          </article>
                         </div>
-                      </article>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </section>
-          )
-        })
+                      </li>
+                    </ul>
+                  </div>
+                </section>
+              )
+            })
+          }
+        </InfiniteScroll>
         : <EmptyResolution />
       }
     </div>
   )
 }
 
-const ListDoneResolution = (props) => {
-  const { buyerComplainedOrders2 } = props
-  if (buyerComplainedOrders2 === undefined) return null
+const ListResolvedResolution = (props) => {
+  const { resolvedResolutions } = props
+  if (resolvedResolutions === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        buyerComplainedOrders2.orders.length > 0
-        ? buyerComplainedOrders2.orders.map((order, i) => {
+        resolvedResolutions.resolutions.length > 0
+        ? resolvedResolutions.resolutions.map((resolution, i) => {
           return (
             <section className='section is-paddingless has-shadow' key={i}>
-              <div className='discuss' onClick={() => this.resolutionDetail(order.id)}>
+              <div className='discuss' onClick={() => this.resolutionDetail(resolution.id)}>
                 <ul className='main-discuss notif-detail'>
                   <li>
                     <div className='box is-paddingless'>
@@ -155,11 +227,11 @@ const ListDoneResolution = (props) => {
                         <div className='media-content'>
                           <div className='content'>
                             <p className='user-name'>
-                              {order.problems}
+                              {resolution.title}
                             </p>
                           </div>
-                          <label className='transaction'>Transaksi</label>
-                          <span className='date-trans'>{moment.unix(order.response_at).format('DD MMMM YYYY')}</span>
+                          <label className='transaction'>{props.topicType(resolution.topic)}</label>
+                          <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMMM YYYY')}</span>
                         </div>
                       </article>
                     </div>
@@ -193,14 +265,15 @@ const EmptyResolution = () => {
 
 const mapStateToProps = (state) => {
   return {
-    buyerComplainedOrders: state.buyerComplainedOrders,
-    buyerComplainedOrders2: state.buyerComplainedOrders2
+    createResolution: state.createResolution,
+    unresolvedResolutions: state.unresolvedResolutions,
+    resolvedResolutions: state.resolvedResolutions
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getComplainedOrdersBuyer: (params) => dispatch(transactionAction.getComplainedOrdersBuyer(params)),
-  getComplainedOrdersBuyer2: (params) => dispatch(transactionAction.getComplainedOrdersBuyer2(params))
+  getUnresolvedResolutions: (params) => dispatch(userAction.getUnresolvedResolutions(params)),
+  getResolvedResolutions: (params) => dispatch(userAction.getResolvedResolutions(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResolutionCenter)
