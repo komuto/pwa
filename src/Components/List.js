@@ -12,7 +12,7 @@ export const ListTitle = (props) => {
   )
 }
 
-export default (props:any) => {
+export default (props) => {
   const { icon, name } = props
   const iconStyle = {
     display: 'inline-block',
