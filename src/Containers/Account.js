@@ -115,7 +115,7 @@ class Account extends Component {
               <div className='box is-paddingless'>
                 <article className='media'>
                   <div className='media-left'>
-                    <figure className='image'>
+                    <figure className='image user-pict'>
                       { isHasStoreprofile ? <img src={profile.user.store.logo} /> : <span className='icon-toko' /> }
                     </figure>
                   </div>

@@ -5,24 +5,24 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ResolutionAdd from '../src/Containers/ResolutionAdd'
+import ResolutionDetail from '../src/Containers/ResolutionDetail'
 
 const Index = (props) => {
   const params = {
-    style: 'main seller',
+    style: 'main detail resolusi bg-grey',
     header: {
-      title: 'Kirim Keluhan'
+      title: 'Detail Resolusi'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Kirim Keluhan',
+      textPath: 'Detail Resolusi',
       callBack: () => Router.push('/resolution-center')
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <ResolutionAdd />
+      <ResolutionDetail {...props} />
     </DefaultLayout>
   )
 }
