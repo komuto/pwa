@@ -24,7 +24,9 @@ const Index = (props) => {
         <PaymentSuccess {...props} />
       </DynamicNavBarLayout>
     )
-  } else if (type === 'unfinish') {
+  }
+
+  if (type === 'unfinish' || type === 'error') {
     let params = {
       style: 'main user user-success',
       header: {
@@ -36,7 +38,9 @@ const Index = (props) => {
         <PaymentPending {...props} />
       </DynamicNavBarLayout>
     )
-  } else {
+  }
+
+  if (!type) {
     let params = {
       style: 'main no-padding-bottom bg-grey',
       header: {
