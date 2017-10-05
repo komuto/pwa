@@ -14,6 +14,7 @@ import MyImage from '../Components/MyImage'
 import Loading from '../Components/Loading'
 import Notification from '../Components/Notification'
 import Content from '../Components/Content'
+import Promo from '../Lib/Promo'
 /** including actions */
 import * as userActions from '../actions/user'
 import * as paymentActions from '../actions/payment'
@@ -238,17 +239,24 @@ class Payment extends Component {
 const Paymentcontent = (props) => {
   let { cart, transaction, paymentType, idT, snapToken, balance, submitting, paymentBalance, failTransaction, isBucketPayment, isTransactionPayment } = props
   let totalPayment = 0
+  let pricePromo = 0
 
   /** count total payment when type is bucket */
   if (isBucketPayment()) {
     cart.cart.items.map((item) => {
       totalPayment += item.total_price
     })
+
+    totalPayment += cart.cart.unique_code
+
+    if (cart.cart.promo) {
+      pricePromo = Promo({ ...cart.cart, totalPayment })
+    }
   }
 
   /** count total payment when type is transaction */
   if (isTransactionPayment()) {
-    totalPayment = transaction.transaction.summary_transaction.total_price
+    totalPayment = transaction.transaction.bucket.total_bill
   }
 
   return (
@@ -259,7 +267,7 @@ const Paymentcontent = (props) => {
             <ul className='list-inline col2'>
               <li>
                 <span>Total Pembayaran</span>
-                <span className='price'>Rp { RupiahFormat(totalPayment) }</span>
+                <span className='price'>Rp { RupiahFormat(totalPayment - pricePromo) }</span>
               </li>
               <li className='has-text-right'>
                 <a onClick={() => paymentType === 'bucket' ? Router.push('/shopping-cart') : Router.push(`/transaction-detail?id=${idT}`)} className='button is-primary is-outlined full-rounded'>Detail</a>

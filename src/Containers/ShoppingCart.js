@@ -247,6 +247,7 @@ class ShoppingCart extends Component {
 
 const Cart = (props) => {
   let { localize, cart, voucher, rsAddToCart, cancelPromo, deleteItem, submitting } = props
+  console.log(cart)
   let data = cart.data
   let totalPayment = 0
   let promoCode = '-'
@@ -259,6 +260,8 @@ const Cart = (props) => {
   data.cart.items.map((item) => {
     totalPayment += item.total_price
   })
+
+  totalPayment += data.cart.unique_code
 
   if (data.cart.promo) {
     pricePromo = Promo({ ...data.cart, totalPayment })
