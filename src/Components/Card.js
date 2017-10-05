@@ -1,9 +1,8 @@
 export default (props) => {
-  const { title } = props
   return (
-    <section className='section is-paddingless has-shadow'>
+    <section className={`section is-paddingless has-shadow ${props.className ? props.className : ''}`}>
       <div className='seller-akun'>
-        { !title ? <Title title /> : '' }
+        { props.title ? <Title {...props} /> : '' }
         <div className='profile-wrapp'>
           <ul>
             { props.children }
