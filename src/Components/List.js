@@ -24,7 +24,7 @@ export default (props) => {
   return (
     <li key={name}>
       <a onClick={() => props.onClick()}>
-        <img src={icon} style={iconStyle} />
+        { icon && <img src={icon} style={iconStyle} />}
         {/* <span className='categories-img' /> */}
         { name }
         <span className='icon-arrow-right' />
