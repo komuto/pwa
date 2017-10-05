@@ -1,10 +1,8 @@
-// @flow
-// layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
-// wrapper
+/** includees wrapper */
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
-// containers
-import Balance from '../src/Containers/Balance'
+/** includees containers */
+import Balance from '../src/Containers/Balance/Balance'
 
 const Index = (props) => {
   const params = {
