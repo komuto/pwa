@@ -201,7 +201,7 @@ class Account extends Component {
                     </div>
                     <span className='icon-arrow-right' />
                   </li>
-                  <li>
+                  <li onClick={() => Router.push('/balance')}>
                     <div className='box is-paddingless'>
                       <article className='media'>
                         <div className='media-left'>
