@@ -227,6 +227,7 @@ const message = function * () {
 
 const other = function * () {
   yield takeEvery(typeReq(otherActions.GET_COMMISSION), otherSaga.getCommission)
+  yield takeEvery(typeReq(otherActions.GET_SALE_COUNT), otherSaga.getSaleCount)
 }
 
 const payment = function * () {
@@ -234,6 +235,7 @@ const payment = function * () {
   yield takeEvery(typeReq(paymentActions.CONFIRM_TRANSFER), paymentSaga.confirmTransfer)
   yield takeEvery(typeReq(paymentActions.GET_MIDTRANS_TOKEN), paymentSaga.getMidtransToken)
   yield takeEvery(typeReq(paymentActions.GET_MIDTRANS_TOKEN_2), paymentSaga.getMidtransToken2)
+  yield takeEvery(typeReq(paymentActions.BALANCE_PAYMENT), paymentSaga.balancePayment)
 }
 
 const review = function * () {

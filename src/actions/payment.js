@@ -6,6 +6,7 @@ export const GET_DOKU_INVOICE = 'GET_DOKU_INVOICE'
 export const PAY_DOKU = 'PAY_DOKU'
 export const GET_MIDTRANS_TOKEN = 'GET_MIDTRANS_TOKEN'
 export const GET_MIDTRANS_TOKEN_2 = 'GET_MIDTRANS_TOKEN_2'
+export const BALANCE_PAYMENT = 'BALANCE_PAYMENT'
 
 /**
  * @state paymentMethods
@@ -34,3 +35,9 @@ export const getMidtransToken = params => buildAction(typeReq(GET_MIDTRANS_TOKEN
  * @state snapToken2
  */
 export const getMidtransToken2 = params => buildAction(typeReq(GET_MIDTRANS_TOKEN_2), params)
+
+/**
+ * @params id {int} bucket id
+ * @state confirmation
+ */
+export const balancePayment = params => buildAction(typeReq(BALANCE_PAYMENT), params)

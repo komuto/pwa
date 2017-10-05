@@ -6,3 +6,8 @@ export const getCommission = ({ data }) => {
   const query = buildQuery(data)
   return axios.get(`commissions?${query}`)
 }
+
+export const getSaleCount = () => {
+  const axios = authApiKomuto()
+  return axios.get('pages/store')
+}

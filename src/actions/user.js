@@ -157,9 +157,10 @@ export const verifyPhone = params => buildAction(typeReq(VERIFIY_PHONE), params)
 export const sendOTPBank = () => buildAction(typeReq(SEND_BANK_OTP))
 
 /**
+ * @params params are the same as the api query
  * @state wishlist
  */
-export const wishlist = () => buildAction(typeReq(GET_WISHLIST))
+export const wishlist = params => buildAction(typeReq(GET_WISHLIST), params)
 
 /**
  * @param params are the same as the api
@@ -179,14 +180,16 @@ export const getNotifSettings = () => buildAction(typeReq(GET_NOTIF_SETTINGS))
 export const updateNotifSettings = params => buildAction(typeReq(UPDATE_NOTIF_SETTINGS), params)
 
 /**
+ * @params params are the same as the api query
  * @state resolvedResolutions
  */
-export const getResolvedResolutions = () => buildAction(typeReq(GET_RESOLVED_RESOLUTIONS))
+export const getResolvedResolutions = params => buildAction(typeReq(GET_RESOLVED_RESOLUTIONS), params)
 
 /**
+ * @params params are the same as the api query
  * @state unresolvedResolutions
  */
-export const getUnresolvedResolutions = () => buildAction(typeReq(GET_UNRESOLVED_RESOLUTIONS))
+export const getUnresolvedResolutions = params => buildAction(typeReq(GET_UNRESOLVED_RESOLUTIONS), params)
 
 /**
  * @params id {int} resolution id

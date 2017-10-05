@@ -16,3 +16,8 @@ export const getMidtransToken = ({ token, id, ...data } = {}) => {
   const query = buildQuery(data)
   return axios.get(`transactions/${id}/token?${query}`)
 }
+
+export const balancePayment = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.put(`transactions/${id}/balance-payment`)
+}

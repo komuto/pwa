@@ -189,8 +189,9 @@ export const buildQuery = (params) => Object.keys(params)
  * @param actionType {string}
  * @param getState {function} Get result from other state
  * @param combine {function} combine getState with api result
+ * @param keepParam {function} combine result with params
  */
-export const buildSaga = (callApi, actionType, getState = false, combine = false) => function * ({ type, ...params }) {
+export const buildSaga = (callApi, actionType, getState = false, combine = false, keepParam = false) => function * ({ type, ...params }) {
   try {
     let res, fromState
     if (getState) {
@@ -202,6 +203,7 @@ export const buildSaga = (callApi, actionType, getState = false, combine = false
       if (!result.ok) throw result
       res = !combine ? result.data : combine(fromState, result.data)
     }
+    if (keepParam) res = keepParam(res, params)
     yield put({ type: typeSucc(actionType), ...res })
   } catch (e) {
     yield errorHandling(typeFail(actionType), e)
@@ -241,8 +243,7 @@ const composeReducer = (initState, sagaReducer) => (state = initState, { type, .
   const actionType = buildType(type)
   let resultState = {}
   const check = sagaReducer.some((options) => {
-    const { resultName, type: reducerType, add = {}, includeNonSaga, resetPrevState, keepParams = [] } = options
-    keepParams.forEach((param) => { add[param] = data[param] })
+    const { resultName, type: reducerType, add = {}, includeNonSaga, resetPrevState } = options
     const customState = [options.customReqState, options.customSuccState, options.customFailState]
     if (actionType === reducerType) {
       // For _REQUEST/_SUCCESS/_FAILURE action type
@@ -279,7 +280,6 @@ export const createReducer = (initState) => {
      * @options add {object} other objects to add to the state
      * @options includeNonSaga {boolean} non saga reducer operation [RESET || TEMP]
      * @options resetPrevState {object} change prev state with the provided object
-     * @options keepParams {[string]}
      * @options customReqState {function}
      * @options customSuccState {function}
      * @options customfailState {function}

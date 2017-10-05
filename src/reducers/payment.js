@@ -11,6 +11,9 @@ export const confirmTransfer = createReducer(buildInitState())
   .addReducer({
     type: actions.CONFIRM_TRANSFER,
     resultName: 'confirmation'
+  })
+  .addReducer({
+    type: actions.BALANCE_PAYMENT
   }).run()
 
 export const getMidtransToken = createReducer(buildInitState())

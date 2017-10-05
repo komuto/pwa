@@ -15,14 +15,14 @@ export const countCart = () => {
   return axios.get('buckets/count')
 }
 
-export const getPromo = ({ code }) => {
+export const getPromo = (data) => {
   const axios = authApiKomuto()
-  return axios.get(`buckets/promo?code=${code}`)
+  return axios.post(`buckets/promo`, data)
 }
 
 export const cancelPromo = () => {
   const axios = authApiKomuto()
-  return axios.get('buckets/promo/cancel')
+  return axios.delete('buckets/promo/cancel', {}, { data: {} })
 }
 
 export const checkout = (action = {}) => {

@@ -21,7 +21,6 @@ export const login = function * login (action) {
     yield storage.setItem('token', result.data.data.token)
     yield put({ type: typeSucc(actions.USER_LOGIN), ...result.data })
   } catch (e) {
-    console.log(e)
     yield errorHandling(typeFail(actions.USER_LOGIN), e)
   }
 }
