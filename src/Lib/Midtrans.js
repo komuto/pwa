@@ -8,19 +8,19 @@ const urlClose = (i) => ['/transaction', '/balance-topup'][i]
 
 /** exporting */
 export default ({ token, type = 'payment' }) => {
-  let i = ['payment', 'balance'].indexOf(type)
+  let index = ['payment', 'balance'].indexOf(type)
   snap.pay(token, {
     onSuccess: (result) => {
-      Router.push(urlFinish(i))
+      Router.push(urlFinish(index))
     },
     onPending: (result) => {
-      Router.push(urlUnFinish(i))
+      Router.push(urlUnFinish(index))
     },
     onError: (result) => {
-      Router.push(urlError(i))
+      Router.push(urlError(index))
     },
     onClose: () => {
-      Router.push(urlClose(i))
+      Router.push(urlClose(index))
     }
   })
 }
