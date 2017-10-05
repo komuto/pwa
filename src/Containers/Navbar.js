@@ -55,7 +55,7 @@ export class Navbar extends PureComponent {
 
   render () {
     const { deleteButton, messageType, navbar, productDetail, productImages, searchActive, moreButton, messageButton, productId } = this.props
-    const { path, textPath, searchBoox, callBack } = navbar
+    const { path, textPath, searchBoox, callBack, filterBalance } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
       <div>
@@ -133,6 +133,12 @@ export class Navbar extends PureComponent {
             deleteButton &&
             <div className='button-search js-option'>
               <span className='icon-trash white' />
+            </div>
+          }
+          {
+            filterBalance && filterBalance.show &&
+            <div className='button-search js-option' onClick={() => filterBalance.press()}>
+              <span className='icon-filter-y' />
             </div>
           }
         </nav>
