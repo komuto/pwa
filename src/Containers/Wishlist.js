@@ -42,7 +42,7 @@ class Wishlist extends Component {
     this.setState({ viewActive: this.state.viewActive === 'list' ? 'grid' : 'list' })
   }
 
-  sortOnClick () {
+  sortOnClick (e) {
     this.setState({ sortActive: !this.state.sortActive })
   }
 
@@ -211,7 +211,7 @@ class Wishlist extends Component {
           sortButton
           filterButton={false}
           viewButton
-          sortOnClick={() => this.sortOnClick()}
+          sortOnClick={(e) => this.sortOnClick(e)}
           filterOnClick={() => this.filterOnClick()}
           viewOnClick={() => this.viewOnClick()}
           viewActive={viewActive} />
