@@ -1,4 +1,5 @@
 export const Status = {
+  DEFAULT: 0,
   SUCCESS: 200,
   FAILED: 400,
   UNAUTHORIZED: 401,
@@ -51,7 +52,7 @@ export const validateResponseAlter = (params, okMessage, failMessage) => {
 }
 
 export const isFetching = ({ isLoading, status }) => {
-  return status === 0
+  return status === Status.DEFAULT
 }
 
 export const isFound = ({ isFound }) => {
@@ -60,6 +61,8 @@ export const isFound = ({ isFound }) => {
 
 export const isError = ({ status, isFound }) => {
   if (status === Status.SUCCESS && !isFound) {
+    return true
+  } else if (status === Status.DEFAULT) {
     return true
   } else if (status === Status.FAILED) {
     return true
