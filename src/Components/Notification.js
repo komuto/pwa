@@ -7,21 +7,21 @@ export const FieldError = (props) => {
   return <i style={{ color: 'red' }}>{message}</i>
 }
 
-export const NotificationPage = (props) => {
+export const NotificationPage = ({ icon, title, subTitle, path, text }) => {
   return (
     <div className='main user user-success'>
       <section className='content'>
         <div className='container is-fluid'>
           <div className='desc has-text-centered'>
-            <img src={props.icon} alt='komuto' />
-            <p><strong>{props.title}</strong></p>
-            <p>{props.subTitle}</p>
+            <img src={icon} alt='komuto' />
+            <p><strong>{title}</strong></p>
+            <p>{subTitle}</p>
           </div>
           <div className='columns is-mobile'>
             <div className='column'>
               <ButtonFullWidthLink
-                path={props.path}
-                text={props.text} />
+                path={path}
+                text={text} />
             </div>
           </div>
         </div>
