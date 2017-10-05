@@ -10,16 +10,16 @@ import Localize from '../Utils/Localize'
 import AppConfig from '../Config/AppConfig'
 import * as handlingState from '../Services/Status'
 let clientTask = null
-let token = null
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ req, isServer, query }) {
+      let token = await GET_TOKEN.getToken()
       if (isServer) {
         // /const rootTask = sagaMiddleware.run(dataSaga)
         sagaMiddleware.run(dataSaga)
-        return {query}
+        return {query, token}
       } else {
-        return {query}
+        return {query, token}
       }
     }
 
@@ -29,14 +29,16 @@ export default function reduxWrapper (ReduxComponent) {
         clientTask = sagaMiddleware.run(dataSaga)
       }
       this.state = {
-        token: 'default',
+        token: props.token,
         mustLogin: false
       }
     }
 
     async componentWillMount () {
-      token = await GET_TOKEN.getToken()
-      this.setState({ token })
+      if (!this.state.token) {
+        let token = await GET_TOKEN.getToken()
+        this.setState({ token })
+      }
     }
 
     render () {
@@ -47,6 +49,7 @@ export default function reduxWrapper (ReduxComponent) {
         status: false,
         message: 'Error, default message.'
       }
+
       return (
         <Content>
           <LoginAlert
@@ -59,6 +62,7 @@ export default function reduxWrapper (ReduxComponent) {
             notification={notification}
             localize={localize}
             isLogin={!!token}
+            token={token}
             alertLogin={() => this.setState({ mustLogin: true })} />
         </Content>
       )
