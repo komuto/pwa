@@ -40,6 +40,7 @@ class DiscussionDetail extends Component {
     }
 
     this.afterAddComment = false
+    moment.locale('id')
   }
 
   async componentDidMount () {
@@ -138,7 +139,6 @@ class DiscussionDetail extends Component {
               {
                 comments.comments.map((comment, index) => {
                   if (comment.is_deleted) return null
-                  moment.locale('id')
                   let createDate = moment.unix(comment.created_at).format('Do MMMM YY h:mm:ss')
                   return (
                     <li key={index}>
