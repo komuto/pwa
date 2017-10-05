@@ -36,7 +36,7 @@ class DiscussionProductDetail extends React.Component {
       }
     }
     this.isAddNewDiscussion = false
-    this.sendQuetion = false
+    this.sendQuestion = false
   }
 
   handleInput (e) {
@@ -48,7 +48,7 @@ class DiscussionProductDetail extends React.Component {
     const { id, question } = this.state
     if (e.key === 'Enter') {
       if (question !== '') {
-        this.sendQuetion = true
+        this.sendQuestion = true
         await this.props.addDiscussion({ id: id, question: question })
         this.setState({ question: '' })
       }

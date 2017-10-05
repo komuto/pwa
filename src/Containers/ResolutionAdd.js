@@ -3,11 +3,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import FlipMove from 'react-flip-move'
 import winurl from 'winurl'
+import Router from 'next/router'
 // components
 import MyImage from '../Components/MyImage'
-// import Notification from '../Components/Notification'
 // actions
-import * as actionTypes from '../actions/user'
+import * as userActions from '../actions/user'
+import * as storesAction from '../actions/stores'
+// Services
+import { isFetching } from '../Services/Status'
 
 let FormData = require('form-data')
 
@@ -23,18 +26,18 @@ class ResolutionAdd extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      imagesOrigin: [],
       images: [],
       notAcceptedFileType: [],
       notAcceptedFileSize: [],
-      submiting: false,
-      uploading: false,
       form: {
         priority: '',
         topic: '',
         title: '',
         message: ''
-      }
+      },
+      validation: false,
+      submiting: false,
+      uploading: false
     }
   }
 
@@ -102,18 +105,36 @@ class ResolutionAdd extends React.Component {
     this.setState({imagesOrigin: filteredImageOrigin})
   }
 
+  renderValidation (name, textFailed) {
+    const { form, images, validation } = this.state
+    let priorityValid = name === 'priority' && form.priority !== ''
+    let topicValid = name === 'topic' && form.topic !== ''
+    let titleValid = name === 'title' && form.title !== ''
+    let messageValid = name === 'message' && form.message !== ''
+    let imagesValid = name === 'images' && images.length > 0
+    let result = priorityValid || topicValid || titleValid || messageValid || imagesValid
+    return (
+      <span style={{color: result ? '#23d160' : '#ef5656',
+        display: validation ? 'block' : 'none',
+        letterSpacing: '0.2px'}} >
+        {result ? '' : textFailed}
+      </span>
+    )
+  }
+
   submit () {
-    const { images, imagesOrigin } = this.state
-    const isFilledImages = images.length > 0
-    if (images.length > 0 || imagesOrigin.length > 0) {
-      isFilledImages ? this.uploadImages() : this.updateImages()
+    const { form, images } = this.state
+    let priorityValid = form.priority !== ''
+    let topicValid = form.topic !== ''
+    let titleValid = form.title !== ''
+    let messageValid = form.message !== ''
+    let imagesValid = images.length > 0
+    let isValid = priorityValid && topicValid && titleValid && messageValid && imagesValid
+    if (isValid) {
+      this.setState({ uploading: true })
+      this.uploadImages()
     } else {
-      this.setState({
-        notification: {
-          status: true,
-          message: 'Foto produk wajib diisi!'
-        }
-      })
+      this.setState({ validation: true })
     }
   }
 
@@ -124,18 +145,39 @@ class ResolutionAdd extends React.Component {
     })
     images.append('type', 'product')
     if (images) {
-      this.setState({ uploading: true })
+      this.uploading = true
       this.props.photoUpload(images)
     }
   }
 
   componentWillReceiveProps (nextProps) {
+    const { upload, createResolution } = nextProps
+    const { uploading, submiting, form } = this.state
+    if (!upload.isLoading && uploading) {
+      this.setState({ uploading: false, submiting: true })
+      let newImage = upload.payload.images.map(image => {
+        let dataImages = {
+          name: image.name
+        }
+        return dataImages
+      })
+      let params = {
+        priority: Number.parseInt(form.priority),
+        topic: Number.parseInt(form.topic),
+        title: form.title,
+        message: form.message,
+        images: newImage
+      }
+      this.props.addResolution(params)
+    }
+    if (!isFetching(createResolution) && submiting) {
+      this.setState({ submiting: false })
+      Router.push(`/resolution-center?create=${createResolution.resolution.id}`)
+    }
   }
 
   render () {
-    console.log('state', this.state)
-    const { imagesOrigin, images, form } = this.state
-    const concatImages = imagesOrigin.concat(images)
+    const { images, form, validation, submiting, uploading } = this.state
     return (
       <section className='section is-paddingless'>
         <form className='form edit'>
@@ -145,7 +187,15 @@ class ResolutionAdd extends React.Component {
               <div className='filter-option active'>
                 <div className='sort-list check-list left'>
                   <label className='checkbox'>
-                    <span className={`sort-text ${form.priority === '2' && 'active'}`}>High</span>
+                    <span className={`sort-text ${form.priority === '3' && 'active'}`}>High</span>
+                    <span className={`input-wrapper ${form.priority === '3' && 'checked'}`}>
+                      <input type='checkbox' name='priority'
+                        value='3'
+                        onChange={(e) => this.handleInput(e)} />
+                    </span>
+                  </label>
+                  <label className='checkbox'>
+                    <span className={`sort-text ${form.priority === '2' && 'active'}`}>Medium</span>
                     <span className={`input-wrapper ${form.priority === '2' && 'checked'}`}>
                       <input type='checkbox' name='priority'
                         value='2'
@@ -153,46 +203,23 @@ class ResolutionAdd extends React.Component {
                     </span>
                   </label>
                   <label className='checkbox'>
-                    <span className={`sort-text ${form.priority === '1' && 'active'}`}>Medium</span>
+                    <span className={`sort-text ${form.priority === '1' && 'checked'}`}>Low</span>
                     <span className={`input-wrapper ${form.priority === '1' && 'checked'}`}>
                       <input type='checkbox' name='priority'
                         value='1'
                         onChange={(e) => this.handleInput(e)} />
                     </span>
                   </label>
-                  <label className='checkbox'>
-                    <span className={`sort-text ${form.priority === '0' && 'checked'}`}>Low</span>
-                    <span className={`input-wrapper ${form.priority === '0' && 'checked'}`}>
-                      <input type='checkbox' name='priority'
-                        value='0'
-                        onChange={(e) => this.handleInput(e)} />
-                    </span>
-                  </label>
                 </div>
               </div>
+              { validation && this.renderValidation('priority', 'Mohon pilih nama prioritas')}
             </div>
             <div className='field'>
               <label className='label'>Topik Keluhan</label>
               <div className='filter-option active'>
                 <div className='sort-list check-list left'>
                   <label className='checkbox'>
-                    <span className={`sort-text ${form.topic === '3' && 'checked'}`}>Umum</span>
-                    <span className={`input-wrapper ${form.topic === '3' && 'checked'}`}>
-                      <input type='checkbox' name='topic'
-                        value='3'
-                        onChange={(e) => this.handleInput(e)} />
-                    </span>
-                  </label>
-                  <label className='checkbox'>
-                    <span className={`sort-text ${form.topic === '2' && 'checked'}`}>Info</span>
-                    <span className={`input-wrapper ${form.topic === '2' && 'checked'}`}>
-                      <input type='checkbox' name='topic'
-                        value='2'
-                        onChange={(e) => this.handleInput(e)} />
-                    </span>
-                  </label>
-                  <label className='checkbox'>
-                    <span className={`sort-text ${form.topic === '1' && 'checked'}`}>Transaksi</span>
+                    <span className={`sort-text ${form.topic === '1' && 'active'}`}>Umum</span>
                     <span className={`input-wrapper ${form.topic === '1' && 'checked'}`}>
                       <input type='checkbox' name='topic'
                         value='1'
@@ -200,15 +227,32 @@ class ResolutionAdd extends React.Component {
                     </span>
                   </label>
                   <label className='checkbox'>
-                    <span className={`sort-text ${form.topic === '0' && 'checked'}`}>Lainnya</span>
-                    <span className={`input-wrapper ${form.topic === '0' && 'checked'}`}>
+                    <span className={`sort-text ${form.topic === '2' && 'active'}`}>Info</span>
+                    <span className={`input-wrapper ${form.topic === '2' && 'checked'}`}>
                       <input type='checkbox' name='topic'
-                        value='0'
+                        value='2'
+                        onChange={(e) => this.handleInput(e)} />
+                    </span>
+                  </label>
+                  <label className='checkbox'>
+                    <span className={`sort-text ${form.topic === '3' && 'active'}`}>Transaksi</span>
+                    <span className={`input-wrapper ${form.topic === '3' && 'checked'}`}>
+                      <input type='checkbox' name='topic'
+                        value='3'
+                        onChange={(e) => this.handleInput(e)} />
+                    </span>
+                  </label>
+                  <label className='checkbox'>
+                    <span className={`sort-text ${form.topic === '4' && 'active'}`}>Lainnya</span>
+                    <span className={`input-wrapper ${form.topic === '4' && 'checked'}`}>
+                      <input type='checkbox' name='topic'
+                        value='4'
                         onChange={(e) => this.handleInput(e)} />
                     </span>
                   </label>
                 </div>
               </div>
+              { validation && this.renderValidation('topic', 'Mohon pilih nama Topik')}
             </div>
             <div className='field'>
               <label className='label'>Judul Keluhan</label>
@@ -217,6 +261,7 @@ class ResolutionAdd extends React.Component {
                   value={form.title}
                   onChange={(e) => this.handleInput(e)} />
               </p>
+              { validation && this.renderValidation('title', 'Mohon isi judul keluhan')}
             </div>
             <div className='field'>
               <label className='label'>Pesan Keluhan</label>
@@ -225,13 +270,14 @@ class ResolutionAdd extends React.Component {
                   value={form.message}
                   onChange={(e) => this.handleInput(e)} />
               </p>
+              { validation && this.renderValidation('message', 'Mohon isi pesan keluhan')}
             </div>
             <div className='add-product'>
               <h3 className='title-content'>Upload Foto</h3>
               <ul className='add-photo-list'>
                 <FlipMove enterAnimation='fade' leaveAnimation='fade' style={styles}>
                   {
-                    concatImages.map((picture, index) => {
+                    images.map((picture, index) => {
                       return (
                         <li key={index}>
                           <div className='photo-product'>
@@ -258,9 +304,12 @@ class ResolutionAdd extends React.Component {
                   </li>
                 </FlipMove>
               </ul>
+              { validation && this.renderValidation('images', 'Mohon upload foto')}
             </div>
             <div className='field'>
-              <a className='button is-primary is-large is-fullwidth'>Simpan Perubahan</a>
+              <a className={`button is-primary is-large is-fullwidth ${(submiting || uploading) && 'is-loading'}`}
+                onClick={() => this.submit()}>Simpan Perubahan
+              </a>
             </div>
           </div>
         </form>
@@ -281,12 +330,14 @@ ResolutionAdd.defaultProps = {
 
 const mapStateToProps = (state) => {
   return {
-    profile: state.profile
+    createResolution: state.createResolution,
+    upload: state.upload
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProfile: () => dispatch(actionTypes.getProfile())
+  addResolution: (params) => dispatch(userActions.createResolution(params)),
+  photoUpload: (params) => dispatch(storesAction.photoUpload({data: params}))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResolutionAdd)
