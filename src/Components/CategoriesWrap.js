@@ -1,4 +1,4 @@
-export default (props: any) => {
+export default (props) => {
   const { children } = props
   return (
     <div className='categories-wrapp'>
