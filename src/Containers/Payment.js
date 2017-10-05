@@ -1,22 +1,31 @@
+/**
+ * Safei Muslim
+ * Updated : Yogyakarta , 3 Oktober 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+ /** including depedencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
-// Components
+/** including components */
 import MyImage from '../Components/MyImage'
 import Loading from '../Components/Loading'
 import Notification from '../Components/Notification'
 import Content from '../Components/Content'
-// actions
+/** including actions */
 import * as userActions from '../actions/user'
 import * as paymentActions from '../actions/payment'
 import * as cartActions from '../actions/cart'
 import * as transactionActions from '../actions/transaction'
-// lib
+/** including lib */
 import RupiahFormat from '../Lib/RupiahFormat'
+import Midtrans from '../Lib/Midtrans'
 
 /**
  * paymentType=[bucket, transaction]
+ * flow checkout->get snapToken->showPayment
  */
 
 class Payment extends Component {
@@ -38,49 +47,84 @@ class Payment extends Component {
       cart: false,
       snapToken: false,
       checkout: false,
-      transaction: false
+      transaction: false,
+      balancePayment: false
     }
   }
 
-  async componentDidMount () {
-    let { paymentType, idT } = this.state
+  componentDidMount () {
+    let { idT } = this.state
 
     NProgress.start()
 
-    if (paymentType === 'bucket') {
+    /** get cart when payment type bucket  */
+    if (this.isBucketPayment()) {
       this.submitting = { ...this.submitting, cart: true }
-      await this.props.getCart()
+      this.props.getCart()
     }
 
-    if (paymentType === 'transaction') {
+    /** get transaction when payment type transaction  */
+    if (this.isTransactionPayment()) {
       this.submitting = { ...this.submitting, transaction: true }
-      await this.props.getTransaction({ id: idT })
+      this.props.getTransaction({ id: idT })
     }
 
+    /** get balance */
     this.submitting = { ...this.submitting, balance: true }
-    await this.props.getBalance()
+    this.props.getBalance()
   }
 
+  /** payment with midtrans */
   paymentMidtrans () {
-    this.submitting = {...this.submitting, checkout: true}
-    this.props.setCheckout({'is_wallet': false})
+    /** call midtrans from bucket/shopping cart */
+    this.setCheckout()
+    /** call midtrans from bucket/shopping cart */
+    this.getMidtransTokenTrans()
   }
 
-  loadMidtransPayment (token) {
-    snap.pay(token, {
-      onSuccess: (result) => {
-        Router.push('/payment?type=finish')
-      },
-      onPending: (result) => {
-        Router.push('/payment?type=unfinish')
-      },
-      onError: (result) => {
-        Router.push('/payment?type=error')
-      },
-      onClose: () => {
-        Router.push('/transaction')
-      }
-    })
+  /** payment with balance */
+  paymentBalance () {
+    this.submitting = {...this.submitting, balancePayment: true, checkout: true}
+
+    this.setCheckout()
+
+    if (this.isTransactionPayment()) {
+      this.redirectToPaymentBalance()
+    }
+  }
+
+  /** checkout */
+  setCheckout () {
+    if (this.isBucketPayment()) {
+      this.submitting = {...this.submitting, checkout: true}
+      this.props.setCheckout({'is_wallet': false})
+    }
+  }
+
+  /** get mindtrans token for transaction */
+  getMidtransTokenTrans () {
+    let { transaction } = this.state
+    let { isFound } = this.props
+    if (this.isTransactionPayment() && isFound(transaction)) {
+      this.submitting = { ...this.submitting, snapToken: true }
+      this.props.getMidtransToken({ id: transaction.transaction.bucket.id, platform: 'pwa' })
+    }
+  }
+
+  /** is payment for bucket */
+  isBucketPayment () {
+    return this.state.paymentType === 'bucket'
+  }
+
+  /** is payment for transaction */
+  isTransactionPayment () {
+    return this.state.paymentType === 'transaction'
+  }
+
+  /** redirect to payment balance page */
+  redirectToPaymentBalance () {
+    let { paymentType, idT } = this.state
+    Router.push(`/payment-balance?paymentType=${paymentType}&idT=${idT}`)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -93,8 +137,13 @@ class Payment extends Component {
         this.setState({ notification: notifError(checkout.message) })
       }
       if (isFound(checkout)) {
-        this.submitting = {...this.submitting, checkout: false}
-        this.loadMidtransPayment(snapToken.token)
+        if (this.submitting.balancePayment) {
+          this.submitting = {...this.submitting, checkout: false, balancePayment: false}
+          this.redirectToPaymentBalance()
+        } else if (isFound(cart)) {
+          this.submitting = {...this.submitting, checkout: false, snapToken: true}
+          this.props.getMidtransToken({ id: cart.cart.id, platform: 'pwa' })
+        }
       }
     }
 
@@ -104,6 +153,8 @@ class Payment extends Component {
         this.setState({ notification: notifError(snapToken.message) })
       }
       if (isFound(snapToken)) {
+        // this.loadMidtransPayment(snapToken.token)
+        Midtrans({...snapToken})
         this.submitting = {...this.submitting, snapToken: false}
         this.setState({ snapToken })
       }
@@ -123,12 +174,11 @@ class Payment extends Component {
     // handling state get cart
     if (!isFetching(cart) && this.submitting.cart) {
       NProgress.done()
+      this.submitting = { ...this.submitting, cart: false }
       if (isError(cart)) {
         this.setState({ notification: notifError(cart.message) })
       }
       if (isFound(cart)) {
-        this.submitting = { ...this.submitting, cart: false, snapToken: true }
-        this.props.getMidtransToken({ id: cart.cart.id, platform: 'pwa' })
         this.setState({ cart })
       }
     }
@@ -136,12 +186,11 @@ class Payment extends Component {
     // handling state get transaction
     if (!isFetching(transaction) && this.submitting.transaction) {
       NProgress.done()
+      this.submitting = { ...this.submitting, transaction: false }
       if (isError(transaction)) {
         this.setState({ notification: notifError(transaction.message) })
       }
       if (isFound(transaction)) {
-        this.submitting = { ...this.submitting, transaction: false, snapToken: true }
-        this.props.getMidtransToken({ id: transaction.transaction.bucket.id, platform: 'pwa' })
         this.setState({ transaction })
       }
     }
@@ -176,6 +225,9 @@ class Payment extends Component {
           {...this.state}
           failTransaction={failTransaction}
           submitting={this.submitting}
+          paymentBalance={() => this.paymentBalance()}
+          isBucketPayment={() => this.isBucketPayment()}
+          isTransactionPayment={() => this.isTransactionPayment()}
           paymentMidtrans={() => this.paymentMidtrans()} />
         }
       </Content>
@@ -184,16 +236,18 @@ class Payment extends Component {
 }
 
 const Paymentcontent = (props) => {
-  let { cart, transaction, paymentType, idT, snapToken, balance, submitting, failTransaction } = props
+  let { cart, transaction, paymentType, idT, snapToken, balance, submitting, paymentBalance, failTransaction, isBucketPayment, isTransactionPayment } = props
   let totalPayment = 0
 
-  if (paymentType === 'bucket') {
+  /** count total payment when type is bucket */
+  if (isBucketPayment()) {
     cart.cart.items.map((item) => {
       totalPayment += item.total_price
     })
   }
 
-  if (paymentType === 'transaction') {
+  /** count total payment when type is transaction */
+  if (isTransactionPayment()) {
     totalPayment = transaction.transaction.summary_transaction.total_price
   }
 
@@ -219,7 +273,7 @@ const Paymentcontent = (props) => {
         <div className='title-content'>
           <h3>Pilih Metode Pembayaran</h3>
         </div>
-        <div className='box-rounded' onClick={() => !submitting.balance && balance.isFound && Router.push(`/payment-balance?paymentType=${paymentType}&idT=${idT}`)}>
+        <div className='box-rounded' onClick={() => !submitting.balance && balance.isFound && paymentBalance()}>
           <div className='payment-method'>
             Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
             {
@@ -229,11 +283,11 @@ const Paymentcontent = (props) => {
             }
           </div>
         </div>
-        <div className='box-rounded' onClick={() => !submitting.snapToken && snapToken.isFound && props.paymentMidtrans()}>
+        <div className='box-rounded' onClick={() => (!submitting.snapToken || !submitting.checkout) && props.paymentMidtrans()}>
           <div className='payment-method'>
             Metode Pembayaran Lainnya
             {
-              submitting.snapToken
+              submitting.snapToken || submitting.checkout
               ? <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
               : <span className='icon-arrow-right' />
             }

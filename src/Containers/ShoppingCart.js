@@ -111,8 +111,12 @@ class ShoppingCart extends Component {
   }
 
   payNow () {
-    Router.push('/payment?paymentType=bucket')
-    this.setState({ submitting: true })
+    let { cart } = this.state
+    if (isFound(cart.data)) {
+      let idT = cart.data.cart.id
+      Router.push(`/payment?paymentType=bucket&idT=${idT}`)
+      this.setState({ submitting: true })
+    }
   }
 
   componentDidMount () {

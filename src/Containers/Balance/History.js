@@ -111,7 +111,7 @@ class History extends Component {
   componentWillReceiveProps (nextProps) {
     const { saldoHistory } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-
+    console.log(saldoHistory)
     /**
      * handling state get balance,
      * only when fetching is FALSE and submitting TRUE
