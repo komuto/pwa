@@ -7,6 +7,7 @@ import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
 import * as actionBankTypes from '../actions/bank'
+import * as saldoActions from '../actions/saldo'
 // services
 import { Status } from '../Services/Status'
 // validation
@@ -32,6 +33,12 @@ class VerifyNoTelp extends React.Component {
       submitting: false,
       submitOTPBank: false
     }
+
+    this.submitting = {
+      withdrawal: false
+    }
+
+    console.log({props})
   }
 
   handleInput (e) {
@@ -94,6 +101,15 @@ class VerifyNoTelp extends React.Component {
         }
         addBankAccount(newState)
         break
+      case 'withdraw':
+        const params = {
+          bank_account_id: query.bank_account_id,
+          code: code,
+          amount: query.amount
+        }
+        this.submitting = { ...this.submitting, withdrawal: true }
+        this.props.withdraw(params)
+        break
       case 'delete':
         deleteBankAccount({id: query.id, code: code})
         break
@@ -116,7 +132,8 @@ class VerifyNoTelp extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { bankAccount, statusSendOTPBank } = nextProps
+    const { isFetching, isError, isFound, notifError } = this.props
+    const { bankAccount, statusSendOTPBank, withdrawal } = nextProps
     let { notification, submitting, submitOTPBank } = this.state
     notification = {status: false, message: 'Error, default message.'}
     this.setState({ profile: nextProps.profile })
@@ -124,9 +141,13 @@ class VerifyNoTelp extends React.Component {
       switch (bankAccount.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          const href = `/data-rekening?isSuccess`
-          const as = 'data-rekening'
-          Router.push(href, as, { shallow: true })
+          let href = ''
+          if (this.props.query.source === 'balance-withdraw') {
+            href = `/balance-withdraw?addAccount=success`
+          } else {
+            href = `/data-rekening?isSuccess`
+          }
+          Router.push(href)
           break
         case Status.OFFLINE :
         case Status.FAILED :
@@ -152,6 +173,17 @@ class VerifyNoTelp extends React.Component {
           break
       }
       this.setState({ notification })
+    }
+
+    /** handling withdraw balance  */
+    if (!isFetching(withdrawal) && this.submitting.withdrawal) {
+      this.submitting = { ...this.submitting, withdrawal: false }
+      if (isError(withdrawal)) {
+        this.setState({ notification: notifError(withdrawal.message) })
+      }
+      if (isFound(withdrawal)) {
+        Router.push('/balance-withdraw?type=finish')
+      }
     }
   }
 
@@ -255,7 +287,8 @@ const mapStateToProps = (state) => {
   return {
     profile: state.profile,
     statusSendOTPBank: state.sendOTPBank,
-    bankAccount: state.bankAccount
+    bankAccount: state.bankAccount,
+    withdrawal: state.withdrawal
   }
 }
 
@@ -264,7 +297,8 @@ const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(actionTypes.getProfile()),
   addBankAccount: (params) => dispatch(actionBankTypes.addBankAccount(params)),
   updateBankAccount: (params) => dispatch(actionBankTypes.updateBankAccount(params)),
-  deleteBankAccount: (params) => dispatch(actionBankTypes.deleteBankAccount(params))
+  deleteBankAccount: (params) => dispatch(actionBankTypes.deleteBankAccount(params)),
+  withdraw: (params) => dispatch(saldoActions.withdraw(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyNoTelp)
