@@ -64,7 +64,6 @@ class Messages extends React.Component {
     if (query.hasOwnProperty('deleteConversation')) {
       this.setState({ notification: validateResponseAlter(deleteMessage, 'Berhasil menghapus Pesan', 'Gagal menghapus Pesan') })
     }
-    console.log('nextPropsMes', nextProps)
   }
 
   render () {
