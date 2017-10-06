@@ -4,29 +4,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Notification from '../src/Containers/Notification'
-// utils
-import Menu from '../src/Config/Menu'
+import OrderDetailDropshiper from '../src/Containers/OrderDetailDropshiper'
 
 const Index = (props) => {
-  const { localize } = props
   const params = {
-    style: 'main no-padding-bottom bg-white',
+    style: 'main detail bg-grey lg',
     header: {
-      title: localize.notification
+      title: 'Detail Pesanan'
     },
     navbar: {
       searchBoox: false,
-      textPath: localize.notification
-    },
-    tabbar: {
-      active: Menu.NOTIFICATION,
-      isShow: true
+      path: '/',
+      textPath: 'Detail Pesanan'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Notification {...props} />
+      <OrderDetailDropshiper {...props} />
     </DefaultLayout>
   )
 }

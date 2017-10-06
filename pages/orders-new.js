@@ -1,32 +1,28 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Notification from '../src/Containers/Notification'
-// utils
-import Menu from '../src/Config/Menu'
+import OrdersNew from '../src/Containers/OrdersNew'
 
 const Index = (props) => {
-  const { localize } = props
   const params = {
-    style: 'main no-padding-bottom bg-white',
+    style: 'main detail bg-grey',
     header: {
-      title: localize.notification
+      title: 'Pesanan Baru'
     },
     navbar: {
       searchBoox: false,
-      textPath: localize.notification
-    },
-    tabbar: {
-      active: Menu.NOTIFICATION,
-      isShow: true
+      path: '/',
+      callBack: () => Router.push('/sales'),
+      textPath: 'Pesanan Baru'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Notification {...props} />
+      <OrdersNew {...props} />
     </DefaultLayout>
   )
 }

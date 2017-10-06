@@ -4,29 +4,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Notification from '../src/Containers/Notification'
-// utils
-import Menu from '../src/Config/Menu'
+import Sales from '../src/Containers/Sales'
 
 const Index = (props) => {
-  const { localize } = props
   const params = {
-    style: 'main no-padding-bottom bg-white',
+    style: 'main no-padding-bottom bg-grey',
     header: {
-      title: localize.notification
+      title: 'Penjualan'
     },
     navbar: {
       searchBoox: false,
-      textPath: localize.notification
-    },
-    tabbar: {
-      active: Menu.NOTIFICATION,
-      isShow: true
+      path: '/',
+      textPath: 'Penjualan'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Notification {...props} />
+      <Sales {...props} />
     </DefaultLayout>
   )
 }
