@@ -9,41 +9,61 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import moment from 'moment'
+import _ from 'lodash'
 /** including component */
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
+import { ModalSlide, ModalFull } from '../../Components/Modal'
 /** including actions */
 import * as bankActions from '../../actions/bank'
 import * as userActions from '../../actions/user'
 /** including custom lib */
 import RupiahFormat from '../../Lib/RupiahFormat'
-/** define anotherBank const, because not available in banks api respon  */
-const anotherBank = {
-  code: '1001',
-  id: -1,
-  logo: null,
-  name: 'Bank Lainya',
-  status: 1,
-  status_at: 1466497561
-}
 
 class Withdraw extends Component {
   constructor (props) {
     super(props)
     /** define state */
     this.state = {
+      addAccountStatus: props.query.addAccount,
       balance: props.balance || null,
-      banks: props.banks || null,
-      listBankAccounts: props.listBankAccounts || null,
-      form: {},
-      listBankShow: false,
+      banks: {
+        data: props.banks || null,
+        show: false,
+        showPress: (e) => this.listBankShowPress(e),
+        selectedListPress: (e, p) => this.selectedBankPress(e, p)
+      },
+      listBankAccounts: {
+        data: props.listBankAccounts || null,
+        show: false,
+        showPress: (e) => this.listBankAccountShowPress(e),
+        selectedListPress: (e, p) => this.selectedBankAccount(e, p)
+      },
+      inputAccount: {
+        form: {
+          error: []
+        },
+        show: false,
+        showPress: (e) => this.inputAccountShowPress(e),
+        handleInput: (p) => this.handleInputAccount(p),
+        submit: () => this.submitBankAccount()
+      },
+      withdraw: {
+        form: {
+          error: []
+        },
+        handleInput: (p) => this.handleInputWithdraw(p),
+        submit: () => this.submitWithdraw()
+      },
       notification: props.notification
     }
     /** define submitting status, status when they call or not [TRUE, FALSE] */
     this.submitting = {
       balance: false,
       banks: false,
-      listBankAccounts: false
+      listBankAccounts: false,
+      sendOTPBank: false,
+      withdraw: false
     }
     /** setup moment localize to id */
     moment.locale('id')
@@ -51,13 +71,16 @@ class Withdraw extends Component {
   }
 
   render () {
-    const { notification } = this.state
-    const { isFound } = this.props
+    let { notification, addAccountStatus } = this.state
+
+    if (addAccountStatus && addAccountStatus === 'success') {
+      notification = { type: 'is-success', status: true, message: 'Berhasil menambah rekening baru' }
+    }
 
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
@@ -65,10 +88,9 @@ class Withdraw extends Component {
         {
           <WithdrawContent
             {...this.state}
-            isFound={isFound}
+            defProps={this.props}
+            submitting={this.submitting}
             handleInput={(e) => this.handleInput(e.target)}
-            selectedBankPress={(e, p) => this.selectedBankPress(e, p)}
-            listBankPress={(e) => this.listBankPress(e)}
             submitPress={(e) => this.submitPress(e)} />
         }
       </Content>
@@ -84,8 +106,31 @@ class Withdraw extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { banks, listBankAccounts, balance } = nextProps
+    const { banks, listBankAccounts, balance, sendOTPBank } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
+
+    /** handling state sendOTPBank */
+    if (!isFetching(sendOTPBank) && this.submitting.sendOTPBank) {
+      this.submitting = { ...this.submitting, sendOTPBank: false }
+      if (isError(sendOTPBank)) {
+        this.setState({ notification: notifError(sendOTPBank.message) })
+      }
+      if (isFound(sendOTPBank)) {
+        let href = ''
+        let as = 'verify-otp-bank'
+        if (this.submitting.withdraw) {
+          this.submitting = { ...this.submitting, withdraw: false }
+          let { form } = this.state.withdraw
+          let { bankAccountId, amount } = this.props.withdraw
+          href = `/verify-otp-bank?action=withdraw&bank_account_id=${form[bankAccountId]}&amount=${form[amount]}`
+        } else {
+          let { form } = this.state.inputAccount
+          let { bankId, branchOffice, accountNumber, holderName } = this.props.account
+          href = `/verify-otp-bank?source=balance-withdraw&action=add&master_bank_id=${form[bankId]}&holder_name=${form[holderName]}&holder_account_number=${form[accountNumber]}&bank_branch_office_name=${form[branchOffice]}`
+        }
+        Router.push(href, as)
+      }
+    }
 
     /** handling state get banks */
     if (!isFetching(banks) && this.submitting.banks) {
@@ -94,7 +139,7 @@ class Withdraw extends Component {
         this.setState({ notification: notifError(banks.message) })
       }
       if (isFound(banks)) {
-        this.setState({ banks })
+        this.setState({ banks: { ...this.state.banks, data: banks } })
       }
     }
 
@@ -106,7 +151,7 @@ class Withdraw extends Component {
         this.setState({ notification: notifError(listBankAccounts.message) })
       }
       if (isFound(listBankAccounts)) {
-        this.setState({ listBankAccounts })
+        this.setState({ listBankAccounts: { ...this.state.listBankAccounts, data: listBankAccounts } })
       }
     }
 
@@ -123,33 +168,148 @@ class Withdraw extends Component {
   }
 
   /** show/hide list bank modal */
-  listBankPress (e) {
+  listBankShowPress (e) {
     e.preventDefault()
     if (!e.target.className.includes('sortButton')) return
-    this.setState({ listBankShow: !this.state.listBankShow })
+    this.setState({ banks: { ...this.state.banks, show: !this.state.banks.show } })
+  }
+
+  /** show/hide list bank account modal */
+  listBankAccountShowPress (e) {
+    e.preventDefault()
+    if (!e.target.className.includes('sortButton')) return
+    this.setState({ listBankAccounts: { ...this.state.listBankAccounts, show: !this.state.listBankAccounts.show } })
+  }
+
+  /** show/hide modal form input account */
+  inputAccountShowPress () {
+    this.setState({
+      inputAccount: { ...this.state.inputAccount, show: !this.state.inputAccount.show },
+      listBankAccounts: { ...this.state.listBankAccounts, show: false }
+    })
+  }
+
+  /** handle input form input account */
+  handleInputAccount ({ name, value }) {
+    let { inputAccount } = this.state
+    inputAccount.form[name] = value
+    this.setState({ inputAccount })
+  }
+
+  handleInputWithdraw ({ name, value }) {
+    let { withdraw } = this.state
+    withdraw.form[name] = value
+    this.setState({ withdraw })
   }
 
   /** handling when bank selected */
   selectedBankPress (e, bank) {
     e.preventDefault()
-    this.setState({ form: {...this.state.form, bank}, listBankShow: false })
+    let { inputAccount } = this.state
+    let { code, bankId } = this.props.account
+    inputAccount.form['bank'] = bank
+    inputAccount.form[code] = bank.code
+    inputAccount.form[bankId] = bank.id
+    this.setState({ inputAccount, banks: { ...this.state.banks, show: false } })
   }
 
-  /** handling input changed */
-  handleInput ({ value, name }) {
-    this.setState({ form: { ...this.state.form, name: value } })
+  /**  handling when bank account selected */
+  selectedBankAccount (e, account) {
+    let { withdraw } = this.state
+    let { bankAccountId } = this.props.withdraw
+    withdraw.form['account'] = account
+    withdraw.form[bankAccountId] = account.id
+    this.setState({
+      withdraw,
+      listBankAccounts: { ...this.state.listBankAccounts, show: false }
+    })
   }
 
-  /** handling submit press */
-  submitPress (e) {
-    e.preventDefault()
-    Router.push('/verify-otp-bank')
+  /** submit withdraw */
+  submitWithdraw () {
+    let { bankAccountId, amount } = this.props.withdraw
+    let { withdraw } = this.state
+    let { form } = withdraw
+    console.log('submitWithdraw ()', withdraw)
+    if (form[amount] === undefined) {
+      form.error.push(amount)
+    } else {
+      let tam = _.without(form.error, amount)
+      form.error = tam
+    }
+
+    if (form[bankAccountId] === undefined) {
+      form.error.push(bankAccountId)
+    } else {
+      let tam = _.without(form.error, bankAccountId)
+      form.error = tam
+    }
+
+    this.setState({ withdraw })
+
+    if (form.error.length > 0) {
+      return
+    }
+
+    this.submitting = { ...this.submitting, sendOTPBank: true, withdraw: true }
+    this.props.addSendOTPBank()
+  }
+
+  /** submit bank account */
+  submitBankAccount () {
+    let { bankId, branchOffice, accountNumber, holderName } = this.props.account
+    let { inputAccount } = this.state
+    let { form } = inputAccount
+
+    if (form[bankId] === undefined) {
+      form.error.push(bankId)
+    } else {
+      let tam = _.without(form.error, bankId)
+      form.error = tam
+    }
+
+    if (form[branchOffice] === undefined) {
+      form.error.push(branchOffice)
+    } else {
+      let tam = _.without(form.error, branchOffice)
+      form.error = tam
+    }
+
+    if (form[accountNumber] === undefined) {
+      form.error.push(accountNumber)
+    } else {
+      let tam = _.without(form.error, accountNumber)
+      form.error = tam
+    }
+
+    if (form[holderName] === undefined) {
+      form.error.push(holderName)
+    } else {
+      let tam = _.without(form.error, holderName)
+      form.error = tam
+    }
+
+    this.setState({ inputAccount })
+
+    if (form.error.length > 0) {
+      return
+    }
+
+    this.submitting = { ...this.submitting, sendOTPBank: true }
+    this.props.addSendOTPBank()
   }
 }
 /** content when user dont have bank account */
-const WithdrawContent = ({ balance, banks, listBankAccounts, isFound, form, handleInput, listBankShow, listBankPress, selectedBankPress, submitPress }) => {
+const WithdrawContent = ({ defProps, balance, banks, listBankAccounts, inputAccount, withdraw, submitting, submitPress }) => {
+  let { bankAccountId, amount } = defProps.withdraw
   let createDate = moment().format('Do MMMM YY')
-  // let hasBankAccount = listBankAccounts.listBankAccounts.length > 0
+  let { handleInput, form, submit } = withdraw
+  let { error, account } = form
+  let dispalayAccount = null
+  if (account) {
+    dispalayAccount = `${account.bank.name}-${account.holder_account_number}`
+  }
+
   return (
     <section className='section is-paddingless'>
       <div className='detail'>
@@ -170,110 +330,158 @@ const WithdrawContent = ({ balance, banks, listBankAccounts, isFound, form, hand
         <form action='#' className='form'>
           <div className='field'>
             <label className='label'>Nominal Penarikan Dana</label>
-            <p className='control with-currency'>
+            <p className={`control with-currency ${error.includes(amount) && 'is-error'}`}>
               <span className='cur-val'>Rp</span>
-              <input name='amount' onChange={(e) => handleInput(e)} className='input' type='number' />
+              <input name={amount} onChange={(e) => handleInput(e.target)} className='input' type='number' />
+              <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
-          <div className='field sortButton' onClick={(e) => listBankPress(e)}>
-            <p className='control detail-address sortButton'>
-              <span className='location-label js-option sortButton'>{ form.bank ? form.bank.name : 'Pilih Bank Tujuan' }</span>
+          <div className='field sortButton' onClick={(e) => listBankAccounts.showPress(e)}>
+            <p className={`control detail-address sortButton with-currency ${error.includes(bankAccountId) && 'is-error'}`}>
+              <span className='location-label js-option sortButton'>{ dispalayAccount || 'Pilih Rekening Bank' }</span>
+              <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
-          {/* {
-            !hasBankAccount
-            ? <div>
-                <div className='field sortButton' onClick={(e) => listBankPress(e)}>
-                  <p className='control detail-address sortButton'>
-                    <span className='location-label js-option sortButton'>{ form.bank ? form.bank.name : 'Pilih Bank Tujuan' }</span>
-                  </p>
-                </div>
-                {
-                  form.bank && form.bank.id === anotherBank.id &&
-                  <div className='field'>
-                    <p className='control'>
-                      <input name='bank_name' onChange={(e) => handleInput(e)} className='input' type='text' placeholder='Nama Bank' />
-                    </p>
-                  </div>
-                }
-                <div className='field'>
-                  <p className='control'>
-                    <input name='bank_branch_office_name' onChange={(e) => handleInput(e)} className='input' type='text' placeholder='Cabang Bank' />
-                  </p>
-                </div>
-                <div className='field'>
-                  <p className='control'>
-                    <input name='holder_account_number' onChange={(e) => handleInput(e)} className='input' type='number' placeholder='Masukan Nomor Rekening' />
-                  </p>
-                </div>
-                <div className='field'>
-                  <p className='control'>
-                    <input name='holder_name' onChange={(e) => handleInput(e)} className='input' type='text' placeholder='Masukkan Nama Pemilik Rekening' />
-                  </p>
-                </div>
-              </div>
-            : <div className='field sortButton' onClick={(e) => listBankPress(e)}>
-                <p className='control detail-address sortButton'>
-                  <span className='location-label js-option sortButton'>{ form.bank ? form.bank.name : 'Pilih Bank Tujuan' }</span>
-                </p>
-              </div>
-          } */}
           <div className='field'>
-            <a onClick={(e) => submitPress(e)} className='button is-primary is-large is-fullwidth js-option' data-target='#aditAddress'>Tarik Saldo</a>
+            <a onClick={(e) => !submitting.sendOTPBank && submit(e)} className={`button is-primary is-large is-fullwidth js-option ${submitting.sendOTPBank && 'is-loading'}`}>Tarik Saldo</a>
           </div>
         </form>
       </div>
       <ListBank
         {...banks}
-        {...form}
-        listBankShow={listBankShow}
-        listBankPress={(e) => listBankPress(e)}
-        selectedBankPress={(e, p) => selectedBankPress(e, p)} />
+        inputAccount={inputAccount} />
+      <ListBankAccount
+        {...listBankAccounts}
+        withdraw={withdraw}
+        inputAccount={inputAccount} />
+      <InputAccount
+        {...inputAccount}
+        banks={banks}
+        defProps={defProps}
+        submitting={submitting} />
     </section>
   )
 }
 
-/** list bank modal content */
-const ListBank = ({ banks, bank, listBankShow, listBankPress, selectedBankPress }) => {
+const InputAccount = ({ show, showPress, handleInput, form, submit, banks, defProps, submitting }) => {
+  let { bankId, branchOffice, accountNumber, holderName } = defProps.account
+  let { error, bank } = form
   return (
-    <div className='sort-option sortButton' onClick={(e) => listBankPress(e)} style={{ display: listBankShow ? 'block' : 'none' }}>
-      <div className='sort-list sortButton'>
-        <p><strong>Pilih Rekening Tujuan</strong></p>
-        <form className='form'>
-          <div className='field'>
-            <div className='control popup-option change-address'>
-              {
-                banks.map((b) => {
-                  return <label key={b.id} onClick={(e) => selectedBankPress(e, b)} className={`radio ${bank && bank.id === b.id && 'checked'}`}>
-                    <input type='radio' name='address' />
-                    <strong>{b.name}</strong>
-                  </label>
-                })
-              }
-              <label onClick={(e) => selectedBankPress(e, anotherBank)} className={`radio ${bank && bank.id === anotherBank.id && 'checked'}`}>
-                <input type='radio' name='address' />
-                <strong>{anotherBank.name}</strong>
-              </label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    <ModalFull
+      title='Tambah Data Rekening'
+      show={show}
+      showPress={showPress} >
+      <form className='form'>
+        <div className='field sortButton' onClick={(e) => banks.showPress(e)}>
+          <p className={`control detail-address sortButton ${error.includes(bankId) && 'is-error'}`}>
+            <span className='location-label js-option sortButton'>{ bank ? bank.name : 'Pilih Bank Tujuan' }</span>
+            <span className='error-msg'>* Wajib diisi</span>
+          </p>
+        </div>
+        <div className='field'>
+          <p className={`control ${error.includes(branchOffice) && 'is-error'}`}>
+            <input name={branchOffice} onChange={(e) => handleInput(e.target)} className='input' type='text' placeholder='Cabang Bank' />
+            <span className='error-msg'>* Wajib diisi</span>
+          </p>
+        </div>
+        <div className='field'>
+          <p className={`control ${error.includes(accountNumber) && 'is-error'}`}>
+            <input name={accountNumber} onChange={(e) => handleInput(e.target)} className='input' type='number' placeholder='Masukan Nomor Rekening' />
+            <span className='error-msg'>* Wajib diisi</span>
+          </p>
+        </div>
+        <div className='field'>
+          <p className={`control ${error.includes(holderName) && 'is-error'}`}>
+            <input name={holderName} onChange={(e) => handleInput(e.target)} className='input' type='text' placeholder='Masukkan Nama Pemilik Rekening' />
+            <span className='error-msg'>* Wajib diisi</span>
+          </p>
+        </div>
+        <div className='field'>
+          <a onClick={() => !submitting.sendOTPBank && submit()} className={`button is-primary is-large is-fullwidth ${submitting.sendOTPBank && 'is-loading'}`}>Tambah Data Rekening</a>
+        </div>
+      </form>
+    </ModalFull>
   )
+}
+
+const ListBankAccount = ({ data, show, showPress, inputAccount, selectedListPress, withdraw }) => {
+  return (
+    <ModalSlide
+      title='Pilih Rekening Tujuan'
+      show={show}
+      showPress={(e) => showPress(e)}>
+      {
+        data.listBankAccounts.map((account, index) => {
+          let isChecked = false
+          if (withdraw.form.bank_account_id) {
+            isChecked = withdraw.form.bank_account_id === account.id
+          }
+          return (
+            <label key={index} className={`radio ${isChecked && 'checked'}`} onClick={(e) => selectedListPress(e, account)}>
+              <input type='radio' name='address' />
+              <strong>{account.bank.name}</strong>
+              <p>{account.holder_account_number}</p>
+              <p>a/n {account.holder_name}</p>
+            </label>
+          )
+        })
+      }
+      <a onClick={() => inputAccount.showPress()} className='add-new-address modal-button'>
+        + Tambah Rekening Baru
+      </a>
+    </ModalSlide>
+  )
+}
+
+/** list bank modal content */
+const ListBank = ({ data, show, showPress, selectedListPress, bank, inputAccount }) => {
+  return (
+    <ModalSlide
+      title='Pilih Bank Tujuan'
+      show={show}
+      style={{ zIndex: 1000 }}
+      showPress={(e) => showPress(e)}>
+      {
+        data.banks.map((b) => {
+          return <label key={b.id} onClick={(e) => selectedListPress(e, b)} className={`radio ${bank && inputAccount.bank.id === b.id && 'checked'}`}>
+            <input type='radio' name='address' />
+            <strong>{b.name}</strong>
+          </label>
+        })
+      }
+    </ModalSlide>
+  )
+}
+
+/** define dafault props */
+Withdraw.defaultProps = {
+  account: {
+    code: 'code',
+    bankId: 'master_bank_id',
+    branchOffice: 'bank_branch_office_name',
+    accountNumber: 'holder_account_number',
+    holderName: 'holder_name'
+  },
+  withdraw: {
+    bankAccountId: 'bank_account_id',
+    amount: 'amount'
+  }
 }
 
 /** function get state from redux */
 const mapStateToProps = (state) => ({
   balance: state.balance,
   banks: state.banks,
-  listBankAccounts: state.listBankAccounts
+  listBankAccounts: state.listBankAccounts,
+  sendOTPBank: state.sendOTPBank
 })
 
 /** function get actions from redux */
 const mapDispatchToPtops = (dispatch) => ({
   listBank: () => dispatch(bankActions.listBank()),
   getBankAccounts: () => dispatch(bankActions.getBankAccounts()),
-  getBalance: () => dispatch(userActions.getBalance())
+  getBalance: () => dispatch(userActions.getBalance()),
+  addSendOTPBank: () => dispatch(userActions.sendOTPBank())
 })
 
 /** connecting componet with redux */

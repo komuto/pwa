@@ -48,9 +48,7 @@ const Index = (props) => {
       text: 'Lihat balance status'
     }
     return <NotificationPage {...params} />
-  }
-
-  if (!type) {
+  } else {
     const params = {
       style: 'main no-padding-bottom bg-white saldo',
       header: {
