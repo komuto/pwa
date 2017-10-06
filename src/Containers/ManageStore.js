@@ -53,6 +53,11 @@ class ManageStore extends Component {
     Router.push('/product-list')
   }
 
+  toSales (e) {
+    e.preventDefault()
+    Router.push('/sales')
+  }
+
   render () {
     return (
       <div>
@@ -110,7 +115,7 @@ class ManageStore extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={(e) => this.toSales(e)}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>

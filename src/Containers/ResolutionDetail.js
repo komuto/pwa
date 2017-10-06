@@ -123,6 +123,7 @@ class ResolutionDetail extends React.Component {
   }
 
   render () {
+    // console.log('state', this.state)
     const { notification, tabs, resolutionDetail, message } = this.state
     return (
       <div>
@@ -267,8 +268,8 @@ const ListDiscustionSolutions = (props) => {
           <ul className='notif-detail conversation bordered'>
             { resolutionDetails.resolution.discussions.map((res, i) => {
               return (
-                <li>
-                  <div className='box is-paddingless' key={i}>
+                <li key={i}>
+                  <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left top sm'>
                         <figure className='image user-pict'>

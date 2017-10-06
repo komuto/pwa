@@ -4,29 +4,23 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Notification from '../src/Containers/Notification'
-// utils
-import Menu from '../src/Config/Menu'
+import SendMessage from '../src/Containers/SendMessage'
 
 const Index = (props) => {
-  const { localize } = props
   const params = {
-    style: 'main no-padding-bottom bg-white',
+    style: 'main user bg-white',
     header: {
-      title: localize.notification
+      title: 'Kirim Pesan'
     },
     navbar: {
       searchBoox: false,
-      textPath: localize.notification
-    },
-    tabbar: {
-      active: Menu.NOTIFICATION,
-      isShow: true
+      path: '/',
+      textPath: 'Kirim Pesan'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Notification {...props} />
+      <SendMessage {...props} />
     </DefaultLayout>
   )
 }
