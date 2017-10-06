@@ -40,7 +40,7 @@ class Sales extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li>
+              <li onClick={() => Router.push(`/delivery-confirmation`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
