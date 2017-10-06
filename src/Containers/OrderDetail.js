@@ -17,8 +17,8 @@ class OrderDetail extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: props.query.id,
-      newOrderDetail: props.newOrderDetail,
+      id: props.query.id || null,
+      newOrderDetail: props.newOrderDetail || null,
       submitting: false,
       showModalConfirm: false,
       showModalReject: false,

@@ -210,9 +210,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params)),
-  messageBuyer: () => dispatch(messageAction.messageBuyer()),
-  messageSeller: () => dispatch(messageAction.messageSeller()),
-  messageReseller: () => dispatch(messageAction.messageReseller())
+  messageBuyer: (params) => dispatch(messageAction.messageBuyer(params)),
+  messageSeller: (params) => dispatch(messageAction.messageSeller(params)),
+  messageReseller: (params) => dispatch(messageAction.messageReseller(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendMessage)
