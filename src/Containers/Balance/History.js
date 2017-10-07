@@ -111,7 +111,6 @@ class History extends Component {
   componentWillReceiveProps (nextProps) {
     const { saldoHistory } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-    console.log(saldoHistory)
     /**
      * handling state get balance,
      * only when fetching is FALSE and submitting TRUE
@@ -229,7 +228,7 @@ const HistoryContent = ({ params, saldoHistory, submitting, handleLoadMore, hasM
         loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
         {
         saldoHistory.history.map((history, index) => {
-          return <List key={index} {...history} />
+          return <List key={index} {...history} transType={history.trans_type} />
         })
       }
       </InfiniteScroll>
@@ -296,20 +295,20 @@ const FilterContent = ({ params, filter, submitting, summTransSelected, datePick
 }
 
 /** List of history content */
-const List = ({amount, last_saldo, date, trans_type}) => {
-  let IndexOfSummTransType = SummTransType.indexOf(trans_type)
+const List = ({id, amount, last_saldo, date, transType}) => {
+  let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = moment.unix(date).format('Do MMMM YY')
-  let Amount = isDecreasses(trans_type) ? <BalanceDecreases amount={amount} /> : <BalanceIncreases amount={amount} />
+  let Amount = isDecreasses(transType) ? <BalanceDecreases amount={amount} /> : <BalanceIncreases amount={amount} />
   return (
-    <section className='section is-paddingless has-shadow xs-margin-top'>
+    <section onClick={() => Router.push(`/balance-history-detail?id=${id}&transType=${transType}`)} className='section is-paddingless has-shadow xs-margin-top'>
       <div className='payment-detail saldo-history'>
         <ul>
           <li>
             <div className='columns is-mobile is-multiline no-margin-bottom'>
               <div className='column'>
                 <div className='label-text is-left'>
-                  <span>{ TransTypeMessage }</span>
+                  <span>{ TransTypeMessage } </span>
                 </div>
               </div>
               <div className='column'>
@@ -355,10 +354,10 @@ const dateFormatID = (date) => { return moment.unix(date).format('dddd[,] Do MMM
 const isDecreasses = (transType) => { return transType === 'PAID' || transType === 'WTHD' }
 
 /** trans decreasses content  */
-const BalanceDecreases = ({amount}) => <strong className='text-red'>-Rp { RupiahFormat(amount) } </strong>
+export const BalanceDecreases = ({amount}) => <strong className='text-red'>-Rp { RupiahFormat(amount) } </strong>
 
 /** trans incresses content  */
-const BalanceIncreases = ({amount}) => <strong className='text-green'>+Rp { RupiahFormat(amount) } </strong>
+export const BalanceIncreases = ({amount}) => <strong className='text-green'>+Rp { RupiahFormat(amount) } </strong>
 
 /** summary transaction type
  * PAYMENT: 'PAID',
