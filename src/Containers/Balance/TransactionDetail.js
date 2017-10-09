@@ -14,10 +14,12 @@ import { SummTransType, SummTransTypeMessage, BalanceDecreases, BalanceIncreases
 /** including component */
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 /** including actions */
 import * as saldoActions from '../../actions/saldo'
 /** including custom lib */
 import RupiahFormat from '../../Lib/RupiahFormat'
+import Promo from '../../Lib/Promo'
 
 class TransactionDetail extends Component {
   constructor (props) {
@@ -26,6 +28,10 @@ class TransactionDetail extends Component {
       id: props.query.id,
       transType: props.query.transType,
       saldoHistoryDetail: props.saldoHistoryDetail || null,
+      balanceDetail: {
+        active: false,
+        show: () => this.balanceDetailShow()
+      },
       notification: props.notification
     }
 
@@ -77,20 +83,37 @@ class TransactionDetail extends Component {
       }
     }
   }
+
+  balanceDetailShow () {
+    this.setState({ balanceDetail: { ...this.state.balanceDetail, active: !this.state.balanceDetail.active } })
+  }
 }
 
-const TransactionDetailContent = ({ transType, saldoHistoryDetail }) => {
+const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
-  let isWithdraw = transType === SummTransType[5]
+  let isPaid = transType === SummTransType[0]
+  let isRefund = transType === SummTransType[1]
+  // let isCommission = transType === SummTransType[3]
   let isTopup = transType === SummTransType[4]
+  let isWithdraw = transType === SummTransType[5]
   let amount = 0
+  let refundNumber = 0
+  let balanceUsed = 0
 
-  /** WTHD / withdraw transaction */
-  if (isWithdraw) {
+  /** PAID / paid transaction  */
+  if (isPaid) {
+    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
+    amount = saldoHistoryDetail.historyDetail.bucket.total_bill
+    balanceUsed = saldoHistoryDetail.historyDetail.bucket.wallet
+  }
+
+  /** RFND / refund transaction  */
+  if (isRefund) {
     TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
     amount = saldoHistoryDetail.historyDetail.transaction.amount
+    refundNumber = saldoHistoryDetail.historyDetail.refund.refund_number
   }
 
   /** TPUP / topup transaction */
@@ -98,6 +121,13 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail }) => {
     TransDate = moment.unix(saldoHistoryDetail.historyDetail.date).format('dddd, Do MMMM YY')
     amount = saldoHistoryDetail.historyDetail.amount
   }
+
+  /** WTHD / withdraw transaction */
+  if (isWithdraw) {
+    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
+    amount = saldoHistoryDetail.historyDetail.transaction.amount
+  }
+
   return (
     <Content>
       <section className='section is-paddingless has-shadow'>
@@ -105,18 +135,52 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail }) => {
           <ul>
             <List title='Jenis Transaksi' data={TransTypeMessage} />
             <List title='Tanggal Transaksi' data={TransDate} />
+            { isPaid && <List title='Total Tagihan' data={`Rp ${RupiahFormat(amount)}`} /> }
             { isWithdraw && <List title='Jumlah Penarikan' data={<BalanceDecreases amount={amount} />} /> }
             { isWithdraw && <List title='Metode Pembayaran' data='Transfer Bank' /> }
             { isTopup && <List title='Jumlah Top-up Saldo' data={<BalanceIncreases amount={amount} />} /> }
             { isTopup && <List title='Metode Pembayaran' data={'null'} /> }
+            { isRefund && <List title='Uang Yang Anda Terima' data={<BalanceIncreases amount={amount} />} /> }
+            { isRefund && <List title='Nomor Refund' data={refundNumber} /> }
           </ul>
         </div>
       </section>
+      {
+        isPaid &&
+        <WrapperList>
+          <List
+            title='Saldo yang digunakan'
+            data={`Rp ${RupiahFormat(balanceUsed)}`}
+            colapse={balanceDetail} />
+          <ListDetail {...balanceDetail} {...saldoHistoryDetail.historyDetail} />
+        </WrapperList>
+      }
+      { isPaid && <PaidInformation {...saldoHistoryDetail.historyDetail} />}
       { isWithdraw && <WithdrawInformation {...saldoHistoryDetail.historyDetail} />}
       { isTopup && <TopupInformation {...saldoHistoryDetail.historyDetail} />}
+      { isRefund && <RefundInformation {...saldoHistoryDetail.historyDetail} /> }
     </Content>
   )
 }
+
+const PaidInformation = ({ orders }) => (
+  <WrapperList title='Daftar barang yang di beli'>
+    {
+      orders.map((order, index) =>
+        <Content>
+          {
+          order.items.map((item, index) => <LisProduct key={index} product={item.product} />)
+        }
+        </Content>
+    )}
+  </WrapperList>
+)
+
+const RefundInformation = ({ refund }) => (
+  <WrapperList title='Daftar barang yang di refund'>
+    { refund.items.map((item, index) => <LisProduct key={index} {...item} />) }
+  </WrapperList>
+)
 
 const WithdrawInformation = ({ bankAccount }) => (
   <WrapperList title='Info Rekening Tujuan'>
@@ -136,11 +200,14 @@ const TopupInformation = ({ amount }) => (
 
 const WrapperList = ({ title, children }) => (
   <section className='section is-paddingless has-shadow sm-margin'>
-    <div className='container is-fluid'>
-      <div className='title'>
-        <h3>{ title }</h3>
+    {
+      title &&
+      <div className='container is-fluid'>
+        <div className='title'>
+          <h3>{ title }</h3>
+        </div>
       </div>
-    </div>
+    }
     <div className='payment-detail margin-less'>
       <ul>
         { children }
@@ -149,7 +216,7 @@ const WrapperList = ({ title, children }) => (
   </section>
 )
 
-const List = ({ title, data }) => (
+const List = ({ title, data, colapse }) => (
   <li>
     <div className='columns is-mobile is-multiline no-margin-bottom'>
       <div className='column is-one-third'>
@@ -162,11 +229,106 @@ const List = ({ title, data }) => (
           <span>
             {data}
           </span>
+          { colapse && <a onClick={() => colapse.show()} className='detail-collapsed'>Detail <span className={`icon-arrow-down blue ${colapse.active && 'top'}`} /></a> }
         </div>
       </div>
     </div>
   </li>
 )
+
+const LisProduct = (product) => (
+  <li>
+    <div className='columns is-mobile is-multiline no-margin-bottom'>
+      <div className='column'>
+        <div className='box'>
+          <div className='media'>
+            <div className='media-left'>
+              <figure className='image list-transaction sm'>
+                <a>
+                  <MyImage src={product.product_image} alt='Image' />
+                </a>
+              </figure>
+            </div>
+            <div className='media-content middle'>
+              <div className='content'>
+                <h4>{product.product_name}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+)
+
+const ListDetail = ({ active, bucket }) => {
+  let totalPayment = bucket.total_bill
+  let promoCode = '-'
+  let pricePromo = 0
+
+  if (bucket.promo) {
+    promoCode = bucket.promo.promo_code
+    pricePromo = Promo({ ...bucket, totalPayment })
+  }
+  return (
+    <li className='collapsed' style={{ display: active ? 'block' : 'none' }}>
+      <div className='payment-detail step-pay'>
+        <ul className='detail-transaction'>
+          <li>
+            <ul className='total-pay'>
+              <li>
+                <div className='columns is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <div className='label-text is-left'>
+                      <span>
+                          Total Belanja
+                        </span>
+                    </div>
+                  </div>
+                  <div className='column is-one-third'>
+                    <div className='has-text-right'>
+                      <span>Rp { RupiahFormat(totalPayment) }</span>
+                    </div>
+                  </div>
+                </div>
+                <div className='columns is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <div className='label-text is-left'>
+                      <span className='pay-code'>
+                          Kode Voucher { promoCode }
+                      </span>
+                    </div>
+                  </div>
+                  <div className='column is-one-third'>
+                    <div className='has-text-right'>
+                      <span className='pay-code'> - Rp { RupiahFormat(pricePromo) }</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div className='columns is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <div className='label-text is-left'>
+                      <span>
+                          Sisa Pembayaran
+                        </span>
+                    </div>
+                  </div>
+                  <div className='column is-one-third'>
+                    <div className='has-text-right'>
+                      <span>Rp {RupiahFormat(totalPayment - pricePromo)}</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </li>
+  )
+}
 
 const mapStateToProps = (state) => ({
   saldoHistoryDetail: state.saldoHistoryDetail
