@@ -5,13 +5,14 @@ import NProgress from 'nprogress'
 import moment from 'moment'
 // components
 import Router from 'next/router'
+import Notification from '../Components/Notification'
 // lib
 import Images from '../Themes/Images'
 import RupiahFormat from '../Lib/RupiahFormat'
 // actions
 import * as transactionAction from '../actions/transaction'
 // services
-import { validateResponse, isFetching } from '../Services/Status'
+import { validateResponse, isFetching, isFound, isError } from '../Services/Status'
 
 class OrderDetail extends React.Component {
   constructor (props) {
@@ -19,11 +20,17 @@ class OrderDetail extends React.Component {
     this.state = {
       id: props.query.id || null,
       newOrderDetail: props.newOrderDetail || null,
-      submitting: false,
       showModalConfirm: false,
       showModalReject: false,
-      showModalConfirmReject: false
+      showModalConfirmReject: false,
+      submitType: '',
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      }
     }
+    this.submiting = false
   }
 
   modalConfirm () {
@@ -46,19 +53,51 @@ class OrderDetail extends React.Component {
     }
   }
 
+  acceptOrder (id) {
+    this.submiting = true
+    this.setState({ submitType: 'acceptOrder' })
+    this.props.acceptOrder({ id })
+  }
+
+  rejectOrder (id) {
+    this.submiting = true
+    this.setState({ submitType: 'rejectOrder' })
+    this.props.rejectOrder({ id })
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { newOrderDetail } = nextProps
+    const { newOrderDetail, updateStatus } = nextProps
     if (!isFetching(newOrderDetail)) {
       NProgress.done()
       this.setState({ newOrderDetail, notification: validateResponse(newOrderDetail, 'Data review tidak ditemukan!') })
     }
+    if (!isFetching(updateStatus) && this.submiting) {
+      if (isFound(updateStatus)) {
+        if (this.state.submitType === 'acceptOrder') {
+          this.modalConfirm()
+        }
+        if (this.state.submitType === 'rejectOrder') {
+          this.showModalConfirmReject()
+        }
+      }
+      if (isError(updateStatus)) {
+        this.setState({ notification: validateResponse(updateStatus, 'Gagal update Order!') })
+      }
+      this.submiting = false
+    }
   }
 
   render () {
-    const { newOrderDetail } = this.state
+    const { newOrderDetail, notification } = this.state
     if (!newOrderDetail.isFound) return null
     return (
       <div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow'>
           <div className='info-purchase'>
             <div className='detail-rate is-purchase'>
@@ -306,7 +345,7 @@ class OrderDetail extends React.Component {
               <a className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.modalReject()}>Tolak</a>
             </div>
             <div className='column'>
-              <a className='button is-primary is-large is-fullwidth js-option' onClick={() => this.modalConfirm()}>Terima</a>
+              <a className={`button is-primary is-large is-fullwidth js-option ${this.submiting && 'is-loading'}`} onClick={() => this.acceptOrder(newOrderDetail.orderDetail.invoice.id)}>Terima</a>
             </div>
           </div>
         </div>
@@ -316,8 +355,8 @@ class OrderDetail extends React.Component {
             <img src={Images.transaksiDetail} alt='pict' />
             <h3>Order Diterima</h3>
             <p>Order telah dipindahkan ke bagian konfirmasi pengiriman. Silahkan memproses order dan jika sudah dikirim Anda tinggal memasukkan nomor resinya</p>
-            <button className='button is-primary is-large is-fullwidth' onClick={() => this.modalConfirm()}>Lihat Daftar Pengiriman</button>
-            <a className='cancel' onClick={() => this.modalConfirm()}>Kembali ke  Konfirmasi Pengiriman</a>
+            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/delivery-confirmation')}>Lihat Daftar Pengiriman</button>
+            <a className='cancel' onClick={() => Router.push('/orders-new')}>Kembali ke Daftar Pesanan</a>
           </div>
         </div>
 
@@ -325,7 +364,7 @@ class OrderDetail extends React.Component {
           <div className='notif-report'>
             <h3>Order telah ditolak</h3>
             <p>Anda telah menolak order dan order sudah dihilangkan dari daftar pesanan</p>
-            <button className='button is-primary is-large is-fullwidth' onClick={() => this.showModalConfirmReject()}>Kembali ke Daftar Pengiriman</button>
+            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/delivery-confirmation')}>Kembali ke Daftar Pengiriman</button>
           </div>
         </div>
 
@@ -336,7 +375,7 @@ class OrderDetail extends React.Component {
             <p>Anda yakin akan menolak order ini? </p>
             <div className='columns is-mobile'>
               <div className='column'>
-                <button className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.showModalConfirmReject()}>Tolak</button>
+                <button className={`button is-primary is-large is-fullwidth is-outlined js-option ${this.submiting && 'is-loading'}`} onClick={() => this.rejectOrder(newOrderDetail.orderDetail.invoice.id)}>Tolak</button>
               </div>
               <div className='column'>
                 <button className='button is-primary is-large is-fullwidth is-outlined' onClick={() => this.modalReject()}>Batal</button>
@@ -351,12 +390,15 @@ class OrderDetail extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    newOrderDetail: state.newOrderDetail
+    newOrderDetail: state.newOrderDetail,
+    updateStatus: state.updateStatus
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params))
+  getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params)),
+  acceptOrder: (params) => dispatch(transactionAction.acceptOrder(params)),
+  rejectOrder: (params) => dispatch(transactionAction.rejectOrder(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderDetail)

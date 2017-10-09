@@ -1,4 +1,5 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
@@ -15,6 +16,7 @@ const Index = (props) => {
     navbar: {
       searchBoox: false,
       path: '/',
+      callBack: () => Router.push('/manage-store'),
       textPath: 'Penjualan'
     }
   }
