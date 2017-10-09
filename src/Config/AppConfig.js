@@ -1,6 +1,6 @@
 const midTrans = {
   production: {
-    BASE_URL: 'https://app.midtrans.com/snnoap/snap.js',
+    BASE_URL: 'https://app.midtrans.com/snap/snap.js',
     ACCESS_KEY: {
       MERCHANT_ID: 'M106891',
       CLIENT_KEY: 'VT-client-Y6pK1V-G7F4a1YgU',
@@ -16,13 +16,15 @@ const midTrans = {
     }
   }
 }
+console.log('>> ')
+console.log(process.env.NODE_ENV)
 
 const AppConfig = {
   DEBUG: true,
   baseURL: 'http://localhost:8889/',
   apiURL: 'http://localhost:8889/',
   languages: 'ID', // ID , EN
-  midTrans: midTrans.stagging
+  midTrans: process.env.NODE_ENV === 'development' ? midTrans.stagging : midTrans.production
 }
 
 export default AppConfig
