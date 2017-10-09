@@ -46,7 +46,8 @@ const images = {
   emptyStatesMessage: '../../static/images/empty-states-percakapan.svg',
   emptyStatesDiscussion: '../../static/images/empty-states.svg',
   review: '../../static/images/review.svg',
-  emptyStatesResolusi: '../../static/images/empty-states-resolusi.svg'
+  emptyStatesResolusi: '../../static/images/empty-states-resolusi.svg',
+  IconInfoBlue: '../../static/images/icon-info-blue.svg'
 }
 
 export default images

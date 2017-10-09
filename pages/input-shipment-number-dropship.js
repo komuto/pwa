@@ -5,24 +5,24 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Sales from '../src/Containers/Sales'
+import InputShipmentNumberDropship from '../src/Containers/InputShipmentNumberDropship'
 
 const Index = (props) => {
   const params = {
-    style: 'main detail bg-grey',
+    style: 'main detail bg-grey lg',
     header: {
-      title: 'Penjualan'
+      title: 'Masukkan Informasi Pengiriman'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      callBack: () => Router.push('/manage-store'),
-      textPath: 'Penjualan'
+      callBack: () => Router.push('/delivery-confirmation'),
+      textPath: 'Masukkan Informasi Pengiriman'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Sales {...props} />
+      <InputShipmentNumberDropship {...props} />
     </DefaultLayout>
   )
 }
