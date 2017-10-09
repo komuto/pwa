@@ -8215,42 +8215,60 @@ strong.total {
     background-color: #ffffff; }
   .edit-data-delivery .field {
     margin-bottom: 30px; }
-    .edit-data-delivery .field .control.detail-address .location-label {
-      border-bottom: 0.5px solid #dedede;
-      padding-bottom: 8px;
-      color: #a0a3ae;
-      display: block;
-      font-size: 13px; }
-      .edit-data-delivery .field .control.detail-address .location-label:after {
-        content: "";
-        width: 24px;
-        height: 24px;
-        background-image: url("../../images/komuto-icon/035_arrow_down.svg");
-        position: absolute;
-        top: 50%;
-        right: 0;
-        -webkit-transform: translateY(-50%);
-        transform: translateY(-50%); }
-    .edit-data-delivery .field .control .input::-moz-placeholder {
-      color: #a0a3ae; }
-    .edit-data-delivery .field .control .input::-webkit-input-placeholder {
-      color: #a0a3ae; }
-    .edit-data-delivery .field .control .input:-moz-placeholder {
-      color: #a0a3ae; }
-    .edit-data-delivery .field .control .input:-ms-input-placeholder {
-      color: #a0a3ae; }
-    .edit-data-delivery .field .control.with-currency {
+    .edit-data-delivery .field .control {
       position: relative; }
-      .edit-data-delivery .field .control.with-currency .cur-val {
-        position: absolute;
-        top: 40%;
-        left: 0;
-        -webkit-transform: translateY(-40%);
-        transform: translateY(-40%);
-        color: #404852;
-        z-index: 2; }
-      .edit-data-delivery .field .control.with-currency .input {
-        padding-left: 28px; }
+      .edit-data-delivery .field .control.detail-address .location-label {
+        border-bottom: 0.5px solid #dedede;
+        padding-bottom: 8px;
+        color: #a0a3ae;
+        display: block;
+        font-size: 13px; }
+        .edit-data-delivery .field .control.detail-address .location-label:after {
+          content: "";
+          width: 24px;
+          height: 24px;
+          background-image: url("../../images/komuto-icon/035_arrow_down.svg");
+          position: absolute;
+          top: 50%;
+          right: 0;
+          -webkit-transform: translateY(-50%);
+          transform: translateY(-50%); }
+      .edit-data-delivery .field .control.is-error {
+        padding-bottom: 18px; }
+        .edit-data-delivery .field .control.is-error .error-msg {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          padding: 0; }
+        .edit-data-delivery .field .control.is-error.detail-address .location-label:after {
+          content: "";
+          width: 24px;
+          height: 24px;
+          background-image: url("../../images/komuto-icon/035_arrow_down.svg");
+          position: absolute;
+          top: 0;
+          right: 0;
+          -webkit-transform: translateY(0);
+          transform: translateY(0); }
+      .edit-data-delivery .field .control .input::-moz-placeholder {
+        color: #a0a3ae; }
+      .edit-data-delivery .field .control .input::-webkit-input-placeholder {
+        color: #a0a3ae; }
+      .edit-data-delivery .field .control .input:-moz-placeholder {
+        color: #a0a3ae; }
+      .edit-data-delivery .field .control .input:-ms-input-placeholder {
+        color: #a0a3ae; }
+      .edit-data-delivery .field .control.with-currency {
+        position: relative; }
+        .edit-data-delivery .field .control.with-currency .cur-val {
+          position: absolute;
+          top: 0;
+          left: 0;
+          color: #404852;
+          z-index: 2; }
+        .edit-data-delivery .field .control.with-currency .input {
+          padding-left: 28px; }
   .edit-data-delivery.edit .field .control.detail-address .location-label {
     color: #41475e;
     font-size: 13px; }
