@@ -15,7 +15,7 @@ import RupiahFormat from '../Lib/RupiahFormat'
 // services
 import { isFetching, validateResponse } from '../Services/Status'
 
-class DeliveryConfirmation extends React.Component {
+class SalesList extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -192,4 +192,4 @@ const mapDispatchToProps = dispatch => ({
   getProcessingOrders: (params) => dispatch(transactionAction.getProcessingOrders(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeliveryConfirmation)
+export default connect(mapStateToProps, mapDispatchToProps)(SalesList)

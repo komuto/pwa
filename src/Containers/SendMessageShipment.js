@@ -13,12 +13,12 @@ import { validateResponse, validateResponseAlter, isFetching, isFound, isError }
 class SendMessage extends React.Component {
   constructor (props) {
     super(props)
-    // let messages = `INVOICE: ${props.newOrderDetail.orderDetail.invoice.invoice_number}`
+    // let messages = `INVOICE: ${props.processingOrderDetail.orderDetail.invoice.invoice_number}`
     // let content = `${messages.substring(0, 20)} ...`
     this.state = {
       id: props.query.id || null,
       type: props.query.type || null,
-      newOrderDetail: props.newOrderDetail,
+      processingOrderDetail: props.processingOrderDetail,
       form: {
         subject: '',
         content: ''
@@ -45,34 +45,34 @@ class SendMessage extends React.Component {
     const { id } = this.state
     if (id !== '') {
       NProgress.start()
-      this.props.getNewOrderDetail({ id })
+      this.props.getProcessingOrderDetail({ id })
     }
   }
 
-  photoType (type, newOrderDetail) {
+  photoType (type, processingOrderDetail) {
     let photo
     if (type === 'buyer') {
-      photo = newOrderDetail.orderDetail.buyer.photo
+      photo = processingOrderDetail.orderDetail.buyer.photo
     }
     if (type === 'seller') {
-      photo = newOrderDetail.orderDetail.seller.photo
+      photo = processingOrderDetail.orderDetail.seller.photo
     }
     if (type === 'reseller') {
-      photo = newOrderDetail.orderDetail.reseller.store.logo
+      photo = processingOrderDetail.orderDetail.reseller.store.logo
     }
     return photo
   }
 
-  nameType (type, newOrderDetail) {
+  nameType (type, processingOrderDetail) {
     let nameType
     if (type === 'buyer') {
-      nameType = newOrderDetail.orderDetail.buyer.name
+      nameType = processingOrderDetail.orderDetail.buyer.name
     }
     if (type === 'seller') {
-      nameType = newOrderDetail.orderDetail.seller.name
+      nameType = processingOrderDetail.orderDetail.seller.name
     }
     if (type === 'reseller') {
-      nameType = newOrderDetail.orderDetail.reseller.store.name
+      nameType = processingOrderDetail.orderDetail.reseller.store.name
     }
     return nameType
   }
@@ -125,10 +125,10 @@ class SendMessage extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { newOrderDetail, transactionMessage } = nextProps
-    if (!isFetching(newOrderDetail)) {
+    const { processingOrderDetail, transactionMessage } = nextProps
+    if (!isFetching(processingOrderDetail)) {
       NProgress.done()
-      this.setState({ newOrderDetail, notification: validateResponse(newOrderDetail, 'Data order tidak ditemukan!') })
+      this.setState({ processingOrderDetail, notification: validateResponse(processingOrderDetail, 'Data order tidak ditemukan!') })
     }
     if (!isFetching(transactionMessage) && this.submitting) {
       if (isFound(transactionMessage)) {
@@ -144,8 +144,8 @@ class SendMessage extends React.Component {
 
   render () {
     console.log('state', this.state)
-    const { newOrderDetail, type, form, validation, notification } = this.state
-    if (!newOrderDetail.isFound) return null
+    const { processingOrderDetail, type, form, validation, notification } = this.state
+    if (!processingOrderDetail.isFound) return null
     return (
       <section className='section is-paddingless bg-white'>
         <Notification
@@ -161,13 +161,13 @@ class SendMessage extends React.Component {
                 <article className='media'>
                   <div className='media-left'>
                     <figure className='image product-pict'>
-                      <img src={this.photoType(type, newOrderDetail)} alt='pict' />
+                      <img src={this.photoType(type, processingOrderDetail)} alt='pict' />
                     </figure>
                   </div>
                   <div className='media-content'>
                     <div className='content reseller'>
                       <p className='products-name'>
-                        <strong>{this.nameType(type, newOrderDetail)}</strong>
+                        <strong>{this.nameType(type, processingOrderDetail)}</strong>
                         <br />
                         <span>{this.typeInvoice(type)}</span>
                       </p>
@@ -205,12 +205,12 @@ class SendMessage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     transactionMessage: state.transactionMessage,
-    newOrderDetail: state.newOrderDetail
+    processingOrderDetail: state.processingOrderDetail
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params)),
+  getProcessingOrderDetail: (params) => dispatch(transactionAction.getProcessingOrderDetail(params)),
   messageBuyer: (params) => dispatch(messageAction.messageBuyer(params)),
   messageSeller: (params) => dispatch(messageAction.messageSeller(params)),
   messageReseller: (params) => dispatch(messageAction.messageReseller(params))
