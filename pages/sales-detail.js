@@ -1,26 +1,28 @@
 // @flow
+import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import SendMessage from '../src/Containers/SendMessage'
+import SalesDetail from '../src/Containers/SalesDetail'
 
 const Index = (props) => {
   const params = {
-    style: 'main user bg-white',
+    style: 'main detail bg-grey',
     header: {
-      title: 'Kirim Pesan'
+      title: 'Detail Penjualan'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Kirim Pesan'
+      callBack: () => Router.push('/sales-list'),
+      textPath: 'Detail Penjualan'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <SendMessage {...props} />
+      <SalesDetail {...props} />
     </DefaultLayout>
   )
 }

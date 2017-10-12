@@ -38,17 +38,6 @@ class InputShipmentNumber extends React.Component {
     this.setState({ tabs: (tabs === TAB_NO_RESI) ? TAB_DETAIL : TAB_NO_RESI })
   }
 
-  submit () {
-    const { receiptNumber } = this.state
-    let receiptNumberValid = receiptNumber !== ''
-    if (receiptNumberValid) {
-      this.setState({ showModal: !this.state.showModal })
-      this.submiting = true
-    } else {
-      this.setState({ validation: true })
-    }
-  }
-
   componentDidMount () {
     const { id } = this.state
     if (id !== '') {
@@ -71,8 +60,8 @@ class InputShipmentNumber extends React.Component {
     return (
       <div>
         <div className='nav-tabs'>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_NO_RESI && 'active'}>Percakapan</a>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_DETAIL && 'active'}>Arsip</a>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_NO_RESI && 'active'}>Nomor Resi</a>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_DETAIL && 'active'}>Detail</a>
         </div>
         <Notification
           type={notification.type}
@@ -126,7 +115,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
               <div className='column'>
                 <div className='rating-content is-left'>
-                  <strong>Jonathan Hope</strong>
+                  <strong>{processingOrderDetail.orderDetail.buyer.name}</strong>
                 </div>
               </div>
               <ul className='seller-items'>

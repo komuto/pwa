@@ -90,18 +90,16 @@ class InputShipmentNumber extends React.Component {
         this.setState({ notification: validateResponse(updateStatus, 'Gagal mengirim Pesan') })
       }
     }
-    console.log('nextProps', nextProps)
   }
 
   render () {
-    console.log('state', this.state)
     const { notification, tabs, processingOrderDetail, receiptNumber, validation, showModal } = this.state
     if (!processingOrderDetail.isFound) return null
     return (
       <div>
         <div className='nav-tabs'>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_NO_RESI && 'active'}>Percakapan</a>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_DETAIL && 'active'}>Arsip</a>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_NO_RESI && 'active'}>Nomor Resi</a>
+          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_DETAIL && 'active'}>Detail</a>
         </div>
         <Notification
           type={notification.type}
@@ -170,7 +168,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
               <div className='column'>
                 <div className='rating-content is-left'>
-                  <strong>Jonathan Hope</strong>
+                  <strong>{processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.name : processingOrderDetail.orderDetail.buyer.name}</strong>
                 </div>
               </div>
               <ul className='seller-items'>

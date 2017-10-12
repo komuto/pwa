@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 // actions
 import * as transactionAction from '../actions/transaction'
-import { isFetching } from '../Services/Status'
+import { isFetching, isFound, isError } from '../Services/Status'
 
 class Sales extends React.Component {
   constructor (props) {
@@ -13,6 +13,7 @@ class Sales extends React.Component {
     this.state = {
       newOrders: props.newOrders || null,
       processingOrders: props.processingOrders || null,
+      sales: props.sales || null,
       pagination: {
         page: 1,
         limit: 10
@@ -30,21 +31,27 @@ class Sales extends React.Component {
     this.fetching = false
     this.fetchingFirst2 = false
     this.fetching2 = false
+    this.fetchingFirst3 = false
+    this.fetching3 = false
   }
 
   componentDidMount () {
-    const { newOrders, processingOrders, pagination, pagination2 } = this.state
-    const newState = { newOrders, processingOrders, pagination, pagination2 }
+    const { newOrders, processingOrders, sales, pagination, pagination2, pagination3 } = this.state
+    const newState = { newOrders, processingOrders, sales, pagination, pagination2, pagination3 }
     newState.pagination['page'] = 1
     newState.pagination2['page'] = 1
+    newState.pagination3['page'] = 1
     newState.newOrders['orders'] = []
     newState.processingOrders['orders'] = []
+    newState.sales['sales'] = []
     this.setState(newState, () => {
-      if (this.state.pagination.page === 1 && this.state.pagination2.page === 1) {
+      if (this.state.pagination.page === 1) {
         this.fetchingFirst = true
         this.fetchingFirst2 = true
+        this.fetchingFirst3 = true
         this.props.getNewOrders(this.state.pagination)
         this.props.getProcessingOrders(this.state.pagination2)
+        this.props.getSales(this.state.pagination3)
       }
     })
   }
@@ -71,50 +78,98 @@ class Sales extends React.Component {
     }
   }
 
+  loadMoreSales () {
+    let { pagination3 } = this.state
+    if (!this.fetching3) {
+      const newState = { pagination3 }
+      pagination3['page'] = pagination3.page + 1
+      this.setState(newState)
+      this.fetching3 = true
+      this.props.getSales(pagination3)
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { newOrders, processingOrders } = nextProps
+    const { newOrders, processingOrders, sales } = nextProps
     if (!isFetching(newOrders) && this.fetchingFirst) {
-      this.fetchingFirst = false
-      this.setState({ newOrders })
-      this.loadMoreNewOrders()
+      if (isFound(newOrders)) {
+        this.fetchingFirst = false
+        this.setState({ newOrders })
+        this.loadMoreNewOrders()
+      }
     }
     if (!isFetching(newOrders) && this.fetching) {
-      let stateNewOrders = this.state.newOrders
-      if (newOrders.orders.length > 0) {
-        this.fetching = false
-        stateNewOrders.orders = stateNewOrders.orders.concat(newOrders.orders)
-        this.setState({ newOrders: stateNewOrders })
-        this.loadMoreNewOrders()
-      } else {
+      if (isFound(newOrders)) {
+        let stateNewOrders = this.state.newOrders
+        if (newOrders.orders.length > 0) {
+          this.fetching = false
+          stateNewOrders.orders = stateNewOrders.orders.concat(newOrders.orders)
+          this.setState({ newOrders: stateNewOrders })
+          this.loadMoreNewOrders()
+        } else {
+          this.fetching = false
+        }
+      }
+      if (isError(newOrders)) {
         this.fetching = false
       }
     }
     if (!isFetching(processingOrders) && this.fetchingFirst2) {
-      this.fetchingFirst2 = false
-      this.setState({ processingOrders })
-      this.loadMoreProcessingOrders()
+      if (isFound(processingOrders)) {
+        this.fetchingFirst2 = false
+        this.setState({ processingOrders })
+        this.loadMoreProcessingOrders()
+      }
     }
     if (!isFetching(processingOrders) && this.fetching2) {
       let stateNewProcessingOrders = this.state.processingOrders
-      if (processingOrders.orders.length > 0) {
+      if (isFound(processingOrders)) {
+        if (processingOrders.orders.length > 0) {
+          this.fetching2 = false
+          stateNewProcessingOrders.orders = stateNewProcessingOrders.orders.concat(processingOrders.orders)
+          this.setState({ processingOrders: stateNewProcessingOrders })
+          this.loadMoreProcessingOrders()
+        } else {
+          this.fetching2 = false
+        }
+      }
+      if (isError(processingOrders)) {
         this.fetching2 = false
-        stateNewProcessingOrders.orders = stateNewProcessingOrders.orders.concat(processingOrders.orders)
-        this.setState({ processingOrders: stateNewProcessingOrders })
-        this.loadMoreProcessingOrders()
-      } else {
-        this.fetching2 = false
+      }
+    }
+    if (!isFetching(sales) && this.fetchingFirst3) {
+      if (isFound(sales)) {
+        this.fetchingFirst3 = false
+        this.setState({ sales })
+        this.loadMoreSales()
+      }
+    }
+    if (!isFetching(sales) && this.fetching3) {
+      if (isFound(sales)) {
+        let stateNewSales = this.state.sales
+        if (sales.sales.length > 0) {
+          this.fetching3 = false
+          stateNewSales.sales = stateNewSales.sales.concat(sales.sales)
+          this.setState({ sales: stateNewSales })
+          this.loadMoreSales()
+        } else {
+          this.fetching3 = false
+        }
+      }
+      if (isError(sales)) {
+        this.fetching3 = false
       }
     }
   }
 
   render () {
-    const { newOrders, processingOrders } = this.state
+    const { newOrders, processingOrders, sales } = this.state
     return (
       <section className='section is-paddingless has-shadow'>
         <div className='seller-akun'>
           <div className='profile-wrapp'>
             <ul>
-              <li onClick={() => Router.push(`/orders-new`)}>
+              <li onClick={() => Router.push('/orders-new')}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -134,7 +189,7 @@ class Sales extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li onClick={() => Router.push(`/delivery-confirmation`)}>
+              <li onClick={() => Router.push('/delivery-confirmation')}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -154,7 +209,7 @@ class Sales extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li>
+              <li onClick={() => Router.push('/sales-list')}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -167,7 +222,7 @@ class Sales extends React.Component {
                         <p>
                           <strong>Daftar Penjualan</strong><br />
                         </p>
-                        <div className='val-right'><span className='notif-akun'>5</span></div>
+                        <div className='val-right'><span className='notif-akun'>{ sales.length !== 0 && sales.sales.length}</span></div>
                       </div>
                     </div>
                   </article>
@@ -185,13 +240,15 @@ class Sales extends React.Component {
 const mapStateToProps = (state) => {
   return {
     newOrders: state.newOrders,
-    processingOrders: state.processingOrders
+    processingOrders: state.processingOrders,
+    sales: state.sales
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getNewOrders: (params) => dispatch(transactionAction.getNewOrders(params)),
-  getProcessingOrders: (params) => dispatch(transactionAction.getProcessingOrders(params))
+  getProcessingOrders: (params) => dispatch(transactionAction.getProcessingOrders(params)),
+  getSales: (params) => dispatch(transactionAction.getSales(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sales)
