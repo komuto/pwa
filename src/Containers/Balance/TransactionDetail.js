@@ -9,6 +9,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import Nprogress from 'nprogress'
+import Router from 'next/router'
 /** including container */
 import { SummTransType, SummTransTypeMessage, BalanceDecreases, BalanceIncreases } from './History'
 /** including component */
@@ -135,7 +136,16 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
           <ul>
             <List title='Jenis Transaksi' data={TransTypeMessage} />
             <List title='Tanggal Transaksi' data={TransDate} />
-            { isPaid && <List title='Total Tagihan' data={`Rp ${RupiahFormat(amount)}`} /> }
+            {
+              isPaid &&
+              <WrapperList>
+                <List
+                  title='Total Tagihan'
+                  data={`Rp ${RupiahFormat(amount)}`}
+                  colapse={balanceDetail} />
+                <ListDetail {...balanceDetail} {...saldoHistoryDetail.historyDetail} />
+              </WrapperList>
+            }
             { isWithdraw && <List title='Jumlah Penarikan' data={<BalanceDecreases amount={amount} />} /> }
             { isWithdraw && <List title='Metode Pembayaran' data='Transfer Bank' /> }
             { isTopup && <List title='Jumlah Top-up Saldo' data={<BalanceIncreases amount={amount} />} /> }
@@ -145,16 +155,7 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
           </ul>
         </div>
       </section>
-      {
-        isPaid &&
-        <WrapperList>
-          <List
-            title='Saldo yang digunakan'
-            data={`Rp ${RupiahFormat(balanceUsed)}`}
-            colapse={balanceDetail} />
-          <ListDetail {...balanceDetail} {...saldoHistoryDetail.historyDetail} />
-        </WrapperList>
-      }
+      { isPaid && <WrapperList><List title='Saldo yang digunakan' data={`Rp ${RupiahFormat(balanceUsed)}`} /> </WrapperList> }
       { isPaid && <PaidInformation {...saldoHistoryDetail.historyDetail} />}
       { isWithdraw && <WithdrawInformation {...saldoHistoryDetail.historyDetail} />}
       { isTopup && <TopupInformation {...saldoHistoryDetail.historyDetail} />}
@@ -166,12 +167,69 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
 const PaidInformation = ({ orders }) => (
   <WrapperList title='Daftar barang yang di beli'>
     {
-      orders.map((order, index) =>
-        <Content>
-          {
-          order.items.map((item, index) => <LisProduct key={index} product={item.product} />)
-        }
-        </Content>
+      orders.map((order, index) => {
+        let lengthItem = order.items.length
+        return (
+          <section key={index} className='section is-paddingless has-shadow'>
+            <div className='payment-detail step-pay'>
+              <ul>
+                <li>
+                  <div className='columns is-mobile is-multiline no-margin-bottom'>
+                    <div className='column'>
+                      <div className='label-text is-left top-middle'>
+                        <span>Sports Station</span>
+                      </div>
+                    </div>
+                  </div>
+                  {
+                    order.items.map((item, index) => {
+                      return (
+                        <div key={index} onClick={() => Router.push(`/product-detail?id=${item.product.id}`)} className='columns is-mobile is-multiline no-margin-bottom'>
+                          <div className='column'>
+                            <div className='box'>
+                              <div className='media'>
+                                {
+                                  index < 4 &&
+                                  <div className='media-left'>
+                                    <figure className='image list-transaction sm'>
+                                      <a><MyImage src={item.product.image} alt='Image' /></a>
+                                    </figure>
+                                  </div>
+                                }
+                                {
+                                  index === 4 &&
+                                  <div className='media-left'>
+                                    <figure className='image list-transaction plus3'>
+                                      <span>+{lengthItem - 5}</span>
+                                      <a><MyImage src={item.product.image} alt='Image' /></a>
+                                    </figure>
+                                  </div>
+                                }
+                                {
+                                  lengthItem < 3 &&
+                                  <div className='media-content middle'>
+                                    <div className='content'>
+                                      <h4>{item.product.name}</h4>
+                                      <div className='right-top'>
+                                        <span className='icon-arrow-right' />
+                                      </div>
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  }
+                </li>
+              </ul>
+            </div>
+          </section>
+        )
+      }
+
     )}
   </WrapperList>
 )

@@ -249,7 +249,7 @@ const TransactionDetailContent = (props) => {
                                           : index === 4
                                             ? <div className='media-left' key={index}>
                                               <figure className='image list-transaction plus3'>
-                                                <span>+3</span>
+                                                <span>+</span>
                                                 <a><MyImage src={item.product.image} alt='Image' /></a>
                                               </figure>
                                             </div>
