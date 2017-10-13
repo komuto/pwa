@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
+import localforage from 'localforage'
 import Router from 'next/router'
 // components
 import Content from '../Components/Content'
@@ -206,7 +207,7 @@ class SignUp extends Component {
     }
   }
 
-  handleRegisterClick () {
+  async handleRegisterClick () {
     let { nama, handphone, email, password, genderGroup } = this.state.input
     if (this.validation(nama.name, nama.value) &&
         this.validation(email.name, email.value) &&
@@ -215,13 +216,16 @@ class SignUp extends Component {
         this.validation(password.name, password.value)) {
       NProgress.start()
       this.dipatchType = REGISTER
+
+      let fcmToken = await localforage.getItem('FCM_TOKEN')
+
       this.props.dispatch(loginAction.register({
         name: nama.value,
         phone_number: handphone.value,
         email: email.value,
         gender: genderGroup.selected,
         password: password.value,
-        reg_token: 'FCM_REGISTRATION_TOKEN'
+        reg_token: fcmToken
       }))
     }
   }
@@ -340,7 +344,6 @@ class SignUp extends Component {
   }
 }
 const mapStateToProps = (state) => {
-  console.log(state.register)
   return {
     register: state.register,
     user: state.user
