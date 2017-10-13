@@ -9,8 +9,6 @@ import Loading from '../Components/Loading'
 // actions
 import * as locationActions from '../actions/location'
 import * as expeditionActions from '../actions/expedition'
-// services
-import { Status } from '../Services/Status'
 
 class ProductDetailServices extends Component {
   constructor (props) {
@@ -48,6 +46,9 @@ class ProductDetailServices extends Component {
       estimatedCharges: {
         data: props.estimatedCharges || null,
         isFetching: false
+      },
+      error: {
+        estimatedCharges: null
       }
     }
   }
@@ -88,11 +89,11 @@ class ProductDetailServices extends Component {
 
   // options  subDistrict selected
   async subDistrictSelected (selected) {
-    const { product, storeData } = this.props
+    const { product, location } = this.props
     const { districts, countProduct } = this.state
     const params = {
       id: product.id,
-      origin_id: storeData.district.ro_id,
+      origin_id: location.district.ro_id,
       destination_id: districts.selected.ro_id,
       weight: countProduct * product.weight
     }
@@ -112,6 +113,7 @@ class ProductDetailServices extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { provinces, districts, subDistricts, estimatedCharges } = nextProps
+    const { isFetching, isFound, isError } = this.props
 
     !provinces.isLoading && this.setState({ provinces: { ...this.state.provinces, data: provinces } })
 
@@ -119,20 +121,17 @@ class ProductDetailServices extends Component {
 
     !subDistricts.isLoading && this.setState({ subDistricts: { ...this.state.subDistricts, data: subDistricts, isFetching: false } })
 
-    if (!estimatedCharges.isLoading) {
-      switch (estimatedCharges.status) {
-        case Status.SUCCESS :
-          // (estimatedCharges.isFound)
-          // ?
-          this.setState({ estimatedCharges: { data: estimatedCharges, isFetching: false } })
-          // : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          // this.setState({ notification: {status: true, message: estimatedCharges.message} })
-          break
-        default:
-          break
+    /** handling state estimatedCharges */
+    if (!isFetching(estimatedCharges) && this.state.estimatedCharges.isFetching) {
+      if (isError(estimatedCharges)) {
+        this.setState({
+          error: { ...this.state.error, estimatedCharges: estimatedCharges.message },
+          estimatedCharges: { ...this.state.estimatedCharges, isFetching: false }
+        })
+      }
+
+      if (isFound(estimatedCharges)) {
+        this.setState({ estimatedCharges: { data: estimatedCharges, isFetching: false } })
       }
     }
   }
@@ -141,7 +140,7 @@ class ProductDetailServices extends Component {
 
   render () {
     const { product } = this.props
-    let { countProduct, provinces, districts, subDistricts, estimatedCharges, formActive } = this.state
+    let { countProduct, provinces, districts, subDistricts, estimatedCharges, error, formActive } = this.state
     return (
       <Section className='section is-paddingless has-shadow'>
         <div className='container is-fluid'>
@@ -223,6 +222,7 @@ class ProductDetailServices extends Component {
                   </ul>
                   </div>
                 }
+              <p>{ error.estimatedCharges }</p>
             </div>
           </div>
         }
