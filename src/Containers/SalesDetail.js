@@ -76,40 +76,36 @@ class SalesDetail extends React.Component {
     let className
     let status
     switch (type) {
-      case 0: {
+      case 0:
         className = 'item-status md right has-trouble'
         status = 'Barang ditolak Reseller'
-      }
         break
-      case 1: {
+      case 1:
         className = 'item-status md right delivered'
         status = 'Menunggu konfirmasi Seller'
-      }
         break
-      case 2: {
+      case 2:
         className = 'item-status md right delivered'
         status = 'Barang sudah dikirim'
-      }
         break
-      case 3: {
+      case 3:
         className = 'item-status md right delivered'
         status = 'Menunggu Konfirmasi Pembeli'
-      }
         break
-      case 4: {
+      case 4:
         className = 'item-status md right accepted'
         status = 'Barang sudah diterima'
-      }
         break
-      case 5: {
+      case 5:
         className = 'item-status md right has-trouble'
         status = 'Terdapat barang bermasalah'
-      }
         break
-      case 6: {
+      case 6:
         className = 'item-status md right accepted'
         status = 'Komplain telah Selesai'
-      }
+        break
+      default:
+        break
     }
     return (
       <div className={`${className}`}>{`${status}`}</div>
@@ -142,29 +138,25 @@ class SalesDetail extends React.Component {
     let className
     let messageNotice
     switch (type) {
-      case 3: {
+      case 3:
         imageIcon = Images.IconInfoBlue
         className = 'box notif-payment-waiting'
         messageNotice = 'Setelah buyer mengkonfirmasi telah menerima barang atau dalam jangka waktu 5 hari, saldo akan langsung kami kirimkan.'
-      }
         break
-      case 4: {
+      case 4:
         imageIcon = Images.paymentDone
         className = 'box notif-payment-success'
         messageNotice = 'Barang telah diterima oleh pembeli. Uang penjualan telah kami kirimkan ke saldo Anda. Silahkan diperiksa.'
-      }
         break
-      case 5: {
+      case 5:
         imageIcon = Images.paymentExpired
         className = 'box notif-payment-expiry'
         messageNotice = 'Terdapat barang yang bermasalah. Silahkan menyelesaikan masalah terlebih dahulu setelah masalah selesai, uang dari buyer akan kami kirimkan ke Anda.'
-      }
         break
-      case 6: {
+      case 6:
         imageIcon = Images.paymentDone
         className = 'box notif-payment-success'
         messageNotice = 'Komplain telah selesai. Uang penjualan telah kami kirimkan ke saldo Anda. Silahkan diperiksa.'
-      }
         break
       default:
         break
