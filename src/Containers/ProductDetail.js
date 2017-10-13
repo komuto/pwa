@@ -2,15 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-// import swal from 'sweetalert2'
 // components
 import Content from '../Components/Content'
 import Notification from '../Components/Notification'
 // actions
 import * as productActions from '../actions/product'
-// services
-import { Status } from '../Services/Status'
-import GET_TOKEN from '../Services/GetToken'
+import * as userActions from '../actions/user'
 // containers
 import { Navbar } from './Navbar'
 import ProductDetailItem from './ProductDetailItem'
@@ -27,7 +24,6 @@ class ProductDetail extends Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
-      token: null,
       submiting: false,
       submitingDiscussion: false,
       notification: {
@@ -35,41 +31,52 @@ class ProductDetail extends Component {
         message: 'Error, default message.'
       }
     }
+
+    this.submiting = {
+      favorite: false,
+      productDetail: false
+    }
   }
 
   async componentDidMount () {
     const { id, productDetail } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
+      this.submiting = { ...this.submiting, productDetail: true }
       await this.props.getProduct({ id })
     }
-    this.setState({ token: await GET_TOKEN.getToken() })
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { productDetail } = nextProps
+    const { productDetail, favorite } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
     const nextId = nextProps.query.id
-
-    if (!productDetail.isLoading) {
+    /** get detail store  */
+    if (!isFetching(productDetail) && this.submiting.productDetail) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
+      this.submiting = { ...this.submiting, productDetail: false }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
+        if (String(productDetail.detail.product.id) !== String(nextId)) {
+          NProgress.start()
+          this.props.getProduct({ id: nextId })
+        }
+      }
+    }
 
-          if (String(productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
-
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    /** delete/add favorite store  */
+    if (!isFetching(favorite) && this.submiting.favorite) {
+      this.submiting = { ...this.submiting, favorite: false }
+      if (isError(favorite)) {
+        this.setState({ notification: notifError(favorite.message) })
+      }
+      if (isFound(favorite)) {
+        let isFavorite = productDetail.detail.store.is_favorite
+        productDetail.detail.store.is_favorite = !isFavorite
+        this.setState({ productDetail })
       }
     }
   }
@@ -112,6 +119,12 @@ class ProductDetail extends Component {
     Router.push(`/catalog-add-product?id=${id}&commission=${this.props.query.commission}`)
   }
 
+  favoritePress () {
+    const { store } = this.state.productDetail.detail
+    this.submiting = { ...this.submiting, favorite: true }
+    this.props.favoriteStore({ id: store.id })
+  }
+
   render () {
     const { productDetail, notification, submiting, submitingDiscussion } = this.state
     const { query } = this.props
@@ -151,11 +164,15 @@ class ProductDetail extends Component {
                 product={detail.product}
                 reviews={detail.reviews} />
               <ProductDetailServices
+                {...this.props}
+                location={detail.location}
                 product={detail.product}
                 storeData={detail.store} />
               <ProductDetailRule
+                product={detail.product}
                 store={detail.store}
-                location={detail.location} />
+                location={detail.location}
+                favoritePress={() => this.favoritePress()} />
               <ProductDetailSuggestions
                 products={detail.other_products}
                 store={detail.store}
@@ -177,12 +194,14 @@ class ProductDetail extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  productDetail: state.productDetail
+  productDetail: state.productDetail,
+  favorite: state.favorite
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getProduct: (params) => dispatch(productActions.getProduct(params)),
-  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
+  favoriteStore: (params) => dispatch(userActions.favoriteStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail)
