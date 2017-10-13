@@ -5,24 +5,24 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Sales from '../src/Containers/Sales'
+import SalesDetail from '../src/Containers/SalesDetail'
 
 const Index = (props) => {
   const params = {
     style: 'main detail bg-grey',
     header: {
-      title: 'Penjualan'
+      title: 'Detail Penjualan'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      callBack: () => Router.push('/manage-store'),
-      textPath: 'Penjualan'
+      callBack: () => Router.push('/sales-list'),
+      textPath: 'Detail Penjualan'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <Sales {...props} />
+      <SalesDetail {...props} />
     </DefaultLayout>
   )
 }

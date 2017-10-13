@@ -37,7 +37,7 @@ class DeliveryConfirmation extends React.Component {
 
   detailOrder (id, type) {
     if (type === 'reseller') {
-      Router.push(`/input-shipment-number?id=${id}`)
+      Router.push(`/input-shipment-number-dropship?id=${id}`)
     } else {
       Router.push(`/input-shipment-number?id=${id}`)
     }

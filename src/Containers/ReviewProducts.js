@@ -150,7 +150,7 @@ class ReviewProducts extends Component {
                     </div>
                   </div>
                   <div className='column'>
-                    <p className='desc'>Sepatunya Keren, ringan, tapi untuk perawatan musti hati hati banget</p>
+                    <p className='desc'>{review.review}</p>
                   </div>
                 </div>
               </section>

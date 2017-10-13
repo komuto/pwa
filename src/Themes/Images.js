@@ -48,7 +48,8 @@ const images = {
   review: '../../static/images/review.svg',
   emptyStatesResolusi: '../../static/images/empty-states-resolusi.svg',
   emptyStates: '../../static/images/empty-states.svg',
-  listProduct: '../../static/images/icon-daftar-produk.svg'
+  listProduct: '../../static/images/icon-daftar-produk.svg',
+  IconInfoBlue: '../../static/images/icon-info-blue.svg'
 }
 
 export default images

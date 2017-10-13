@@ -12,7 +12,7 @@ import RupiahFormat from '../Lib/RupiahFormat'
 // actions
 import * as transactionAction from '../actions/transaction'
 // services
-import { isFetching, validateResponse, isError, isFound } from '../Services/Status'
+import { isFetching, validateResponse } from '../Services/Status'
 
 const TAB_NO_RESI = 'TAB_NO_RESI'
 const TAB_DETAIL = 'TAB_DETAIL'
@@ -24,14 +24,11 @@ class InputShipmentNumber extends React.Component {
       id: props.query.id || null,
       processingOrderDetail: props.processingOrderDetail || null,
       tabs: TAB_NO_RESI,
-      receiptNumber: '',
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
-      },
-      validation: false,
-      showModal: false
+      }
     }
     this.submiting = false
   }
@@ -39,31 +36,6 @@ class InputShipmentNumber extends React.Component {
   switchTab (e) {
     const { tabs } = this.state
     this.setState({ tabs: (tabs === TAB_NO_RESI) ? TAB_DETAIL : TAB_NO_RESI })
-  }
-
-  handleInput (e) {
-    this.setState({ receiptNumber: e.target.value })
-  }
-
-  renderValidation (name, textFailed) {
-    const { receiptNumber } = this.state
-    let receiptNumberValid = name === 'receiptNumber' && receiptNumber !== ''
-    return (
-      <span className='error-msg'>
-        {receiptNumberValid ? '' : textFailed}
-      </span>
-    )
-  }
-
-  submit () {
-    const { receiptNumber, id } = this.state
-    let receiptNumberValid = receiptNumber !== ''
-    if (receiptNumberValid) {
-      this.submiting = true
-      this.props.inputAirwayBill({ id, airway_bill: receiptNumber })
-    } else {
-      this.setState({ validation: true })
-    }
   }
 
   componentDidMount () {
@@ -75,25 +47,15 @@ class InputShipmentNumber extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { processingOrderDetail, updateStatus } = nextProps
+    const { processingOrderDetail } = nextProps
     if (!isFetching(processingOrderDetail)) {
       NProgress.done()
       this.setState({ processingOrderDetail, notification: validateResponse(processingOrderDetail, processingOrderDetail.message) })
     }
-    if (!isFetching(updateStatus) && this.submiting) {
-      if (isFound(updateStatus)) {
-        this.submiting = false
-        this.setState({ showModal: !this.state.showModal })
-      }
-      if (isError(updateStatus)) {
-        this.submiting = false
-        this.setState({ notification: validateResponse(updateStatus, 'Gagal mengirim Pesan') })
-      }
-    }
   }
 
   render () {
-    const { notification, tabs, processingOrderDetail, receiptNumber, validation, showModal } = this.state
+    const { notification, tabs, processingOrderDetail } = this.state
     if (!processingOrderDetail.isFound) return null
     return (
       <div>
@@ -113,35 +75,20 @@ class InputShipmentNumber extends React.Component {
               {
                 tabs === TAB_NO_RESI
                 ? <ShipmentReceiptNumber
-                  processingOrderDetail={processingOrderDetail}
-                  receiptNumber={receiptNumber}
-                  submiting={this.submiting}
-                  submit={() => this.submit()}
-                  validation={validation}
-                  renderValidation={(name, textFailed) => this.renderValidation(name, textFailed)}
-                  handleInput={(e) => this.handleInput(e)} />
+                  processingOrderDetail={processingOrderDetail} />
                 : <OrderDetail
                   processingOrderDetail={processingOrderDetail} />
               }
             </ul>
           </div>
         </section>
-        <div className='sort-option' style={{ display: showModal && 'block' }}>
-          <div className='notif-report'>
-            <img src={Images.transaksiDetail} alt='pict' />
-            <h3>Nomor Resi telah diinfokan</h3>
-            <p>Nomor Resi telah diinfokan ke buyer. Order ini dipindahkan ke daftar penjualan. Silahkan cek untuk melihat status transaksi Anda</p>
-            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/sales-list')}>Lihat Daftar Penjualan</button>
-            <a className='cancel' onClick={() => Router.push('/delivery-confirmation')}>Kembali ke Konfirmasi Pengiriman</a>
-          </div>
-        </div>
       </div>
     )
   }
 }
 
 const ShipmentReceiptNumber = (props) => {
-  const { processingOrderDetail, receiptNumber, validation } = props
+  const { processingOrderDetail } = props
   if (processingOrderDetail === undefined) return null
   moment.locale('id')
   return (
@@ -168,7 +115,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
               <div className='column'>
                 <div className='rating-content is-left'>
-                  <strong>{processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.name : processingOrderDetail.orderDetail.buyer.name}</strong>
+                  <strong>{processingOrderDetail.orderDetail.buyer.name}</strong>
                 </div>
               </div>
               <ul className='seller-items'>
@@ -259,19 +206,26 @@ const ShipmentReceiptNumber = (props) => {
         </div>
       </section>
       <section className='section is-paddingless has-shadow'>
-        <div className='content-header'>
-          <h3>Nomor Resi</h3>
-        </div>
-        <div className={`content-body ${validation && 'is-error'}`}>
-          <input type='text' className='input' value={receiptNumber} placeholder='Masukkan nomor resi disini'
-            onChange={(e) => props.handleInput(e)} />
-          {validation && props.renderValidation('receiptNumber', 'Mohon isi no Resi')}
+        <div className='info-purchase'>
+          <div className='detail-rate is-purchase'>
+            <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+              <div className='column is-half'>
+                <div className='rating-content is-left'>
+                  <strong>No Resi</strong>
+                </div>
+              </div>
+              <div className='column is-half'>
+                <div className='rating-content item-qty has-text-right'>
+                  <span className='has-text-left text-grey'>Menunggu No Resi dari Seller</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <section className='section is-paddingless'>
         <div className='container is-fluid'>
-          <a className={`button is-primary is-large is-fullwidth js-option ${props.submiting && 'is-loading'}`}
-            onClick={() => props.submit()}>Proses Info Pengiriman</a>
+          <a className='button is-primary is-outlined is-large is-fullwidth' onClick={() => Router.push(`/send-message-shipment?id=${processingOrderDetail.orderDetail.invoice.id}&type=seller`)}>Kirim Pesan ke Seller</a>
         </div>
       </section>
     </div>
@@ -322,7 +276,7 @@ const OrderDetail = (props) => {
         <div className='container is-fluid'>
           <div className='title'>
             <br />
-            <h3>{processingOrderDetail.orderDetail.invoice.type === 'seller' ? 'Info Reseller' : 'Info Pembeli'}</h3>
+            <h3>Info Pembeli</h3>
           </div>
         </div>
         <div className='payment-detail step-pay'>
@@ -334,20 +288,16 @@ const OrderDetail = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><img src={processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.logo : processingOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
+                          <a><img src={processingOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>
                         <div className='content'>
-                          <h4>{processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.name : processingOrderDetail.orderDetail.buyer.name}</h4>
+                          <h4>{processingOrderDetail.orderDetail.buyer.name}</h4>
                         </div>
                       </div>
                       <div className='right-top' style={{paddingRight: '16px'}}>
-                        {
-                          processingOrderDetail.orderDetail.invoice.type === 'seller'
-                          ? <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-shipment?id=${processingOrderDetail.orderDetail.invoice.id}&type=reseller`)}>Kirim Pesan</a>
-                          : <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-shipment?id=${processingOrderDetail.orderDetail.invoice.id}&type=buyer`)}>Kirim Pesan</a>
-                        }
+                        <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-shipment?id=${processingOrderDetail.orderDetail.invoice.id}&type=buyer`)}>Kirim Pesan</a>
                       </div>
                     </div>
                   </div>
@@ -381,7 +331,7 @@ const OrderDetail = (props) => {
                         <h4>{item.product.name} </h4>
                         <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
                         <strong>Jumlah : {item.qty}</strong>
-                        <span>{item.note !== '' && `"${item.note}"`}</span>
+                        <span>{item.note !== '' && `'${item.note}'`}</span>
                       </div>
                     </div>
                   </div>
@@ -412,70 +362,32 @@ const OrderDetail = (props) => {
                       {processingOrderDetail.orderDetail.buyer.address.province.name}, {processingOrderDetail.orderDetail.buyer.address.postal_code}<br />
                       Telp: {processingOrderDetail.orderDetail.buyer.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
                     </span>
-                    <div className='right-top topR'>
-                      <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                    </div>
                   </div>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-        {
-          processingOrderDetail.orderDetail.invoice.type === 'seller' && <div className='notif-inside'>
-            <div className='notif-info'>
-              <span>Barang ini terjual dari reseller. Sehingga nama toko reseller disertakan.</span>
-            </div>
-          </div>
-        }
-        { processingOrderDetail.orderDetail.invoice.type === 'seller'
-          ? <div className='detail-purchase summary at-cart'>
-            <div className='detail-result white'>
-              <ul className='data-delivery'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column'>
-                      <strong>Info Alamat Penjual</strong>
-                      <span className='address'>
-                        {processingOrderDetail.orderDetail.seller.name} ({processingOrderDetail.orderDetail.reseller.store.name})<br />
-                        {processingOrderDetail.orderDetail.seller.address.address}<br />
-                        {processingOrderDetail.orderDetail.seller.address.village.name}, {processingOrderDetail.orderDetail.seller.address.subdistrict.name}, {processingOrderDetail.orderDetail.seller.address.district.name}<br />
-                        {processingOrderDetail.orderDetail.seller.address.province.name}, {processingOrderDetail.orderDetail.seller.address.postal_code}<br />
-                        Telp: {processingOrderDetail.orderDetail.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                      </span>
-                      <div className='right-top topR'>
-                        <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                      </div>
-                    </div>
+        <div className='detail-purchase summary at-cart'>
+          <div className='detail-result white'>
+            <ul className='data-delivery'>
+              <li>
+                <div className='columns custom is-mobile'>
+                  <div className='column'>
+                    <strong>Info Alamat Penjual</strong>
+                    <span className='address'>
+                      {processingOrderDetail.orderDetail.seller.name} {`(${processingOrderDetail.orderDetail.reseller.store.name})`}<br />
+                      {processingOrderDetail.orderDetail.seller.address.address}<br />
+                      {processingOrderDetail.orderDetail.seller.address.village.name}, {processingOrderDetail.orderDetail.seller.address.subdistrict.name}, {processingOrderDetail.orderDetail.seller.address.district.name}<br />
+                      {processingOrderDetail.orderDetail.seller.address.province.name}, {processingOrderDetail.orderDetail.seller.address.postal_code}<br />
+                      Telp: {processingOrderDetail.orderDetail.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
+                    </span>
                   </div>
-                </li>
-              </ul>
-            </div>
+                </div>
+              </li>
+            </ul>
           </div>
-          : <div className='detail-purchase summary at-cart'>
-            <div className='detail-result white'>
-              <ul className='data-delivery'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column'>
-                      <strong>Info Alamat Penjual</strong>
-                      <span className='address'>
-                        {processingOrderDetail.orderDetail.seller.name}<br />
-                        {processingOrderDetail.orderDetail.seller.address.address}<br />
-                        {processingOrderDetail.orderDetail.seller.address.village.name}, {processingOrderDetail.orderDetail.seller.address.subdistrict.name}, {processingOrderDetail.orderDetail.seller.address.district.name}<br />
-                        {processingOrderDetail.orderDetail.seller.address.province.name}, {processingOrderDetail.orderDetail.seller.address.postal_code}<br />
-                        Telp: {processingOrderDetail.orderDetail.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                      </span>
-                      <div className='right-top topR'>
-                        <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        }
+        </div>
         <div className='column is-paddingless'>
           <div className='see-all'>
             <span className='link black js-option'>Kurir Pengiriman <span className='kurir normal'>{processingOrderDetail.orderDetail.invoice.expedition.expedition.name}</span></span>
@@ -539,14 +451,12 @@ const OrderDetail = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    processingOrderDetail: state.processingOrderDetail,
-    updateStatus: state.updateStatus
+    processingOrderDetail: state.processingOrderDetail
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProcessingOrderDetail: (params) => dispatch(transactionAction.getProcessingOrderDetail(params)),
-  inputAirwayBill: (params) => dispatch(transactionAction.inputAirwayBill(params))
+  getProcessingOrderDetail: (params) => dispatch(transactionAction.getProcessingOrderDetail(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(InputShipmentNumber)
