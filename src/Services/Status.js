@@ -5,6 +5,7 @@ export const Status = {
   UNAUTHORIZED: 401,
   NOT_ACCEPTABLE: 406,
   BAD_GATEWAY: 502,
+  NOT_FOUND: 404,
   OFFLINE: 'EOFFLINE',
   TIMEOUT: 'ETIMEOUT',
   UNKNOWN: 'EUNKNOWN'
@@ -77,6 +78,8 @@ export const isError = ({ status, isFound }) => {
   } else if (status === Status.UNKNOWN) {
     return true
   } else if (status === Status.NOT_ACCEPTABLE) {
+    return true
+  } else if (status === Status.NOT_FOUND) {
     return true
   } else if (isFound) {
     return false
