@@ -17,7 +17,7 @@ class ProductDetailRule extends Component {
   openTerms = () => this.setState({ openTerms: !this.state.openTerms })
 
   render () {
-    const { store, location } = this.props
+    const { store, location, product, favoritePress } = this.props
     const { openTerms } = this.state
 
     return (
@@ -39,7 +39,7 @@ class ProductDetailRule extends Component {
                       <div className='media-content'>
                         <div className='content'>
                           <h4>
-                            <a onClick={() => Router.push(`/store?id=${store.id}&tab=Produk`)}>{ store.name }</a>
+                            <a onClick={() => Router.push(`/store?id=${store.id}&idProduct=${product.id}&tab=Produk`)}>{ store.name }</a>
                             <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} />
                           </h4>
                           <div className='detail'>
@@ -53,7 +53,7 @@ class ProductDetailRule extends Component {
               </div>
               <div className='column is-half'>
                 <div className='rating-content is-left'>
-                  <a className='button is-primary is-outlined'><span className='icon-selected-sign' /> Di Favoritkan</a>
+                  <a onClick={() => favoritePress()} className={`button ${store.is_favorite ? 'is-primary' : 'is-outlined'}`}><span className={`${store.is_favorite ? 'icon-close white' : 'icon-plus'}`} /> Di Favoritkan</a>
                 </div>
               </div>
             </div>

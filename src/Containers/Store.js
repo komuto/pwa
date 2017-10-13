@@ -17,9 +17,7 @@ import { Navbar } from './Navbar'
 // actions
 import * as storeActions from '../actions/stores'
 import * as productActions from '../actions/product'
-// services
-import { Status } from '../Services/Status'
-import GET_TOKEN from '../Services/GetToken'
+import * as userActions from '../actions/user'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -28,10 +26,10 @@ class Store extends Component {
     super(props)
     this.state = {
       id: props.query.id || null,
+      idProduct: props.query.idProduct || null,
       tab: props.query.tab || null,
       store: props.store | null,
       showListCatalog: false,
-      token: null,
       tabs: {
         selected: props.query.tab || 'Produk',
         options: ['Produk', 'Profile', 'Penilaian']
@@ -47,38 +45,48 @@ class Store extends Component {
         message: 'Error, default message.'
       }
     }
+
+    this.submitting = {
+      store: false,
+      addWishlist: false,
+      favorite: false
+    }
   }
 
   async componentDidMount () {
     const { id, store } = this.state
     if (!store.isFound) {
       NProgress.start()
-      await this.props.dispatch(storeActions.getStores({ id }))
+      this.submitting = { ...this.submitting, store: true }
+      await this.props.getStores({ id })
     } else if (store.isFound && store.store.id !== id) {
       NProgress.start()
-      await this.props.dispatch(storeActions.getStores({ id }))
+      this.submitting = { ...this.submitting, store: true }
+      await this.props.getStores({ id })
     }
-
-    this.setState({ token: await GET_TOKEN.getToken() })
 
     Events.scrollEvent.register('end', (to, element) => {
       this.setState({ showListCatalog: !this.state.showListCatalog })
     })
   }
 
-  favouritePress = () => console.log('favouritePress()')
+  favouritePress () {
+    const { id } = this.state
+    this.submitting = { ...this.submitting, favorite: false }
+    this.props.favoriteStore({ id })
+  }
 
   showListCatalogPress = () => { this.setState({ showListCatalog: !this.state.showListCatalog }) }
 
   tabSelected = (selected) => {
-    Router.push(`/store?id=${this.state.id}&tab=${selected}`)
+    Router.push(`/store?id=${this.state.id}&idProduct=${this.state.idProduct}&tab=${selected}`)
     this.setState({ tabs: {...this.state.tabs, selected}, boxSeller: {...this.state.boxSeller, height: selected === 'Produk' ? 200 : 0} })
   }
 
   async wishlistPress (e, id) {
     e.stopPropagation()
-    let { store, token } = this.state
-    if (token) {
+    let { store } = this.state
+    if (this.props.isLogin) {
       store.store.catalogs.map((catalog) => {
         catalog.products.map((product) => {
           if (product.id === id) {
@@ -87,45 +95,51 @@ class Store extends Component {
           }
         })
       })
-      await this.props.dispatch(productActions.addToWishlist({ id }))
+      this.submitting = { ...this.submitting, addWishlist: true }
+      await this.props.addToWishlist({ id })
       this.setState({ store })
     } else {
-      this.setState({notification: {status: true, message: 'Anda harus login'}})
+      this.props.alertLogin()
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { store, addWishlist } = nextProps
-    if (!store.isLoading) {
+    const { addWishlist, favorite } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+    let { store } = nextProps
+
+    /** handling state store */
+    if (!isFetching(store) && this.submitting.store) {
       NProgress.done()
-      switch (store.status) {
-        case Status.SUCCESS :
-          (store.isFound)
-          ? this.setState({ store })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: store.message} })
-          break
-        default:
-          break
+      this.submitting = { ...this.submitting, store: false }
+      if (isError(store)) {
+        this.setState({ notification: notifError(store.message) })
+      }
+      if (isFound(store)) {
+        this.setState({ store })
       }
     }
 
-    if (!addWishlist.isLoading) {
-      switch (addWishlist.status) {
-        case Status.SUCCESS :
-          (addWishlist.isFound)
-          ? this.setState({ addWishlist })
-          : this.setState({ notification: {status: true, message: 'Gagal menambah wishlist'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: addWishlist.message} })
-          break
-        default:
-          break
+    /** handling state addwishlist */
+    if (!isFetching(addWishlist) && this.submitting.addWishlist) {
+      this.submitting = { ...this.submitting, addWishlist: false }
+      if (isError(addWishlist)) {
+        this.setState({ notification: notifError(addWishlist.message) })
+      }
+      if (isFound(addWishlist)) {
+        this.setState({ addWishlist })
+      }
+    }
+    /** handling state favorite */
+    if (!isFetching(favorite) && this.submitting.favorite) {
+      this.submitting = { ...this.submitting, favorite: false }
+      if (isError(favorite)) {
+        this.setState({ notification: notifError(favorite.message) })
+      }
+      if (isFound(favorite)) {
+        let isFavorite = store.store.is_favorite
+        store.store.is_favorite = !isFavorite
+        this.setState({ store })
       }
     }
   }
@@ -156,7 +170,7 @@ class Store extends Component {
             } >
             <div className='media'>
               <div className='media-left'>
-                <figure className='image'>
+                <figure className='image' style={{ width: 212 }}>
                   <a><MyImage src={product.image} alt={product.name} /></a>
                   { pin }
                 </figure>
@@ -188,6 +202,7 @@ class Store extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
+        // callBack: () => Router.push(`/product-detail?id=${idProduct}`),
         textPath: store.isFound && myStore.name
       }
     }
@@ -213,7 +228,7 @@ class Store extends Component {
             store.isFound &&
               <Content>
                 <Section className='section is-paddingless'>
-                  <BoxSeller boxSeller={boxSeller} myStore={myStore} />
+                  <BoxSeller boxSeller={boxSeller} myStore={myStore} favouritePress={() => this.favouritePress()} />
                   <Tabs {...tabs} tabSelected={(selected) => this.tabSelected(selected)} />
                 </Section>
                 {
@@ -559,8 +574,8 @@ const BoxSeller = (props) => {
           </a>
         </div>
         <div className='column'>
-          <a className='button is-medium is-fullwidth is-outlined' onClick={() => this.favouritePress()}>
-            <span className='icon-plus' />
+          <a onClick={() => props.favouritePress()} className={`button is-medium is-fullwidth ${myStore.is_favorite ? 'is-primary' : 'is-outlined'}`}>
+            <span className={`${myStore.is_favorite ? 'icon-close white' : 'icon-plus'}`} />
             Favorit
           </a>
         </div>
@@ -589,11 +604,16 @@ const Tabs = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    store: state.stores,
-    addWishlist: state.addWishlist
-  }
-}
+const mapStateToProps = (state) => ({
+  store: state.stores,
+  addWishlist: state.addWishlist,
+  favorite: state.favorite
+})
 
-export default connect(mapStateToProps)(Store)
+const mapDispatchToProps = (dispatch) => ({
+  getStores: (params) => dispatch(storeActions.getStores(params)),
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
+  favoriteStore: (params) => dispatch(userActions.favoriteStore(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Store)
