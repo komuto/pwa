@@ -281,6 +281,7 @@ const transaction = function * () {
   yield takeEvery(typeReq(transactionActions.GET_COMPLAINED_ORDERS_BUYER_2), transactionSaga.getComplainedOrdersBuyer2)
   yield takeEvery(typeReq(transactionActions.GET_COMPLAINED_ORDERS_SELLER_2), transactionSaga.getComplainedOrdersSeller2)
   yield takeEvery(typeReq(transactionActions.GET_SALES_2), transactionSaga.getSales2)
+  yield takeEvery(typeReq(transactionActions.BUYER_REFUND), transactionSaga.buyerRefund)
 }
 
 export default dataSaga

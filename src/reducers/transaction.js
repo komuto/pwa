@@ -140,3 +140,9 @@ export const getSaleDetail = createReducer(buildInitState({ sale: {} }))
     type: actions.GET_SALE_DETAIL,
     resultName: 'sale'
   }).run()
+
+export const buyerRefund = createReducer(buildInitState({ refund: {} }))
+  .addReducer({
+    type: actions.BUYER_REFUND,
+    resultName: 'refund'
+  }).run()

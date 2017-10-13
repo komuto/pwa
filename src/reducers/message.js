@@ -25,13 +25,13 @@ export const getSellerDetailMessage = createReducer(buildInitState({ sellerDetai
     resultName: 'sellerDetailMessage'
   }).run()
 
-export const getArchiveBuyerMessages = createReducer(buildInitState({ archiveMessages: {} }))
+export const getArchiveBuyerMessages = createReducer(buildInitState({ archiveMessages: [] }))
   .addReducer({
     type: actions.GET_ARCHIVE_BUYER_MESSAGES,
     resultName: 'archiveMessages'
   }).run()
 
-export const getArchiveSellerMessages = createReducer(buildInitState({ archiveMessage: {} }))
+export const getArchiveSellerMessages = createReducer(buildInitState({ archiveMessages: [] }))
   .addReducer({
     type: actions.GET_ARCHIVE_SELLER_MESSAGES,
     resultName: 'archiveMessages'

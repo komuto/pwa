@@ -25,6 +25,7 @@ export const SELLER_DISPUTE_RECEIVED = 'SELLER_DISPUTE_RECEIVED'
 export const GET_SALES = 'GET_SALES'
 export const GET_SALES_2 = 'GET_SALES_2'
 export const GET_SALE_DETAIL = 'GET_SALE_DETAIL'
+export const BUYER_REFUND = 'BUYER_REFUND'
 
 /**
  * @params params are the same as the api query
@@ -183,3 +184,9 @@ export const getSales2 = params => buildAction(typeReq(GET_SALES_2), params)
  * @state saleDetail
  */
 export const getSaleDetail = params => buildAction(typeReq(GET_SALE_DETAIL), params)
+
+/**
+ * @params id {int} dispute id
+ * @state buyerRefund
+ */
+export const buyerRefund = params => buildAction(typeReq(BUYER_REFUND), params)

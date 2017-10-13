@@ -16,8 +16,6 @@ const midTrans = {
     }
   }
 }
-console.log('>> ')
-console.log(process.env.NODE_ENV)
 
 const AppConfig = {
   DEBUG: true,

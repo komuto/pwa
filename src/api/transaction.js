@@ -116,3 +116,8 @@ export const getSaleDetail = ({ id }) => {
   const axios = authApiKomuto()
   return axios.get(`invoices/${id}/sale-detail`)
 }
+
+export const buyerRefund = ({ id }) => {
+  const axios = authApiKomuto()
+  return axios.post(`users/disputes/${id}/refund`)
+}
