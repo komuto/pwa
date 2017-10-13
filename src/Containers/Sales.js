@@ -56,36 +56,36 @@ class Sales extends React.Component {
     })
   }
 
-  loadMoreNewOrders () {
+  async loadMoreNewOrders () {
     let { pagination } = this.state
     if (!this.fetching) {
       const newState = { pagination }
       newState.pagination['page'] = pagination.page + 1
       this.setState(newState)
       this.fetching = true
-      this.props.getNewOrders(pagination)
+      await this.props.getNewOrders(pagination)
     }
   }
 
-  loadMoreProcessingOrders () {
+  async loadMoreProcessingOrders () {
     let { pagination2 } = this.state
     if (!this.fetching2) {
       const newState = { pagination2 }
       newState.pagination2['page'] = pagination2.page + 1
       this.setState(newState)
       this.fetching2 = true
-      this.props.getProcessingOrders(pagination2)
+      await this.props.getProcessingOrders(pagination2)
     }
   }
 
-  loadMoreSales () {
+  async loadMoreSales () {
     let { pagination3 } = this.state
     if (!this.fetching3) {
       const newState = { pagination3 }
       pagination3['page'] = pagination3.page + 1
       this.setState(newState)
       this.fetching3 = true
-      this.props.getSales(pagination3)
+      await this.props.getSales(pagination3)
     }
   }
 
@@ -94,8 +94,11 @@ class Sales extends React.Component {
     if (!isFetching(newOrders) && this.fetchingFirst) {
       if (isFound(newOrders)) {
         this.fetchingFirst = false
-        this.setState({ newOrders })
-        this.loadMoreNewOrders()
+        this.setState({ newOrders }, () => {
+          if (isFound(this.state.newOrders)) {
+            this.loadMoreNewOrders()
+          }
+        })
       }
     }
     if (!isFetching(newOrders) && this.fetching) {
@@ -117,8 +120,11 @@ class Sales extends React.Component {
     if (!isFetching(processingOrders) && this.fetchingFirst2) {
       if (isFound(processingOrders)) {
         this.fetchingFirst2 = false
-        this.setState({ processingOrders })
-        this.loadMoreProcessingOrders()
+        this.setState({ processingOrders }, () => {
+          if (isFound(this.state.processingOrders)) {
+            this.loadMoreProcessingOrders()
+          }
+        })
       }
     }
     if (!isFetching(processingOrders) && this.fetching2) {
@@ -140,8 +146,11 @@ class Sales extends React.Component {
     if (!isFetching(sales) && this.fetchingFirst3) {
       if (isFound(sales)) {
         this.fetchingFirst3 = false
-        this.setState({ sales })
-        this.loadMoreSales()
+        this.setState({ sales }, () => {
+          if (isFound(this.state.sales)) {
+            this.loadMoreSales()
+          }
+        })
       }
     }
     if (!isFetching(sales) && this.fetching3) {

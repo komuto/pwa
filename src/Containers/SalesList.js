@@ -130,9 +130,15 @@ class SalesList extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { sales, sales2 } = nextProps
     if (!isFetching(sales) && this.fetchingFirst) {
-      NProgress.done()
-      this.fetchingFirst = false
-      this.setState({ sales, notification: validateResponse(sales, sales.message) })
+      if (isFound(sales)) {
+        NProgress.done()
+        this.fetchingFirst = false
+        this.setState({ sales })
+      }
+      if (isError(sales)) {
+        this.fetchingFirst = false
+        this.setState({ notification: validateResponse(sales, sales.message) })
+      }
     }
     if (!isFetching(sales) && this.fetching) {
       let stateNewSales = this.state.sales
@@ -153,9 +159,15 @@ class SalesList extends React.Component {
       }
     }
     if (!isFetching(sales2) && this.fetchingFirst2) {
-      NProgress.done()
-      this.fetchingFirst2 = false
-      this.setState({ sales2, notification: validateResponse(sales2, sales2.message) })
+      if (isFound(sales2)) {
+        NProgress.done()
+        this.fetchingFirst2 = false
+        this.setState({ sales2 })
+      }
+      if (isError(sales2)) {
+        this.fetchingFirst2 = false
+        this.setState({ notification: validateResponse(sales2, sales2.message) })
+      }
     }
     if (!isFetching(sales2) && this.fetching2) {
       let stateNewSales2 = this.state.sales2

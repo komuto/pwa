@@ -12,7 +12,6 @@ import MyRating from '../Components/MyRating'
 import RupiahFormat from '../Lib/RupiahFormat'
 // actions
 import * as transactionAction from '../actions/transaction'
-import * as reviewAction from '../actions/review'
 // services
 import { isFetching, validateResponse, validateResponseAlter, isError, isFound } from '../Services/Status'
 
@@ -28,10 +27,6 @@ class SalesDetail extends React.Component {
       saleDetail: props.saleDetail || null,
       tabs: TAB_DELIVERY_STATUS,
       receiptNumber,
-      pagination: {
-        page: 1,
-        limit: 10
-      },
       notification: {
         type: 'is-success',
         status: false,
@@ -41,7 +36,6 @@ class SalesDetail extends React.Component {
       showModal: false
     }
     this.submiting = false
-    this.actionFirst = true
   }
 
   modalEditReceiptNumber () {
@@ -222,17 +216,6 @@ class SalesDetail extends React.Component {
     }
   }
 
-  loadMoreReview () {
-    let { pagination } = this.state
-    if (!this.fetching) {
-      const newState = { pagination }
-      pagination['page'] = pagination.page + 1
-      this.setState(newState)
-      this.fetching = true
-      this.props.getSellerReview(pagination)
-    }
-  }
-
   componentDidMount () {
     const { id } = this.state
     if (id !== '') {
@@ -243,7 +226,7 @@ class SalesDetail extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { saleDetail, updateStatus } = nextProps
-    if (!isFetching(saleDetail)) {
+    if (!isFetching(saleDetail) && !this.submiting) {
       if (isFound(saleDetail)) {
         NProgress.done()
         this.setState({ saleDetail })
@@ -258,11 +241,14 @@ class SalesDetail extends React.Component {
     if (!isFetching(updateStatus) && this.submiting) {
       if (isFound(updateStatus)) {
         this.submiting = false
-        this.setState({ showModal: !this.state.showModal, notification: validateResponseAlter(updateStatus, updateStatus.message, updateStatus.message) })
+        const { saleDetail, receiptNumber, showModal } = this.state
+        const setReceiptNumber = { saleDetail, showModal: !showModal, notification: validateResponseAlter(updateStatus, updateStatus.message, updateStatus.message) }
+        setReceiptNumber.saleDetail.sale.shipping['airway_bill'] = receiptNumber
+        this.setState(setReceiptNumber)
       }
       if (isError(updateStatus)) {
         this.submiting = false
-        this.setState({ notification: validateResponse(updateStatus, 'Gagal mengirim Pesan') })
+        this.setState({ notification: validateResponse(updateStatus, 'Gagal mengubah No Resi') })
       }
     }
   }
@@ -1065,15 +1051,13 @@ const ReviewProduct = (props) => {
 const mapStateToProps = (state) => {
   return {
     saleDetail: state.saleDetail,
-    updateStatus: state.updateStatus,
-    sellerReview: state.sellerReview
+    updateStatus: state.updateStatus
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getSaleDetail: (params) => dispatch(transactionAction.getSaleDetail(params)),
-  inputAirwayBill: (params) => dispatch(transactionAction.inputAirwayBill(params)),
-  getSellerReview: (params) => dispatch(reviewAction.getSellerReview(params))
+  inputAirwayBill: (params) => dispatch(transactionAction.inputAirwayBill(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SalesDetail)
