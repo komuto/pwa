@@ -19,6 +19,7 @@ module.exports = {
           filename: 'sw.js',
           minify: true,
           staticFileGlobsIgnorePatterns: [/\.next\//],
+          importScripts: ['/static/js/push-notifications.js'],
           staticFileGlobs: [
             'static/**/*' // Precache all static files by default
           ],
