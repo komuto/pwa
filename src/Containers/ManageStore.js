@@ -148,7 +148,7 @@ class ManageStore extends Component {
             </div>
             <div className='profile-wrapp'>
               <ul>
-                <li>
+                <li onClick={() => Router.push('/notification-message')}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -167,7 +167,7 @@ class ManageStore extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={() => Router.push('/notification-discussion')}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
@@ -186,7 +186,7 @@ class ManageStore extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={() => Router.push('/notification-product-review')}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>
