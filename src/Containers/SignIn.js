@@ -15,6 +15,7 @@ import { ButtonFullWidth } from '../Components/Button'
 import { HrText } from '../Components/Hr'
 import TermConditions from '../Components/TermConditions'
 import Notification from '../Components/Notification'
+import localforage from 'localforage'
 // validations
 import * as constraints from '../Validations/Auth'
 // actions
@@ -118,15 +119,19 @@ class SignIn extends Component {
     }
   }
 
-  handleSignInClick () {
+  async handleSignInClick () {
     let { email, password } = this.state.input
     if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
       NProgress.start()
+
+      let fcmToken = await localforage.getItem('FCM_TOKEN')
+
       this.submitting = true
       this.dipatchType = LOGIN_FORM
       this.props.login({
         email: email.value,
-        password: password.value
+        password: password.value,
+        reg_token: fcmToken
       })
     }
   }
