@@ -13,6 +13,8 @@ import {Images} from '../Themes'
 import * as loginAction from '../actions/user'
 // utils
 import { isFetching, isError } from '../Services/Status'
+// lib
+import RupiahFormat from '../Lib/RupiahFormat'
 
 class Account extends Component {
   constructor (props) {
@@ -214,14 +216,14 @@ class Account extends Component {
                             <p>
                               <strong>Saldo</strong>
                             </p>
-                            <div className='val-right'><span>Rp { profile.user.user.saldo_wallet }</span></div>
+                            <div className='val-right'><span>Rp { RupiahFormat(profile.user.user.saldo_wallet) }</span></div>
                           </div>
                         </div>
                       </article>
                     </div>
                     <span className='icon-arrow-right' />
                   </li>
-                  <li>
+                  <li onClick={() => Router.push('/store-favorite')}>
                     <div className='box is-paddingless'>
                       <article className='media'>
                         <div className='media-left'>
