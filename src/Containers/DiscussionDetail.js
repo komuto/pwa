@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { animateScroll } from 'react-scroll'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
-import _ from 'lodash'
 import moment from 'moment'
 // components
 import Section from '../Components/Section'
@@ -11,8 +10,6 @@ import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
 // actions
 import * as productActions from '../actions/product'
-// services
-import { validateResponse, isFetching, Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -40,6 +37,11 @@ class DiscussionDetail extends Component {
     }
 
     this.afterAddComment = false
+    this.submitting = {
+      productDetail: false,
+      comments: false,
+      newComment: false
+    }
     moment.locale('id')
   }
 
@@ -47,10 +49,11 @@ class DiscussionDetail extends Component {
     const { id, idd, productDetail } = this.state
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
       NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+      this.submitting = { ...this.submitting, productDetail: true }
+      await this.props.getProduct({ id })
     }
-
-    await this.props.dispatch(productActions.getComment({ productId: id, id: idd, ...this.state.params }))
+    this.submitting = { ...this.submitting, comments: true }
+    await this.props.getComment({ productId: id, id: idd, ...this.state.params })
   }
 
   scrollToBottom = () => {
@@ -67,8 +70,8 @@ class DiscussionDetail extends Component {
     if (e.key === 'Enter') {
       if (comment.value !== '') {
         this.afterAddComment = true
-        await this.props.dispatch(productActions.newComment({productId: id, id: idd, content: comment.value}))
-        this.setState({ comment: { ...this.state.comment, value: '' } })
+        this.submitting = { ...this.submitting, newComment: true }
+        await this.props.addNewComment({productId: id, id: idd, content: comment.value})
         this.scrollToBottom()
       }
     }
@@ -76,26 +79,48 @@ class DiscussionDetail extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { productDetail, comments, newComment } = nextProps
+    const { isFetching, isError, isFound, notifError } = this.props
 
-    if (!isFetching(productDetail)) {
+    /** handling state get product detail */
+    if (!isFetching(productDetail) && this.submitting.productDetail) {
       NProgress.done()
-      this.setState({ productDetail, notification: validateResponse(productDetail, 'Data produk tidak ditemukan!') })
+      this.submitting = { ...this.submitting, productDetail: false }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
+      }
     }
 
-    if (!isFetching(comments)) {
-      NProgress.done()
-      if (comments.status === Status.SUCCESS && comments.isFound) {
-        comments.comments = _.orderBy(comments.comments, ['id'], ['asc'])
+    /** handling state comments */
+    if (!isFetching(comments) && this.submitting.comments) {
+      this.submitting = { ...this.submitting, comments: false }
+      if (isError(comments)) {
+        this.setState({ notification: notifError(comments.message) })
       }
-      this.setState({ comments, notification: validateResponse(comments, 'Data komentar tidak ditemukan!') })
+      if (isFound(comments)) {
+        // comments.comments = _.orderBy(comments.comments, ['id'], ['asc'])
+        this.setState({ comments })
+        this.scrollToBottom()
+      }
     }
 
-    if (!isFetching(newComment)) {
-      NProgress.done()
-      if (newComment.status === Status.SUCCESS && newComment.isFound) {
-        comments.comments.push(newComment.comment)
+    /** handling state comments */
+    if (!isFetching(newComment) && this.submitting.newComment) {
+      this.submitting = { ...this.submitting, newComment: false }
+      if (isError(newComment)) {
+        this.setState({ notification: notifError(newComment.message) })
       }
-      this.setState({ comments, newComment, notification: validateResponse(newComment, 'Komentar gagal ditambahkan!') })
+      if (isFound(newComment)) {
+        // let tam = comments.comments
+        // .comments.push(newComment.comment)
+        this.setState({
+          newComment,
+          comments,
+          comment: { ...this.state.comment, value: '' }
+        })
+      }
     }
   }
 
@@ -137,7 +162,7 @@ class DiscussionDetail extends Component {
             </ul>
             <ul className='main-discuss'>
               {
-                comments.comments.map((comment, index) => {
+                comments.comments.comments.map((comment, index) => {
                   if (comment.is_deleted) return null
                   let createDate = moment.unix(comment.created_at).format('Do MMMM YY h:mm:ss')
                   return (
@@ -174,7 +199,14 @@ class DiscussionDetail extends Component {
         <div className='add-comment' style={{ position: 'fixed' }}>
           <div className='field'>
             <p className='control'>
-              <textarea onChange={this.commentOnChange} value={comment.value} onKeyPress={(e) => this.commentOnEnterPress(e)} className='textarea' placeholder='Tulis Komentar' />
+              <span className={`${this.submitting.newComment && 'button self is-loading right'}`} />
+              <textarea
+                onChange={this.commentOnChange}
+                value={comment.value}
+                onKeyPress={(e) => this.commentOnEnterPress(e)}
+                className='textarea'
+                placeholder='Tulis Komentar'
+                readOnly={this.submitting.newComment} />
             </p>
           </div>
         </div>
@@ -182,12 +214,16 @@ class DiscussionDetail extends Component {
     )
   }
 }
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail,
-    comments: state.comments,
-    newComment: state.newComment
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail,
+  comments: state.comments,
+  newComment: state.newComment
+})
 
-export default connect(mapStateToProps)(DiscussionDetail)
+const mapDispatchToProps = (dispatch) => ({
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  getComment: (params) => dispatch(productActions.getComment(params)),
+  addNewComment: (params) => dispatch(productActions.newComment(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(DiscussionDetail)
