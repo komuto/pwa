@@ -55,7 +55,7 @@ export class Navbar extends PureComponent {
 
   render () {
     const { deleteButton, messageType, navbar, productDetail, productImages, searchActive, moreButton, messageButton, productId } = this.props
-    const { path, textPath, searchBoox, callBack, filterBalance } = navbar
+    const { path, textPath, searchBoox, callBack, filterBalance, moreMessage } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
       <div>
@@ -139,6 +139,20 @@ export class Navbar extends PureComponent {
             filterBalance && filterBalance.show &&
             <div className='button-search js-option' onClick={() => filterBalance.press()}>
               <span className='icon-filter-y' />
+            </div>
+          }
+          {
+            moreMessage &&
+            <div className={`button-search menu-top ${moreMessage.show && 'open'}`}>
+              <div className='overlay-menu' onClick={(e) => moreMessage.press(e)} style={{ display: moreMessage.show ? 'block' : 'none' }} />
+              <span onClick={(e) => moreMessage.press(e)} className='icon-dots' />
+              {
+                moreMessage.show &&
+                <ul className='option-dropdown'>
+                  <li onClick={() => moreMessage.selected(moreMessage.type === 'conversation' ? 'archives' : 'conversation')}><a className='js-option'>Pindahkan ke {moreMessage.type === 'conversation' ? 'Arsip' : 'Percakapan' } </a></li>
+                  <li onClick={() => moreMessage.selected('delete')}><a className='js-option'>Hapus Selamanya</a></li>
+                </ul>
+              }
             </div>
           }
         </nav>
