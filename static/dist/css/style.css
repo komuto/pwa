@@ -6936,10 +6936,10 @@ strong.total {
     position: absolute;
     top: 0;
     right: 0;
-    cursor: pointer;
     background-color: transparent; }
     .level.header .button-search.menu-top .option-dropdown {
-      right: 20px; }
+      right: 20px;
+      z-index: 2; }
       .level.header .button-search.menu-top .option-dropdown li {
         line-height: 13px; }
     .level.header .button-search .media-left {
@@ -6956,6 +6956,16 @@ strong.total {
 
 .header-search .control {
   position: inherit; }
+
+.overlay-menu {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1; }
 
 /* @media screen and (max-width: 768px)
   .nav-menu
