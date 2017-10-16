@@ -181,6 +181,16 @@ class SalesDetail extends React.Component {
     )
   }
 
+  handleChangeReceiptNumber (data) {
+    if (data.sale.invoice.type !== 'reseller') {
+      if (data.sale.invoice.transaction_status === 2 || data.sale.invoice.transaction_status === 3) {
+        return (
+          <a className='js-option' onClick={() => this.modalEditReceiptNumber()}>Ubah</a>
+        )
+      }
+    }
+  }
+
   renderContentTabs (tabs) {
     const { saleDetail } = this.state
     if (tabs === TAB_DELIVERY_STATUS) {
@@ -190,7 +200,8 @@ class SalesDetail extends React.Component {
           transactionType={(type) => this.transactionType(type)}
           statusResi={(type) => this.statusResi(type)}
           renderNotice={(type) => this.renderNotice(type)}
-          modalEditReceiptNumber={() => this.modalEditReceiptNumber()} />
+          modalEditReceiptNumber={() => this.modalEditReceiptNumber()}
+          handleChangeReceiptNumber={(data) => this.handleChangeReceiptNumber(data)} />
       )
     }
     if (tabs === TAB_SALES_DETAIL) {
@@ -376,7 +387,7 @@ const DeliveryStatus = (props) => {
               <div className='column is-half'>
                 <div className='rating-content item-qty has-text-right'>
                   <span className='has-text-left'>{saleDetail.sale.shipping.airway_bill}</span> &nbsp;
-                  {(saleDetail.sale.invoice.transaction_status === 2 || saleDetail.sale.invoice.transaction_status === 3) ? <a className='js-option' onClick={() => props.modalEditReceiptNumber()}>Ubah</a> : ''}
+                  { props.handleChangeReceiptNumber(saleDetail) }
                 </div>
               </div>
             </div>
