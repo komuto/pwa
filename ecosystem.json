@@ -2,8 +2,8 @@
     "apps" : [
       {
         "name"            : "komuto.pwa",
-        "script"          : "npm",
-        "args"            : "run server",
+        "script"          : "yarn",
+        "args"            : "server",
         "ignore_watch"    : ["node_modules", "log/error.log", "log/access.log"],
         "error_file"      : "log/error.log",
         "out_file"        : "log/access.log",
@@ -22,7 +22,7 @@
         "ref"  : "origin/master",
         "path" : "/home/skyshi/deploy/komuto.pwa",
         "repo"  : "git@gitlab.skyshi.io:komuto/pwa.git",
-        "post-deploy" : "cp ../../config/.env.komuto.pwa .env && npm install && npm run build && pm2 startOrRestart ecosystem.json"
+        "post-deploy" : "cp ../../config/.env.komuto.pwa .env && yarn install && yarn build && pm2 startOrRestart ecosystem.json"
       }
     }
 }
