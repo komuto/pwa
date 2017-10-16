@@ -1,0 +1,11 @@
+stages:
+  - deploy
+
+deploy_staging:
+  stage: deploy
+  script:
+     - "if [ -n \"$DEPLOY\" ]; then start=`date +%s`; pm2 deploy ecosystem.json staging; end=`date +%s`; execution=`expr $end - $start`;fi"
+     - "if [ -n \"$DEPLOY\" ]; then curl -XPOST -H \"Content-type: application/json\" -d \"{'text': 'Deployment Komuto PWA is done ($execution s) :yey:', 'channel': '#komuto-pwa'}\" $WEBHOOK_URL;fi"
+    
+  only:
+  - master
