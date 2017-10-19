@@ -12,7 +12,7 @@ import Loading from '../Components/Loading'
 // actions
 import * as reviewActions from '../actions/review'
 // services
-import { isFetching, isFound, isError, validateResponse } from '../Services/Status'
+import { isFetching, isFound, validateResponse } from '../Services/Status'
 
 class ReviewProducts extends Component {
   constructor (props) {
