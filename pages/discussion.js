@@ -4,11 +4,11 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Discussion from '../src/Containers/Discussion'
+import Discussion from '../src/Containers/Discussion/Discussion'
 
 const Index = (props) => {
   const params = {
-    style: 'main user bg-grey',
+    style: 'main user bg-grey is-padding-160',
     header: {
       title: 'Diskusi'
     },

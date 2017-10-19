@@ -1,15 +1,22 @@
+/**
+ * Safei Muslim
+ * Yogyakarta , revamp: 16 Oktober 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+ /** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import url from 'url'
-// actions
+/** including actions */
 import * as homeActions from '../actions/home'
-// components
+/** including components */
 import Notification from '../Components/Notification'
 import MyImage from '../Components/MyImage'
-// validations
+/** including validations */
 import * as inputValidations from '../Validations/Input'
-// themes
+/** including themes */
 import Images from '../Themes/Images'
 
 class MySearch extends Component {
@@ -26,8 +33,9 @@ class MySearch extends Component {
     }
   }
 
-  doSearch (evt) {
-    var searchText = inputValidations.inputNormal(evt.target.value)
+  /** handling input search */
+  doSearch ({value}) {
+    var searchText = inputValidations.inputNormal(value)
     if (this.timeout) clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       if (searchText) {
@@ -37,6 +45,7 @@ class MySearch extends Component {
     }, 1000)
   }
 
+  /** focusing to input search */
   changeSearchPress () {
     this.searchInput.focus()
   }
@@ -53,7 +62,7 @@ class MySearch extends Component {
     let { isFetching, isError, isFound, notifError } = this.props
     let { searchProduct } = nextProps
 
-    // handling state get search product
+    /** handling state get search product */
     if (!isFetching(searchProduct) && this.submitting.searchProduct) {
       this.submitting = { ...this.submitting, searchProduct: false }
       if (isError(searchProduct)) {
@@ -67,20 +76,13 @@ class MySearch extends Component {
 
   render () {
     let { searchProduct, notFound, notification } = this.state
+    let { isFound } = this.props
     return (
       <div className='on-search slide'>
-        <div className='header-search'>
-          <a className='back back-on-seacrh' onClick={() => Router.back()}><span className='icon-arrow-left black' /></a>
-          <div className='field'>
-            <p className={`control has-icons-left`}>
-              <span className={`${this.submitting.searchProduct && 'button self is-loading right'}`} />
-              <input
-                onChange={e => this.doSearch(e)}
-                ref={(input) => this.refInput(input)}
-                className='input is-medium' type='text' placeholder='Cari barang atau toko' />
-            </p>
-          </div>
-        </div>
+        <InputSearchContent
+          submitting={this.submitting}
+          doSearch={e => this.doSearch(e.target)}
+          refInput={(input) => this.refInput(input)} />
         <Notification
           type='is-danger'
           isShow={notification.status}
@@ -89,12 +91,8 @@ class MySearch extends Component {
           message={notification.message} />
         <div className='body-search' style={{height: '100%', overflowY: 'auto'}}>
           <div className='search-list'>
-            {
-            notFound && <EmptySearch changeSearchPress={() => this.changeSearchPress()} />
-          }
-            {
-            searchProduct.products && <SearchContent {...this.state} />
-          }
+            { notFound && <EmptySearch changeSearchPress={() => this.changeSearchPress()} /> }
+            { isFound(searchProduct) && <SearchContent {...this.state} /> }
           </div>
         </div>
       </div>
@@ -102,45 +100,56 @@ class MySearch extends Component {
   }
 }
 
-const SearchContent = (props) => {
-  let { searchProduct } = props
-  return (
-    <ul>
-      {
-        searchProduct.products.map((product, index) => {
-          return (
-            <li
-              key={index}
-              onClick={() => {
-                Router.push(
-                    url.format({
-                      pathname: '/product',
-                      query: {q: product.name}
-                    }),
-                    `/p?q=${product.name}`
-                )
-              }} >{ product.name }</li>
-          )
-        })
-      }
-    </ul>
-  )
-}
+/** define input search */
+const InputSearchContent = ({submitting, doSearch, refInput}) => (
+  <div className='header-search'>
+    <a className='back back-on-seacrh' onClick={() => Router.back()}><span className='icon-arrow-left black' /></a>
+    <div className='field'>
+      <p className={`control has-icons-left`}>
+        <span className={`${submitting.searchProduct && 'button self is-loading right'}`} />
+        <input
+          onChange={doSearch}
+          ref={refInput}
+          className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+      </p>
+    </div>
+  </div>
+)
 
-const EmptySearch = (props) => {
-  return (
-    <section className='content'>
-      <div className='container is-fluid'>
-        <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='notFound' />
-          <p><strong>Hasil Pencarian tidak ditemukan</strong></p>
-          <p>Kami tidak bisa menemukan barang dari kata kunci yang Anda masukkan</p>
-        </div>
-        <a onClick={() => props.changeSearchPress()} className='button is-primary is-large is-fullwidth'>Ubah Pencarian</a>
+/** define search content */
+const SearchContent = ({searchProduct}) => (
+  <ul>
+    {
+      searchProduct.products.map((product, index) => (
+        <li
+          key={index}
+          onClick={() => {
+            Router.push(
+                url.format({
+                  pathname: '/product',
+                  query: {q: product.name}
+                }),
+                `/p?q=${product.name}`
+            )
+          }} >{ product.name }</li>
+      ))
+    }
+  </ul>
+)
+
+/** define empty content */
+const EmptySearch = ({changeSearchPress}) => (
+  <section className='content'>
+    <div className='container is-fluid'>
+      <div className='desc has-text-centered'>
+        <MyImage src={Images.notFound} alt='notFound' />
+        <p><strong>Hasil Pencarian tidak ditemukan</strong></p>
+        <p>Kami tidak bisa menemukan barang dari kata kunci yang Anda masukkan</p>
       </div>
-    </section>
-  )
-}
+      <a onClick={() => changeSearchPress()} className='button is-primary is-large is-fullwidth'>Ubah Pencarian</a>
+    </div>
+  </section>
+)
 
 const mapStateToProps = (state) => ({
   searchProduct: state.searchProduct

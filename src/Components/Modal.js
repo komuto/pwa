@@ -8,10 +8,13 @@ class Modal extends Component {
     return (
       <div className='sort-option' style={{ display: show ? 'block' : 'none', zIndex: 1000 }} onClick={(e) => this.outsideModaPress(e)}>
         <div className='notif-report add-voucher'>
-          <div className='header-notif'>
-            <h3>{title}</h3>
-            <span onClick={(e) => closePress(e)} className='icon-close' />
-          </div>
+          {
+            title &&
+            <div className='header-notif'>
+              <h3>{title}</h3>
+              <span onClick={(e) => closePress(e)} className='icon-close' />
+            </div>
+          }
           { children }
         </div>
       </div>

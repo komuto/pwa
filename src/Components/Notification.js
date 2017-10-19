@@ -1,19 +1,31 @@
-// @flow
+/**
+ * Safei Muslim
+ * Yogyakarta , 2017
+ * PT Skyshi Digital Indonesa
+ */
+
 import React from 'react'
 import { ButtonFullWidthLink } from './Button'
+import MyImage from './MyImage'
 
+/**
+ * Norif field error
+ */
 export const FieldError = (props) => {
   let message = props.message !== undefined ? props.message : '* wajib diisi'
   return <i style={{ color: 'red' }}>{message}</i>
 }
 
+/**
+ * Notification full page
+ */
 export const NotificationPage = ({ icon, title, subTitle, path, text }) => {
   return (
     <div className='main user user-success'>
       <section className='content'>
         <div className='container is-fluid'>
           <div className='desc has-text-centered'>
-            <img src={icon} alt='komuto' />
+            <MyImage src={icon} alt='komuto' />
             <p><strong>{title}</strong></p>
             <p>{subTitle}</p>
           </div>
@@ -30,9 +42,32 @@ export const NotificationPage = ({ icon, title, subTitle, path, text }) => {
   )
 }
 
- // type : is-primary, is-info, is-success, is-warning, is-danger
- // isType : true/false
- // message : message
+/**
+ * Notification payment status
+ * box in section
+ */
+export const NotificationBox = ({ notifClass, icon, children }) => (
+  <div className={`box ${notifClass}`}>
+    <article className='media'>
+      <div className='media-left'>
+        <figure className='image user-pict' style={icon === undefined ? { width: 50 } : {}}>
+          <MyImage src={icon} alt='icon' />
+        </figure>
+      </div>
+      <div className='media-content'>
+        <div className='content'>
+          { children }
+        </div>
+      </div>
+    </article>
+  </div>
+)
+
+/**
+ * type : is-primary, is-info, is-success, is-warning, is-danger
+ * isType : true/false
+ * message : message
+ */
 export default (props) => {
   if (!props.isShow) return null
   return (

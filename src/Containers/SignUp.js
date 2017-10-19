@@ -19,8 +19,6 @@ import Notification from '../Components/Notification'
 import * as constraints from '../Validations/Auth'
 // actions
 import * as loginAction from '../actions/user'
-// utils
-import { Status } from '../Services/Status'
 
 const LOGIN = 'LOGIN'
 const REGISTER = 'REGISTER'
@@ -79,7 +77,8 @@ class SignUp extends Component {
       notification: {
         status: false,
         message: 'Error, default message.'
-      }
+      },
+      fcmToken: null
     }
     this.dipatchType = null
     this.onChange = this.onChange.bind(this)
@@ -186,7 +185,9 @@ class SignUp extends Component {
 
   onChange (event) {
     const { name, value } = event.target
-    this.validation(name, value)
+    let { input } = this.state
+    input[name].value = value
+    this.setState({ input })
   }
 
   handleGenderChange (value) {
@@ -217,7 +218,7 @@ class SignUp extends Component {
       NProgress.start()
       this.dipatchType = REGISTER
 
-      let fcmToken = await localforage.getItem('FCM_TOKEN')
+      let { fcmToken } = this.state
 
       this.props.dispatch(loginAction.register({
         name: nama.value,
@@ -230,23 +231,24 @@ class SignUp extends Component {
     }
   }
 
+  async componentDidMount () {
+    let { fcmToken } = this.state
+    fcmToken = await localforage.getItem('FCM_TOKEN')
+    this.setState({ fcmToken })
+  }
+
   componentWillReceiveProps (nextProps) {
     const { register, user } = nextProps
+    const { isFetching, isError, isFound, notifError } = this.props
     const data = (this.dipatchType === LOGIN) ? user : register
-    if (!data.isLoading) {
-      NProgress.done()
-      switch (data.status) {
-        case Status.SUCCESS :
-          (data.isFound)
-          ? Router.push('/profile')
-          : this.setState({ notification: {status: true, message: 'Data tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: data.message} })
-          break
-        default:
-          break
+
+    /** handling state register */
+    if (!isFetching(data)) {
+      if (isError(data)) {
+        this.setState({ notification: notifError(data.message) })
+      }
+      if (isFound(data)) {
+        Router.push('/profile')
       }
     }
   }
@@ -265,50 +267,25 @@ class SignUp extends Component {
           <Containers>
             <form action='#' className='form'>
               <Input
-                type={input.nama.type}
-                placeholder={input.nama.placeholder}
-                name={input.nama.name}
-                classInfo={input.nama.classInfo}
-                value={input.nama.value}
+                {...input.nama}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.nama.textHelp} />
+                hasIconsRight />
               <Input
-                type={input.handphone.type}
-                placeholder={input.handphone.placeholder}
-                name={input.handphone.name}
-                classInfo={input.handphone.classInfo}
-                value={input.handphone.value}
+                {...input.handphone}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.handphone.textHelp} />
+                hasIconsRight />
               <Input
-                type={input.email.type}
-                placeholder={input.email.placeholder}
-                name={input.email.name}
-                classInfo={input.email.classInfo}
-                value={input.email.value}
+                {...input.email}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.email.textHelp} />
+                hasIconsRight />
               <Input
-                type={input.password.type}
-                placeholder={input.password.placeholder}
-                name={input.password.name}
-                classInfo={input.password.classInfo}
-                value={input.password.value}
+                {...input.password}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.password.textHelp} />
+                hasIconsRight />
               <Input
-                type={input.passwordRetype.type}
-                placeholder={input.passwordRetype.placeholder}
-                name={input.passwordRetype.name}
-                classInfo={input.passwordRetype.classInfo}
-                value={input.passwordRetype.value}
+                {...input.passwordRetype}
                 onChange={this.onChange}
-                hasIconsRight
-                textHelp={input.passwordRetype.textHelp} />
+                hasIconsRight />
 
               <div className='field'>
                 <label className='label'>Gender</label>
@@ -316,15 +293,13 @@ class SignUp extends Component {
                   <InputRadio
                     text='Pria'
                     value='male'
-                    name={input.genderGroup.name}
-                    selected={input.genderGroup.selected}
+                    {...input.genderGroup}
                     onChange={this.handleGenderChange} />
 
                   <InputRadio
                     text='Wanita'
                     value='female'
-                    name={input.genderGroup.name}
-                    selected={input.genderGroup.selected}
+                    {...input.genderGroup}
                     onChange={this.handleGenderChange} />
                 </p>
               </div>

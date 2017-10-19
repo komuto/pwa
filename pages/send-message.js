@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import SendMessage from '../src/Containers/SendMessage'
+import SendMessage from '../src/Containers/SendMessage/SendMessage'
 
 const Index = (props) => {
   const params = {

@@ -1,11 +1,17 @@
-// @flow
+/**
+ * Safei Muslim
+ * Yogyakarta , revamp: 16 Oktober 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+ /** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-// components
+/** including components */
 import Content from '../Components/Content'
 import Section from '../Components/Section'
 import Containers from '../Components/Containers'
@@ -16,15 +22,10 @@ import { HrText } from '../Components/Hr'
 import TermConditions from '../Components/TermConditions'
 import Notification from '../Components/Notification'
 import localforage from 'localforage'
-// validations
+/** including components */
 import * as constraints from '../Validations/Auth'
-// actions
+/** including actions */
 import * as loginAction from '../actions/user'
-// utils
-import { isFetching, isError, isFound, notifError } from '../Services/Status'
-
-const LOGIN_SOCIAL = 'LOGIN_SOCIAL'
-const LOGIN_FORM = 'LOGIN_FORM'
 
 class SignIn extends Component {
   constructor (props) {
@@ -52,100 +53,100 @@ class SignIn extends Component {
       notification: {
         status: false,
         message: 'Error, default message.'
-      }
+      },
+      fcmToken: null
     }
     this.submitting = false
-    this.dipatchType = null
     this.onChange = this.onChange.bind(this)
   }
 
-  validation (name, value) {
-    const { email, password } = constraints.loginConstraints
-    const { danger, success } = constraints.classInfo
-    let { input } = this.state
-    let status = false
-    switch (name) {
-      case input.email.name:
-        input.email.value = value
-        if (value === '') {
-          input.email.classInfo = danger
-          input.email.textHelp = email.alert.empty
-          status = false
-        } else {
-          if (EmailValidator.validate(value)) {
-            input.email.classInfo = success
-            input.email.textHelp = ''
-            status = true
-          } else {
-            input.email.classInfo = danger
-            input.email.textHelp = email.alert.valid
-            status = false
-          }
-        }
-        break
-      case input.password.name:
-        input.password.value = value
-        if (value === '') {
-          input.password.classInfo = danger
-          input.password.textHelp = password.alert.empty
-          status = false
-        } else {
-          input.password.classInfo = success
-          input.password.textHelp = ''
-          status = true
-        }
-        break
-      default:
-        break
-    }
-    this.setState({ input })
-    return status
-  }
-
   onChange (event) {
-    const { name, value } = event.target
-    this.validation(name, value)
+    let { name, value } = event.target
+    let { input } = this.state
+    input[name].value = value
+    this.setState({ input })
   }
 
   responseFacebook (response) {
     if (response) {
+      let { fcmToken } = this.state
       NProgress.start()
-      this.dipatchType = LOGIN_SOCIAL
+      this.submitting = true
       this.props.loginSocial({
         provider_name: 'Facebook',
         provider_uid: response.userID,
-        access_token: response.accessToken
-      })
-    }
-  }
-
-  async handleSignInClick () {
-    let { email, password } = this.state.input
-    if (this.validation(email.name, email.value) && this.validation(password.name, password.value)) {
-      NProgress.start()
-
-      let fcmToken = await localforage.getItem('FCM_TOKEN')
-
-      this.submitting = true
-      this.dipatchType = LOGIN_FORM
-      this.props.login({
-        email: email.value,
-        password: password.value,
+        access_token: response.accessToken,
         reg_token: fcmToken
       })
     }
   }
 
+  /** submit login */
+  submit () {
+    let { loginConstraints } = constraints
+    let { danger, success } = constraints.classInfo
+    let { input, fcmToken } = this.state
+    let { email, password } = input
+    let isError = false
+
+    email.classInfo = success
+    email.textHelp = ''
+
+    password.classInfo = success
+    password.textHelp = ''
+
+    /** validate email format */
+    if (!EmailValidator.validate(email.value)) {
+      email.classInfo = danger
+      email.textHelp = loginConstraints.email.alert.valid
+      isError = true
+    }
+
+    /** validate email empty */
+    if (email.value === '') {
+      email.classInfo = danger
+      email.textHelp = loginConstraints.email.alert.empty
+      isError = true
+    }
+
+    /** validate password empty */
+    if (password.value === '') {
+      password.classInfo = danger
+      password.textHelp = loginConstraints.password.alert.empty
+      isError = true
+    }
+
+    if (isError) {
+      this.setState({ input })
+      return
+    }
+
+    /** process */
+    NProgress.start()
+    this.submitting = true
+    this.props.login({
+      email: email.value,
+      password: password.value,
+      reg_token: fcmToken
+    })
+  }
+
+  async componentDidMount () {
+    let { fcmToken } = this.state
+    fcmToken = await localforage.getItem('FCM_TOKEN')
+    this.setState({ fcmToken })
+  }
+
   componentWillReceiveProps (nextProps) {
     const { user } = nextProps
-    // handling state get login
+    const { isFetching, isError, isFound, notifError } = this.props
+    /** handling state get login */
     if (!isFetching(user) && this.submitting) {
       NProgress.done()
       this.submitting = false
       if (isError(user)) {
         this.setState({ notification: notifError(user.message) })
       }
-
       if (isFound(user)) {
         this.props.getProfile()
         Router.push('/profile')
@@ -165,28 +166,27 @@ class SignIn extends Component {
           message={notification.message} />
         <Section className='content'>
           <Containers>
-            <form action='#' className='form'>
-              <Input
-                {...input.email}
-                onChange={this.onChange}
-                hasIconsRight />
-              <Input
-                {...input.password}
-                onChange={this.onChange}
-                hasIconsRight />
-              <TermConditions />
-              <ButtonFullWidth
-                text={localize.signin}
-                isLoading={this.submitting}
-                onClick={() => this.handleSignInClick()} />
-              <div className='has-text-centered'>
-                <Link href='/password-reset'><a>{localize.lost_password}</a></Link>
-              </div>
-              <HrText text={localize.or} />
-              <LoginFacebook
-                text={localize.login_facebook}
-                responseFacebook={(response) => this.responseFacebook(response)} />
-            </form>
+            <Input
+              {...input.email}
+              onChange={this.onChange}
+              hasIconsRight />
+            <Input
+              {...input.password}
+              onChange={this.onChange}
+              hasIconsRight />
+            <TermConditions />
+            <ButtonFullWidth
+              text={localize.signin}
+              isLoading={this.submitting}
+              onClick={() => this.submit()} />
+            <br />
+            <div className='has-text-centered'>
+              <Link href='/password-reset'><a>{localize.lost_password}</a></Link>
+            </div>
+            <HrText text={localize.or} />
+            <LoginFacebook
+              text={localize.login_facebook}
+              responseFacebook={(response) => this.responseFacebook(response)} />
           </Containers>
         </Section>
       </Content>

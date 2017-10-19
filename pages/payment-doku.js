@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PaymentDoku from '../src/Containers/PaymentDoku'
+import PaymentDoku from '../src/Containers/Payment/Doku'
 
 const Index = (props) => {
   const params = {

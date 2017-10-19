@@ -49,7 +49,8 @@ const images = {
   emptyStatesResolusi: '../../static/images/empty-states-resolusi.svg',
   emptyStates: '../../static/images/empty-states.svg',
   listProduct: '../../static/images/icon-daftar-produk.svg',
-  IconInfoBlue: '../../static/images/icon-info-blue.svg'
+  IconInfoBlue: '../../static/images/icon-info-blue.svg',
+  IconInfoYellow: '../../static/images/icon-info-yellow.svg'
 }
 
 export default images

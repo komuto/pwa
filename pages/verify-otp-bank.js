@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import VerifyOTPBank from '../src/Containers/VerifyOTPBank'
+import VerifyOTPBank from '../src/Containers/Verify/OTPBank'
 
 const Index = (props) => {
   const params = {

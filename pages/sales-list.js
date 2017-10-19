@@ -5,7 +5,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import SalesList from '../src/Containers/SalesList'
+import SalesList from '../src/Containers/Sales/List'
 
 const Index = (props) => {
   const params = {

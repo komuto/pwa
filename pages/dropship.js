@@ -5,7 +5,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ProductAddFromDropshipper from '../src/Containers/ProductAddFromDropshipper'
+import ProductAddFromDropshipper from '../src/Containers/Product/AddFromDropshipper'
 
 const Index = (props) => {
   const params = {

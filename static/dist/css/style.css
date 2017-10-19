@@ -5520,6 +5520,17 @@ strong {
       margin: 10px 10px 0 10px;
       border-radius: 3px;
       overflow: hidden; }
+  .main.is-padding-144 {
+    padding-top: 144px; }
+  .main.is-padding-160 {
+    padding-top: 160px; }
+  .main.is-padding-110 {
+    padding-top: 110px; }
+  .main.in-search {
+    padding-top: 119px; }
+    .main.in-search .level.header {
+      padding-bottom: 43px;
+      height: 112px; }
   .main.no-padding-bottom {
     padding-bottom: 10px; }
 
@@ -5704,6 +5715,11 @@ strong {
 .search-form {
   width: 100%;
   margin-bottom: 15px; }
+  .search-form.is-fixed {
+    position: fixed;
+    top: 64px;
+    width: 100%;
+    z-index: 2; }
   .search-form .control.has-icons-left .icon {
     font-size: 15px;
     height: 43px;
@@ -5789,6 +5805,11 @@ strong {
 .see-all {
   background-color: #ffffff;
   border-bottom: 1px solid #dedede; }
+  .see-all.is-fixed {
+    position: fixed;
+    top: 64px;
+    width: 100%;
+    z-index: 2; }
   .see-all:last-child {
     border-bottom: 0; }
   .see-all .link {
@@ -6587,6 +6608,7 @@ strong.total {
     border-bottom: 2px solid transparent;
     text-align: center;
     display: inline-block;
+    vertical-align: bottom;
     width: 50%;
     height: 41px; }
     .nav-tabs a .text {
@@ -6897,6 +6919,10 @@ strong.total {
         transform: translateY(-50%);
         border-bottom: none;
         background-color: transparent; }
+    .level.header .nav-left .box {
+      background-color: transparent; }
+      .level.header .nav-left .box .media .media-content p strong {
+        color: #ffffff; }
   .level.header.bg-white {
     background-color: #ffffff;
     border-bottom: 1px solid #dedede; }
@@ -6950,6 +6976,11 @@ strong.total {
       color: #ffffff; }
       .level.header .button-search .media-content .content p strong {
         color: #ffffff; }
+  .level.header .search-head {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%; }
 
 .home .level.header {
   height: auto; }
@@ -7196,11 +7227,15 @@ strong.total {
             color: #a0a3ae;
             letter-spacing: 0.2px;
             margin-bottom: 0; }
-            .profile-wrapp ul li .box .content p.user-name, .profile-wrapp ul li .box .content pproduct-name, .discuss ul li .box .content p.user-name, .discuss ul li .box .content pproduct-name {
-              width: 80%; }
+            .profile-wrapp ul li .box .content p.user-name, .profile-wrapp ul li .box .content p.product-name, .discuss ul li .box .content p.user-name, .discuss ul li .box .content p.product-name {
+              color: #41475e; }
             .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong {
               color: #41475e;
-              letter-spacing: 0.2px; }
+              letter-spacing: 0.2px;
+              display: block; }
+            .profile-wrapp ul li .box .content p .date-discuss, .discuss ul li .box .content p .date-discuss {
+              display: block;
+              opacity: 0.5; }
             .profile-wrapp ul li .box .content p a, .discuss ul li .box .content p a {
               display: block;
               color: #41475e; }
@@ -7217,6 +7252,10 @@ strong.total {
   padding: 0; }
   .discuss ul.product-discuss li {
     box-shadow: 0 0.5px 0 0 #eaebeb; }
+  .discuss ul.product-discuss.is-fixed {
+    position: fixed;
+    top: 64px;
+    width: 100%; }
   .discuss ul.main-discuss {
     margin: 0; }
   .discuss ul li {
@@ -7224,7 +7263,7 @@ strong.total {
     border-bottom: none; }
     .discuss ul li .time-discuss {
       position: absolute;
-      top: 20px;
+      top: 0;
       right: 20px;
       font-size: 11px;
       color: #41475e;
@@ -7301,6 +7340,12 @@ strong.total {
 
 .profile-wrapp.border-bottom {
   border-bottom: solid 0.5px #dedede; }
+
+@media screen and (max-width: 360px) {
+  .discuss ul li .time-discuss.relativeMobile {
+    right: 0;
+    top: 6px;
+    position: relative; } }
 
 .wishlist .search-form {
   margin-bottom: 20px; }
@@ -9717,6 +9762,12 @@ strong.total {
   .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong {
     max-width: 68%; } }
 
+@media screen and (max-width: 360px) {
+  .discuss .notif-detail li .box .media .media-content .time-discuss.relativeMobile {
+    right: 0;
+    top: 0;
+    position: relative; } }
+
 .saldo .saldo-panel {
   background-color: #ef5656;
   padding: 0 0 25px 47px;
@@ -9873,7 +9924,8 @@ strong.total {
   border-radius: 700px;
   vertical-align: middle;
   position: relative;
-  margin-left: 8px; }
+  margin-left: 8px;
+  top: -3px; }
   .notif-complaint > span {
     font-size: 11px;
     letter-spacing: 0.2px;

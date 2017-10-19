@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PasswordResetVerification from '../src/Containers/PasswordResetVerification'
+import PasswordResetVerification from '../src/Containers/Password/ResetVerification'
 
 const Index = (props) => {
   const params = {

@@ -5,7 +5,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Messages from '../src/Containers/Messages'
+import Messages from '../src/Containers/Message/Messages'
 
 const Index = (props) => {
   const params = {

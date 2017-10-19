@@ -17,17 +17,12 @@ const Success = (props) => {
 }
 
 export const Input = (props) => {
-  let icon = ''
-  switch (props.classInfo) {
-    case 'is-success':
-      icon = <Success />
-      break
-    case 'is-danger':
-      icon = <Warning />
-      break
-    default:
-      break
-  }
+  let alertList = ['is-success', 'is-danger']
+  let iconList = [<Success />, <Warning />]
+
+  let alertIndex = alertList.indexOf(props.classInfo)
+  let icon = iconList[alertIndex]
+
   return (
     <div className='field'>
       <label className='label'>{props.text}</label>

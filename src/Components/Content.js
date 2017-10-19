@@ -1,5 +1,4 @@
-export default (props: any) => {
-  const { children, className, style } = props
+export default ({children, className, style}) => {
   return (
     <div className={className} style={style}>
       { children }

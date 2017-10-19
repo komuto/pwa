@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PasswordNew from '../src/Containers/PasswordNew'
+import PasswordNew from '../src/Containers/Password/New'
 
 const Index = (props) => {
   const params = {

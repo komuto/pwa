@@ -4,7 +4,7 @@ import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Product from '../src/Containers/Product'
+import Product from '../src/Containers/Product/Product'
 
 const Index = (props) => {
   const params = {

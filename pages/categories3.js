@@ -4,7 +4,7 @@ import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Categories3 from '../src/Containers/Categories3'
+import Categories3 from '../src/Containers/Categories/Level3'
 
 const Index = (props) => {
   const { localize } = props

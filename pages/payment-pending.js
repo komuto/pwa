@@ -4,7 +4,7 @@ import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PaymentPending from '../src/Containers/PaymentPending'
+import PaymentPending from '../src/Containers/Payment/Pending'
 
 const Index = (props) => {
   const params = {

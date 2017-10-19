@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Transaction from '../src/Containers/Transaction'
+import Transaction from '../src/Containers/Transaction/Transaction'
 // config
 import Menu from '../src/Config/Menu'
 

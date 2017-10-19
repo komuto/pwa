@@ -250,7 +250,7 @@ export class Filter extends Component {
         <div className='modal-card'>
           <header className='modal-card-head'>
             <p className='modal-card-title'>Filter</p>
-            <button onClick={() => this.props.filterClose()} className='delete icon-close' />
+            <button onClick={() => this.props.filterOnClick()} className='delete icon-close' />
           </header>
           <section className='modal-card-body' style={{ marginBottom: 0 }}>
             <div className='fiter-side'>

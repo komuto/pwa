@@ -218,8 +218,7 @@ export class MoreOptions extends PureComponent {
   }
 }
 
-export const Hero = (props) => {
-  const { path, textPath, textInfo } = props
+export const Hero = ({ path, textPath, textInfo }) => {
   return (
     <section className='hero'>
       <div className='container is-fluid'>
@@ -231,3 +230,21 @@ export const Hero = (props) => {
     </section>
   )
 }
+
+export const Navtab = ({ onSelect, active, items }) => (
+  <div className='nav-tabs'>
+    {
+      items.map((item, index) => (
+        <a onClick={() => onSelect(item.name)} key={index} className={`${active === item.name ? 'active' : ''}`}>
+          <span className='text'>{item.name}</span>
+          {
+            item.notif > 0 &&
+            <span className='notif-complaint'>
+              <span>{ item.notif }</span>
+            </span>
+          }
+        </a>
+      ))
+    }
+  </div>
+)

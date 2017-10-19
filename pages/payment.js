@@ -5,9 +5,9 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Payment from '../src/Containers/Payment'
-import PaymentPending from '../src/Containers/PaymentPending'
-import PaymentSuccess from '../src/Containers/PaymentSuccess'
+import Payment from '../src/Containers/Payment/Payment'
+import PaymentPending from '../src/Containers/Payment/Pending'
+import PaymentSuccess from '../src/Containers/Payment/Success'
 
 const Index = (props) => {
   let { type } = props.query

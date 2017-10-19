@@ -9,7 +9,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 /** including component */
 import Content from '../../Components/Content'
-import Card from '../../Components/Card'
+import Card, { WrapperList } from '../../Components/Card'
 import CardList from '../../Components/CardList'
 import Notification from '../../Components/Notification'
 /** including actions */
@@ -89,15 +89,21 @@ const BalanceContent = (props) => {
   return (
     <Content>
       <Card title='Isi Ulang'>
-        <CardList className='icon-wallet-add' title='Isi Ulang Saldo' url='/balance-topup' />
-        <CardList className='icon-status-add' title='Status Pengisian' url='/balance-topup-status' />
+        <WrapperList>
+          <CardList className='icon-wallet-add' title='Isi Ulang Saldo' url='/balance-topup' />
+          <CardList className='icon-status-add' title='Status Pengisian' url='/balance-topup-status' />
+        </WrapperList>
       </Card>
       <Card title='Penarikan Saldo'>
-        <CardList className='icon-wallet-pull' title='Tarik Saldo' url='/balance-withdraw' />
-        <CardList className='icon-status-pull' title='Status Penarikan Saldo' url='/balance-withdraw-status' />
+        <WrapperList>
+          <CardList className='icon-wallet-pull' title='Tarik Saldo' url='/balance-withdraw' />
+          <CardList className='icon-status-pull' title='Status Penarikan Saldo' url='/balance-withdraw-status' />
+        </WrapperList>
       </Card>
       <Card>
-        <CardList className='icon-history' title='History Saldo' url='/balance-history' />
+        <WrapperList>
+          <CardList className='icon-history' title='History Saldo' url='/balance-history' />
+        </WrapperList>
       </Card>
     </Content>
   )
@@ -108,9 +114,9 @@ const mapStateToProps = (state) => ({
 })
 
 /** function get actions from redux */
-const mapDispatchToPtops = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   getBalance: () => dispatch(userActions.getBalance())
 })
 
 /** connecting componet with redux */
-export default connect(mapStateToProps, mapDispatchToPtops)(Balance)
+export default connect(mapStateToProps, mapDispatchToProps)(Balance)

@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Categories1 from '../src/Containers/Categories1'
+import Categories1 from '../src/Containers/Categories/Level1'
 
 const Index = (props) => {
   const { localize } = props

@@ -109,67 +109,28 @@ class Wishlist extends Component {
     let { isFetching, isError, isFound, notifError } = this.props
     let { products, addWishlist } = nextProps
 
-    // handling state set wishlist
+    /** handling state set wishlist */
     if (!isFetching(addWishlist) && this.submitting.addWishlist) {
       this.submitting = { ...this.submitting, addWishlist: false }
       if (isError(addWishlist)) {
         this.setState({ notification: notifError(addWishlist.message) })
       }
-
       if (isFound(addWishlist)) {
         this.setState({ addWishlist })
       }
     }
 
-    // handling state get products
+    /** handling state get products */
     if (!isFetching(products) && this.submitting.products) {
       NProgress.done()
       this.submitting = { ...this.submitting, products: false }
       if (isError(products)) {
         this.setState({ notification: notifError(products.message) })
       }
-
       if (isFound(products)) {
         this.setState({ products })
       }
     }
-  }
-
-  renderProductList (viewActive, products) {
-    return (
-      <Content>
-        {
-          products.map((myProduct, index) => {
-            if (myProduct.product.is_liked) {
-              return <ProductContainers key={index}>
-                <Product
-                  {...myProduct}
-                  viewActive={viewActive}
-                  wishlistPress={(id) => this.wishlistPress(id)} />
-              </ProductContainers>
-            }
-          })
-        }
-      </Content>
-    )
-  }
-
-  renderProductColoumn (viewActive, products) {
-    return (
-      <ProductContainers>
-        {
-          products.map((myProduct, index) => {
-            if (myProduct.product.is_liked) {
-              return <Product
-                {...myProduct}
-                key={index}
-                viewActive={viewActive}
-                wishlistPress={(id) => this.wishlistPress(id)} />
-            }
-          })
-        }
-      </ProductContainers>
-    )
   }
 
   render () {
@@ -182,9 +143,9 @@ class Wishlist extends Component {
       }
     }
     let wishlist = []
-    if (products.wishlist) wishlist = search.status ? search.results : products.wishlist
-    let listProducts = (viewActive === 'list') ? this.renderProductList(viewActive, wishlist) : this.renderProductColoumn(viewActive, wishlist)
-
+    if (products.wishlist) {
+      wishlist = search.status ? search.results : products.wishlist
+    }
     return (
       <Content>
         <Navbar {...params} />
@@ -204,9 +165,9 @@ class Wishlist extends Component {
             </p>
           </div>
         </Section>
-        <Section className='section is-paddingless' style={{marginBottom: '0px'}}>
-          { listProducts }
-        </Section>
+        <WishlistContent
+          viewActive={viewActive}
+          wishlist={wishlist} />
         <TabbarCategories
           sortButton
           filterButton={false}
@@ -223,6 +184,41 @@ class Wishlist extends Component {
     )
   }
 }
+
+const WishlistContent = ({ wishlist, viewActive }) => (
+  <Section className='section is-paddingless' style={{marginBottom: '0px'}}>
+    {
+      viewActive === 'list'
+      ? <Content>
+        {
+          wishlist.map((myProduct, index) => {
+            if (myProduct.product.is_liked) {
+              return <ProductContainers key={index}>
+                <Product
+                  {...myProduct}
+                  viewActive={viewActive}
+                  wishlistPress={(id) => this.wishlistPress(id)} />
+              </ProductContainers>
+            }
+          })
+        }
+      </Content>
+      : <ProductContainers>
+        {
+          wishlist.map((myProduct, index) => {
+            if (myProduct.product.is_liked) {
+              return <Product
+                {...myProduct}
+                key={index}
+                viewActive={viewActive}
+                wishlistPress={(id) => this.wishlistPress(id)} />
+            }
+          })
+        }
+      </ProductContainers>
+    }
+  </Section>
+)
 
 const mapStateToProps = (state) => ({
   products: state.wishlist,

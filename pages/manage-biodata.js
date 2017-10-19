@@ -5,7 +5,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ManageBiodata from '../src/Containers/ManageBiodata'
+import ManageBiodata from '../src/Containers/Manage/Biodata'
 
 const Index = (props) => {
   const params = {

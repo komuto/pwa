@@ -4,7 +4,7 @@
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import PasswordNewSuccess from '../src/Containers/PasswordNewSuccess'
+import PasswordNewSuccess from '../src/Containers/Password/NewSuccess'
 // style custom
 
 const Index = () => (
