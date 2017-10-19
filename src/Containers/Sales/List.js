@@ -78,40 +78,33 @@ class SalesList extends React.Component {
     let className
     let status
     switch (type) {
-      case 0: {
+      case 0:
         className = 'item-status has-trouble'
         status = 'Barang ditolak Reseller'
-      }
         break
-      case 1: {
+      case 1:
         className = 'item-status delivered'
         status = 'Menunggu konfirmasi Seller'
-      }
         break
-      case 2: {
+      case 2:
         className = 'item-status delivered'
         status = 'Barang sudah dikirim'
-      }
         break
-      case 3: {
+      case 3:
         className = 'item-status delivered'
         status = 'Menunggu Konfirmasi Pembeli'
-      }
         break
-      case 4: {
+      case 4:
         className = 'item-status accepted'
         status = 'Barang sudah diterima'
-      }
         break
-      case 5: {
+      case 5:
         className = 'item-status has-trouble'
         status = 'Terdapat barang bermasalah'
-      }
         break
-      case 6: {
+      case 6:
         className = 'item-status accepted'
         status = 'Komplain telah Selesai'
-      }
     }
     return (
       <div className={`${className}`}>{`${status}`}</div>
