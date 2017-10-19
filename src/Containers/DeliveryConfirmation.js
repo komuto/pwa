@@ -13,7 +13,7 @@ import * as transactionAction from '../actions/transaction'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // services
-import { isFetching, validateResponse } from '../Services/Status'
+import { isFetching, validateResponse, isFound, isError } from '../Services/Status'
 
 class DeliveryConfirmation extends React.Component {
   constructor (props) {
@@ -63,9 +63,14 @@ class DeliveryConfirmation extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { processingOrders } = nextProps
     if (!isFetching(processingOrders) && this.fetchingFirst) {
-      NProgress.done()
-      this.fetchingFirst = false
-      this.setState({ processingOrders, notification: validateResponse(processingOrders, 'Data review tidak ditemukan!') })
+      if (isFound(processingOrders)) {
+        NProgress.done()
+        this.fetchingFirst = false
+        this.setState({ processingOrders })
+      }
+      if (isError(processingOrders)) {
+        this.setState({ notification: validateResponse(processingOrders, processingOrders.message) })
+      }
     }
     if (!isFetching(processingOrders) && this.fetching) {
       let stateNewOrders = this.state.processingOrders
