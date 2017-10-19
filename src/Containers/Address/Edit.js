@@ -5,12 +5,12 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // actions
-import * as actionLocationTypes from '../actions/location'
-import * as actionAddressTypes from '../actions/address'
+import * as actionLocationTypes from '../../actions/location'
+import * as actionAddressTypes from '../../actions/address'
 // validation
-import { inputNumber } from '../Validations/Input'
+import { inputNumber } from '../../Validations/Input'
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 
 class EditAddress extends React.Component {
   constructor (props) {

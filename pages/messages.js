@@ -17,7 +17,7 @@ const Index = (props) => {
       searchBoox: false,
       path: '/',
       callBack: () => Router.push('/notification'),
-      textPath: 'Data Alamat'
+      textPath: 'Pesan'
     }
   }
   return (

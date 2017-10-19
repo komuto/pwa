@@ -5,9 +5,9 @@ import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
 // actions
-import * as actionTypes from '../actions/address'
+import * as actionTypes from '../../actions/address'
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 
 class DataAddress extends React.Component {
   constructor (props) {
