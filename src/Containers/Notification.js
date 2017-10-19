@@ -7,29 +7,13 @@ import Router from 'next/router'
 import * as actionTypes from '../actions/user'
 
 class Notification extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-    }
-  }
-
-  toMessages (e) {
-    e.preventDefault()
-    Router.push('/messages')
-  }
-
-  toDiscussionProduct (e) {
-    e.preventDefault()
-    Router.push('/discussion-product')
-  }
-
   render () {
     return (
       <section className='section is-paddingless'>
         <div className='seller-akun'>
           <div className='profile-wrapp'>
             <ul>
-              <li onClick={(e) => this.toMessages(e)}>
+              <li onClick={() => Router.push(`/messages`, `/messages`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -48,7 +32,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li onClick={(e) => this.toDiscussionProduct(e)}>
+              <li onClick={() => Router.push(`/discussion-product`, `/discussion/product`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -67,7 +51,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li onClick={() => Router.push(`/review-products`)}>
+              <li onClick={() => Router.push(`/review-products`, `/review/products`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -86,7 +70,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li onClick={() => Router.push(`/resolution-center`)}>
+              <li onClick={() => Router.push(`/resolution-center`, `/resolution/center`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
@@ -98,6 +82,25 @@ class Notification extends React.Component {
                       <div className='content'>
                         <p>
                           <strong>Pusat Resolusi</strong><br />
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <span className='icon-arrow-right' />
+              </li>
+              <li onClick={() => Router.push(`/complaint-buyer`, `/complaint/buyer`)}>
+                <div className='box is-paddingless'>
+                  <article className='media'>
+                    <div className='media-left'>
+                      <figure className='image'>
+                        <span className='icon-komplain-produk' />
+                      </figure>
+                    </div>
+                    <div className='media-content'>
+                      <div className='content'>
+                        <p>
+                          <strong>Komplain</strong><br />
                         </p>
                       </div>
                     </div>

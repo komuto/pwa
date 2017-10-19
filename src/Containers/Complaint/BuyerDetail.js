@@ -59,7 +59,7 @@ class Buyer extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
-        callBack: () => Router.push('/complaint-buyer'),
+        callBack: () => Router.push('/complaint-buyer', '/complaint/buyer'),
         textPath: 'Detail Komplain Barang'
       },
       navtab: {
@@ -132,7 +132,9 @@ class Buyer extends Component {
   }
 
   selectedTab (params) {
-    Router.push(`/complaint-buyer-detail?id=${this.state.id}&tab=${params}`)
+    let href = `/complaint-buyer-detail?id=${this.state.id}&tab=${params}`
+    let as = `/complaint/buyer/${this.state.id}?tab=${params}`
+    Router.push(href, as)
   }
 
   componentDidMount () {

@@ -73,6 +73,7 @@ class Buyer extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
+        callBack: () => Router.push('/notification'),
         textPath: 'Komplain Barang'
       },
       navtab: {
@@ -110,7 +111,7 @@ class Buyer extends Component {
   }
 
   selectedTab (params) {
-    Router.push(`/complaint-buyer?tab=${params}`)
+    Router.push(`/complaint-buyer?tab=${params}`, `/complaint/buyer?tab=${params}`)
   }
 
   componentDidMount () {
@@ -129,7 +130,7 @@ class Buyer extends Component {
       NProgress.done()
       this.submitting = { ...this.submitting, buyerComplainedOrders: false }
       if (isError(buyerComplainedOrders)) {
-        this.state({ notification: notifError(buyerComplainedOrders.message) })
+        this.setState({ notification: notifError(buyerComplainedOrders.message) })
       }
       if (isFound(buyerComplainedOrders)) {
         let hasMore = buyerComplainedOrders.orders.length > 8
@@ -145,7 +146,7 @@ class Buyer extends Component {
       NProgress.done()
       this.submitting = { ...this.submitting, buyerComplainedOrders2: false }
       if (isError(buyerComplainedOrders2)) {
-        this.state({ notification: notifError(buyerComplainedOrders2.message) })
+        this.setState({ notification: notifError(buyerComplainedOrders2.message) })
       }
       if (isFound(buyerComplainedOrders2)) {
         let hasMore = buyerComplainedOrders2.orders.length > 8
@@ -196,7 +197,7 @@ const ResolvedContent = ({ data }) => (
 )
 
 export const ItemStore = ({ order }) => (
-  <section onClick={() => Router.push(`/complaint-buyer-detail?id=${order.id}`)} className='section is-paddingless has-shadow xs-margin-top'>
+  <section onClick={() => Router.push(`/complaint-buyer-detail?id=${order.id}&tab=Detail`, `/complaint/buyer/${order.id}?tab=Detail`)} className='section is-paddingless has-shadow xs-margin-top'>
     <ul className='customer-order'>
       <li>
         <div className='columns custom is-mobile'>
