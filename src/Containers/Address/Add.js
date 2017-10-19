@@ -3,15 +3,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
-// import Loading from '../Components/Loading'
-import Notification from '../Components/Notification'
+import Notification from '../../Components/Notification'
 // actions
-import * as actionLocationTypes from '../actions/location'
-import * as actionAddressTypes from '../actions/address'
+import * as actionLocationTypes from '../../actions/location'
+import * as actionAddressTypes from '../../actions/address'
 // validation
-import { inputNumber } from '../Validations/Input'
+import { inputNumber } from '../../Validations/Input'
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 
 class AddAddress extends React.Component {
   constructor (props) {

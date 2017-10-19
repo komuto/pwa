@@ -5,12 +5,12 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 // actions
-import * as actionTypes from '../actions/stores'
-import * as actionUserTypes from '../actions/user'
+import * as actionTypes from '../../actions/stores'
+import * as actionUserTypes from '../../actions/user'
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 
-class AddressData extends React.Component {
+class AddressStore extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -216,4 +216,4 @@ const mapDispatchToProps = dispatch => ({
   getStoreAddress: () => dispatch(actionTypes.getStoreAddress())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddressData)
+export default connect(mapStateToProps, mapDispatchToProps)(AddressStore)

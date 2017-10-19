@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import EditAddress from '../src/Containers/EditAddress'
+import EditAddress from '../src/Containers/Address/Edit'
 
 const Index = (props) => {
   const params = {

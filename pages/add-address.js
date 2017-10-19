@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import AddAddress from '../src/Containers/AddAddress'
+import AddressAdd from '../src/Containers/Address/Add'
 
 const Index = (props) => {
   const params = {
@@ -20,7 +20,7 @@ const Index = (props) => {
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <AddAddress />
+      <AddressAdd />
     </DefaultLayout>
   )
 }
