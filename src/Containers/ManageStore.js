@@ -224,6 +224,25 @@ class ManageStore extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
+                <li onClick={() => Router.push('/complain-items')}>
+                  <div className='box is-paddingless'>
+                    <article className='media'>
+                      <div className='media-left'>
+                        <figure className='image'>
+                          <span className='icon-komplain-produk' />
+                        </figure>
+                      </div>
+                      <div className='media-content'>
+                        <div className='content'>
+                          <p>
+                            <strong>Komplain Barang</strong><br />
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                  <span className='icon-arrow-right' />
+                </li>
               </ul>
             </div>
           </div>
