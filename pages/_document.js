@@ -16,10 +16,10 @@ export default class HomeDocument extends Document {
           <title>Komuto</title>
           <meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
-          <link rel='stylesheet prefetch' href={`../static/dist/css/style.css`} />
-          <link rel='stylesheet prefetch' href={`../static/dist/css/effect.css`} />
-          <link rel='stylesheet prefetch' href={`../static/dist/css/nprogress.css`} />
-          <link rel='stylesheet prefetch' href={`../static/dist/css/react-infinite-calendar.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.css`} />
           <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
           <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
@@ -34,11 +34,11 @@ export default class HomeDocument extends Document {
         </Head>
         <body>
           <Main />
-          <script src={`../static/js/index.js`} />
+          <script src={`${AppConfig.baseURL}static/js/index.js`} />
           <NextScript />
           {/* <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' />
           <script src='http://staging.doku.com/doku-js/assets/js/doku.js' /> */}
-          <script src={`../static/js/nprogress.js`} />
+          <script src={`${AppConfig.baseURL}static/js/nprogress.js`} />
         </body>
       </html>
     )
