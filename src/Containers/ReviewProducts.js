@@ -12,7 +12,7 @@ import Loading from '../Components/Loading'
 // actions
 import * as reviewActions from '../actions/review'
 // services
-import { validateResponse, isFetching } from '../Services/Status'
+import { isFetching, isFound, isError, validateResponse } from '../Services/Status'
 
 class ReviewProducts extends Component {
   constructor (props) {
@@ -23,32 +23,33 @@ class ReviewProducts extends Component {
         page: 1,
         limit: 10
       },
-      hasMore: true,
       notification: {
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.hasMore = true
     this.fetching = false
     this.fetchingFirst = false
     this.afterAddComment = false
   }
 
   async loadMore () {
-    // let { pagination } = this.state
+    let { pagination } = this.state
     if (!this.fetching) {
-      // const newState = { pagination }
-      // pagination['page'] = pagination.page + 1
-      // this.setState(newState)
-      // await this.props.getBuyerReview(pagination)
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = true
+      await this.props.getBuyerReview(this.state.pagination)
     }
   }
 
   async componentDidMount () {
     const { buyerReview, pagination } = this.state
-    if (!buyerReview.isFound) {
+    if (!isFound(buyerReview)) {
       NProgress.start()
-      // this.fetchingFirst = true
+      this.fetchingFirst = true
       this.props.getBuyerReview(pagination)
     }
   }
