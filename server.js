@@ -16,70 +16,36 @@ const handle = app.getRequestHandler()
 app.prepare().then(_ => {
   const server = express()
 
+  const defineASURL = (as, url) => (
+    server.get(as, (req, res) => {
+      const params = Object.assign(req.query, req.params)
+      return app.render(req, res, url, params)
+    })
+  )
+
   // serve service worker
   server.get('/sw.js', (req, res) =>
     res.sendFile(path.resolve('./.next/sw.js'))
   )
 
-  server.get('/p/:slugparent/:slugsubparent/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/product', params)
-  })
-
-  server.get('/p/:slugparent/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/product', params)
-  })
-
-  server.get('/p/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/product', params)
-  })
-
-  server.get('/p', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/product', params)
-  })
-
-  server.get('/d/:slugparent/:slugsubparent/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/dropship', params)
-  })
-
-  server.get('/d/:slugparent/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/dropship', params)
-  })
-
-  server.get('/d/:slug', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/dropship', params)
-  })
-
-  server.get('/d', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/dropship', params)
-  })
-
-  server.get('/c/:slugparent/:slugsubparent/:slug/:id', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/product', params)
-  })
-
-  server.get('/c/:slugparent/:slug/:id', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/categories3', params)
-  })
-
-  server.get('/c/:slug/:id', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/categories2', params)
-  })
-
-  server.get('/c', (req, res) => {
-    const params = Object.assign(req.query, req.params)
-    return app.render(req, res, '/categories1', params)
-  })
+  defineASURL('/complaint/buyer/:id', '/complaint-buyer-detail')
+  defineASURL('/complaint/buyer', '/complaint-buyer')
+  defineASURL('/review/products', '/review-products')
+  defineASURL('/discussion/product', '/discussion-product')
+  defineASURL('/messages', '/messages')
+  defineASURL('/resolution/center', '/resolution-center')
+  defineASURL('/p/:slugparent/:slugsubparent/:slug', '/product')
+  defineASURL('/p/:slugparent/:slug', '/product')
+  defineASURL('/p/:slug', '/product')
+  defineASURL('/p', '/product')
+  defineASURL('/d/:slugparent/:slugsubparent/:slug', '/dropship')
+  defineASURL('/d/:slugparent/:slug', '/dropship')
+  defineASURL('/d/:slug', '/dropship')
+  defineASURL('/d', '/dropship')
+  defineASURL('/c/:slugparent/:slugsubparent/:slug/:id', '/product')
+  defineASURL('/c/:slugparent/:slug/:id', '/categories3')
+  defineASURL('/c/:slug/:id', '/categories2')
+  defineASURL('/c', '/categories1')
 
   server.get('*', (req, res) => {
     return handle(req, res)
