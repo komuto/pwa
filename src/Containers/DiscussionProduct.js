@@ -4,24 +4,45 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import moment from 'moment'
 import NProgress from 'nprogress'
+import InfiniteScroll from 'react-infinite-scroller'
+import _ from 'lodash'
 // components
+import Loading from '../Components/Loading'
 import Images from '../Themes/Images'
 import Notification from '../Components/Notification'
 // actions
 import * as userAction from '../actions/user'
 // services
-import { isFetching, validateResponse } from '../Services/Status'
+import { isFetching, isFound, isError, validateResponse } from '../Services/Status'
 
 class DiscussionProduct extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       userDiscussion: props.userDiscussion || null,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
+    }
+    this.hasMore = true
+    this.fetching = false
+    this.fetchingFirst = false
+  }
+
+  async loadMore () {
+    let { pagination } = this.state
+    if (!this.fetching) {
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = true
+      await this.props.getDiscussion(this.state.pagination)
     }
   }
 
@@ -30,67 +51,47 @@ class DiscussionProduct extends React.Component {
   }
 
   componentDidMount () {
-    if (!this.state.userDiscussion.isFound) {
-      NProgress.start()
-      this.props.getDiscussion()
-    }
+    NProgress.start()
+    this.fetchingFirst = true
+    this.props.getDiscussion({ page: 1, limit: 10 })
   }
 
   componentWillReceiveProps (nextProps) {
     const { userDiscussion } = nextProps
-    if (!isFetching(userDiscussion)) {
+    if (!isFetching(userDiscussion) && this.fetchingFirst) {
       NProgress.done()
-      this.setState({
-        userDiscussion: nextProps.userDiscussion,
-        notification: validateResponse(userDiscussion, userDiscussion.message)
-      })
+      this.fetchingFirst = false
+      if (isFound(userDiscussion)) {
+        this.setState({ userDiscussion, notification: validateResponse(userDiscussion, userDiscussion.message) })
+      }
+      if (isError(userDiscussion)) {
+        this.setState({ notification: validateResponse(userDiscussion, userDiscussion.message) })
+      }
     }
-  }
-
-  renderListMessages () {
-    const { userDiscussion } = this.state
-    if (userDiscussion.isFound && userDiscussion.discussions.length > 0) {
-      moment.locale('id')
-      return userDiscussion.discussions.map((discussion, i) => {
-        return (
-          <li key={i} onClick={(id) => this.detailDiscussion(discussion.product.id)}>
-            <div className='box is-paddingless'>
-              <article className='media'>
-                <div className='media-left top sm'>
-                  <figure className='image user-pict'>
-                    <img src={discussion.product.image} alt='pict' />
-                  </figure>
-                </div>
-                <div className='media-content'>
-                  <div className='content'>
-                    <p className='user-name'>
-                      <strong>{discussion.product.name}</strong>
-                      {discussion.question}
-                    </p>
-                  </div>
-                  <span className='time-discuss'>{moment.unix(discussion.created_at).format('h:mm')}</span>
-                </div>
-              </article>
-            </div>
-          </li>
-        )
-      })
-    } else {
-      return (
-        <div className='container is-fluid'>
-          <div className='desc has-text-centered'>
-            <img src={Images.emptyStatesDiscussion} alt='komuto' />
-            <br /><br />
-            <p><strong className='bold'>Diskusi Produk Anda Kosong</strong></p>
-            <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk produk apapun</p>
-          </div>
-        </div>
-      )
+    if (!isFetching(userDiscussion) && this.fetching) {
+      let newUserDiscussion = this.state.userDiscussion
+      if (isFound(userDiscussion)) {
+        if (userDiscussion.discussions.length > 0) {
+          this.fetching = false
+          newUserDiscussion.discussions = newUserDiscussion.discussions.concat(userDiscussion.discussions)
+          this.setState({ userDiscussion: newUserDiscussion })
+        } else {
+          this.hasMore = false
+          this.fetching = false
+        }
+      }
+      if (isError(userDiscussion)) {
+        this.setState({ notification: validateResponse(userDiscussion, userDiscussion.message) })
+        this.hasMore = false
+        this.fetching = false
+      }
     }
   }
 
   render () {
-    const { notification } = this.state
+    const { notification, userDiscussion } = this.state
+    if (!userDiscussion.isFound) return null
+    moment.locale('id')
     return (
       <div>
         <Notification
@@ -102,13 +103,62 @@ class DiscussionProduct extends React.Component {
         <section className='section is-paddingless'>
           <div className='discuss'>
             <ul className='notif-detail conversation bordered'>
-              {this.renderListMessages()}
+              {
+                userDiscussion.discussions.length > 0
+                ? <InfiniteScroll
+                  pageStart={0}
+                  loadMore={_.debounce(this.loadMore.bind(this), 500)}
+                  hasMore={this.hasMore}
+                  loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+                  {
+                    userDiscussion.discussions.map((discussion, i) => {
+                      return (
+                        <li key={i} onClick={(id) => this.detailDiscussion(discussion.product.id)}>
+                          <div className='box is-paddingless'>
+                            <article className='media'>
+                              <div className='media-left top sm'>
+                                <figure className='image user-pict'>
+                                  <img src={discussion.product.image} alt='pict' />
+                                </figure>
+                              </div>
+                              <div className='media-content'>
+                                <div className='content'>
+                                  <p className='user-name'>
+                                    <strong>{discussion.product.name}</strong>
+                                    {discussion.question}
+                                  </p>
+                                </div>
+                                <span className='time-discuss'>{moment.unix(discussion.created_at).format('h:mm')}</span>
+                              </div>
+                            </article>
+                          </div>
+                        </li>
+                      )
+                    })
+                  }
+                </InfiniteScroll>
+                : <EmptyDiscussion />
+                }
+
             </ul>
           </div>
         </section>
       </div>
     )
   }
+}
+
+const EmptyDiscussion = () => {
+  return (
+    <div className='container is-fluid'>
+      <div className='desc has-text-centered'>
+        <img src={Images.emptyStatesDiscussion} alt='komuto' />
+        <br /><br />
+        <p><strong className='bold'>Diskusi Produk Anda Kosong</strong></p>
+        <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk produk apapun</p>
+      </div>
+    </div>
+  )
 }
 
 const mapStateToProps = (state) => {
@@ -118,7 +168,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getDiscussion: () => dispatch(userAction.getDiscussion())
+  getDiscussion: (params) => dispatch(userAction.getDiscussion(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DiscussionProduct)
