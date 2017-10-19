@@ -1,0 +1,28 @@
+{
+    "apps" : [
+      {
+        "name"            : "komuto.pwa",
+        "script"          : "yarn",
+        "args"            : "server",
+        "ignore_watch"    : ["node_modules", "log/error.log", "log/access.log"],
+        "error_file"      : "log/error.log",
+        "out_file"        : "log/access.log",
+        "merge_logs"      : true,
+        "log_date_format" : "YYYY-MM-DD HH:mm Z",
+        "env"  : {
+            "PORT": 7008
+        }
+      }
+    ],
+    "deploy" : {
+      "staging" : {
+        "user" : "skyshi",
+        "host" : "121.101.131.149",
+        "ssh_options": "StrictHostKeyChecking=no",
+        "ref"  : "origin/master",
+        "path" : "/home/skyshi/deploy/komuto.pwa",
+        "repo"  : "git@gitlab.skyshi.io:komuto/pwa.git",
+        "post-deploy" : "cp ../../config/.env.komuto.pwa .env && yarn install && yarn build && pm2 startOrRestart ecosystem.json"
+      }
+    }
+}

@@ -171,6 +171,38 @@ class Sales extends React.Component {
     }
   }
 
+  countNotif1 (data) {
+    let count
+    if (data.isFound) {
+      if (data.orders.length > 0) {
+        count = data.orders.length
+      } else {
+        return null
+      }
+    } else {
+      return null
+    }
+    return (
+      <span className='notif-akun'>{ count }</span>
+    )
+  }
+
+  countNotif2 (data) {
+    let count
+    if (data.isFound) {
+      if (data.sales.length > 0) {
+        count = data.sales.length
+      } else {
+        return null
+      }
+    } else {
+      return null
+    }
+    return (
+      <span className='notif-akun'>{ count }</span>
+    )
+  }
+
   render () {
     const { newOrders, processingOrders, sales } = this.state
     return (
@@ -191,7 +223,7 @@ class Sales extends React.Component {
                         <p>
                           <strong>Pesanan Baru</strong>
                         </p>
-                        <div className='val-right'><span className='notif-akun'>{ newOrders.length !== 0 && newOrders.orders.length}</span></div>
+                        <div className='val-right'>{ this.countNotif1(newOrders) }</div>
                       </div>
                     </div>
                   </article>
@@ -211,7 +243,7 @@ class Sales extends React.Component {
                         <p>
                           <strong>Konfirmasi Pengiriman</strong>
                         </p>
-                        <div className='val-right'><span className='notif-akun'>{ processingOrders.length !== 0 && processingOrders.orders.length}</span></div>
+                        <div className='val-right'>{ this.countNotif1(processingOrders) }</div>
                       </div>
                     </div>
                   </article>
@@ -231,7 +263,7 @@ class Sales extends React.Component {
                         <p>
                           <strong>Daftar Penjualan</strong><br />
                         </p>
-                        <div className='val-right'><span className='notif-akun'>{ sales.length !== 0 && sales.sales.length}</span></div>
+                        <div className='val-right'>{ this.countNotif2(sales) }</div>
                       </div>
                     </div>
                   </article>
