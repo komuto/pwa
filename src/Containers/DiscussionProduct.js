@@ -51,9 +51,11 @@ class DiscussionProduct extends React.Component {
   }
 
   componentDidMount () {
-    NProgress.start()
-    this.fetchingFirst = true
-    this.props.getDiscussion({ page: 1, limit: 10 })
+    if (!isFound(this.state.userDiscussion)) {
+      NProgress.start()
+      this.fetchingFirst = true
+      this.props.getDiscussion({ page: 1, limit: 10 })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
