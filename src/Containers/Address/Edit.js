@@ -253,16 +253,16 @@ class EditAddress extends React.Component {
       switch (statusUpdateAddress.status) {
         case Status.SUCCESS: {
           this.setState({ submitting: false })
-          const href = `/data-address?isSuccess`
-          const as = 'data-address'
+          const href = `/manage-address?isSuccess`
+          const as = 'manage-address'
           Router.push(href, as, { shallow: true })
           break
         }
         case Status.OFFLINE :
         case Status.FAILED : {
           this.setState({ submitting: false })
-          const href = `/data-address?isSuccess`
-          const as = 'data-address'
+          const href = `/manage-address?isSuccess`
+          const as = 'manage-address'
           Router.push(href, as, { shallow: true })
           break
         }
