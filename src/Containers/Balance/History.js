@@ -70,8 +70,6 @@ class History extends Component {
       }
     }
 
-    // console.log({saldoHistory})
-
     return (
       <Content>
         <Navbar {...params} />
@@ -301,7 +299,11 @@ const List = ({id, amount, last_saldo, date, transType}) => {
   let TransDate = moment.unix(date).format('Do MMMM YY')
   let Amount = isDecreasses(transType) ? <BalanceDecreases amount={amount} /> : <BalanceIncreases amount={amount} />
   return (
-    <section onClick={() => Router.push(`/balance-history-detail?id=${id}&transType=${transType}`)} className='section is-paddingless has-shadow xs-margin-top'>
+    <section onClick={() =>
+      Router.push(
+        `/balance?type=history&status=detail&id=${id}&transType=${transType}`,
+        `/balance/history/detail/${id}/${transType}`
+      )} className='section is-paddingless has-shadow xs-margin-top'>
       <div className='payment-detail saldo-history'>
         <ul>
           <li>

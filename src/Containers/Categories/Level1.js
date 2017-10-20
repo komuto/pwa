@@ -1,4 +1,9 @@
-// @flow
+/**
+ * Safei Muslim
+ * Yogyakarta , 2017
+ * PT Skyshi Digital Indonesa
+ */
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
@@ -12,8 +17,6 @@ import Section, { SectionTitle } from '../../Components/Section'
 import Notification from '../../Components/Notification'
 // actions
 import * as homeActions from '../../actions/home'
-// Utils
-import { validateResponse, isFetching } from '../../Services/Status'
 
 class Level1 extends Component {
   constructor (props) {
@@ -21,26 +24,31 @@ class Level1 extends Component {
     this.state = {
       allCategory: props.allCategory || null,
       type: props.query.type || null,
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      }
+      notification: props.notification
+    }
+    this.submitting = {
+      allCategory: false
     }
   }
 
-  async componentDidMount () {
-    const { allCategory } = this.state.allCategory
-    if (!allCategory.isFound) {
-      NProgress.start()
-      await this.props.getCategory()
-    }
+  componentDidMount () {
+    NProgress.start()
+    this.submitting = { ...this.submitting, allCategory: true }
+    this.props.getCategory()
   }
 
   componentWillReceiveProps (nextProps) {
     const { allCategory } = nextProps
-    if (!isFetching(allCategory)) {
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(allCategory) && this.submitting.allCategory) {
       NProgress.done()
-      this.setState({ allCategory, notification: validateResponse(allCategory, 'Data kategori tidak ditemukan!') })
+      this.submitting = { ...this.submitting, allCategory: false }
+      if (isError(allCategory)) {
+        this.setState({ notification: notifError(allCategory.message) })
+      }
+      if (isFound(allCategory)) {
+        this.setState({ allCategory })
+      }
     }
   }
 

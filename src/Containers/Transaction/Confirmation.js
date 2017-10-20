@@ -403,7 +403,10 @@ class TransactionConfirmation extends Component {
         complaint: false
       }
       if (addComplaint.status === Status.SUCCESS) {
-        Router.push('/transaction-confirmation-complaint')
+        Router.push(
+          '/transaction-confirmation-complaint',
+          '/transaction-confirmation/complaint'
+        )
       } else {
         this.setState({ addComplaint, notification: validateResponse(addComplaint, 'Gagal melakukan komplain') })
       }
@@ -416,7 +419,10 @@ class TransactionConfirmation extends Component {
         review: false
       }
       if (addReviews.status === Status.SUCCESS) {
-        Router.push('/transaction-confirmation-review')
+        Router.push(
+          '/transaction-confirmation-review',
+          '/transaction/confirmation/review'
+        )
       } else {
         this.setState({ notification: validateResponse(addReviews, 'Gagal melakukan review') })
       }

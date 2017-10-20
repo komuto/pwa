@@ -17,3 +17,5 @@ npm-debug.log
 catatan.txt
 
 yarn.lock
+
+./src/Config/AppConfig.js
