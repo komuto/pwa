@@ -7232,7 +7232,7 @@ strong.total {
             .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong {
               color: #41475e;
               letter-spacing: 0.2px;
-              display: block; }
+              display: inline-block; }
             .profile-wrapp ul li .box .content p .date-discuss, .discuss ul li .box .content p .date-discuss {
               display: block;
               opacity: 0.5; }
@@ -7271,6 +7271,8 @@ strong.total {
       opacity: 0.5; }
       .discuss ul li .time-discuss.bg-white {
         margin-bottom: 10px; }
+    .discuss ul li .box .content p strong {
+      display: block; }
   .discuss ul.notif-detail .time-discuss {
     top: 0; }
   .discuss ul.notif-detail .box .content {

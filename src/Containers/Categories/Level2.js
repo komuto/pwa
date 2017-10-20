@@ -14,8 +14,6 @@ import Notification from '../../Components/Notification'
 import { Navbar } from '../../Containers/Navbar'
 // actions
 import * as homeActions from '../../actions/home'
-// utils
-import { validateResponse, isFetching } from '../../Services/Status'
 
 class Level2 extends Component {
   constructor (props) {
@@ -24,10 +22,10 @@ class Level2 extends Component {
       id: props.query.id || null,
       subCategory: props.subCategory || [],
       type: props.query.type || null,
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      }
+      notification: props.notification
+    }
+    this.submitting = {
+      subCategory: false
     }
   }
 
@@ -75,14 +73,25 @@ class Level2 extends Component {
 
   componentDidMount () {
     const { id } = this.state
-    if (id) NProgress.start() && this.props.getSubCategory({ id })
+    if (id) {
+      this.submitting = { ...this.submitting, subCategory: true }
+      NProgress.start()
+      this.props.getSubCategory({ id })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
     const { subCategory } = nextProps
-    if (!isFetching(subCategory)) {
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(subCategory) && this.submitting.subCategory) {
       NProgress.done()
-      this.setState({ subCategory, notification: validateResponse(subCategory, 'Data sub kategori tidak ditemukan!') })
+      this.submitting = { ...this.submitting, subCategory: false }
+      if (isError(subCategory)) {
+        this.setState({ notification: notifError(subCategory.message) })
+      }
+      if (isFound(subCategory)) {
+        this.setState({ subCategory })
+      }
     }
   }
 

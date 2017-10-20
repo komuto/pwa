@@ -111,7 +111,10 @@ class Buyer extends Component {
   }
 
   selectedTab (params) {
-    Router.push(`/complaint-buyer?tab=${params}`, `/complaint/buyer?tab=${params}`)
+    Router.push(
+      `/complaint?type=buyer&tab=${params}`,
+      `/complaint/buyer?tab=${params}`
+    )
   }
 
   componentDidMount () {
@@ -197,7 +200,11 @@ const ResolvedContent = ({ data }) => (
 )
 
 export const ItemStore = ({ order }) => (
-  <section onClick={() => Router.push(`/complaint-buyer-detail?id=${order.id}&tab=Detail`, `/complaint/buyer/${order.id}?tab=Detail`)} className='section is-paddingless has-shadow xs-margin-top'>
+  <section onClick={() =>
+    Router.push(
+      `/complaint?type=buyer&id=${order.id}&tab=Detail`,
+      `/complaint/buyer/${order.id}?tab=Detail`
+    )} className='section is-paddingless has-shadow xs-margin-top'>
     <ul className='customer-order'>
       <li>
         <div className='columns custom is-mobile'>

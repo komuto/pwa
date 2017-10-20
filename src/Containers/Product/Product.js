@@ -4,7 +4,7 @@
  * PT Skyshi Digital Indonesa
  */
 
- /** including dependencies */
+/** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
@@ -50,7 +50,7 @@ class MyProduct extends Component {
         id: props.query.id || null
       },
       productBySearch: props.productBySearch || null,
-      categories: props.subCategory || [],
+      categories: props.subCategory.categories || [],
       expeditionServices: props.expeditionServices || null,
       coba: props.expeditionServices || null,
       provinces: props.provinces || null,
@@ -174,28 +174,30 @@ class MyProduct extends Component {
   }
 
   componentDidMount () {
-    // const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
+    const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
+    // const { id } = this.state.query
     // console.log('componentDidMount()')
     /** generate params */
-    this.params = { ...this.props.query }
-    // if (id) this.params.category_id = id
-    // if (page) this.params.page = page
-    // if (limit) this.params.limit = limit
-    // if (sort) this.params.sort = sort
-    // if (q) this.params.query = q
-    // if (condition) this.params.condition = condition
-    // if (services) this.params.services = services
-    // if (other) this.params.other = other
-    // if (brands) this.params.brands = brands
+    // console.log(this.props.query)
+    // this.params = { ...this.state.query }
+    if (id) this.params.category_id = id
+    if (page) this.params.page = page
+    if (limit) this.params.limit = limit
+    if (sort) this.params.sort = sort
+    if (q) this.params.query = q
+    if (condition) this.params.condition = condition
+    if (services) this.params.services = services
+    if (other) this.params.other = other
+    if (brands) this.params.brands = brands
 
     /** start loading */
     NProgress.start()
 
     /** fetch product & category */
-    let { id } = this.state.query
+    // let { id } = this.state.query
     if (id) {
       this.submitting = { ...this.submitting, subCategory: true }
-      this.props.subCategory({ id })
+      this.props.getSubCategory({ id })
     }
 
     this.submitting = {
@@ -571,7 +573,7 @@ const mapDispatchToProps = (dispatch) => ({
   getDistrict: (params) => dispatch(locationActions.getDistrict(params)),
   addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
   listProductBySearch: (params) => dispatch(productActions.listProductBySearch(params)),
-  subCategory: (params) => dispatch(homeActions.subCategory(params)),
+  getSubCategory: (params) => dispatch(homeActions.subCategory(params)),
   getServices: () => dispatch(expeditionActions.getServices()),
   getProvince: () => dispatch(locationActions.getProvince()),
   getBrand: () => dispatch(brandActions.getBrand())
