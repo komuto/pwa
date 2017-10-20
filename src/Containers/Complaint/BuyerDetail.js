@@ -253,7 +253,7 @@ const DetailContent = ({ orderDetail }) => {
         { isComplaintNew && <ComplaintNew /> }
         { isComplaintReceived && <ComplaintReceived /> }
         { isComplaintDone && <ComplaintDone /> }
-        { isFineProduct && <ComplaintReview /> }
+        { isFineProduct && <ComplaintReview id={orderDetail.id} /> }
         <Item title='No Invoice' data={orderDetail.invoice.invoice_number} type='standard' />
         <Item title='Tanggal Transaksi' data={createdAt} type='standard' />
         <Item title='Status Penyelesaian' data={isComplaintDone ? <SolutionDone /> : <SolutionWaiting />} type='status' />
