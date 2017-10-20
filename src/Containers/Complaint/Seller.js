@@ -216,10 +216,10 @@ const ListComplainOrderWaiting = (props) => {
                         <div className='columns custom is-mobile'>
                           <div className='column is-half'><strong>{order.user.name}</strong></div>
                           <div className='column is-half has-text-right'>
-                            { /* order.dispute_products.length > 0
+                            { order.count_unread > 0
                               ? <span className='notif-akun right'>{order.dispute_products.length}</span>
                               : ''
-                            */}
+                            }
                           </div>
                         </div>
                       </li>
@@ -313,10 +313,10 @@ const ListComplainOrderDone = (props) => {
                         <div className='columns custom is-mobile'>
                           <div className='column is-half'><strong>{order.user.name}</strong></div>
                           <div className='column is-half has-text-right'>
-                            { /* order.dispute_products.length > 0
+                            { order.count_unread > 0
                               ? <span className='notif-akun right'>{order.dispute_products.length}</span>
                               : ''
-                            */ }
+                            }
                           </div>
                         </div>
                       </li>

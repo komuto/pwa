@@ -306,6 +306,7 @@ class ComplainItemDetail extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { notification, tabs, sellerComplainedOrderDetail, message, showModal, validation, showModalShipping, receiptNumber } = this.state
     if (!sellerComplainedOrderDetail.isFound) return null
     return (
