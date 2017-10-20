@@ -5,10 +5,10 @@ import Router from 'next/router'
 // components
 
 // validation
-import { inputNumber } from '../Validations/Input'
+import { inputNumber } from '../../Validations/Input'
 // actions
-import * as actionTypes from '../actions/bank'
-import * as actionUserTypes from '../actions/user'
+import * as actionTypes from '../../actions/bank'
+import * as actionUserTypes from '../../actions/user'
 
 class EditRekening extends React.Component {
   constructor (props) {
