@@ -104,7 +104,7 @@ class ManageAccount extends Component {
 
   toDataAddress (e) {
     e.preventDefault()
-    Router.push('/data-address')
+    Router.push('/manage-address')
   }
 
   toChangePassword (e) {

@@ -4,12 +4,12 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import moment from 'moment'
 // components
-import Images from '../Themes/Images'
-import Notification from '../Components/Notification'
+import Images from '../../Themes/Images'
+import Notification from '../../Components/Notification'
 // actions
-import * as transactionAction from '../actions/transaction'
+import * as transactionAction from '../../actions/transaction'
 // services
-import { isFetching, isFound, isError, validateResponse, validateResponseAlter } from '../Services/Status'
+import { isFetching, isFound, isError, validateResponse, validateResponseAlter } from '../../Services/Status'
 
 const TAB_DETAIL = 'TAB_DETAIL'
 const TAB_DISCUSSION = 'TAB_DISCUSSION'
