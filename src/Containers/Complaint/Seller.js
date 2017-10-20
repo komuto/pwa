@@ -145,7 +145,6 @@ class ComplainItems extends React.Component {
         this.fetching2 = false
       }
     }
-    console.log('nextPropsMes', nextProps)
   }
 
   render () {
@@ -217,10 +216,10 @@ const ListComplainOrderWaiting = (props) => {
                         <div className='columns custom is-mobile'>
                           <div className='column is-half'><strong>{order.user.name}</strong></div>
                           <div className='column is-half has-text-right'>
-                            { order.dispute_products.length > 0
+                            { /* order.dispute_products.length > 0
                               ? <span className='notif-akun right'>{order.dispute_products.length}</span>
                               : ''
-                            }
+                            */}
                           </div>
                         </div>
                       </li>
@@ -314,10 +313,10 @@ const ListComplainOrderDone = (props) => {
                         <div className='columns custom is-mobile'>
                           <div className='column is-half'><strong>{order.user.name}</strong></div>
                           <div className='column is-half has-text-right'>
-                            { order.dispute_products.length > 0
+                            { /* order.dispute_products.length > 0
                               ? <span className='notif-akun right'>{order.dispute_products.length}</span>
                               : ''
-                            }
+                            */ }
                           </div>
                         </div>
                       </li>
