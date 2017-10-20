@@ -1,9 +1,10 @@
 // a library to wrap and simplify api calls
-import AppConfig from '../Config/AppConfig'
+// import AppConfig from '../Config/AppConfig'
 import apisauce from 'apisauce'
 // import qs from 'querystringify'
 // const apiURL = 'http://api.rupa.project.skyshi.com/'
-const apiURL = AppConfig.apiURL
+// const apiURL = AppConfig.apiURL
+const apiURL = ''
 // const baseUrlStg = 'http://121.101.131.149:18000/rupastg/'
 // const baseUrlES = 'http://search.rupa.project.skyshi.com/'
 

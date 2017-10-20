@@ -1,8 +1,9 @@
 import { delay } from 'redux-saga'
 import { put, call, select } from 'redux-saga/effects'
 import localforage from 'localforage'
-export const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
-export const apiKomuto = 'https://api.komuto.skyshi.com/4690fa4c3d68f93b/'
+import AppConfig from './Config/AppConfig'
+export const serviceUrl = AppConfig.serviceUrl
+export const apiKomuto = AppConfig.apiKomuto
 export const storage = localforage
 
 export function errorHandling (actionType, err) {
