@@ -1,28 +1,26 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import DataAddress from '../src/Containers/Address/DataAddress'
+import ComplainItems from '../src/Containers/Complaint/Seller'
 
 const Index = (props) => {
   const params = {
-    style: 'main no-padding-bottom bg-grey',
+    style: 'main detail bg-grey',
     header: {
-      title: 'Data Alamat'
+      title: 'Komplain Barang'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      callBack: () => Router.push('/manage-account'),
-      textPath: 'Data Alamat'
+      textPath: 'Komplain Barang'
     }
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <DataAddress {...props} />
+      <ComplainItems {...props} />
     </DefaultLayout>
   )
 }

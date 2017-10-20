@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import AddRekening from '../src/Containers/AddRekening'
+import AddRekening from '../src/Containers/Rekening/Add'
 
 const Index = (props) => {
   const params = {

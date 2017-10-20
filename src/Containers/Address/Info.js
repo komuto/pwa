@@ -5,16 +5,16 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 // import Loading from '../Components/Loading'
 import NProgress from 'nprogress'
-import Notification from '../Components/Notification'
+import Notification from '../../Components/Notification'
 // actions
-import * as actionLocationTypes from '../actions/location'
-import * as actionAddressTypes from '../actions/address'
-import * as actionStoreTypes from '../actions/stores'
-import * as actionExpeditionTypes from '../actions/expedition'
+import * as actionLocationTypes from '../../actions/location'
+import * as actionAddressTypes from '../../actions/address'
+import * as actionStoreTypes from '../../actions/stores'
+import * as actionExpeditionTypes from '../../actions/expedition'
 // validation
-import { inputNumber } from '../Validations/Input'
+import { inputNumber } from '../../Validations/Input'
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 
 class AddressInfo extends React.Component {
   constructor (props) {

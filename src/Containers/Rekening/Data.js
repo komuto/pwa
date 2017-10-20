@@ -5,10 +5,10 @@ import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
 // services
-import { Status } from '../Services/Status'
+import { Status } from '../../Services/Status'
 // actions
-import * as actionUserTypes from '../actions/user'
-import * as actionTypes from '../actions/bank'
+import * as actionUserTypes from '../../actions/user'
+import * as actionTypes from '../../actions/bank'
 
 class DataRekening extends React.Component {
   constructor (props) {

@@ -6,13 +6,13 @@ import _ from 'lodash'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
-import Loading from '../Components/Loading'
-import Images from '../Themes/Images'
-import Notification from '../Components/Notification'
+import Loading from '../../Components/Loading'
+import Images from '../../Themes/Images'
+import Notification from '../../Components/Notification'
 // actions
-import * as transactionAction from '../actions/transaction'
+import * as transactionAction from '../../actions/transaction'
 // services
-import { isFetching, isFound, isError, validateResponse } from '../Services/Status'
+import { isFetching, isFound, isError, validateResponse } from '../../Services/Status'
 
 const TAB_WAIT = 'TAB_WAIT'
 const TAB_DONE = 'TAB_DONE'
@@ -52,7 +52,7 @@ class ComplainItems extends React.Component {
   }
 
   complainDetail (id) {
-    Router.push(`/complain-detail?id=${id}`)
+    Router.push(`/complain-seller-detail?id=${id}`)
   }
 
   async loadMore () {
@@ -211,7 +211,7 @@ const ListComplainOrderWaiting = (props) => {
               sellerComplainedOrders.orders.map((order, i) => {
                 return (
                   <section className='section is-paddingless has-shadow xs-margin-top'
-                    onClick={() => Router.push(`/complain-item-detail?id=${order.id}`)} key={i}>
+                    onClick={() => Router.push(`/complain-seller-detail?id=${order.id}`)} key={i}>
                     <ul className='customer-order'>
                       <li>
                         <div className='columns custom is-mobile'>
@@ -308,7 +308,7 @@ const ListComplainOrderDone = (props) => {
               sellerComplainedOrders2.orders.map((order, i) => {
                 return (
                   <section className='section is-paddingless has-shadow xs-margin-top'
-                    onClick={() => Router.push(`/complain-item-detail?id=${order.id}`)} key={i}>
+                    onClick={() => Router.push(`/complain-seller-detail?id=${order.id}`)} key={i}>
                     <ul className='customer-order'>
                       <li>
                         <div className='columns custom is-mobile'>
