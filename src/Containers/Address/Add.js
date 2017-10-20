@@ -227,7 +227,7 @@ class AddAddress extends React.Component {
       switch (nextProps.statusAddAddress.status) {
         case Status.SUCCESS:
           this.setState({ submitting: false })
-          const href = `/data-address?isSuccess`
+          const href = `/manage-address?isSuccess`
           const as = 'data-address'
           Router.push(href, as, { shallow: true })
           break
