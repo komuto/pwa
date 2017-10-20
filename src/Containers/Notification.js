@@ -89,7 +89,7 @@ class Notification extends React.Component {
                 </div>
                 <span className='icon-arrow-right' />
               </li>
-              <li onClick={() => Router.push(`/complaint-buyer`, `/complaint/buyer`)}>
+              <li onClick={() => Router.push(`/complaint?type=buyer`, `/complaint/buyer`)}>
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>

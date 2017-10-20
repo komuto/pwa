@@ -28,8 +28,6 @@ app.prepare().then(_ => {
     res.sendFile(path.resolve('./.next/sw.js'))
   )
 
-  defineASURL('/complaint/buyer/:id', '/complaint-buyer-detail')
-  defineASURL('/complaint/buyer', '/complaint-buyer')
   defineASURL('/review/products', '/review-products')
   defineASURL('/discussion/product', '/discussion-product')
   defineASURL('/messages', '/messages')
@@ -46,6 +44,19 @@ app.prepare().then(_ => {
   defineASURL('/c/:slugparent/:slug/:id', '/categories3')
   defineASURL('/c/:slug/:id', '/categories2')
   defineASURL('/c', '/categories1')
+  defineASURL('/transaction/:id', '/transaction-detail')
+  defineASURL('/transaction/:id/:idInv', '/transaction-detail-status')
+  defineASURL('/payment/:paymentType/:idT', '/payment')
+  defineASURL('/transaction-confirmation/complaint', '/transaction-confirmation-complaint')
+  defineASURL('/transaction-confirmation/review', '/transaction-confirmation-review')
+  defineASURL('/product-detail/:id', '/product-detail')
+  defineASURL('/balance', '/balance')
+  defineASURL('/balance/:type', '/balance')
+  defineASURL('/balance/:type/:status', '/balance')
+  defineASURL('/balance/:type/:status/:id/:transType', '/balance')
+  defineASURL('/complaint/:type', '/complaint')
+  defineASURL('/complaint/:type/:id', '/complaint')
+  defineASURL('/complaint/:type/:id/:sub', '/complaint')
 
   server.get('*', (req, res) => {
     return handle(req, res)

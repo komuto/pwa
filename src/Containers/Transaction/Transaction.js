@@ -1,16 +1,23 @@
+/**
+ * Safei Muslim
+ * Yogyakarta , 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+ /** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-// component
+/** including component */
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
-// actions
+/** including actions */
 import * as transactionActions from '../../actions/transaction'
-// lib
+/** including lib */
 import RupiahFormat from '../../Lib/RupiahFormat'
-// utils
+/** including utils */
 import { PAYMENT_STATUS } from './Detail'
 
 class Transaction extends Component {
@@ -34,6 +41,7 @@ class Transaction extends Component {
   componentWillReceiveProps (nextProps) {
     let { listTransactions } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
+    /** handling state list of transaction */
     if (!isFetching(listTransactions) && this.submitting.transaction) {
       NProgress.done()
       this.submitting = { ...this.submitting, transaction: false }
@@ -93,7 +101,7 @@ const TransactionContent = (props) => {
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
                         <div className='column'>
                           <div className='box'>
-                            <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`)}>
+                            <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`, `/transaction/${bucket.id}`)}>
                               <div className='media-left'>
                                 <figure className='image list-transaction'>
                                   <a>
@@ -150,7 +158,7 @@ const TransactionContent = (props) => {
                     <div className='columns is-mobile is-multiline no-margin-bottom'>
                       <div className='column'>
                         <div className='box'>
-                          <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`)}>
+                          <div className='media' onClick={() => Router.push(`/transaction-detail?id=${bucket.id}`, `/transaction/${bucket.id}`)}>
                             {
                               products.map((product, index) => {
                                 return index < 2

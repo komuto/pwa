@@ -90,19 +90,19 @@ const BalanceContent = (props) => {
     <Content>
       <Card title='Isi Ulang'>
         <WrapperList>
-          <CardList className='icon-wallet-add' title='Isi Ulang Saldo' url='/balance-topup' />
-          <CardList className='icon-status-add' title='Status Pengisian' url='/balance-topup-status' />
+          <CardList className='icon-wallet-add' title='Isi Ulang Saldo' url='/balance?type=topup' as='/balance/topup' />
+          <CardList className='icon-status-add' title='Status Pengisian' url='/balance?type=topup&status=history' as='/balance/topup/history' />
         </WrapperList>
       </Card>
       <Card title='Penarikan Saldo'>
         <WrapperList>
-          <CardList className='icon-wallet-pull' title='Tarik Saldo' url='/balance-withdraw' />
-          <CardList className='icon-status-pull' title='Status Penarikan Saldo' url='/balance-withdraw-status' />
+          <CardList className='icon-wallet-pull' title='Tarik Saldo' url='/balance?type=withdraw' as='/balance/withdraw' />
+          <CardList className='icon-status-pull' title='Status Penarikan Saldo' url='/balance?type=withdraw&status=history' as='/balance/withdraw/history' />
         </WrapperList>
       </Card>
       <Card>
         <WrapperList>
-          <CardList className='icon-history' title='History Saldo' url='/balance-history' />
+          <CardList className='icon-history' title='History Saldo' url='/balance?type=history' as='/balance/history' />
         </WrapperList>
       </Card>
     </Content>

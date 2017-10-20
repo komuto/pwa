@@ -1,27 +1,34 @@
+/**
+ * Safei Muslim
+ * Yogyakarta , 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+ /** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-// componnet
+/** including componnet */
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
-// actions
+/** including actions */
 import * as transactionActions from '../../actions/transaction'
-// images
+/** including images */
 import Images from '../../Themes/Images'
-// lib
+/** including lib */
 import RupiahFormat from '../../Lib/RupiahFormat'
 import Promo from '../../Lib/Promo'
-// payment status
+/** define payment status */
 export const PAYMENT_STATUS = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
 export const PAYMENT_ICON = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
 export const PAYMENT_CLASS = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
-// invoce status
+/** define invoce status */
 export const INVOICE_TRANSACTION_STATUS = ['REJECTED', 'WAITING', 'PROCEED', 'SENDING', 'RECEIVED', 'PROBLEM', 'COMPLAINT_DONE']
 export const INVOICE_TRANSACTION_CLASS = ['reject', 'waiting', 'process', 'delivered', 'accepted', 'has-trouble', 'has-complaint']
 export const INVOICE_TRANSACTION_MESSAGE = ['Ditolak oleh Seller', 'Menunggu Konfirmasi Seller', 'Diproses oleh Seller', 'Barang sudah dikirim', 'Barang sudah diterima', 'Terdapat barang bermasalah', 'Komplain telah selesai']
-// shipping
+/** define shipping */
 export const SHIPPING_SENDER_STATUS = ['DEFAULT', 'ACCEPT', 'DECLINE', 'SENT']
 
 class TransactionDetail extends Component {
@@ -226,7 +233,11 @@ const TransactionDetailContent = (props) => {
                 }
                 <div className='payment-detail step-pay'>
                   <ul>
-                    <li onClick={() => Router.push(`/transaction-detail-status?id=${bucket.id}&idInv=${invoice.id}`)}>
+                    <li onClick={() =>
+                      Router.push(
+                        `/transaction-detail-status?id=${bucket.id}&idInv=${invoice.id}`,
+                        `/transaction/${bucket.id}/${invoice.id}`
+                      )}>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
                         <div className='column'>
                           <div className='label-text is-left top-middle'>
@@ -287,7 +298,11 @@ const TransactionDetailContent = (props) => {
             <div className='payment-detail action' style={{ backgroundColor: '#f4f5f6' }}>
               <ul>
                 <li>
-                  <a onClick={() => Router.push(`/payment?paymentType=transaction&idT=${id}`)} className={`button is-primary is-large is-fullwidth`}>Bayar Sekarang</a>
+                  <a onClick={() =>
+                    Router.push(
+                      `/payment?paymentType=transaction&idT=${id}`,
+                      `/payment/transaction/${id}`
+                    )} className={`button is-primary is-large is-fullwidth`}>Bayar Sekarang</a>
                 </li>
               </ul>
             </div>

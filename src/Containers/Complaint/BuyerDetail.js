@@ -14,6 +14,7 @@ import moment from 'moment'
 /** including component */
 import Comment from '../../Components/Comment'
 import Content from '../../Components/Content'
+import { ButtonFullWidth } from '../../Components/Button'
 import Section from '../../Components/Section'
 import Notification, { NotificationBox } from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
@@ -28,7 +29,7 @@ import * as validations from '../../Validations/Input'
 /** including themes */
 import Images from '../../Themes/Images'
 
-class Buyer extends Component {
+class Detail extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -59,7 +60,7 @@ class Buyer extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
-        callBack: () => Router.push('/complaint-buyer', '/complaint/buyer'),
+        callBack: () => Router.push('/complaint?type=buyer', '/complaint/buyer'),
         textPath: 'Detail Komplain Barang'
       },
       navtab: {
@@ -96,7 +97,7 @@ class Buyer extends Component {
     )
   }
 
-  scrollToBottom = () => {
+  scrollToBottom () {
     animateScroll.scrollToBottom()
   }
 
@@ -132,7 +133,7 @@ class Buyer extends Component {
   }
 
   selectedTab (params) {
-    let href = `/complaint-buyer-detail?id=${this.state.id}&tab=${params}`
+    let href = `/complaint?type=buyer&id=${this.state.id}&tab=${params}`
     let as = `/complaint/buyer/${this.state.id}?tab=${params}`
     Router.push(href, as)
   }
@@ -146,6 +147,7 @@ class Buyer extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { buyerComplainedOrderDetail, buyerComplaintDiscussion } = nextProps
+
     const { isFetching, isError, isFound, notifError } = this.props
 
     /** handling state status complaint resolved true */
@@ -156,6 +158,7 @@ class Buyer extends Component {
         this.setState({ notification: notifError(buyerComplainedOrderDetail.message) })
       }
       if (isFound(buyerComplainedOrderDetail)) {
+        console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
         this.setState({
           buyerComplainedOrderDetail,
           comment: {
@@ -192,6 +195,9 @@ class Buyer extends Component {
     let nextTab = nextProps.query.tab
     if (oldTab !== nextTab) {
       this.setState({ tab: nextTab })
+      if (nextTab === TabsName[1]) {
+        this.scrollToBottom()
+      }
     }
   }
 }
@@ -208,35 +214,46 @@ const BuyerDetailContent = ({ buyerComplainedOrderDetail, tab, comment }) => (
 
 const DetailContent = ({ orderDetail }) => {
   let createdAt = moment.unix(orderDetail.invoice.created_at).format('Do MMMM YYYY')
-  // let isComplaintNew = (orderDetail.response_status === 0 && orderDetail.status === 1)
-  // let isComplaintReceived = (orderDetail.response_status === 0 && orderDetail.status === 4)
-  let isComplaintDone = (orderDetail.response_status !== 0 && orderDetail.status === 8)
+  /**
+   * SolutionType :
+   * REFUND: 1
+   * EXCHANGE: 2
+   */
+
+  /**
+   * DisputeResponseStatus :
+   * NO_RESPONSE_YET: 0
+   * BUYER_WIN: 1
+   * SELLER_WIN: 2
+   */
+
+  /**
+   * DisputeStatus :
+   * NEW: 1
+   * READ_BY_USER: 2
+   * SEND_BY_BUYER: 3
+   * RECEIVE_BY_SELLER: 4
+   * SEND_BY_SELLER: 5
+   * RECEIVE_BY_BUYER: 6
+   * PROCESS_OF_REFUND: 7
+   * CLOSED: 8
+   */
+  /** complaint no respon */
+  let isComplaintNew = (orderDetail.response_status === 0 && orderDetail.status === 1)
+  /** complaint product received by seller */
+  let isComplaintReceived = (orderDetail.response_status === 0 && orderDetail.status === 4)
+  /** when fine_products is not empty, so add button to review product */
+  let isFineProduct = orderDetail.fine_products.length > 0
+  /** complaint finish need review for isFineProduct */
+  let isComplaintDone = (orderDetail.response_status !== 0 && orderDetail.status === 8 && !isFineProduct)
 
   return (
     <Content>
       <Section className='has-shadow'>
-        {
-          isComplaintDone
-          ? <NotificationBox
-            notifClass={`notif-payment-success`}
-            icon={Images.paymentDone}>
-            <p>
-              <strong>
-                  Komplain telah terselesaikan
-                </strong>
-            </p>
-          </NotificationBox>
-          : <NotificationBox
-            notifClass={`notif-payment`}
-            icon={Images.IconInfoYellow}>
-            <p>
-              <strong>
-                  Anda memilih solusi Refund Dana, untuk itu Anda harus mengirim barang kembali ke Seller ,
-                  paling lambat tanggal 5 September 2017. atau admin akan mengirimkan dana ke Seller
-                </strong>
-            </p>
-          </NotificationBox>
-        }
+        { isComplaintNew && <ComplaintNew /> }
+        { isComplaintReceived && <ComplaintReceived /> }
+        { isComplaintDone && <ComplaintDone /> }
+        { isFineProduct && <ComplaintReview /> }
         <Item title='No Invoice' data={orderDetail.invoice.invoice_number} type='standard' />
         <Item title='Tanggal Transaksi' data={createdAt} type='standard' />
         <Item title='Status Penyelesaian' data={isComplaintDone ? <SolutionDone /> : <SolutionWaiting />} type='status' />
@@ -300,6 +317,68 @@ const Item = ({ title, data, type, children }) => (
       </div>
     </div>
   </div>
+)
+
+/** complaint no proccess */
+const ComplaintNew = () => (
+  <NotificationBox
+    notifClass={`notif-payment`}
+    icon={Images.IconInfoYellow}>
+    <p>
+      <strong>
+        Anda memilih solusi Refund Dana, untuk itu Anda harus mengirim barang kembali ke Seller ,
+        paling lambat tanggal 5 September 2017. atau admin akan mengirimkan dana ke Seller
+      </strong>
+    </p>
+  </NotificationBox>
+)
+
+/** complaint product received by seller */
+const ComplaintReceived = () => (
+  <NotificationBox
+    notifClass={`notif-payment-waiting`}
+    icon={Images.IconInfoBlue}>
+    <p>
+      <strong>
+        Terimakasih telah bersifat kooperatif. Kini Admin akan mengirimkan kembali uang Anda.
+        Dan segera setelah itu Admin akan menandai komplain ini sudah terselesaikan.
+      </strong>
+    </p>
+  </NotificationBox>
+)
+
+/** complaint finish */
+const ComplaintDone = () => (
+  <NotificationBox
+    notifClass={`notif-payment-success`}
+    icon={Images.paymentDone}>
+    <p>
+      <strong>
+        Komplain telah terselesaikan
+      </strong>
+    </p>
+  </NotificationBox>
+)
+
+/** complaint finish but need review for fine product */
+const ComplaintReview = ({ id }) => (
+  <Section className='has-shadow'>
+    <NotificationBox
+      notifClass={`notif-payment-waiting`}
+      icon={Images.IconInfoBlue}>
+      <p>
+        <strong>
+          Silahkan mengisi review dari beberapa barang di invoice ini, setelah itu kami akan mengirim dana refund ke saldo Anda.
+        </strong>
+      </p>
+    </NotificationBox>
+    <div className='info-purchase'>
+      <ButtonFullWidth
+        isLoading={false}
+        onClick={() => Router.push(`/complaint?type=buyer&id=${id}&sub=review`, '/complaint/buyer/37/review')}
+        text='Beri review untuk barang lainya' />
+    </div>
+  </Section>
 )
 
 /** media card content */
@@ -367,4 +446,4 @@ const mapDispatchToProps = (dispatch) => ({
   createComplaintDiscussionBuyer: (params) => dispatch(transactionActions.createComplaintDiscussionBuyer(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Buyer)
+export default connect(mapStateToProps, mapDispatchToProps)(Detail)

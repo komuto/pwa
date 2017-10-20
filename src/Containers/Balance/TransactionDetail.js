@@ -74,7 +74,6 @@ class TransactionDetail extends Component {
     /** handling state saldoHistoryDetail */
     if (!isFetching(saldoHistoryDetail) && this.submitting.saldoHistoryDetail) {
       Nprogress.done()
-      console.log({saldoHistoryDetail})
       this.submitting = { ...this.submitting, saldoHistoryDetail: false }
       if (isError(saldoHistoryDetail)) {
         this.setState({ notification: notifError(saldoHistoryDetail.message) })
@@ -184,7 +183,11 @@ const PaidInformation = ({ orders }) => (
                   {
                     order.items.map((item, index) => {
                       return (
-                        <div key={index} onClick={() => Router.push(`/product-detail?id=${item.product.id}`)} className='columns is-mobile is-multiline no-margin-bottom'>
+                        <div key={index} onClick={() =>
+                          Router.push(
+                            `/product-detail?id=${item.product.id}`,
+                            `/product-detail/${item.product.id}`
+                          )} className='columns is-mobile is-multiline no-margin-bottom'>
                           <div className='column'>
                             <div className='box'>
                               <div className='media'>
