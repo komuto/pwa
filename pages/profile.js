@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import Profile from '../src/Containers/Profile'
+import Profile from '../src/Containers/Account/Profile'
 // utils
 import Menu from '../src/Config/Menu'
 

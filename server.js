@@ -50,13 +50,19 @@ app.prepare().then(_ => {
   defineASURL('/transaction-confirmation/complaint', '/transaction-confirmation-complaint')
   defineASURL('/transaction-confirmation/review', '/transaction-confirmation-review')
   defineASURL('/product-detail/:id', '/product-detail')
+  // balance
   defineASURL('/balance', '/balance')
   defineASURL('/balance/:type', '/balance')
   defineASURL('/balance/:type/:status', '/balance')
   defineASURL('/balance/:type/:status/:id/:transType', '/balance')
+  // complaint
   defineASURL('/complaint/:type', '/complaint')
   defineASURL('/complaint/:type/:id', '/complaint')
   defineASURL('/complaint/:type/:id/:sub', '/complaint')
+  // password
+  defineASURL('/password/:type', '/password')
+  defineASURL('/password/:type/:status', '/password')
+  defineASURL('/password/:type/:status/:email', '/password')
 
   server.get('*', (req, res) => {
     return handle(req, res)

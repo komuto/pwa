@@ -5,7 +5,6 @@ import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
 import Content from '../../Components/Content'
-import Section from '../../Components/Section'
 import { Input } from '../../Components/Input'
 import { ButtonFullWidth } from '../../Components/Button'
 import Containers from '../../Components/Containers'
@@ -13,202 +12,203 @@ import Notification from '../../Components/Notification'
 // validations
 import * as constraints from '../../Validations/Auth'
 // actions
-import * as loginAction from '../../actions/user'
-
-const VALIDATE_TOKEN = 'VALIDATE_TOKEN'
-const SUBMIT = 'SUBMIT'
+import * as loginActions from '../../actions/user'
 
 class PasswordNew extends Component {
   constructor (props) {
     super(props)
+
+    this.defaultInput = {
+      isError: false,
+      value: '',
+      classInfo: '',
+      textHelp: '',
+      onChange: (e) => this.onChange(e.target)
+    }
+
     this.state = {
       input: {
         password: {
           type: 'password',
           placeholder: 'Password',
           name: 'password',
-          value: '',
-          classInfo: '',
-          textHelp: ''
+          ...this.defaultInput
         },
         passwordRetype: {
           type: 'password',
           placeholder: 'Konfirmasi Password',
           name: 'passwordRetype',
-          value: '',
-          classInfo: '',
-          textHelp: ''
+          ...this.defaultInput
         }
       },
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      },
-      tokenError: true
+      token: props.query.token || null,
+      validToken: props.validToken || null,
+      notification: props.notification
     }
-    this.dipatchType = null
-    this.token = null
-    this.onChange = this.onChange.bind(this)
   }
 
-  validation (name, value) {
-    const { password, retypePassword } = constraints.loginConstraints
-    const { danger, success } = constraints.classInfo
+  onChange ({ name, value }) {
     let { input } = this.state
-    let status = false
+    input[name].value = value
+    this.setState({ input })
+  }
 
-    switch (name) {
-      case input.password.name:
-        input.password.value = value
-        if (value === '') {
-          input.password.classInfo = danger
-          input.password.textHelp = password.alert.empty
-          status = false
-        } else {
-          if ([...value].length < password.length.minimum) {
-            input.password.classInfo = danger
-            input.password.textHelp = password.alert.valid
-            status = false
-          } else {
-            input.password.classInfo = success
-            input.password.textHelp = ''
-            status = true
-          }
-        }
-        break
-      case input.passwordRetype.name:
-        input.passwordRetype.value = value
-        if (value === '') {
-          input.passwordRetype.classInfo = danger
-          input.passwordRetype.textHelp = password.alert.empty
-          status = false
-        } else {
-          if (input.password.value !== value) {
-            input.passwordRetype.classInfo = danger
-            input.passwordRetype.textHelp = retypePassword.alert.valid
-            status = false
-          } else {
-            input.passwordRetype.classInfo = success
-            input.passwordRetype.textHelp = ''
-            status = true
-          }
-        }
-        break
-      default:
-        break
+  validatePassword ({ value }) {
+    const { loginConstraints, classInfo } = constraints
+    const { length, alert } = loginConstraints.password
+    let { input } = this.state
+    /** reset input */
+    input.password = {
+      ...input.password,
+      ...this.defaultInput,
+      value
     }
-    this.setState({input})
-    return status
+    /** validate input */
+    let isEmty = value === ''
+    let isToShort = [...value].length < length.minimum
+    let isError = isEmty || isToShort
+
+    if (isError) {
+      input.password = {
+        ...input.password,
+        classInfo: classInfo.danger,
+        textHelp: isEmty ? alert.empty : alert.valid
+      }
+    }
+
+    this.setState({ input })
+    return isError
   }
 
-  onChange (event) {
-    const { name, value } = event.target
-    this.validation(name, value)
+  validatePasswordRetype ({ value }) {
+    const { loginConstraints, classInfo } = constraints
+    const { alert } = loginConstraints.retypePassword
+    let { input } = this.state
+    /** reset input */
+    input.passwordRetype = {
+      ...input.passwordRetype,
+      ...this.defaultInput,
+      value
+    }
+    /** validate input */
+    let isEmty = value === ''
+    let isNotSamePassword = value !== input.password.value
+    let isError = isEmty || isNotSamePassword
+
+    if (isError) {
+      input.passwordRetype = {
+        ...input.passwordRetype,
+        classInfo: classInfo.danger,
+        textHelp: isEmty ? alert.empty : alert.valid
+      }
+    }
+
+    this.setState({ input })
+    return isError
   }
 
-  async componentDidMount () {
-    const token = await Router.query.token
-    this.token = token
-    this.dipatchType = VALIDATE_TOKEN
+  componentDidMount () {
+    let { token } = this.state
     NProgress.start()
-    this.props.dispatch(loginAction.validateToken({token: token}))
+    this.submitting = { ...this.submitting, validateToken: true }
+    this.props.validateToken({ token })
   }
 
   handleNewPasswordClick () {
-    let { password, passwordRetype } = this.state.input
-    if (this.validation(passwordRetype.name, passwordRetype.value) &&
-        this.validation(password.name, password.value)) {
-      NProgress.start()
-      this.dipatchType = SUBMIT
-      this.props.dispatch(loginAction.newPassword({
-        password: password.value,
-        token: this.token
-      }))
+    const { token, input } = this.state
+    const { password, passwordRetype } = input
+    /** validate password */
+    if (this.validatePassword({...password})) {
+      return
     }
+    /** validate retype password */
+    if (this.validatePasswordRetype({...passwordRetype})) {
+      return
+    }
+    /** update new password */
+    NProgress.start()
+    this.submitting = { ...this.submitting, newPassword: true }
+    this.props.setNewPassword({
+      password: password.value,
+      token
+    })
   }
 
   componentWillReceiveProps (nextProps) {
     const { validToken, newPassword } = nextProps
-    let { notification, tokenError } = this.state
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    if (this.dipatchType === VALIDATE_TOKEN && !validToken.isLoading) {
-      const data = validToken
-      if (data.status === 400) {
-        notification.status = true
-        notification.message = data.message
-        tokenError = true
-      } else if (data.status === 200) {
-        tokenError = false
-      }
+    if (!isFetching(validToken) && this.submitting.validateToken) {
       NProgress.done()
-      this.setState({ notification, tokenError })
+      this.submitting = { ...this.submitting, validateToken: false }
+      if (isError(validToken)) {
+        this.setState({ notification: notifError(validToken.message) })
+      }
+      if (isFound(validToken)) {
+        this.setState({ validToken })
+      }
     }
 
-    if (this.dipatchType === SUBMIT && !newPassword.isLoading) {
-      const data = newPassword
-      if (data.status === 400) {
-        notification.status = true
-        notification.message = data.message
-      } else if (data.status === 200) {
-        Router.push('/password-new-success')
-      }
+    if (!isFetching(newPassword) && this.submitting.newPassword) {
       NProgress.done()
-      this.setState({ notification })
+      this.submitting = { ...this.submitting, newPassword: false }
+      if (isError(newPassword)) {
+        this.setState({ notification: notifError(newPassword.message) })
+      }
+      if (isFound(newPassword)) {
+        Router.push(
+          '/password?type=new&status=success',
+          '/password/new/success'
+        )
+      }
     }
   }
 
   render () {
-    const { input, notification, tokenError } = this.state
+    const { input, validToken, notification } = this.state
+    const { isFound } = this.props
     return (
       <Content>
         <Notification
-          type='is-warning'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <Section className='content'>
+        <section className='content'>
           <Containers>
-            {
-              !tokenError
-              ? <form action='#' className='form'>
-                <Input
-                  type={input.password.type}
-                  placeholder={input.password.placeholder}
-                  name={input.password.name}
-                  classInfo={input.password.classInfo}
-                  value={input.password.value}
-                  onChange={this.onChange}
-                  hasIconsRight
-                  textHelp={input.password.textHelp} />
-                <Input
-                  type={input.passwordRetype.type}
-                  placeholder={input.passwordRetype.placeholder}
-                  name={input.passwordRetype.name}
-                  classInfo={input.passwordRetype.classInfo}
-                  value={input.passwordRetype.value}
-                  onChange={this.onChange}
-                  hasIconsRight
-                  textHelp={input.passwordRetype.textHelp} />
-                <ButtonFullWidth
-                  text='Buat Password Baru'
-                  onClick={() => this.handleNewPasswordClick()} />
-              </form>
-              : null
-            }
-
+            <form action='#' className='form'>
+              {
+                (isFound(validToken)) &&
+                <Content>
+                  <Input
+                    {...input.password}
+                    hasIconsRight />
+                  <Input
+                    {...input.passwordRetype}
+                    hasIconsRight />
+                  <ButtonFullWidth
+                    isLoading={this.submitting.newPassword}
+                    text='Buat Password Baru'
+                    onClick={() => this.handleNewPasswordClick()} />
+                </Content>
+              }
+            </form>
           </Containers>
-        </Section>
+        </section>
       </Content>
     )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    validToken: state.validation,
-    newPassword: state.newPassword
-  }
-}
+const mapStateToProps = (state) => ({
+  validToken: state.validation,
+  newPassword: state.newPassword
+})
 
-export default connect(mapStateToProps)(PasswordNew)
+const mapDispatchToProps = (dispatch) => ({
+  validateToken: (params) => dispatch(loginActions.validateToken(params)),
+  setNewPassword: (params) => dispatch(loginActions.newPassword(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PasswordNew)

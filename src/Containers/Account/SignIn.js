@@ -7,25 +7,24 @@
  /** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Link from 'next/link'
 import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 /** including components */
-import Content from '../Components/Content'
-import Section from '../Components/Section'
-import Containers from '../Components/Containers'
-import { LoginFacebook } from '../Components/Facebook'
-import { Input } from '../Components/Input'
-import { ButtonFullWidth } from '../Components/Button'
-import { HrText } from '../Components/Hr'
-import TermConditions from '../Components/TermConditions'
-import Notification from '../Components/Notification'
+import Content from '../../Components/Content'
+import Section from '../../Components/Section'
+import Containers from '../../Components/Containers'
+import { LoginFacebook } from '../../Components/Facebook'
+import { Input } from '../../Components/Input'
+import { ButtonFullWidth } from '../../Components/Button'
+import { HrText } from '../../Components/Hr'
+import TermConditions from '../../Components/TermConditions'
+import Notification from '../../Components/Notification'
 import localforage from 'localforage'
 /** including components */
-import * as constraints from '../Validations/Auth'
+import * as constraints from '../../Validations/Auth'
 /** including actions */
-import * as loginAction from '../actions/user'
+import * as loginAction from '../../actions/user'
 
 class SignIn extends Component {
   constructor (props) {
@@ -181,7 +180,7 @@ class SignIn extends Component {
               onClick={() => this.submit()} />
             <br />
             <div className='has-text-centered'>
-              <Link href='/password-reset'><a>{localize.lost_password}</a></Link>
+              <a onClick={() => Router.push('/password?type=reset', '/password/reset')}>{localize.lost_password}</a>
             </div>
             <HrText text={localize.or} />
             <LoginFacebook

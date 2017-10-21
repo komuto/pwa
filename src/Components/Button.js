@@ -1,12 +1,9 @@
-// @flow
 import React from 'react'
-import Link from 'next/link'
+import Router from 'next/router'
 
 export const ButtonFullWidthLink = ({ path, className, text }) => {
   return (
-    <Link href={path}>
-      <a className={`button is-primary is-large is-fullwidth ${className}`}>{text}</a>
-    </Link>
+    <a onClick={() => Router.push(path)} className={`button is-primary is-large is-fullwidth ${className}`}>{text}</a>
   )
 }
 

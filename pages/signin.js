@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import SignIn from '../src/Containers/SignIn'
+import SignIn from '../src/Containers/Account/SignIn'
 
 const Index = (props) => {
   const { localize } = props

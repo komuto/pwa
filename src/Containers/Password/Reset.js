@@ -16,94 +16,93 @@ import * as loginAction from '../../actions/user'
 class PasswordReset extends Component {
   constructor (props) {
     super(props)
+
+    this.defaultInput = {
+      isError: false,
+      value: '',
+      classInfo: '',
+      textHelp: '',
+      onChange: (e) => this.onChange(e.target)
+    }
+
     this.state = {
       input: {
         email: {
           type: 'email',
           placeholder: 'Email',
           name: 'email',
-          value: '',
-          classInfo: '',
-          textHelp: ''
+          ...this.defaultInput
         }
       },
-      notification: {
-        status: false,
-        message: 'Error, default message.'
+      notification: props.notification
+    }
+    this.submitting = {
+      forgetPassword: false
+    }
+  }
+
+  validateEmail ({ value }) {
+    const { loginConstraints, classInfo } = constraints
+    const { alert } = loginConstraints.email
+    let { input } = this.state
+    /** reset input */
+    input.email = {
+      ...input.email,
+      ...this.defaultInput,
+      value
+    }
+    /** validate input */
+    let isEmty = value === ''
+    let isValid = !EmailValidator.validate(value)
+    let isError = isEmty || isValid
+
+    if (isError) {
+      input.email = {
+        ...input.email,
+        classInfo: classInfo.danger,
+        textHelp: isEmty ? alert.empty : alert.valid
       }
     }
-    this.onChange = this.onChange.bind(this)
-  }
 
-  validation (name, value) {
-    const { email } = constraints.loginConstraints
-    const { danger, success } = constraints.classInfo
-    let { input } = this.state
-    let status = false
-    switch (name) {
-      case input.email.name:
-        input.email.value = value
-        if (value === '') {
-          input.email.classInfo = danger
-          input.email.textHelp = email.alert.empty
-          status = false
-        } else {
-          if (EmailValidator.validate(value)) {
-            input.email.classInfo = success
-            input.email.textHelp = ''
-            status = true
-          } else {
-            input.email.classInfo = danger
-            input.email.textHelp = email.alert.valid
-            status = false
-          }
-        }
-        break
-      default:
-        break
-    }
     this.setState({ input })
-    return status
+    return isError
   }
 
-  onChange (event) {
-    const { name, value } = event.target
-    this.validation(name, value)
+  onChange ({ name, value }) {
+    let { input } = this.state
+    input[name].value = value
+    this.setState({ input })
   }
 
   handleResetPasswordClick () {
     let { email } = this.state.input
-    if (this.validation(email.name, email.value)) {
-      NProgress.start()
-      this.props.dispatch(loginAction.forgetPassword({
-        email: email.value
-      }))
+    /** validate email */
+    if (this.validateEmail({...email})) {
+      return
     }
+    /** request reset password  */
+    NProgress.start()
+    this.submitting = { ...this.submitting, forgetPassword: true }
+    this.props.setForgetPassword({ email: email.value })
   }
 
   componentWillReceiveProps (nextProps) {
     const { forgetPassword } = nextProps
-    const { notification } = this.state
-    const { email } = this.state.input
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!forgetPassword.isLoading) {
-      if (forgetPassword.isFound) {
-        Router.push({
-          pathname: '/password-reset-verification',
-          query: { email: email.value }
-        })
-      }
-
-      if (forgetPassword.isError) {
-        notification.status = true
-        notification.message = forgetPassword.message
-      } else if (!forgetPassword.isFound) {
-        notification.status = true
-        notification.message = 'Data tidak ditemukan'
-      }
-
+    if (!isFetching(forgetPassword) && this.submitting.forgetPassword) {
       NProgress.done()
-      this.setState({ notification })
+      this.submitting = { ...this.submitting, forgetPassword: false }
+      if (isError(forgetPassword)) {
+        this.setState({ notification: notifError(forgetPassword.message) })
+      }
+      if (isFound(forgetPassword)) {
+        const { email } = this.state.input
+        Router.push(
+          `/password?type=reset&status=verification&email=${email.value}`,
+          `/password/reset/verification/${email.value}`
+        )
+      }
     }
   }
 
@@ -116,22 +115,17 @@ class PasswordReset extends Component {
             <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di Komuto</p>
           </div>
           <Notification
-            type='is-warning'
+            type={notification.type}
             isShow={notification.status}
             activeClose
             onClose={() => this.setState({notification: false})}
             message={notification.message} />
           <form action='#' className='form'>
             <Input
-              type={input.email.type}
-              placeholder={input.email.placeholder}
-              name={input.email.name}
-              classInfo={input.email.classInfo}
-              value={input.email.value}
-              onChange={this.onChange}
-              hasIconsRight
-              textHelp={input.email.textHelp} />
+              {...input.email}
+              hasIconsRight />
             <ButtonFullWidth
+              isLoading={this.submitting.forgetPassword}
               text='Reset Password'
               onClick={() => this.handleResetPasswordClick()} />
           </form>
@@ -141,10 +135,12 @@ class PasswordReset extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    forgetPassword: state.forgetPassword
-  }
-}
+const mapStateToProps = (state) => ({
+  forgetPassword: state.forgetPassword
+})
 
-export default connect(mapStateToProps)(PasswordReset)
+const mapDispatchToProps = (dispatch) => ({
+  setForgetPassword: (params) => dispatch(loginAction.forgetPassword(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PasswordReset)

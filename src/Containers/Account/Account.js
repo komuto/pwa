@@ -4,17 +4,17 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 // import NProgress from 'nprogress'
 // components
-import Content from '../Components/Content'
-import Section from '../Components/Section'
-import Notification from '../Components/Notification'
+import Content from '../../Components/Content'
+import Section from '../../Components/Section'
+import Notification from '../../Components/Notification'
 // import { ButtonFullWidth } from '../Components/Button'
-import {Images} from '../Themes'
+import {Images} from '../../Themes'
 // actions
-import * as loginAction from '../actions/user'
+import * as loginAction from '../../actions/user'
 // utils
-import { isFetching, isError } from '../Services/Status'
+import { isFetching, isError } from '../../Services/Status'
 // lib
-import RupiahFormat from '../Lib/RupiahFormat'
+import RupiahFormat from '../../Lib/RupiahFormat'
 
 class Account extends Component {
   constructor (props) {

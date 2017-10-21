@@ -1,6 +1,5 @@
-// @flow
 
-const Warning = (props) => {
+const Warning = () => {
   return (
     <span className='icon is-small is-right'>
       <i className='fa fa-warning' />
@@ -8,7 +7,7 @@ const Warning = (props) => {
   )
 }
 
-const Success = (props) => {
+const Success = () => {
   return (
     <span className='icon is-small is-right'>
       <i className='fa fa-check' />
@@ -16,36 +15,36 @@ const Success = (props) => {
   )
 }
 
-export const Input = (props) => {
+export const Input = ({ classInfo, text, hasIconsRight, name, type, placeholder, value, onChange, textHelp }) => {
   let alertList = ['is-success', 'is-danger']
   let iconList = [<Success />, <Warning />]
 
-  let alertIndex = alertList.indexOf(props.classInfo)
+  let alertIndex = alertList.indexOf(classInfo)
   let icon = iconList[alertIndex]
 
   return (
     <div className='field'>
-      <label className='label'>{props.text}</label>
-      <p className={`control ${(props.hasIconsRight) ? 'has-icons-right' : ''}`}>
+      <label className='label'>{text}</label>
+      <p className={`control ${(hasIconsRight) ? 'has-icons-right' : ''}`}>
         <input
-          name={props.name}
-          type={props.type}
-          className={`input ${props.classInfo}`}
-          placeholder={props.placeholder}
-          value={props.value}
-          onChange={props.onChange} />
+          name={name}
+          type={type}
+          className={`input ${classInfo}`}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange} />
         {icon}
       </p>
-      <p className={`help ${props.classInfo}`}>{props.textHelp}</p>
+      <p className={`help ${classInfo}`}>{textHelp}</p>
     </div>
   )
 }
 
-export const InputRadio = (props) => {
+export const InputRadio = ({ value, selected, name, onChange, text }) => {
   return (
-    <label className={`radio ${(props.value === props.selected) ? 'checked' : ''} `}>
-      <input type='radio' name={props.name} onChange={() => props.onChange(props.value)} />
-      {props.text}
+    <label className={`radio ${(value === selected) ? 'checked' : ''} `}>
+      <input type='radio' name={name} onChange={() => onChange(value)} />
+      {text}
     </label>
   )
 }

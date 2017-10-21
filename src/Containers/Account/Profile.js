@@ -1,12 +1,30 @@
-// @flow
-import React from 'react'
+/**
+ * Safei Muslim
+ * Yogyakarta , 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+/** including dependencies */
+import React, { Component } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
-import {Images} from '../Themes'
-import MyImage from '../Components/MyImage'
+/** including components */
+import Account from './Account'
+import {Images} from '../../Themes'
+import MyImage from '../../Components/MyImage'
 
-export default (props) => {
-  const { localize } = props
+class Profile extends Component {
+  render () {
+    if (this.props.isLogin) {
+      return <Account {...this.props} />
+    } else {
+      return <LoginContent {...this.props} />
+    }
+  }
+}
+
+/** form login */
+const LoginContent = ({ localize }) => {
   return (
     <section className='content'>
       <div className='container is-fluid'>
@@ -27,3 +45,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Profile
