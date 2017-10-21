@@ -13,6 +13,7 @@ import Router from 'next/router'
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
+import { animateScroll } from 'react-scroll'
 /** including actions */
 import * as transactionActions from '../../actions/transaction'
 /** including lib */
@@ -32,7 +33,13 @@ class Transaction extends Component {
     }
   }
 
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
+  }
+
   componentDidMount () {
+    this.scrollToTop()
     NProgress.start()
     this.submitting = { ...this.submitting, transaction: true }
     this.props.getListTransactions()

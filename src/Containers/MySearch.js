@@ -4,7 +4,7 @@
  * PT Skyshi Digital Indonesa
  */
 
- /** including dependencies */
+/** including dependencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
