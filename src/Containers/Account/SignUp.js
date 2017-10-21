@@ -243,7 +243,8 @@ class SignUp extends Component {
     const data = (this.dipatchType === LOGIN) ? user : register
 
     /** handling state register */
-    if (!isFetching(data)) {
+    if (!isFetching(data) && this.dipatchType) {
+      this.dipatchType = null
       if (isError(data)) {
         this.setState({ notification: notifError(data.message) })
       }
