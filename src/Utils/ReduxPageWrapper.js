@@ -7,7 +7,7 @@ import GET_TOKEN from '../Services/GetToken'
 import Content from '../Components/Content'
 import LoginAlert from '../Components/LoginAlert'
 import Localize from '../Utils/Localize'
-import AppConfig from '../Config/AppConfig.example'
+import AppConfig from '../Config/AppConfig'
 import * as handlingState from '../Services/Status'
 let clientTask = null
 export default function reduxWrapper (ReduxComponent) {
