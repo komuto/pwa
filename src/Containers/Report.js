@@ -9,8 +9,6 @@ import Notification from '../Components/Notification'
 import MyImage from '../Components/MyImage'
 // actions
 import * as productActions from '../actions/product'
-// services
-import { Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // themes
@@ -37,17 +35,21 @@ class Report extends Component {
         message: 'Error, default message.'
       }
     }
-  }
-
-  async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+    this.submitting = {
+      productDetail: false
     }
   }
 
-  reportSelected = (selected) => this.setState({ report: { ...this.state.report, selected } })
+  componentDidMount () {
+    const { id } = this.state
+    NProgress.start()
+    this.submitting = { ...this.submitting, productDetail: true }
+    this.props.dispatch(productActions.getProduct({ id }))
+  }
+
+  reportSelected (selected) {
+    this.setState({ report: { ...this.state.report, selected } })
+  }
 
   descriptionOnChange (e) {
     let value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
@@ -59,44 +61,37 @@ class Report extends Component {
     if (report.description.value === '') {
       this.setState({ report: { ...this.state.report, description: {value: '', error: true, errorMessage: 'Silahkan isi deskripsi laporan anda!'} } })
     } else {
-      this.props.dispatch(productActions.reportProduct({ id, report_type: _.indexOf(report.options, report.selected) + 1, description: report.description.value }))
+      this.submitting = { ...this.submitting, report: true }
+      this.props.reportProduct({
+        id,
+        report_type: _.indexOf(report.options, report.selected) + 1,
+        description: report.description.value
+      })
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { productDetail, report } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!productDetail.isLoading) {
+    if (!isFetching(productDetail) && this.submitting.productDetail) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+      this.submitting = { ...this.submitting, productDetail: false }
+      if (isError(productDetail)) {
+        this.setState({notification: notifError(productDetail.message)})
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
       }
     }
 
-    if (!report.isLoading) {
-      NProgress.done()
-      switch (report.status) {
-        case Status.SUCCESS :
-          (report.isFound)
-          ? this.setState({ notifReport: true })
-          : this.setState({ notification: {status: true, message: 'Report gagal'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(report) && this.submitting.report) {
+      this.submitting = { ...this.submitting, report: false }
+      if (isError(report)) {
+        this.setState({ notification: notifError(report.message) })
+      }
+      if (isFound(report)) {
+        this.setState({ notifReport: true })
       }
     }
   }
@@ -167,7 +162,7 @@ class Report extends Component {
                   <textarea style={report.description.error ? styleError : {}} onChange={(event) => this.descriptionOnChange(event)} value={report.description.value} className='textarea text-discus' placeholder='Tulis Laporan' rows='1' />
                 </p>
                 <p className='control'>
-                  <button onClick={() => this.submitReport()} className='button is-primary is-large is-fullwidth js-sort'>Kirimkan Lapporan</button>
+                  <button onClick={() => !this.submitting.report && this.submitReport()} className={`button is-primary is-large is-fullwidth js-sort ${this.submitting.report && 'is-loading'}`}>Kirimkan Lapporan</button>
                 </p>
               </div>
             </div>
@@ -189,11 +184,13 @@ class Report extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail,
-    report: state.report
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail,
+  report: state.report
+})
 
-export default connect(mapStateToProps)(Report)
+const mapDispatchToProps = (dispatch) => ({
+  reportProduct: (params) => dispatch(productActions.reportProduct(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Report)
