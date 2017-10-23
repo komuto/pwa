@@ -8,7 +8,6 @@ import SignUpVerification from '../src/Containers/Account/SignUpVerification'
 
 const Index = (props) => {
   const { localize, query } = props
-  console.log('props: ', props)
   const { type } = query
   if (type === 'verification') {
     const params = {
