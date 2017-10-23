@@ -137,6 +137,7 @@ export const buildAction = (type, params = false) => {
  * @param customState {array}
  */
 export const buildReducer = (state, action, type, name, customState) => {
+  console.log(action)
   switch (action.type) {
     case typeReq(type):
       return !customState[0] ? reqState(state) : customState[0](state, action)

@@ -151,4 +151,9 @@ export const replyResolution = ({ id, ...data }) => {
   return axios.post(`users/resolutions/${id}`, data)
 }
 
+export const resendSignup = () => {
+  const axios = authApiKomuto()
+  return axios.post('signup-verification', {})
+}
+
 export const logout = () => ({ message: 'LOGOUT SUCCESS', code: 0 })

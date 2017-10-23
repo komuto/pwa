@@ -121,7 +121,8 @@ export const changePassword = createReducer(buildInitState())
 
 export const favoriteStore = createReducer(buildInitState())
   .addReducer({
-    type: actions.FAVORITE_STORE
+    type: actions.FAVORITE_STORE,
+    resultName: 'favorite'
   }).run()
 
 export const getPhone = createReducer(buildInitState({ phone: '' }))
@@ -171,6 +172,9 @@ export const listFavoriteStore = createReducer(buildInitState({ stores: [] }, tr
 export const alterUser = createReducer(buildInitState())
   .addReducer({
     type: actions.UPDATE_FIREBASE_REG_TOKEN
+  })
+  .addReducer({
+    type: actions.RESEND_SIGNUP
   }).run()
 
 export const notifSettings = createReducer(buildInitState({ settings: [] }))
