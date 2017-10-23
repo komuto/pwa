@@ -72,7 +72,7 @@ class SignIn extends Component {
       NProgress.start()
       this.submitting = true
       this.props.loginSocial({
-        provider_name: 'Facebook',
+        provider_name: 'facebook',
         provider_uid: response.userID,
         access_token: response.accessToken,
         reg_token: fcmToken

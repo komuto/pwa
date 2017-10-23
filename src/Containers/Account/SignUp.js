@@ -20,9 +20,6 @@ import * as constraints from '../../Validations/Auth'
 // actions
 import * as loginAction from '../../actions/user'
 
-const LOGIN = 'LOGIN'
-const REGISTER = 'REGISTER'
-
 class SignUp extends Component {
   constructor (props) {
     super(props)
@@ -80,7 +77,10 @@ class SignUp extends Component {
       },
       fcmToken: null
     }
-    this.dipatchType = null
+    this.submitting = {
+      register: false,
+      user: false
+    }
     this.onChange = this.onChange.bind(this)
     this.handleGenderChange = this.handleGenderChange.bind(this)
   }
@@ -199,9 +199,9 @@ class SignUp extends Component {
   responseFacebook (response) {
     if (response) {
       NProgress.start()
-      this.dipatchType = LOGIN
+      this.submitting = { ...this.submitting, user: true }
       this.props.dispatch(loginAction.loginSocial({
-        provider_name: 'Facebook',
+        provider_name: 'facebook',
         provider_uid: response.userID,
         access_token: response.accessToken
       }))
@@ -209,14 +209,15 @@ class SignUp extends Component {
   }
 
   handleRegisterClick () {
-    let { nama, handphone, email, password, genderGroup } = this.state.input
+    let { nama, handphone, email, password, passwordRetype, genderGroup } = this.state.input
     if (this.validation(nama.name, nama.value) &&
         this.validation(email.name, email.value) &&
         this.validation(handphone.name, handphone.value) &&
         this.validation(email.name, email.value) &&
-        this.validation(password.name, password.value)) {
+        this.validation(password.name, password.value) &&
+        this.validation(passwordRetype.name, passwordRetype.value)) {
       NProgress.start()
-      this.dipatchType = REGISTER
+      this.submitting = { ...this.submitting, register: true }
 
       let { fcmToken } = this.state
 
@@ -240,15 +241,27 @@ class SignUp extends Component {
   componentWillReceiveProps (nextProps) {
     const { register, user } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-    const data = (this.dipatchType === LOGIN) ? user : register
 
     /** handling state register */
-    if (!isFetching(data) && this.dipatchType) {
-      this.dipatchType = null
-      if (isError(data)) {
-        this.setState({ notification: notifError(data.message) })
+    if (!isFetching(register) && this.submitting.register) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, register: false }
+      if (isError(register)) {
+        this.setState({ notification: notifError(register.message) })
       }
-      if (isFound(data)) {
+      if (isFound(register)) {
+        Router.push('/profile')
+      }
+    }
+    /** handling login social */
+    if (!isFetching(user) && this.submitting.user) {
+      console.log('user: ', user)
+      NProgress.done()
+      this.submitting = { ...this.submitting, user: false }
+      if (isError(user)) {
+        this.setState({ notification: notifError(user.message) })
+      }
+      if (isFound(user)) {
         Router.push('/profile')
       }
     }
@@ -306,8 +319,9 @@ class SignUp extends Component {
               </div>
               <TermConditions />
               <ButtonFullWidth
+                isLoading={this.submitting.register}
                 text='Register'
-                onClick={() => this.handleRegisterClick()} />
+                onClick={() => !this.submitting.register && this.handleRegisterClick()} />
               <HrText
                 text='atau' />
               <LoginFacebook
@@ -319,11 +333,14 @@ class SignUp extends Component {
     )
   }
 }
-const mapStateToProps = (state) => {
-  return {
-    register: state.register,
-    user: state.user
-  }
-}
+const mapStateToProps = (state) => ({
+  register: state.register,
+  user: state.user
+})
 
-export default connect(mapStateToProps)(SignUp)
+const mapDispatchToProps = (dispatch) => ({
+  setRegister: (params) => dispatch(loginAction.register(params)),
+  loginSocial: (params) => dispatch(loginAction.loginSocial(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
