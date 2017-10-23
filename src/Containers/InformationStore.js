@@ -160,7 +160,7 @@ class InformationStore extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { formInfo, submitting, notification, setStateStart } = this.state
-    const { query, isFetching, isFound, isError, notifSuccess, notifError } = this.props
+    const { query, isFetching, isFound, isError, notifError } = this.props
     const { profile, updateStore, upload } = nextProps
     if (!isFetching(upload) && submitting) {
       if (isFound(upload)) {
@@ -209,7 +209,7 @@ class InformationStore extends React.Component {
     if (!updateStore.isLoading && updateStore.isFound && submitting) {
       switch (updateStore.status) {
         case Status.SUCCESS: {
-          getProfile()
+          this.props.getProfile()
           const newNotification = { notification, submitting: false }
           newNotification.notification['status'] = true
           newNotification.notification['message'] = updateStore.message
