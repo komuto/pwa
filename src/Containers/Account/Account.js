@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
-// import NProgress from 'nprogress'
+import NProgress from 'nprogress'
 // components
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -10,9 +10,7 @@ import Notification from '../../Components/Notification'
 // import { ButtonFullWidth } from '../Components/Button'
 import {Images} from '../../Themes'
 // actions
-import * as loginAction from '../../actions/user'
-// utils
-import { isFetching, isError } from '../../Services/Status'
+import * as userActions from '../../actions/user'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 
@@ -27,6 +25,11 @@ class Account extends Component {
         status: false,
         message: 'Error, default message.'
       }
+    }
+
+    this.submitting = {
+      alterUser: false,
+      profile: false
     }
   }
 
@@ -60,23 +63,42 @@ class Account extends Component {
   }
 
   async componentDidMount () {
-    // NProgress.start()
+    this.submitting = { ...this.submitting, profile: true }
     await this.props.getProfile()
   }
 
+  resendVerification () {
+    NProgress.start()
+    this.submitting = { ...this.submitting, alterUser: true }
+    this.props.resendSignup()
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { profile } = nextProps
+    const { profile, alterUser } = nextProps
+    const { isFetching, isError, isFound, notifError, notifSuccess } = this.props
     const { submitting } = this.state
     if (nextProps.sendOTPPhone.isFound && submitting) {
       Router.push('/verify-no-telp')
     }
 
-    if (!isFetching(profile)) {
-      // NProgress.done()
-      if (isError({ ...profile })) {
-        this.setState({ profile, notification: { status: true, message: 'Profile tidak ditemukan' } })
-      } else {
+    if (!isFetching(profile) && this.submitting.profile) {
+      this.submitting = { ...this.submitting, profile: false }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
+      if (isFound(profile)) {
         this.setState({ profile })
+      }
+    }
+
+    if (!isFetching(alterUser) && this.submitting.alterUser) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, alterUser: false }
+      if (isError(alterUser)) {
+        this.setState({ notification: notifError(alterUser.message) })
+      }
+      if (isFound(alterUser)) {
+        this.setState({ notification: notifSuccess(alterUser.message) })
       }
     }
   }
@@ -144,7 +166,7 @@ class Account extends Component {
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
@@ -168,7 +190,7 @@ class Account extends Component {
                         <p>
                           <strong>Verifikasikan email untuk mengakses semua menu</strong>
                           Silahkan klik link verifikasi yang telah kami kirimkan ke { profile.user.user.email }
-                          <a className='button is-warning is-outlined'>Kirim Ulang link verifikasi</a>
+                          <a onClick={() => !this.submitting.alterUser && this.resendVerification()} className={`button is-warning is-outlined ${this.submitting.alterUser && 'is-loading'}`}>Kirim Ulang link verifikasi</a>
                         </p>
                       </div>
                     </div>
@@ -256,12 +278,14 @@ class Account extends Component {
 
 const mapStateToProps = (state) => ({
   sendOTPPhone: state.sendOTPPhone,
-  profile: state.profile
+  profile: state.profile,
+  alterUser: state.alterUser
 })
 
 const mapDispatchToProps = dispatch => ({
-  sendOTPToPhone: () => dispatch(loginAction.sendOTPPhone()),
-  getProfile: () => dispatch(loginAction.getProfile())
+  sendOTPToPhone: () => dispatch(userActions.sendOTPPhone()),
+  getProfile: () => dispatch(userActions.getProfile()),
+  resendSignup: () => dispatch(userActions.resendSignup())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account)
