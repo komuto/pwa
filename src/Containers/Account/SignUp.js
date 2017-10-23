@@ -208,7 +208,7 @@ class SignUp extends Component {
     }
   }
 
-  async handleRegisterClick () {
+  handleRegisterClick () {
     let { nama, handphone, email, password, genderGroup } = this.state.input
     if (this.validation(nama.name, nama.value) &&
         this.validation(email.name, email.value) &&
