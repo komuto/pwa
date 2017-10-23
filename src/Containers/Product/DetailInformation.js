@@ -10,7 +10,9 @@ class ProductDetailInformation extends Component {
     }
   }
 
-  openDescription = () => this.setState({ openDescription: !this.state.openDescription })
+  openDescription () {
+    this.setState({ openDescription: !this.state.openDescription })
+  }
 
   render () {
     const { product, category } = this.props

@@ -14,7 +14,9 @@ class ProductDetailRule extends Component {
     }
   }
 
-  openTerms = () => this.setState({ openTerms: !this.state.openTerms })
+  openTerms () {
+    this.setState({ openTerms: !this.state.openTerms })
+  }
 
   render () {
     const { store, location, product, favoritePress } = this.props

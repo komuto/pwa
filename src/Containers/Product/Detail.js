@@ -25,6 +25,7 @@ class ProductDetail extends Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
+      addWishlist: props.addWishlist || null,
       submiting: false,
       submitingDiscussion: false,
       notification: {
@@ -37,6 +38,9 @@ class ProductDetail extends Component {
       favorite: false,
       productDetail: false
     }
+
+    this.addWishlistId = null
+    this.addWishlistType = null
   }
   /** reset scroll */
   scrollToTop () {
@@ -52,7 +56,7 @@ class ProductDetail extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, favorite } = nextProps
+    const { productDetail, favorite, addWishlist } = nextProps
 
     const { isFetching, isFound, isError, notifError } = this.props
     const nextId = nextProps.query.id
@@ -64,6 +68,7 @@ class ProductDetail extends Component {
         this.setState({ notification: notifError(productDetail.message) })
       }
       if (isFound(productDetail)) {
+        console.log('productDetail: ', productDetail)
         this.setState({ productDetail })
         if (String(productDetail.detail.product.id) !== String(nextId)) {
           NProgress.start()
@@ -85,6 +90,32 @@ class ProductDetail extends Component {
       }
     }
 
+    if (!isFetching(addWishlist) && this.submiting.addWishlist) {
+      this.addWishlist = { ...this.addWishlist, addWishlist: false }
+      if (isError(addWishlist)) {
+        this.setState({ notification: notifError(addWishlist.message) })
+      }
+      if (isFound(addWishlist)) {
+        console.log('addWishlist: ', addWishlist)
+        if (this.addWishlistType === 'product_sugesstion') {
+          productDetail.detail.other_products.some((product) => {
+            if (product.id === this.addWishlistId) {
+              (product.is_liked) ? product.count_like -= 1 : product.count_like += 1
+              product.is_liked = !product.is_liked
+              return true
+            }
+          })
+        }
+
+        if (this.addWishlistType === 'product') {
+          productDetail.detail.product.is_liked = addWishlist.wishlist.is_liked
+        }
+        this.addWishlistType = null
+        this.addWishlistId = null
+        this.setState({ productDetail })
+      }
+    }
+
     /** load new product when route change */
     let oldId = this.props.query.id
     let newId = nextProps.query.id
@@ -95,17 +126,12 @@ class ProductDetail extends Component {
     }
   }
 
-  async wishlistPress (id) {
-    let { productDetail } = this.state
+  wishlistPress (id, status) {
     if (this.props.isLogin) {
-      productDetail.detail.other_products.map((product) => {
-        if (product.id === id) {
-          (product.is_liked) ? product.count_like -= 1 : product.count_like += 1
-          product.is_liked = !product.is_liked
-        }
-      })
-      await this.props.addToWishlist({ id })
-      this.setState({ productDetail })
+      this.submiting = { ...this.submiting, addWishlist: true }
+      this.addWishlistType = status
+      this.addWishlistId = id
+      this.props.addToWishlist({ id })
     } else {
       this.props.alertLogin()
     }
@@ -147,7 +173,7 @@ class ProductDetail extends Component {
 
   render () {
     const { productDetail, notification, submiting, submitingDiscussion } = this.state
-    const { query } = this.props
+    const { isFound, query } = this.props
     const { detail } = productDetail
     const params = {
       navbar: {
@@ -168,7 +194,7 @@ class ProductDetail extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            productDetail.isFound &&
+          isFound(productDetail) &&
             <Content>
               <ProductDetailItem
                 {...this.props}
@@ -176,6 +202,7 @@ class ProductDetail extends Component {
                 product={detail.product}
                 rating={detail.rating}
                 notification={(message) => this.notification(message)}
+                wishlistPress={(id) => this.wishlistPress(id, 'product')}
                 commission={query.commission} />
               <ProductDetailInformation
                 product={detail.product}
@@ -196,7 +223,7 @@ class ProductDetail extends Component {
               <ProductDetailSuggestions
                 products={detail.other_products}
                 store={detail.store}
-                wishlistPress={(id) => this.wishlistPress(id)} />
+                wishlistPress={(id) => this.wishlistPress(id, 'product_sugesstion')} />
               <ProductDetailNavBottom
                 {...detail.product}
                 purchaseNow={() => this.purchaseNow()}
@@ -205,9 +232,8 @@ class ProductDetail extends Component {
                 submitingDiscussion={submitingDiscussion}
                 submiting={submiting}
                 query={query} />
-              </Content>
-          }
-
+            </Content>
+        }
       </Content>
     )
   }
@@ -215,7 +241,8 @@ class ProductDetail extends Component {
 
 const mapStateToProps = (state) => ({
   productDetail: state.productDetail,
-  favorite: state.favorite
+  favorite: state.favorite,
+  addWishlist: state.addWishlist
 })
 
 const mapDispatchToProps = (dispatch) => ({

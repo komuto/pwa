@@ -1,57 +1,19 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 // components
 import Section from '../../Components/Section'
 import MyRating from '../../Components/MyRating'
 // containers
 import ProductDetailSlider from './DetailSlider'
-// actions
-import * as productActions from '../../actions/product'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 
 class ProductDetailItem extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      product: props.product || null,
-      rating: props.rating || null,
-      commission: props.commission || null,
-      images: props.images || null,
-      wishlistStatus: false,
-      wishlist: props.wishlist || null
-    }
-    this.submitting = {
-      wishlist: false
-    }
-  }
-
   wishlistPress (id) {
-    if (this.props.isLogin) {
-      this.submitting = { ...this.submitting, wishlist: true }
-      this.props.addToWishlist({ id })
-    } else {
-      this.props.alertLogin()
-    }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { wishlist } = nextProps
-    const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(wishlist) && this.submitting.wishlist) {
-      if (isError(wishlist)) {
-        this.props.notification(notifError(wishlist.message))
-      }
-      if (isFound(wishlist)) {
-        let { product } = this.state
-        product.is_liked = wishlist.wishlist.is_liked
-        this.setState({ product })
-      }
-    }
+    this.props.wishlistPress(id)
   }
 
   render () {
-    const { product, rating, commission, images } = this.state
+    const { product, rating, commission, images } = this.props
     let comission = commission && <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
@@ -116,12 +78,4 @@ class ProductDetailItem extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  wishlist: state.addWishlist
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailItem)
+export default ProductDetailItem

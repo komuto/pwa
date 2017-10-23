@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
 import url from 'url'
+import UrlParam from '../../Lib/UrlParam'
 // components
 import Section from '../../Components/Section'
 import MyImage from '../../Components/MyImage'
@@ -36,7 +37,7 @@ class ProductDetailSuggestions extends Component {
                     pathname: '/product-detail',
                     query: {id: product.id}
                   }),
-                  `/product-detail?id=${product.id}`
+                  `/detail/${UrlParam(store.name)}/${product.slug}?id=${product.id}`
                 )}>
                 <div className='column'>
                   <div className='box list'>
