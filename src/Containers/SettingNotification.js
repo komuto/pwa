@@ -1,25 +1,29 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-// import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
+import Notification from '../Components/Notification'
 // actions
-import * as actionTypes from '../actions/user'
+import * as userAction from '../actions/user'
+// services
+import { isFetching, isFound, isError, validateResponse, validateResponseAlter } from '../Services/Status'
 
 class SettingNotification extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      formNotification: {
-      },
+      notifSettings: props.notifSettings,
+      // form: {
+
+      // },
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
-      },
-      submitting: false,
-      validation: false
+      }
     }
+    this.submiting = false
   }
 
   handleInput (e) {
@@ -35,13 +39,45 @@ class SettingNotification extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    const { notifSettings } = nextProps
+    if (!isFetching(notifSettings)) {
+      NProgress.done()
+      if (isFound(notifSettings)) {
+        this.setState({ notifSettings })
+      }
+      if (isError(notifSettings)) {
+        this.setState({ notification: validateResponse(notifSettings, notifSettings.message) })
+      }
+    }
+    if (!isFetching(notifSettings) && this.submiting) {
+      NProgress.done()
+      if (isFound(notifSettings)) {
+        this.setState({ notifSettings })
+      }
+      if (isError(notifSettings)) {
+        this.setState({ notification: validateResponseAlter(notifSettings, notifSettings.message) })
+      }
+    }
   }
 
   componentDidMount () {
+    NProgress.start()
+    this.props.getNotifSettings()
   }
 
   render () {
-    const { submitting, notification } = this.state
+    const { notifSettings, notification } = this.state
+    if (!isFound(notifSettings)) return null
+    if (isError(notifSettings)) {
+      return (
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+      )
+    }
     return (
       <section className='section is-paddingless'>
         <div
@@ -93,7 +129,7 @@ class SettingNotification extends React.Component {
           </ul>
           <div className='field'>
             <a
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`}
               onClick={(e) => this.postSettingNotification(e)}>Simpan Perubahan
               </a>
           </div>
@@ -105,12 +141,13 @@ class SettingNotification extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    changePassword: state.changePassword
+    notifSettings: state.notifSettings
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  changePassword: () => dispatch(actionTypes.changePassword())
+  getNotifSettings: () => dispatch(userAction.getNotifSettings()),
+  updateNotifSettings: (params) => dispatch(userAction.updateNotifSettings(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingNotification)
