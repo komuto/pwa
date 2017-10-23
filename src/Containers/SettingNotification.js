@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Notification from '../Components/Notification'
 // actions
@@ -72,8 +73,12 @@ class SettingNotification extends React.Component {
   }
 
   componentDidMount () {
-    NProgress.start()
-    this.props.getNotifSettings()
+    if (this.props.isLogin) {
+      NProgress.start()
+      this.props.getNotifSettings()
+    } else {
+      Router.push('/signin')
+    }
   }
 
   render () {

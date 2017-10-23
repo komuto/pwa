@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Dropzone from 'react-dropzone'
 // components
 import Router from 'next/router'
+import Notification from '../Components/Notification'
 import {Images} from '../Themes'
 import NProgress from 'nprogress'
 // actions
@@ -30,18 +31,11 @@ class InformationStore extends React.Component {
       validation: false,
       setStateStart: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
-  }
-
-  handleNotification (e) {
-    const { notification } = this.state
-    const newState = { notification }
-    newState.notification['status'] = !notification.status
-    this.setState(newState)
   }
 
   onDrop (files) {
@@ -146,6 +140,7 @@ class InformationStore extends React.Component {
     const { profile, formInfo } = this.state
     const { query, getProfile } = this.props
     if (query.type === 'settingStore') {
+      NProgress.start()
       if (!profile.isFound) {
         this.setState({ setStateStart: true })
         getProfile()
@@ -161,44 +156,60 @@ class InformationStore extends React.Component {
         this.setState(newState)
       }
     }
-    NProgress.done()
   }
 
   componentWillReceiveProps (nextProps) {
     const { formInfo, submitting, notification, setStateStart } = this.state
-    const { tempCreateStore, query, updateInformation, getProfile } = this.props
+    const { query, isFetching, isFound, isError, notifError } = this.props
     const { profile, updateStore, upload } = nextProps
-    if (!upload.isLoading && upload.isFound && submitting) {
-      const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
-      const logo = upload.payload.images[0].name
-      const path = upload.payload.path
-      const newState = { formInfo, submitting: false }
-      newState.formInfo['logo'] = logo
-      newState.formInfo['path'] = path
-      this.setState(newState)
-      if (isSetting) {
-        updateInformation(formInfo)
-      } else {
-        tempCreateStore({ store: formInfo })
-        Router.push('/shipping-expedition')
+    if (!isFetching(upload) && submitting) {
+      if (isFound(upload)) {
+        const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+        const logo = upload.payload.images[0].name
+        const path = upload.payload.path
+        const newState = { formInfo }
+        newState.formInfo['logo'] = logo
+        newState.formInfo['path'] = path
+        this.setState(newState)
+        if (isSetting) {
+          this.props.updateInformation(formInfo)
+        } else {
+          this.props.tempCreateStore({ store: formInfo })
+        }
+      }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message) })
       }
     }
-    if (!profile.isLoading && profile.isFound && setStateStart) {
-      const newState = { formInfo, setStateStart: false }
-      const splitLogo = profile.user.store.logo.split('/')
-      const logo = splitLogo.pop() || splitLogo.pop()
-      newState.formInfo['name'] = profile.user.store.name
-      newState.formInfo['slogan'] = profile.user.store.slogan
-      newState.formInfo['description'] = profile.user.store.description
-      newState.formInfo['logo'] = logo
-      newState.formInfo['path'] = splitLogo.join('/')
-      this.setState(newState)
-      this.setState({ profile })
+    if (nextProps.formInfo.name !== '') {
+      this.setState({ submitting: false })
+      Router.push('/shipping-expedition')
+    }
+
+    if (!isFetching(profile) && setStateStart) {
+      if (isFound(profile)) {
+        const newState = { formInfo, setStateStart: false }
+        const splitLogo = profile.user.store.logo.split('/')
+        const logo = splitLogo.pop() || splitLogo.pop()
+        newState.formInfo['name'] = profile.user.store.name
+        newState.formInfo['slogan'] = profile.user.store.slogan
+        newState.formInfo['description'] = profile.user.store.description
+        newState.formInfo['logo'] = logo
+        newState.formInfo['path'] = splitLogo.join('/')
+        this.setState(newState)
+        this.setState({ profile })
+      }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message), setStateStart: false })
+      }
+    }
+    if (!isFetching(updateStore) && submitting) {
+
     }
     if (!updateStore.isLoading && updateStore.isFound && submitting) {
       switch (updateStore.status) {
         case Status.SUCCESS: {
-          getProfile()
+          this.props.getProfile()
           const newNotification = { notification, submitting: false }
           newNotification.notification['status'] = true
           newNotification.notification['message'] = updateStore.message
@@ -233,12 +244,12 @@ class InformationStore extends React.Component {
     }
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless'>
           <div className='seller-bar'>
             <div className='seller-step active1'>
