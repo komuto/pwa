@@ -15,10 +15,10 @@ export default (props) => {
         <p>{localize.signin_warning}</p>
         {/* <div className='columns is-mobile'>
         </div> */}
-        <div className='column is-half'>
+        <div className='column'>
           <a className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/signin')}>{localize.signin}</a>
         </div>
-        <div className='column is-half'>
+        <div className='column'>
           <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/signup')}>{localize.signup}</a>
         </div>
       </div>
