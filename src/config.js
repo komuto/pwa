@@ -1,7 +1,7 @@
 import { delay } from 'redux-saga'
 import { put, call, select } from 'redux-saga/effects'
 import localforage from 'localforage'
-import AppConfig from './Config/AppConfig.example'
+import AppConfig from './Config/AppConfig'
 export const serviceUrl = AppConfig.serviceUrl
 export const apiKomuto = AppConfig.apiKomuto
 export const storage = localforage
