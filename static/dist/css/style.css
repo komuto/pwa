@@ -5766,6 +5766,8 @@ strong {
     margin-bottom: 0; }
   .columns.margin-bottom-sm:last-child, .columns.margin-bottom-sm:not(:last-child) {
     margin-bottom: 5px; }
+  .columns.bg-white {
+    background-color: #ffffff; }
   .columns.custom:last-child, .columns.custom:not(:last-child) {
     margin-bottom: 0; }
   .columns.custom .column {
@@ -5775,6 +5777,10 @@ strong {
     border-bottom: 1px solid #dedede; }
     .columns.custom .column.no-padding {
       padding: 0; }
+    .columns.custom .column.no-flex {
+      width: 100%;
+      -ms-flex-preferred-size: initial;
+          flex-basis: initial; }
   .columns.view-all:last-child, .columns.view-all:not(:last-child) {
     margin-bottom: 0; }
 
@@ -7494,12 +7500,20 @@ strong.total {
     .modal-filter .modal-card .modal-card-body .filter-option {
       right: 0;
       overflow-y: auto;
-      overflow-x: hidden; }
+      overflow-x: hidden;
+      position: absolute;
+      width: 60%; }
       .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
         background-color: #ffffff;
         width: 100%;
         right: -20px;
         padding-left: 0; }
+        .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
+          position: absolute;
+          top: 50%;
+          left: 15px;
+          -webkit-transform: translateY(-50%);
+          transform: translateY(-50%); }
 
 .modal-filter.categories .modal-card .modal-card-body {
   margin-left: 0;
@@ -7555,7 +7569,7 @@ strong.total {
         color: #41475e;
         font-size: 14px; }
     .filter-option .sort-list .checkbox {
-      padding: 20px;
+      padding: 27.6px 20px;
       position: relative;
       display: block;
       border-bottom: 1px solid #e9e9e9; }
@@ -7620,7 +7634,7 @@ strong.total {
     .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
       padding-left: 0; }
       .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
-        padding: 20px 10px; }
+        padding: 27.6px 10px; }
         .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
           font-size: 11px; } }
 
