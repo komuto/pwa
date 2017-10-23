@@ -68,7 +68,9 @@ class Home extends Component {
     this.submitting = { ...this.submitting, products: true, category: true, countCart: true }
     this.props.getProducts(this.params)
     this.props.getCategoryList()
-    this.props.getCountCart()
+    if (this.props.isLogin) {
+      this.props.getCountCart()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -171,7 +173,7 @@ const CategoryContent = ({ localize, category }) => (
   <Content>
     <Section>
       <SectionTitle title={localize.product_category} />
-      <Content className='columns is-mobile is-multiline custom'>
+      <Content className='columns is-mobile is-multiline custom bg-white'>
         {
           category.categories.map(category => {
             return (
@@ -195,7 +197,7 @@ const CategoryContent = ({ localize, category }) => (
             )
           })
         }
-        <Content className='column is-paddingless'>
+        <Content className='column is-paddingless no-flex'>
           <Content className='see-all'>
             <Link href='categories1' as='c'><a><span className='link'>{localize.product_category_all} <span className='icon-arrow-right' /></span></a></Link>
           </Content>
