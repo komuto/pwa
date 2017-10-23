@@ -1,4 +1,4 @@
-import AppConfig from '../Config/AppConfig'
+import AppConfig from '../Config/AppConfig.example'
 
 const images = {
   about: `https://skyshi.com/sites/skyshi.com/files/logo_rev_1.png`,

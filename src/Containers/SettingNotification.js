@@ -6,17 +6,13 @@ import NProgress from 'nprogress'
 import Notification from '../Components/Notification'
 // actions
 import * as userAction from '../actions/user'
-// services
-import { isFetching, isFound, isError, validateResponse, validateResponseAlter } from '../Services/Status'
 
 class SettingNotification extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       notifSettings: props.notifSettings,
-      // form: {
-
-      // },
+      formSetting: [],
       notification: {
         type: 'is-success',
         status: false,
@@ -24,38 +20,53 @@ class SettingNotification extends React.Component {
       }
     }
     this.submiting = false
+    this.fetchingFirst = true
   }
 
   handleInput (e) {
-    const { name, value } = e.target
-    let { formPassword } = this.state
-    const newState = { formPassword }
-    newState.formPassword[name] = value
+    const { name } = e.target
+    let { notifSettings } = this.state
+    const newState = { notifSettings }
+    newState.notifSettings.settings.map(setting => {
+      if (setting.type === Number(name)) {
+        setting['is_active'] = !setting.is_active
+      }
+      return setting
+    })
     this.setState(newState)
   }
 
-  postSettingNotification (e) {
+  updateSettingNotification (e) {
     e.preventDefault()
+    this.submiting = true
+    const { notifSettings } = this.state
+    const notifications = notifSettings.settings.map(val => {
+      return { type: val.type, is_active: val.is_active }
+    })
+    this.props.updateNotifSettings({ notifications })
   }
 
   componentWillReceiveProps (nextProps) {
     const { notifSettings } = nextProps
-    if (!isFetching(notifSettings)) {
+    const { isFetching, isFound, isError, notifSuccess, notifError } = this.props
+    if (!isFetching(notifSettings) && this.fetchingFirst) {
       NProgress.done()
+      this.fetchingFirst = false
       if (isFound(notifSettings)) {
         this.setState({ notifSettings })
       }
       if (isError(notifSettings)) {
-        this.setState({ notification: validateResponse(notifSettings, notifSettings.message) })
+        this.setState({ notification: notifError(notifSettings.message) })
       }
     }
     if (!isFetching(notifSettings) && this.submiting) {
       NProgress.done()
+      this.submiting = false
       if (isFound(notifSettings)) {
-        this.setState({ notifSettings })
+        this.setState({ notifSettings, notification: notifSuccess(notifSettings.message) })
       }
       if (isError(notifSettings)) {
-        this.setState({ notification: validateResponseAlter(notifSettings, notifSettings.message) })
+        this.setState({ notification: notifError(notifSettings.message) })
       }
     }
   }
@@ -66,71 +77,42 @@ class SettingNotification extends React.Component {
   }
 
   render () {
-    const { notifSettings, notification } = this.state
-    if (!isFound(notifSettings)) return null
-    if (isError(notifSettings)) {
-      return (
+    const { notifSettings, notification, formSetting } = this.state
+    return (
+      <section className='section is-paddingless'>
         <Notification
           type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-      )
-    }
-    return (
-      <section className='section is-paddingless'>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
         <div className='title-head'>
           <p>Pilih Notifikasi yang ingin dikirimkan ke akun Anda</p>
         </div>
         <div className='data-wrapper'>
           <ul className='set-notify'>
-            <li>
-              <span>Setiap pesan pribadi dari admin saya terima</span>
-              <label className='switch right grey-style'>
-                <input type='checkbox' />
-                <span className='slider round' />
-              </label>
-            </li>
-            <li>
-              <span>Setiap Pesan Berita dari Komuto.</span>
-              <label className='switch right grey-style'>
-                <input type='checkbox' />
-                <span className='slider round' />
-              </label>
-            </li>
-            <li>
-              <span>Setiap Review dan komentar saya terima.</span>
-              <label className='switch right grey-style'>
-                <input type='checkbox' />
-                <span className='slider round' />
-              </label>
-            </li>
-            <li>
-              <span>Setiap Diskusi produk dan komentar saya terima.</span>
-              <label className='switch right grey-style'>
-                <input type='checkbox' />
-                <span className='slider round' />
-              </label>
-            </li>
-            <li>
-              <span>Setiap Pesan Pribadi saya terima.</span>
-              <label className='switch right grey-style'>
-                <input type='checkbox' />
-                <span className='slider round' />
-              </label>
-            </li>
+            {
+              notifSettings.settings.map((setting, i) => {
+                let isChecked = setting.is_active
+                return (
+                  <li key={i}>
+                    <span>{setting.content}</span>
+                    <label className='switch right grey-style'>
+                      <input type='checkbox' name={setting.type}
+                        checked={isChecked}
+                        onChange={(e) => this.handleInput(e)}
+                        value={formSetting.is_active} />
+                      <span className='slider round' />
+                    </label>
+                  </li>
+                )
+              })
+            }
           </ul>
           <div className='field'>
             <a
-              className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`}
-              onClick={(e) => this.postSettingNotification(e)}>Simpan Perubahan
+              className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}
+              onClick={(e) => this.updateSettingNotification(e)}>Simpan Perubahan
               </a>
           </div>
         </div>
