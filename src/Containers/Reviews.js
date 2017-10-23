@@ -12,8 +12,6 @@ import Loading from '../Components/Loading'
 // actions
 import * as reviewActions from '../actions/review'
 import * as productActions from '../actions/product'
-// services
-import { Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -25,7 +23,7 @@ class Reviews extends Component {
       reviews: props.reviews || null,
       productDetail: props.productDetail || null,
       fetching: false,
-      hasMore: true,
+      hasMore: false,
       pagination: {
         page: 1,
         limit: 10
@@ -35,72 +33,59 @@ class Reviews extends Component {
         message: 'Error, default message.'
       }
     }
+
+    this.submitting = {
+      productDetail: false,
+      reviews: false
+    }
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     const { id, productDetail } = this.state
     NProgress.start()
     if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
+      this.submitting = { ...this.submitting, productDetail: true }
+      this.props.getProduct({ id })
     }
-    await this.props.dispatch(reviewActions.listReviews({ id, ...this.state.pagination }))
+    this.submitting = { ...this.submitting, reviews: true }
+    this.props.listReviews({ id, ...this.state.pagination })
   }
 
-  async handleLoadMore () {
-    let { id, pagination, fetching } = this.state
-    if (!fetching) {
+  handleLoadMore () {
+    let { id, pagination } = this.state
+    if (!this.submitting.reviews) {
       pagination.page += 1
-      await this.props.dispatch(reviewActions.listReviews({ id, ...this.state.pagination }))
-      this.setState({ pagination, fetching: true })
+      this.submitting = { ...this.submitting, reviews: true }
+      this.props.listReviews({ id, ...this.state.pagination })
+      this.setState({ pagination })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { reviews, productDetail } = nextProps
-    const stateReviews = this.state.reviews
+    const { isFetching, isFound, isError, notifError } = this.props
+    let { reviews, productDetail } = nextProps
 
-    if (!productDetail.isLoading) {
-      NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(productDetail) && this.submitting.productDetail) {
+      this.submitting = { ...this.submitting, productDetail: false }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
       }
     }
 
-    if (!reviews.isLoading) {
+    if (!isFetching(reviews) && this.submitting.reviews) {
       NProgress.done()
-      switch (reviews.status) {
-        case Status.SUCCESS :
-          if (reviews.isFound) {
-            let hasMore = reviews.reviews.length > 0
-            // jika page di state kurang dari page di props maka data reviews di tambahkan
-            if ((stateReviews.meta.page < reviews.meta.page) && reviews.reviews.length > 0) {
-              reviews.reviews = stateReviews.reviews.concat(reviews.reviews)
-            } else {
-              reviews.reviews = stateReviews.reviews
-            }
-            // reviews.reviews = this.state.reviews.reviews.concat(reviews.reviews)
-            this.setState({ fetching: false, hasMore, reviews })
-          } else {
-            this.setState({ notification: {status: true, message: 'Data reviews tidak ditemukan'} })
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: reviews.message} })
-          break
-        default:
-          break
+      this.submitting = { ...this.submitting, reviews: false }
+      if (isError(reviews)) {
+        this.setState({ notification: notifError(reviews.message) })
+      }
+      if (isFound(reviews)) {
+        let hasMore = reviews.reviews.length > 8
+        let tam = this.state.reviews.reviews.concat(reviews.reviews)
+        reviews.reviews = tam
+        this.setState({ reviews, hasMore })
       }
     }
   }
@@ -108,7 +93,7 @@ class Reviews extends Component {
   render () {
     const { reviews, productDetail, notification } = this.state
     const { product, images } = productDetail.detail
-    if (!productDetail.isFound) return null
+    const { isFound } = this.props
     return (
       <Section>
         <Notification
@@ -118,7 +103,7 @@ class Reviews extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            productDetail.isFound &&
+          isFound(productDetail) &&
             <div className='discuss'>
               <ul className='product-discuss' style={{ backgroundColor: '#fff' }}>
                 <li>
@@ -142,28 +127,31 @@ class Reviews extends Component {
                   </div>
                 </li>
               </ul>
-              </div>
-          }
+            </div>
+        }
         {
-            reviews.reviews.length > 0 &&
+          isFound(reviews) &&
             <InfiniteScroll
               pageStart={0}
               loadMore={_.debounce(this.handleLoadMore.bind(this), 500)}
               hasMore={this.state.hasMore}
               loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
-                { reviews.reviews.map((review, index) => { return <ReviewItem {...review} key={review.id} /> }) }
-              </InfiniteScroll>
-          }
+              { reviews.reviews.map((review, index) => { return <ReviewItem {...review} key={review.id} /> }) }
+            </InfiniteScroll>
+        }
       </Section>
     )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail,
-    reviews: state.productReview
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail,
+  reviews: state.productReview
+})
 
-export default connect(mapStateToProps)(Reviews)
+const mapDispatchToProps = (dispatch) => ({
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  listReviews: (params) => dispatch(reviewActions.listReviews(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Reviews)
