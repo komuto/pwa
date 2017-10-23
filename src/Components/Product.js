@@ -4,6 +4,7 @@ import Router from 'next/router'
 import url from 'url'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+import UrlParam from '../Lib/UrlParam'
 // component
 import MyImage from '../Components/MyImage'
 // import Loader from 'react-loader-advanced'
@@ -23,7 +24,7 @@ class Product extends Component {
     this.props.wishlistPress(id)
   }
 
-  productPress (product) {
+  productPress (product, store) {
     const { type } = this.props
     const commission = product.commission * 100
     if (type === 'dropship') {
@@ -32,7 +33,7 @@ class Product extends Component {
           pathname: '/product-detail',
           query: {id: product.id, type: 'dropship', commission}
         }),
-        `/product-detail?type=dropship&id=${product.id}&commission=${commission}`
+        `/detail/${UrlParam(store.name)}/${product.slug}?&id=${product.id}&type=dropship&commission=${commission}`
       )
       this.setState({ pressId: product.id })
     } else {
@@ -41,7 +42,7 @@ class Product extends Component {
           pathname: '/product-detail',
           query: {id: product.id}
         }),
-        `/product-detail?id=${product.id}`
+        `/detail/${UrlParam(store.name)}/${product.slug}?id=${product.id}`
       )
       this.setState({ pressId: product.id })
     }
@@ -68,9 +69,8 @@ class Product extends Component {
     return (
       <div
         className={`column ${viewActive === 'grid' ? 'is-half' : ''}`}
-        onClick={() => this.productPress(product)}
-        style={{ opacity: pressId === product.id ? 0.5 : 1 }}
-        >
+        onClick={() => this.productPress(product, store)}
+        style={{ opacity: pressId === product.id ? 0.5 : 1 }}>
         <div className={`box ${viewActive} effect-display`} >
           <div className='media'>
             <div className='media-left'>

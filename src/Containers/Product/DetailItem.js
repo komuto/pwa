@@ -7,8 +7,6 @@ import MyRating from '../../Components/MyRating'
 import ProductDetailSlider from './DetailSlider'
 // actions
 import * as productActions from '../../actions/product'
-// services
-import { Status } from '../../Services/Status'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 
@@ -16,14 +14,22 @@ class ProductDetailItem extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      product: props.product || null,
+      rating: props.rating || null,
+      commission: props.commission || null,
+      images: props.images || null,
       wishlistStatus: false,
       wishlist: props.wishlist || null
     }
+    this.submitting = {
+      wishlist: false
+    }
   }
 
-  async wishlistPress (id) {
+  wishlistPress (id) {
     if (this.props.isLogin) {
-      await this.props.addToWishlist({ id })
+      this.submitting = { ...this.submitting, wishlist: true }
+      this.props.addToWishlist({ id })
     } else {
       this.props.alertLogin()
     }
@@ -31,42 +37,31 @@ class ProductDetailItem extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { wishlist } = nextProps
-
-    if (!wishlist.isLoading) {
-      switch (wishlist.status) {
-        case Status.SUCCESS :
-          this.setState({ wishlist })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          break
-        default:
-          break
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(wishlist) && this.submitting.wishlist) {
+      if (isError(wishlist)) {
+        this.props.notification(notifError(wishlist.message))
+      }
+      if (isFound(wishlist)) {
+        let { product } = this.state
+        product.is_liked = wishlist.wishlist.is_liked
+        this.setState({ product })
       }
     }
   }
 
   render () {
-    const { product, rating, commission, ...props } = this.props
-    const { wishlist } = this.state
-    let wishlistStatus = product.is_liked
-    if (wishlist.isFound && (wishlist.wishlist.id === product.id)) wishlistStatus = wishlist.wishlist.is_liked
-    let comission = () => {
-      if (commission !== undefined || null) {
-        return (
-          <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
-        )
-      }
-    }
+    const { product, rating, commission, images } = this.state
+    let comission = commission && <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
         {
-          this.props.images.length > 0 && <ProductDetailSlider {...props} />
+          this.props.images.length > 0 && <ProductDetailSlider images={images} />
         }
         <div className='detail-product'>
           <h3>{ product.name }</h3>
-          <span className='price'>Rp { RupiahFormat(product.price) }</span>{comission()}
-          <span className={`icon-wishlist ${wishlistStatus && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
+          <span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}
+          <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>
           <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>

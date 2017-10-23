@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
+import { animateScroll } from 'react-scroll'
 // components
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
@@ -37,9 +38,14 @@ class ProductDetail extends Component {
       productDetail: false
     }
   }
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
+  }
 
   componentDidMount () {
     const { id } = this.state
+    this.scrollToTop()
     NProgress.start()
     this.submiting = { ...this.submiting, productDetail: true }
     this.props.getProduct({ id })
@@ -105,7 +111,9 @@ class ProductDetail extends Component {
     }
   }
 
-  notification = (message) => this.setState({notification: {status: true, message: message}})
+  notification (notification) {
+    this.setState({ notification })
+  }
 
   purchaseNow () {
     if (this.props.isLogin) {

@@ -32,14 +32,19 @@ app.prepare().then(_ => {
   defineASURL('/discussion/product', '/discussion-product')
   defineASURL('/messages', '/messages')
   defineASURL('/resolution/center', '/resolution-center')
+  // product
   defineASURL('/p/:slugparent/:slugsubparent/:slug', '/product')
   defineASURL('/p/:slugparent/:slug', '/product')
   defineASURL('/p/:slug', '/product')
   defineASURL('/p', '/product')
+  // product detail
+  defineASURL('/detail/:store/:slug', '/product-detail')
+  // dropship
   defineASURL('/d/:slugparent/:slugsubparent/:slug', '/dropship')
   defineASURL('/d/:slugparent/:slug', '/dropship')
   defineASURL('/d/:slug', '/dropship')
   defineASURL('/d', '/dropship')
+  // categories
   defineASURL('/c/:slugparent/:slugsubparent/:slug/:id', '/product')
   defineASURL('/c/:slugparent/:slug/:id', '/categories3')
   defineASURL('/c/:slug/:id', '/categories2')
@@ -49,7 +54,6 @@ app.prepare().then(_ => {
   defineASURL('/payment/:paymentType/:idT', '/payment')
   defineASURL('/transaction-confirmation/complaint', '/transaction-confirmation-complaint')
   defineASURL('/transaction-confirmation/review', '/transaction-confirmation-review')
-  defineASURL('/product-detail/:id', '/product-detail')
   // balance
   defineASURL('/balance', '/balance')
   defineASURL('/balance/:type', '/balance')
