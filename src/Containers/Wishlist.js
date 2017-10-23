@@ -67,7 +67,7 @@ class Wishlist extends Component {
     this.setState({ selectedSort, sortActive: false, products })
   }
 
-  searchOnChange = (event) => {
+  searchOnChange (event) {
     let { products, search } = this.state
     search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
     search.status = false
@@ -81,32 +81,23 @@ class Wishlist extends Component {
     this.setState({ search })
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     NProgress.start()
     this.submitting = { ...this.submitting, products: true }
-    await this.props.wishlist()
+    this.props.wishlist()
   }
 
-  async wishlistPress (id) {
-    let { products } = this.state
+  wishlistPress (id) {
     if (this.props.isLogin) {
-      products.wishlist.some((myProduct) => {
-        if (myProduct.product.id === id) {
-          (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
-          myProduct.product.is_liked = !myProduct.product.is_liked
-          return true
-        }
-      })
       this.submitting = { ...this.submitting, addWishlist: true }
-      await this.props.addToWishlist({ id })
-      this.setState({ products })
+      this.props.addToWishlist({ id })
     } else {
       this.props.alertLogin()
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    let { isFetching, isError, isFound, notifError } = this.props
+    const { isFetching, isError, isFound, notifError } = this.props
     let { products, addWishlist } = nextProps
 
     /** handling state set wishlist */
@@ -116,7 +107,15 @@ class Wishlist extends Component {
         this.setState({ notification: notifError(addWishlist.message) })
       }
       if (isFound(addWishlist)) {
-        this.setState({ addWishlist })
+        let idAddToWishlist = addWishlist.wishlist.id
+        products.wishlist.some((myProduct) => {
+          if (myProduct.product.id === idAddToWishlist) {
+            (myProduct.product.is_liked) ? myProduct.product.count_like -= 1 : myProduct.product.count_like += 1
+            myProduct.product.is_liked = !myProduct.product.is_liked
+            return true
+          }
+        })
+        this.setState({ addWishlist, products })
       }
     }
 
@@ -149,12 +148,6 @@ class Wishlist extends Component {
     return (
       <Content>
         <Navbar {...params} />
-        <Notification
-          type='is-danger'
-          isShow={notification.status}
-          activeClose
-          onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message} />
         <Section className='section is-paddingless'>
           <div className='field search-form'>
             <p className='control has-icons-left'>
@@ -164,10 +157,17 @@ class Wishlist extends Component {
               </span>
             </p>
           </div>
+          <Notification
+            type='is-danger'
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
         </Section>
         <WishlistContent
           viewActive={viewActive}
-          wishlist={wishlist} />
+          wishlist={wishlist}
+          wishlistPress={(id) => this.wishlistPress(id)} />
         <TabbarCategories
           sortButton
           filterButton={false}
@@ -185,7 +185,7 @@ class Wishlist extends Component {
   }
 }
 
-const WishlistContent = ({ wishlist, viewActive }) => (
+const WishlistContent = ({ wishlist, viewActive, wishlistPress }) => (
   <Section className='section is-paddingless' style={{marginBottom: '0px'}}>
     {
       viewActive === 'list'
@@ -193,11 +193,12 @@ const WishlistContent = ({ wishlist, viewActive }) => (
         {
           wishlist.map((myProduct, index) => {
             if (myProduct.product.is_liked) {
+              let idProduct = `${myProduct.product.id}.${myProduct.store.id}`
               return <ProductContainers key={index}>
                 <Product
                   {...myProduct}
                   viewActive={viewActive}
-                  wishlistPress={(id) => this.wishlistPress(id)} />
+                  wishlistPress={() => wishlistPress(idProduct)} />
               </ProductContainers>
             }
           })
@@ -206,12 +207,13 @@ const WishlistContent = ({ wishlist, viewActive }) => (
       : <ProductContainers>
         {
           wishlist.map((myProduct, index) => {
+            let idProduct = `${myProduct.product.id}.${myProduct.store.id}`
             if (myProduct.product.is_liked) {
               return <Product
                 {...myProduct}
                 key={index}
                 viewActive={viewActive}
-                wishlistPress={(id) => this.wishlistPress(id)} />
+                wishlistPress={() => wishlistPress(idProduct)} />
             }
           })
         }

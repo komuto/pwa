@@ -11,6 +11,7 @@ import Link from 'next/link'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import url from 'url'
+import { animateScroll } from 'react-scroll'
 /** including components */
 import Slider from 'react-slick'
 import Content from '../Components/Content'
@@ -22,6 +23,7 @@ import MyImage from '../Components/MyImage'
 /** including actions */
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
+import * as cartActions from '../actions/cart'
 /** including themes */
 import Images from '../Themes/Images'
 
@@ -30,16 +32,23 @@ class Home extends Component {
     super(props)
     this.state = {
       products: props.products || null,
+      countCart: props.countCart || null,
       category: props.category || null,
       notification: props.notification
     }
     this.submitting = {
       products: false,
       category: false,
-      addWishlist: false
+      addWishlist: false,
+      countCart: false
     }
     this.wishlistId = null
     this.params = {sort: 'newest', page: 1, limit: 6}
+  }
+
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   /** handling wishlist / love button press  */
@@ -54,14 +63,16 @@ class Home extends Component {
   }
 
   componentDidMount () {
+    this.scrollToTop()
     NProgress.start()
-    this.submitting = { ...this.submitting, products: true, category: true }
+    this.submitting = { ...this.submitting, products: true, category: true, countCart: true }
     this.props.getProducts(this.params)
     this.props.getCategoryList()
+    this.props.getCountCart()
   }
 
   componentWillReceiveProps (nextProps) {
-    let { products, addWishlist, category } = nextProps
+    let { products, addWishlist, category, countCart } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
     // console.log(products)
     /** handling state set wishlist */
@@ -106,6 +117,16 @@ class Home extends Component {
       }
       if (isFound(category)) {
         this.setState({ category })
+      }
+    }
+
+    /** handling state get category */
+    if (!isFetching(countCart) && this.submitting.countCart) {
+      if (isError(countCart)) {
+        this.setState({ notification: notifError(countCart.message) })
+      }
+      if (isFound(countCart)) {
+        this.setState({ countCart })
       }
     }
 
@@ -239,13 +260,15 @@ Home.defaultProps = {
 const mapStateToProps = (state) => ({
   products: state.products,
   category: state.category,
-  addWishlist: state.addWishlist
+  addWishlist: state.addWishlist,
+  countCart: state.countCart
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getProducts: (params) => dispatch(homeActions.products(params)),
   getCategoryList: () => dispatch(homeActions.categoryList()),
-  addToWishlist: (params) => dispatch(productActions.addToWishlist(params))
+  addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
+  getCountCart: (params) => dispatch(cartActions.countCart())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

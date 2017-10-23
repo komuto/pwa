@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
 import InfiniteScroll from 'react-infinite-scroller'
+import { animateScroll } from 'react-scroll'
 /** including components */
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -83,6 +84,11 @@ class MyProduct extends Component {
       brands: false,
       addWishlist: false
     }
+  }
+
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   /** handling sort button press */
@@ -175,6 +181,8 @@ class MyProduct extends Component {
 
   componentDidMount () {
     const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
+    // window.scrollTo(0, 0)
+    this.scrollToTop()
     // const { id } = this.state.query
     // console.log('componentDidMount()')
     /** generate params */
@@ -223,6 +231,7 @@ class MyProduct extends Component {
 
   /** handling filter button press */
   filterRealization (filters) {
+    this.scrollToTop()
     filters.map((filter) => {
       switch (filter.id) {
         case 'condition':
@@ -286,6 +295,9 @@ class MyProduct extends Component {
     this.submitting = { ...this.submitting, productBySearch: true }
     delete this.params.page
     delete this.params.limit
+
+    console.log('this.params: ', this.params)
+
     this.props.listProductBySearch(this.params)
 
     /** close filter */

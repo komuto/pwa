@@ -1,4 +1,4 @@
-import { buildAction, typeReq } from '../config'
+import { buildAction, typeReq, typeTemp } from '../config'
 
 export const GET_STORE = 'GET_STORE'
 export const CREATE_STORE = 'CREATE_STORE'
@@ -18,7 +18,6 @@ export const UPDATE_INFORMATION = 'UPDATE_INFORMATION'
 export const UPDATE_TERM = 'UPDATE_TERM'
 export const GET_ADDRESS = 'GET_ADDRESS'
 export const UPDATE_STORE_ADDRESS = 'UPDATE_STORE_ADDRESS'
-export const TEMP_CREATE_STORE = 'TEMP_CREATE_STORE'
 export const GET_STORE_DISCUSSIONS = 'GET_STORE_DISCUSSIONS'
 export const GET_STORE_PRODUCTS_BY_CATALOG = 'GET_STORE_PRODUCTS_BY_CATALOG'
 
@@ -118,7 +117,7 @@ export const getHiddenStoreProducts = params => buildAction(typeReq(GET_HIDDEN_S
 /**
  * @state tempCreateStore
  */
-export const tempCreateStore = params => buildAction(TEMP_CREATE_STORE, params)
+export const tempCreateStore = params => buildAction(typeTemp(CREATE_STORE), params)
 
 /**
  * @params params are the same as the api query

@@ -19,7 +19,7 @@ const Index = (props) => {
     },
     hero: {
       path: '/signin',
-      textPath: localize.signup_hero,
+      textPath: localize.signup_hero_path,
       textInfo: localize.signup_hero_info
     }
   }
