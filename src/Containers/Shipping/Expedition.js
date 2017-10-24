@@ -206,6 +206,7 @@ class ShippingExpedition extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
     return (
       <div>
