@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 // components
-import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../../actions/user'
 // services
@@ -39,7 +38,6 @@ class ManageStore extends Component {
   toManageBiodata (e) {
     e.preventDefault()
     this.setState({ loadingBiodata: true })
-    NProgress.start()
     Router.push('/manage-biodata')
   }
 

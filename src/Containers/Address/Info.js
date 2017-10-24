@@ -13,8 +13,6 @@ import * as actionStoreTypes from '../../actions/stores'
 import * as actionExpeditionTypes from '../../actions/expedition'
 // validation
 import { inputNumber } from '../../Validations/Input'
-// services
-import { Status } from '../../Services/Status'
 
 class AddressInfo extends React.Component {
   constructor (props) {
@@ -50,9 +48,10 @@ class AddressInfo extends React.Component {
       submitting: false,
       showAddress: false,
       validation: false,
-      setStateStart: false,
+      fetchingFirst: false,
       showVerified: false,
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
@@ -248,24 +247,115 @@ class AddressInfo extends React.Component {
 
   componentDidMount () {
     const { districts, subdistricts, villages, listAddress, expeditions, storeAddress, formAddress } = this.state
-    const { getListAddress, getProvince, getExpedition, getStoreAddress, query } = this.props
+    const { getListAddress, getProvince, getExpedition, getStoreAddress, query, isFound } = this.props
     getProvince()
-    if (!listAddress.isFound) {
+    if (!isFound(listAddress)) {
       getListAddress()
     }
-    if (!expeditions.isFound) {
+    if (!isFound(expeditions)) {
       getExpedition()
     }
     if (this.props.hasOwnProperty('query') && query.type === 'settingStore') {
-      if (!storeAddress.isFound) {
+      if (!isFound(storeAddress)) {
         NProgress.start()
-        this.setState({ setStateStart: true }, () => {
-          if (this.state.setStateStart) {
+        this.setState({ fetchingFirst: true }, () => {
+          if (this.state.fetchingFirst) {
             getStoreAddress()
           }
         })
       } else {
         const newState = { formAddress }
+        newState.formAddress['province_id'] = storeAddress.storeAddress.province.id
+        newState.formAddress['district_id'] = storeAddress.storeAddress.district.id
+        newState.formAddress['sub_district_id'] = storeAddress.storeAddress.subDistrict.id
+        newState.formAddress['village_id'] = storeAddress.storeAddress.village.id
+        newState.formAddress['address'] = storeAddress.storeAddress.address
+        newState.formAddress['postal_code'] = storeAddress.storeAddress.postal_code
+        this.setState(newState)
+        if (!isFound(districts.data)) {
+          this.props.getDistrict({ province_id: formAddress.province_id })
+        }
+        if (!isFound(subdistricts.data)) {
+          this.props.getSubDistrict({ district_id: formAddress.district_id })
+        }
+        if (!isFound(villages.data)) {
+          this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
+        }
+      }
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { formAddress, provinces, districts, subdistricts, villages, submitting, fetchingFirst } = this.state
+    const { store, listAddress, storeAddress, statusUpdateStoreAddress } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(nextProps.provinces)) {
+      if (isFound(nextProps.provinces)) {
+        const newProvince = { provinces }
+        newProvince.provinces['data'] = nextProps.provinces
+        this.setState(newProvince)
+      }
+      if (isError(nextProps.provinces)) {
+        this.setState({ notification: notifError(nextProps.provinces.message) })
+      }
+    }
+    if (!isFetching(nextProps.districts)) {
+      if (isFound(nextProps.districts)) {
+        const newDistrict = { districts }
+        newDistrict.districts['data'] = nextProps.districts
+        this.setState(newDistrict)
+      }
+      if (isError(nextProps.districts)) {
+        this.setState({ notification: notifError(nextProps.districts.message) })
+      }
+    }
+    if (!isFetching(nextProps.subdistricts)) {
+      if (isFound(nextProps.subdistricts)) {
+        const newSubdistrict = { subdistricts }
+        newSubdistrict.subdistricts['data'] = nextProps.subdistricts
+        this.setState(newSubdistrict)
+      }
+      if (isError(nextProps.subdistricts)) {
+        this.setState({ notification: notifError(nextProps.subdistricts.message) })
+      }
+    }
+    if (!isFetching(nextProps.villages)) {
+      if (isFound(nextProps.villages)) {
+        const newVillage = { villages }
+        newVillage.villages['data'] = nextProps.villages
+        this.setState(newVillage)
+      }
+      if (isError(nextProps.villages)) {
+        this.setState({ notification: notifError(nextProps.villages.message) })
+      }
+    }
+    if (isFetching(nextProps.districts)) {
+      const resetSubdistricts = { subdistricts }
+      resetSubdistricts.subdistricts.data['subdistricts'] = []
+      const resetVillages = { villages }
+      resetVillages.villages.data['villages'] = []
+      this.setState(resetSubdistricts)
+      this.setState(resetVillages)
+    }
+    if (isFetching(nextProps.subdistricts)) {
+      const resetVillages = { villages }
+      resetVillages.villages.data['villages'] = []
+      this.setState(resetVillages)
+    }
+    if (!isFetching(listAddress)) {
+      if (isFound(listAddress)) {
+        this.setState({ listAddress })
+      }
+      if (isError(listAddress)) {
+        this.setState({ notification: notifError(listAddress.message) })
+      }
+    }
+    if (!isFetching(storeAddress) && fetchingFirst) {
+      this.setState({ fetchingFirst: false })
+      if (isFound(storeAddress)) {
+        this.setState({ storeAddress })
+        const newState = { formAddress }
+        newState.formAddress['id'] = storeAddress.storeAddress.id
         newState.formAddress['province_id'] = storeAddress.storeAddress.province.id
         newState.formAddress['district_id'] = storeAddress.storeAddress.district.id
         newState.formAddress['sub_district_id'] = storeAddress.storeAddress.subDistrict.id
@@ -282,101 +372,28 @@ class AddressInfo extends React.Component {
         if (!villages.data.isFound) {
           this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
         }
+        NProgress.done()
+      }
+      if (isError(storeAddress)) {
+        this.setState({ notification: notifError(storeAddress.message) })
       }
     }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { formAddress, provinces, districts, subdistricts, villages, submitting, setStateStart } = this.state
-    const { store, listAddress, storeAddress, statusUpdateStoreAddress } = nextProps
-    if (nextProps.provinces.isFound) {
-      const newProvince = { provinces }
-      newProvince.provinces['data'] = nextProps.provinces
-      this.setState(newProvince)
-    }
-    if (nextProps.districts.isFound) {
-      const newDistrict = { districts }
-      newDistrict.districts['data'] = nextProps.districts
-      this.setState(newDistrict)
-    }
-    if (nextProps.subdistricts.isFound) {
-      const newSubdistrict = { subdistricts }
-      newSubdistrict.subdistricts['data'] = nextProps.subdistricts
-      this.setState(newSubdistrict)
-    }
-    if (nextProps.villages.isFound) {
-      const newVillage = { villages }
-      newVillage.villages['data'] = nextProps.villages
-      this.setState(newVillage)
-    }
-    if (nextProps.districts.isLoading) {
-      const resetSubdistricts = { subdistricts }
-      resetSubdistricts.subdistricts.data['subdistricts'] = []
-      const resetVillages = { villages }
-      resetVillages.villages.data['villages'] = []
-      this.setState(resetSubdistricts)
-      this.setState(resetVillages)
-    }
-    if (nextProps.subdistricts.isLoading) {
-      const resetVillages = { villages }
-      resetVillages.villages.data['villages'] = []
-      this.setState(resetVillages)
-    }
-    if (!listAddress.isLoading && listAddress.isFound) {
-      this.setState({ listAddress })
-    }
-    if (!storeAddress.isLoading && storeAddress.isFound && setStateStart) {
-      this.setState({ storeAddress })
-      const newState = { formAddress, setStateStart: false }
-      newState.formAddress['id'] = storeAddress.storeAddress.id
-      newState.formAddress['province_id'] = storeAddress.storeAddress.province.id
-      newState.formAddress['district_id'] = storeAddress.storeAddress.district.id
-      newState.formAddress['sub_district_id'] = storeAddress.storeAddress.subDistrict.id
-      newState.formAddress['village_id'] = storeAddress.storeAddress.village.id
-      newState.formAddress['address'] = storeAddress.storeAddress.address
-      newState.formAddress['postal_code'] = storeAddress.storeAddress.postal_code
-      this.setState(newState)
-      if (!districts.data.isFound) {
-        this.props.getDistrict({ province_id: formAddress.province_id })
+    if (!isFetching(store) && submitting) {
+      this.setState({ submitting: false })
+      if (isFound(store)) {
+        Router.push('/has-opened-store')
       }
-      if (!subdistricts.data.isFound) {
-        this.props.getSubDistrict({ district_id: formAddress.district_id })
+      if (isError(store)) {
+        this.setState({ notification: notifError(store.message) })
       }
-      if (!villages.data.isFound) {
-        this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
-      }
-      NProgress.done()
     }
-    if (!store.isLoading && submitting) {
-      let { notification } = this.state
-      notification = {status: false, message: 'Error, default message.'}
-      switch (store.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false })
-          Router.push('/has-opened-store')
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: store.message}
-          this.setState({ submitting: false })
-          break
-        default:
-          break
+    if (!isFetching(statusUpdateStoreAddress) && submitting) {
+      this.setState({ submitting: false })
+      if (isFound(store)) {
+        this.setState({ showVerified: true })
       }
-      this.setState({ notification })
-    }
-    if (!statusUpdateStoreAddress.isLoading && statusUpdateStoreAddress.isFound && submitting) {
-      switch (statusUpdateStoreAddress.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false, showVerified: true })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ submitting: false })
-          Router.push(`/address-data?isSuccess`)
-          break
-        default:
-          break
+      if (isError(store)) {
+        Router.push(`/address-data?isSuccess`)
       }
     }
   }
@@ -452,12 +469,11 @@ class AddressInfo extends React.Component {
     return (
       <div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <section className='section is-paddingless'>
           <div className='seller-bar'>
             <div className='seller-step active4'>

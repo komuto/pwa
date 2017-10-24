@@ -93,7 +93,6 @@ class ManageAccount extends Component {
   toManageBiodata (e) {
     e.preventDefault()
     this.setState({ loadingBiodata: true })
-    NProgress.start()
     Router.push('/manage-biodata')
   }
 
