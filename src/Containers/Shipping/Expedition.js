@@ -21,10 +21,13 @@ class ShippingExpedition extends React.Component {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
+      },
+      submiting: {
+        createStore: false,
+        updateStore: false
       }
     }
     this.fetchingFirst = false
-    this.submiting = false
   }
 
   handleNotification (e) {
@@ -82,7 +85,7 @@ class ShippingExpedition extends React.Component {
 
   submitExpedition (e) {
     e.preventDefault()
-    const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
+    const { expeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
     const { postExpedition, updateExpedition, query } = this.props
     const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     const tempExpeditionServices = {
@@ -90,8 +93,8 @@ class ShippingExpedition extends React.Component {
       selectedServices: selectedServices
     }
     if (selectedServices.length !== 0) {
-      this.submiting = true
       if (isSetting) {
+        this.setState({ submiting: { ...submiting, updateStore: true } })
         const dataServices = []
         expeditions.expeditions.map(expedition => {
           return expedition.services.map(service => {
@@ -108,6 +111,7 @@ class ShippingExpedition extends React.Component {
         })
         updateExpedition({ data: newExpedition })
       } else {
+        this.setState({ submiting: { ...submiting, createStore: true } })
         postExpedition({ expedition_services: tempExpeditionServices })
       }
     } else {
@@ -158,7 +162,7 @@ class ShippingExpedition extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { selectedServices } = this.state
+    const { selectedServices, submiting } = this.state
     const { processCreateStore, expeditions, manageExpeditions, statusUpdateExpedition } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(expeditions)) {
@@ -170,8 +174,8 @@ class ShippingExpedition extends React.Component {
         this.setState({ notification: notifError(expeditions.message) })
       }
     }
-    if (processCreateStore.expedition_services.selectedServices.length !== 0 && this.submiting) {
-      this.submiting = false
+    if (processCreateStore.expedition_services.selectedServices.length !== 0 && submiting.createStore) {
+      this.setState({ submiting: { updateStore: false, createStore: false } })
       Router.push('/owner-information')
     }
 
@@ -193,8 +197,8 @@ class ShippingExpedition extends React.Component {
         this.setState({ notification: notifError(manageExpeditions.message) })
       }
     }
-    if (!isFetching(statusUpdateExpedition) && this.submiting) {
-      this.submiting = false
+    if (!isFetching(statusUpdateExpedition) && submiting.updateStore) {
+      this.setState({ submiting: { updateStore: false, createStore: false } })
       if (isFound(statusUpdateExpedition)) {
         this.props.manageStoreExpeditions()
         this.setState({ notification: notifSuccess(statusUpdateExpedition.message) })
