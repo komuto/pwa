@@ -96,7 +96,6 @@ class ProductDetail extends Component {
         this.setState({ notification: notifError(addWishlist.message) })
       }
       if (isFound(addWishlist)) {
-        console.log('addWishlist: ', addWishlist)
         if (this.addWishlistType === 'product_sugesstion') {
           productDetail.detail.other_products.some((product) => {
             if (product.id === this.addWishlistId) {

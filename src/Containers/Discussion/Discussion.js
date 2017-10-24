@@ -27,11 +27,13 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 
 class Discussion extends Component {
   constructor (props) {
+    console.log('constructor: ')
     super(props)
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
-      discussions: props.discussions || null,
+      newDiscussion: props.newDiscussion || null,
+      discussions: null,
       hasMore: false,
       pagination: {
         page: 1,
@@ -66,17 +68,19 @@ class Discussion extends Component {
 
   addNewDiscussion () {
     if (this.props.isLogin) {
-      Router.push(`/discussion-new?id=${this.state.id}`)
+      let { id } = this.state
+      Router.push(
+        `/discussion?type=new&id=${id}`,
+        `/discussion/new?id=${id}`
+      )
     } else {
       this.props.alertLogin()
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, discussions } = nextProps
+    const { productDetail, discussions, newDiscussion } = nextProps
     const { isFetching, isError, isFound, notifError, notifSuccess } = this.props
-    const beforeDiscuss = this.props.newDiscussion
-    const nextDiscuss = nextProps.newDiscussion
 
     /** handling state product detail */
     if (!isFetching(productDetail) && this.submitting.productDetail) {
@@ -90,20 +94,18 @@ class Discussion extends Component {
     }
 
     /** handling state new discussion */
-    if (!isFetching(nextDiscuss)) {
-      if (isError(nextDiscuss)) {
-        this.setState({ notification: notifError(nextDiscuss.message) })
+    if (!isFetching(newDiscussion)) {
+      if (isError(newDiscussion)) {
+        this.setState({ notification: notifError(newDiscussion.message) })
       }
-      if (isFound(nextDiscuss)) {
-        let isNewData = nextDiscuss.discussion.id !== beforeDiscuss.discussion.id
-        if (isNewData) {
-          this.isAddNewDiscussion = true
-          discussions.discussions.unshift(nextDiscuss.discussion)
-          this.setState({
-            discussions,
-            notification: notifSuccess(nextDiscuss.message)
-          })
-        }
+      if (isFound(newDiscussion)) {
+        this.isAddNewDiscussion = true
+        discussions.discussions.unshift(newDiscussion.discussion)
+        this.setState({
+          discussions,
+          notification: notifSuccess(newDiscussion.message)
+        })
+        this.props.resetDiscussion()
       }
     }
 
@@ -116,15 +118,17 @@ class Discussion extends Component {
       }
       if (isFound(discussions)) {
         let hasMore = (discussions.discussions.length > 8)
-        let tam = this.state.discussions.discussions.concat(discussions.discussions)
-        discussions.discussions = tam
+        if (this.state.discussions) {
+          let tam = this.state.discussions.discussions.concat(discussions.discussions)
+          discussions.discussions = tam
+        }
         this.setState({ discussions, hasMore })
       }
     }
   }
 
   render () {
-    const { productDetail, discussions, notification } = this.state
+    const { notification } = this.state
     const { isFound } = this.props
 
     return (
@@ -136,54 +140,52 @@ class Discussion extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            isFound(productDetail) && isFound(discussions) &&
-            <Content>
-              <DiscussionContent
-                {...this.state}
-                isAddNewDiscussion={this.isAddNewDiscussion}
-                handleLoadMore={() => this.handleLoadMore()} />
-              <NewDiscussionContent addNewDiscussion={() => this.addNewDiscussion()} />
-            </Content>
-          }
+          <Content>
+            <DiscussionContent
+              {...this.state}
+              isFound={isFound}
+              isAddNewDiscussion={this.isAddNewDiscussion}
+              handleLoadMore={() => this.handleLoadMore()} />
+            <NewDiscussionContent addNewDiscussion={() => this.addNewDiscussion()} />
+          </Content>
+        }
       </Content>
     )
   }
 }
 
-const DiscussionContent = ({ productDetail, discussions, pagination, hasMore, handleLoadMore, isAddNewDiscussion }) => {
-  return (
-    <Section>
-      <div className='discuss gap'>
-        <DetailProduct {...productDetail.detail} />
-
-        <ul className='main-discuss' style={{ paddingTop: 15 }}>
-          {
-            discussions.discussions.length < 1
-            ? null
-            : <InfiniteScroll
-              pageStart={0}
-              loadMore={_.debounce(handleLoadMore.bind(this), 500)}
-              hasMore={hasMore}
-              loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
-              {
-                  discussions.discussions.map((discussion, index) => {
-                    let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
-                    let sttNewDisscussion = isAddNewDiscussion && index === 0
-                    return <ListDiscussion
-                      key={index}
-                      {...productDetail.detail}
-                      sttNewDisscussion={sttNewDisscussion}
-                      discussion={discussion}
-                      createDate={createDate} />
-                  })
-                }
-            </InfiniteScroll>
-          }
-        </ul>
-      </div>
-    </Section>
-  )
-}
+const DiscussionContent = ({ isFound, productDetail, discussions, pagination, hasMore, handleLoadMore, isAddNewDiscussion }) => (
+  <Section>
+    <div className='discuss gap'>
+      {
+        isFound(productDetail) && <DetailProduct {...productDetail.detail} />
+      }
+      <ul className='main-discuss' style={{ paddingTop: 15 }}>
+        {
+          discussions && isFound(discussions) && discussions.discussions.length > 0 &&
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={_.debounce(handleLoadMore.bind(this), 500)}
+            hasMore={hasMore}
+            loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+            {
+              discussions.discussions.map((discussion, index) => {
+                let createDate = moment.unix(discussion.created_at).format('Do MMMM YY')
+                let sttNewDisscussion = isAddNewDiscussion && index === 0
+                return <ListDiscussion
+                  key={index}
+                  {...productDetail.detail}
+                  sttNewDisscussion={sttNewDisscussion}
+                  discussion={discussion}
+                  createDate={createDate} />
+              })
+            }
+          </InfiniteScroll>
+        }
+      </ul>
+    </div>
+  </Section>
+)
 
 const DetailProduct = ({ product, images }) => (
   <ul className='product-discuss is-fixed' style={{ zIndex: 2, marginBottom: '15px' }}>
@@ -215,7 +217,10 @@ const ListDiscussion = ({ sttNewDisscussion, product, discussion, createDate }) 
     className={` ${sttNewDisscussion && ''}`}
     key={discussion.id}
     onClick={() => {
-      Router.push(`/discussion-detail?id=${product.id}&idd=${discussion.id}`)
+      Router.push(
+        `/discussion?type=detail&id=${product.id}&idd=${discussion.id}`,
+        `/discussion/detail?id=${product.id}&idd=${discussion.id}`
+      )
     }}>
     <div className={`box is-paddingless ${sttNewDisscussion && 'effect-display'}`}>
       <article className={`media`}>
@@ -227,7 +232,7 @@ const ListDiscussion = ({ sttNewDisscussion, product, discussion, createDate }) 
         <div className='media-content'>
           <div className='content'>
             <p className='user-name'>
-              <strong>{discussion.user.name} {discussion.id} </strong>
+              <strong>{discussion.user.name} </strong>
               <br />
               <span className='date-discuss'>{ createDate }</span>
               <br />
@@ -257,6 +262,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getDiscussion: (params) => dispatch(productActions.getDiscussion(params)),
+  resetDiscussion: (params) => dispatch(productActions.resetDiscussion(params)),
   getProduct: (params) => dispatch(productActions.getProduct(params))
 })
 

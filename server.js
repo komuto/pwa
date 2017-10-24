@@ -68,8 +68,9 @@ app.prepare().then(_ => {
   defineASURL('/password/:type/:status', '/password')
   defineASURL('/password/:type/:status/:email', '/password')
   // signup
-  defineASURL('/signup', '/signup')
   defineASURL('/signup/:type', '/signup')
+  // disscussion
+  defineASURL('/discussion/:type', '/discussion')
 
   server.get('*', (req, res) => {
     return handle(req, res)
