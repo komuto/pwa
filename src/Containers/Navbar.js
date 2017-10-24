@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
+// components
+import Share from '../Components/Share'
 // libs
 import RupiahFormat from '../Lib/RupiahFormat'
 
@@ -10,7 +12,8 @@ export class Navbar extends PureComponent {
     this.state = {
       activeSearch: false,
       activeMoreOptions: false,
-      openMessageOptions: false
+      openMessageOptions: false,
+      showShareProduct: false
     }
   }
 
@@ -53,8 +56,12 @@ export class Navbar extends PureComponent {
     }
   }
 
+  shareProduct () {
+    this.setState({ showShareProduct: !this.state.showShareProduct })
+  }
+
   render () {
-    const { deleteButton, messageType, navbar, productDetail, productImages, moreButton, messageButton, productId } = this.props
+    const { deleteButton, messageType, navbar, productDetail, productImages, moreButton, messageButton, productId, share } = this.props
     const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
@@ -159,7 +166,16 @@ export class Navbar extends PureComponent {
         <MoreOptions
           productId={productId}
           onClick={(e) => this.moreButtonPress(e)}
-          active={activeMoreOptions} />
+          active={activeMoreOptions}
+          shareProduct={() => this.shareProduct()} />
+        {
+          share &&
+          <Share
+            onShow={this.state.showShareProduct}
+            shareProduct={() => this.shareProduct()}
+            share={share}
+          />
+        }
       </div>
     )
   }
@@ -204,12 +220,12 @@ export class SearchBoox extends PureComponent {
 
 export class MoreOptions extends PureComponent {
   render () {
-    const { active, productId } = this.props
+    const { active, productId, shareProduct } = this.props
     return (
       <div className='sort-option moreButton' style={{ display: active ? 'block' : 'none' }} onClick={(e) => this.props.onClick(e)}>
         <div className='sort-list'>
           <ul className='other-option'>
-            <li><a><span className='icon-share' />Bagikan</a></li>
+            <li onClick={() => shareProduct()}><a><span className='icon-share' />Bagikan</a></li>
             <li onClick={() => Router.push(`/report?id=${productId}`)}><a><span className='icon-warning' />Laporkan Barang</a></li>
           </ul>
         </div>
