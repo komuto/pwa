@@ -15,7 +15,6 @@ const handle = app.getRequestHandler()
 
 app.prepare().then(_ => {
   const server = express()
-
   const defineASURL = (as, url) => (
     server.get(as, (req, res) => {
       const params = Object.assign(req.query, req.params)
