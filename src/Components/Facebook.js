@@ -6,6 +6,7 @@ export const LoginFacebook = (props) => {
     appId='829312977224065'
     fields='name,email,picture'
     textButton={props.text}
+    disableMobileRedirect
     callback={(response) => props.responseFacebook(response)}
     cssClass='button is-fb is-large is-fullwidth'
     icon={<span className='icon-fb' />} />

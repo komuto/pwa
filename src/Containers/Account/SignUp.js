@@ -79,7 +79,8 @@ class SignUp extends Component {
     }
     this.submitting = {
       register: false,
-      user: false
+      user: false,
+      profile: false
     }
     this.onChange = this.onChange.bind(this)
     this.handleGenderChange = this.handleGenderChange.bind(this)
@@ -239,7 +240,7 @@ class SignUp extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { register, user } = nextProps
+    const { register, user, profile } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
 
     /** handling state register */
@@ -250,18 +251,33 @@ class SignUp extends Component {
         this.setState({ notification: notifError(register.message) })
       }
       if (isFound(register)) {
-        Router.push('/profile')
+        NProgress.start()
+        this.submitting = { ...this.submitting, profile: true }
+        this.props.getProfile()
       }
     }
     /** handling login social */
     if (!isFetching(user) && this.submitting.user) {
-      console.log('user: ', user)
       NProgress.done()
       this.submitting = { ...this.submitting, user: false }
       if (isError(user)) {
         this.setState({ notification: notifError(user.message) })
       }
       if (isFound(user)) {
+        NProgress.start()
+        this.submitting = { ...this.submitting, profile: true }
+        this.props.getProfile()
+      }
+    }
+
+    /** handling state get profile */
+    if (!isFetching(profile) && this.submitting.profile) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, profile: false }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
+      if (isFound(profile)) {
         Router.push('/profile')
       }
     }
@@ -335,12 +351,14 @@ class SignUp extends Component {
 }
 const mapStateToProps = (state) => ({
   register: state.register,
-  user: state.user
+  user: state.user,
+  profile: state.profile
 })
 
 const mapDispatchToProps = (dispatch) => ({
   setRegister: (params) => dispatch(loginAction.register(params)),
-  loginSocial: (params) => dispatch(loginAction.loginSocial(params))
+  loginSocial: (params) => dispatch(loginAction.loginSocial(params)),
+  getProfile: () => dispatch(loginAction.getProfile())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
