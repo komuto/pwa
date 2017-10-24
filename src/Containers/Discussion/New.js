@@ -8,8 +8,6 @@ import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 // actions
 import * as productActions from '../../actions/product'
-// services
-import { Status } from '../../Services/Status'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 
@@ -26,37 +24,42 @@ class New extends Component {
         errorMessage: null
       }
     }
+    this.submitting = {
+      productDetail: false,
+      newDiscussion: false
+    }
   }
 
-  async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
-    }
+  componentDidMount () {
+    const { id } = this.state
+    NProgress.start()
+    this.submitting = { ...this.submitting, productDetail: true }
+    this.props.getProduct({ id })
   }
 
   componentWillReceiveProps (nextProps) {
     const { productDetail, newDiscussion } = nextProps
-    if (!productDetail.isLoading) {
+    const { isFetching, isError, isFound, notifError } = this.props
+    if (!isFetching(productDetail) && this.submitting.productDetail) {
+      this.submitting = { ...this.submitting, productDetail: false }
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
       }
     }
 
-    if (!newDiscussion.isLoading) {
-      (newDiscussion.status) ? this.setState({ newDiscussion }) : this.setState({ notification: {status: true, message: productDetail.message} })
+    if (!isFetching(newDiscussion) && this.submitting.newDiscussion) {
+      this.submitting = { ...this.submitting, newDiscussion: false }
+      if (isError(newDiscussion)) {
+        this.setState({ notification: notifError(newDiscussion.message) })
+      }
+      if (isFound(newDiscussion)) {
+        this.setState({ newDiscussion })
+        Router.back()
+      }
     }
   }
 
@@ -65,14 +68,13 @@ class New extends Component {
     this.setState({ question: { ...this.state.question, error: false, value } })
   }
 
-  async submitQuestion () {
+  submitQuestion () {
     const { id, question } = this.state
     if (question.value === '') {
       this.setState({ question: { ...this.state.question, error: true, errorMessage: 'Silahkan isi pertanyaan anda!' } })
     } else {
-      NProgress.start()
-      await this.props.dispatch(productActions.newDiscussion({ id, question: question.value }))
-      Router.back()
+      this.submitting = { ...this.submitting, newDiscussion: true }
+      this.props.setNewDiscussion({ id, question: question.value })
     }
   }
 
@@ -120,8 +122,8 @@ class New extends Component {
                 </p>
                 <p className='control'>
                   <button
-                    className='button is-primary is-large is-fullwidth'
-                    onClick={() => this.submitQuestion()}>Kirimkan Pertanyaan</button>
+                    className={`button is-primary is-large is-fullwidth ${this.submitting.newDiscussion && 'is-loading'}`}
+                    onClick={() => !this.submitting.newDiscussion && this.submitQuestion()}>Kirimkan Pertanyaan</button>
                 </p>
               </div>
             </div>
@@ -132,11 +134,14 @@ class New extends Component {
     )
   }
 }
-const mapStateToProps = (state) => {
-  return {
-    productDetail: state.productDetail,
-    newDiscussion: state.newDiscussion
-  }
-}
+const mapStateToProps = (state) => ({
+  productDetail: state.productDetail,
+  newDiscussion: state.newDiscussion
+})
 
-export default connect(mapStateToProps)(New)
+const mapDispatchToProps = (dispatch) => ({
+  setNewDiscussion: (params) => dispatch(productActions.newDiscussion(params)),
+  getProduct: (params) => dispatch(productActions.getProduct(params))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(New)

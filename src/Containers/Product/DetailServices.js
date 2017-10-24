@@ -54,19 +54,29 @@ class ProductDetailServices extends Component {
   }
 
   // button pluss press
-  plussPress = () => this.setState({ countProduct: this.state.countProduct + 1 })
+  plussPress () {
+    this.setState({ countProduct: this.state.countProduct + 1 })
+  }
 
   // button minus press
-  minPress = () => this.setState({ countProduct: this.state.countProduct - 1 })
+  minPress () {
+    this.setState({ countProduct: this.state.countProduct - 1 })
+  }
 
   // button show province press
-  provinceShow = () => this.setState({ provinces: { ...this.state.provinces, show: true } })
+  provinceShow () {
+    this.setState({ provinces: { ...this.state.provinces, show: true } })
+  }
 
   // button show districts press
-  districtShow = () => this.setState({ districts: { ...this.state.districts, show: true } })
+  districtShow () {
+    this.setState({ districts: { ...this.state.districts, show: true } })
+  }
 
   // button show subDistricts press
-  subDistrictShow = () => this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
+  subDistrictShow () {
+    this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
+  }
 
   // options province selected
   async provinceSelected (selected) {
@@ -136,7 +146,9 @@ class ProductDetailServices extends Component {
     }
   }
 
-  formActivePress = () => this.setState({ formActive: true })
+  formActivePress () {
+    this.setState({ formActive: true })
+  }
 
   render () {
     const { product } = this.props
