@@ -55,7 +55,10 @@ class SignIn extends Component {
       },
       fcmToken: null
     }
-    this.submitting = false
+    this.submitting = {
+      user: false,
+      profile: false
+    }
     this.onChange = this.onChange.bind(this)
   }
 
@@ -66,12 +69,12 @@ class SignIn extends Component {
     this.setState({ input })
   }
 
-  responseFacebook (response) {
+  async responseFacebook (response) {
     if (response) {
       let { fcmToken } = this.state
       NProgress.start()
-      this.submitting = true
-      this.props.loginSocial({
+      this.submitting = { ...this.submitting, user: true }
+      await this.props.loginSocial({
         provider_name: 'facebook',
         provider_uid: response.userID,
         access_token: response.accessToken,
@@ -122,7 +125,7 @@ class SignIn extends Component {
 
     /** process */
     NProgress.start()
-    this.submitting = true
+    this.submitting = { ...this.submitting, user: true }
     this.props.login({
       email: email.value,
       password: password.value,
@@ -136,18 +139,30 @@ class SignIn extends Component {
     this.setState({ fcmToken })
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { user } = nextProps
+  async componentWillReceiveProps (nextProps) {
+    const { user, profile } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
     /** handling state get login */
-    if (!isFetching(user) && this.submitting) {
+    if (!isFetching(user) && this.submitting.user) {
       NProgress.done()
-      this.submitting = false
+      this.submitting = { ...this.submitting, user: false }
       if (isError(user)) {
         this.setState({ notification: notifError(user.message) })
       }
       if (isFound(user)) {
-        this.props.getProfile()
+        NProgress.start()
+        this.submitting = { ...this.submitting, profile: true }
+        await this.props.getProfile()
+      }
+    }
+    /** handling state get profile */
+    if (!isFetching(profile) && this.submitting.profile) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, profile: false }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
+      if (isFound(profile)) {
         Router.push('/profile')
       }
     }
@@ -176,7 +191,7 @@ class SignIn extends Component {
             <TermConditions />
             <ButtonFullWidth
               text={localize.signin}
-              isLoading={this.submitting}
+              isLoading={this.submitting.user}
               onClick={() => this.submit()} />
             <br />
             <div className='has-text-centered'>
@@ -194,7 +209,8 @@ class SignIn extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.user
+  user: state.user,
+  profile: state.profile
 })
 
 const mapDispatchToProps = (dispatch) => ({
