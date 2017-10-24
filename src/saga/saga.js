@@ -87,6 +87,7 @@ const user = function * () {
   yield takeEvery(typeReq(userActions.CREATE_RESOLUTION), userSaga.createResolution)
   yield takeEvery(typeReq(userActions.REPLY_RESOLUTION), userSaga.replyResolution)
   yield takeEvery(typeReq(userActions.RESEND_SIGNUP), userSaga.resendSignup)
+  yield takeEvery(typeReq(userActions.UNREAD_DISPUTES), userSaga.getUnreadDisputes)
 }
 
 const home = function * () {
@@ -144,6 +145,7 @@ const store = function * () {
   yield takeEvery(typeReq(storeActions.GET_HIDDEN_STORE_PRODUCTS), storeSaga.getHiddenStoreProducts)
   yield takeEvery(typeReq(storeActions.GET_STORE_DISCUSSIONS), storeSaga.getStoreDiscussions)
   yield takeEvery(typeReq(storeActions.GET_STORE_PRODUCTS_BY_CATALOG), storeSaga.getStoreProductsByCatalog)
+  yield takeEvery(typeReq(storeActions.UNREAD_DISPUTES_STORE), storeSaga.getUnreadDisputesStore)
 }
 
 const address = function * () {

@@ -1,8 +1,10 @@
 import { publicApiKomuto } from './api'
+import { buildQuery } from '../config'
 
-export const search = ({ query }) => {
+export const search = (data) => {
   const axios = publicApiKomuto()
-  return axios.get(`products/search?q=${query}`)
+  const query = buildQuery(data)
+  return axios.get(`products/search?${query}`)
 }
 
 export const allCategory = () => {

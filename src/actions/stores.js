@@ -20,6 +20,7 @@ export const GET_ADDRESS = 'GET_ADDRESS'
 export const UPDATE_STORE_ADDRESS = 'UPDATE_STORE_ADDRESS'
 export const GET_STORE_DISCUSSIONS = 'GET_STORE_DISCUSSIONS'
 export const GET_STORE_PRODUCTS_BY_CATALOG = 'GET_STORE_PRODUCTS_BY_CATALOG'
+export const UNREAD_DISPUTES_STORE = 'UNREAD_DISPUTES_STORE'
 
 /**
  * @params id {int} store id
@@ -137,3 +138,5 @@ export const getStoreProductDetail = params => buildAction(typeReq(GET_STORE_PRO
  * @state storeProductsByCatalog
  */
 export const getStoreProductsByCatalog = params => buildAction(typeReq(GET_STORE_PRODUCTS_BY_CATALOG), params)
+
+export const getUnreadDisputeStore = () => buildAction(typeReq(UNREAD_DISPUTES_STORE))

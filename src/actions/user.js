@@ -32,6 +32,7 @@ export const GET_RESOLUTION_DETAIL = 'GET_RESOLUTION_DETAIL'
 export const CREATE_RESOLUTION = 'CREATE_RESOLUTION'
 export const REPLY_RESOLUTION = 'REPLY_RESOLUTION'
 export const RESEND_SIGNUP = 'RESEND_SIGNUP'
+export const UNREAD_DISPUTES = 'UNREAD_DISPUTES'
 
 /**
  * @param params are the same as the api
@@ -214,3 +215,8 @@ export const replyResolution = params => buildAction(typeReq(REPLY_RESOLUTION), 
  * @state alterUser
  */
 export const resendSignup = () => buildAction(typeReq(RESEND_SIGNUP))
+
+/**
+ * @state unread dispute
+ */
+export const getUnreadDispute = () => buildAction(typeReq(UNREAD_DISPUTES))

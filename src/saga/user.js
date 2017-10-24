@@ -77,3 +77,4 @@ export const getResolutionDetail = buildSaga(apis.getResolutionDetail, actions.G
 export const createResolution = buildSaga(apis.createResolution, actions.CREATE_RESOLUTION)
 export const replyResolution = buildSaga(apis.replyResolution, actions.REPLY_RESOLUTION)
 export const resendSignup = buildSaga(apis.resendSignup, actions.RESEND_SIGNUP)
+export const getUnreadDisputes = buildSaga(apis.getUnreadDispute, actions.UNREAD_DISPUTES)

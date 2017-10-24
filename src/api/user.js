@@ -157,3 +157,8 @@ export const resendSignup = () => {
 }
 
 export const logout = () => ({ message: 'LOGOUT SUCCESS', code: 0 })
+
+export const getUnreadDispute = () => {
+  const axios = authApiKomuto()
+  return axios.get('pages/notification')
+}
