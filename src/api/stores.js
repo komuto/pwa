@@ -1,8 +1,8 @@
-import { publicApiKomuto, authApiKomuto } from './api'
+import { authApiKomuto } from './api'
 import { buildQuery } from '../config'
 
 export const getStores = ({ id }) => {
-  const axios = publicApiKomuto()
+  const axios = authApiKomuto()
   return axios.get(`stores/${id}`)
 }
 
@@ -128,4 +128,9 @@ export const getStoreProductsByCatalog = ({ id, ...data }) => {
   const axios = authApiKomuto()
   const query = buildQuery(data)
   return axios.get(`users/store/products/catalogs/${id}/list?${query}`)
+}
+
+export const getUnreadDisputeStore = () => {
+  const axios = authApiKomuto()
+  return axios.get('pages/store')
 }

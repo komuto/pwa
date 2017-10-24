@@ -143,3 +143,9 @@ export const getStoreProductsByCatalog = createReducer(buildInitState({ products
     type: actions.GET_STORE_PRODUCTS_BY_CATALOG,
     resultName: 'products'
   }).run()
+
+export const unreadDisputesStore = createReducer(buildInitState({ unreaddisputes: '' }))
+.addReducer({
+  type: actions.UNREAD_DISPUTES_STORE,
+  resultName: 'disputes'
+}).run()

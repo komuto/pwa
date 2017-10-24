@@ -218,3 +218,9 @@ export const replyResolution = createReducer(buildInitState({ resolution: {} }))
     type: actions.REPLY_RESOLUTION,
     resultName: 'resolution'
   }).run()
+
+export const unreadDisputes = createReducer(buildInitState({ unreaddisputes: '' }))
+.addReducer({
+  type: actions.UNREAD_DISPUTES,
+  customSuccState: (state, action) => ({ disputes: action.data.disputes, ...succState(action) })
+}).run()
