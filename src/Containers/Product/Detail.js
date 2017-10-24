@@ -68,7 +68,6 @@ class ProductDetail extends Component {
         this.setState({ notification: notifError(productDetail.message) })
       }
       if (isFound(productDetail)) {
-        console.log('productDetail: ', productDetail)
         this.setState({ productDetail })
         if (String(productDetail.detail.product.id) !== String(nextId)) {
           NProgress.start()

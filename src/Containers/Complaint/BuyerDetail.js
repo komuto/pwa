@@ -237,15 +237,20 @@ const DetailContent = ({ orderDetail }) => {
    * RECEIVE_BY_BUYER: 6
    * PROCESS_OF_REFUND: 7
    * CLOSED: 8
+   * REVIEWED: 9
    */
+  /** is refund  */
+  // let isRefund = orderDetail.solution === 1
+  /** is exchange  */
+  // let isExchange = orderDetail.solution === 2
   /** complaint no respon */
   let isComplaintNew = (orderDetail.response_status === 0 && orderDetail.status === 1)
   /** complaint product received by seller */
   let isComplaintReceived = (orderDetail.response_status === 0 && orderDetail.status === 4)
-  /** when fine_products is not empty, so add button to review product */
-  let isFineProduct = orderDetail.fine_products.length > 0
-  /** complaint finish need review for isFineProduct */
-  let isComplaintDone = (orderDetail.response_status !== 0 && orderDetail.status === 8 && !isFineProduct)
+  /** complaint finish need review */
+  let isComplaintNeedReview = (orderDetail.response_status !== 0 && orderDetail.status === 8)
+  /** complaint finish */
+  let isComplaintDone = (orderDetail.response_status !== 0 && orderDetail.status === 9)
 
   return (
     <Content>
@@ -253,7 +258,7 @@ const DetailContent = ({ orderDetail }) => {
         { isComplaintNew && <ComplaintNew /> }
         { isComplaintReceived && <ComplaintReceived /> }
         { isComplaintDone && <ComplaintDone /> }
-        { isFineProduct && <ComplaintReview id={orderDetail.id} /> }
+        { isComplaintNeedReview && <ComplaintReview id={orderDetail.id} /> }
         <Item title='No Invoice' data={orderDetail.invoice.invoice_number} type='standard' />
         <Item title='Tanggal Transaksi' data={createdAt} type='standard' />
         <Item title='Status Penyelesaian' data={isComplaintDone ? <SolutionDone /> : <SolutionWaiting />} type='status' />

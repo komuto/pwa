@@ -8,6 +8,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 /** including component */
 import Content from '../../Components/Content'
 import Notification, { FieldError } from '../../Components/Notification'
@@ -92,7 +93,6 @@ class Review extends Component {
   submitReview () {
     let { buyerComplainedOrderDetail } = this.state
     let { id } = buyerComplainedOrderDetail.orderDetail
-    console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
     let error = false
     buyerComplainedOrderDetail.orderDetail.fine_products.some((product) => {
       if (!product.quality) {
@@ -117,19 +117,18 @@ class Review extends Component {
       return
     }
 
-    let reviews = []
+    let data = []
     buyerComplainedOrderDetail.orderDetail.fine_products.map((product) => {
-      reviews.push({
+      data.push({
         'product_id': product.id,
         'review': product.note,
         'quality': product.quality,
         'accuracy': product.accuracy
       })
     })
-
     NProgress.start()
     this.submiting = { ...this.submiting, addReviews: true }
-    this.props.setAddReviews({ id, reviews })
+    this.props.setAddReviews({ id, data })
   }
 
   componentDidMount () {
@@ -140,18 +139,28 @@ class Review extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { buyerComplainedOrderDetail } = nextProps
+    const { buyerComplainedOrderDetail, addReviews } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
     /** handling state buyerComplainedOrderDetail  */
     if (!isFetching(buyerComplainedOrderDetail) && this.submitting.buyerComplainedOrderDetail) {
       NProgress.done()
-      console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
       this.submitting = { ...this.submitting, buyerComplainedOrderDetail: false }
       if (isError(buyerComplainedOrderDetail)) {
         this.setState({ notification: notifError(buyerComplainedOrderDetail.message) })
       }
       if (isFound(buyerComplainedOrderDetail)) {
         this.setState({ buyerComplainedOrderDetail })
+      }
+    }
+
+    if (!isFetching(addReviews) && this.submiting.addReviews) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, addReviews: false }
+      if (isError(addReviews)) {
+        this.setState({ notification: notifError(addReviews.message) })
+      }
+      if (isFound(addReviews)) {
+        Router.back()
       }
     }
   }
@@ -254,7 +263,7 @@ const ProductReview = ({ fine_products, addReviews, submitting }) => (
               <div className='field'>
                 <p className='control'>
                   { product.error !== 'note' ? '' : <FieldError /> }
-                  <input onChange={(e) => !submitting.addReviews && addReviews.onChangeNote(e, product)} className={`input`} type='text' placeholder='Apa pendapat Anda tentang barang ini?' />
+                  <input onChange={(e) => addReviews.onChangeNote(e, product)} className={`input`} type='text' placeholder='Apa pendapat Anda tentang barang ini?' />
                 </p>
               </div>
             </form>
@@ -264,7 +273,7 @@ const ProductReview = ({ fine_products, addReviews, submitting }) => (
     }
     <section className='section is-paddingless'>
       <div className='container is-fluid'>
-        <a onClick={() => addReviews.submit()} className={`button is-primary is-large is-fullwidth ${submitting.addReviews ? 'is-loading' : ''}`} >Kirim Ulasan</a>
+        <a onClick={() => !submitting.addReviews && addReviews.submit()} className={`button is-primary is-large is-fullwidth ${submitting.addReviews ? 'is-loading' : ''}`} >Kirim Ulasan</a>
       </div>
     </section>
   </Content>
