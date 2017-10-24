@@ -106,7 +106,9 @@ export class Filter extends Component {
     this.setState({ tabs, provinces, districts })
   }
 
-  setTabActive = (tabActive) => this.setState({ tabActive })
+  setTabActive (tabActive) {
+    this.setState({ tabActive })
+  }
 
   viewCheckAll (event, tabActive) {
     const selectedAll = event.target.checked
@@ -161,9 +163,13 @@ export class Filter extends Component {
   }
 
   // filter event button
-  filterRealization = () => this.props.filterRealization(this.state.tabs)
+  filterRealization () {
+    this.props.filterRealization(this.state.tabs)
+  }
   // change provinces event selected
-  onChangeProvinces = (event) => this.props.onChangeProvinces(event.target.value)
+  onChangeProvinces (event) {
+    this.props.onChangeProvinces(event.target.value)
+  }
   // change change event selected
   onChangeDistrict (event) {
     const { tabs } = this.state
