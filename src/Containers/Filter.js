@@ -214,14 +214,14 @@ export class Filter extends Component {
       </Content>
     } else if (filterTabResults.customComponent && filterTabResults.id === 'harga') {
       chekAllItems = <Content>
-        <label className='checkbox'>
+        <label className='checkbox is-other'>
           <span className='label'>Harga Minimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
             <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} />
           </div>
         </label>
-        <label className='checkbox'>
+        <label className='checkbox is-other'>
           <span className='label'>Harga Maksimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
@@ -286,7 +286,7 @@ export class Filter extends Component {
 const InputDropdown = (props) => {
   const { title, options } = props
   return (
-    <label className='checkbox'>
+    <label className='checkbox is-other'>
       <span className='label'>{ title }</span>
       <div className='field'>
         <p className='control'>
