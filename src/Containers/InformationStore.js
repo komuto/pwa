@@ -10,8 +10,6 @@ import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../actions/stores'
 import * as actionUserTypes from '../actions/user'
-// services
-import { Status } from '../Services/Status'
 
 let FormData = require('form-data')
 
@@ -26,16 +24,16 @@ class InformationStore extends React.Component {
       formInfo: {
         ...props.formInfo.store
       },
-      submitting: false,
       overSlogan: 25,
       validation: false,
-      setStateStart: false,
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.submiting = false
+    this.fetchingFirst = false
   }
 
   onDrop (files) {
@@ -86,7 +84,7 @@ class InformationStore extends React.Component {
   }
 
   postInfoStore () {
-    const { formInfo, files, submitting } = this.state
+    const { formInfo, files } = this.state
     const { tempCreateStore, updateInformation, query } = this.props
     const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     let logo = files
@@ -99,10 +97,9 @@ class InformationStore extends React.Component {
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
-      const newSubmitting = { submitting, validation: false }
-      newSubmitting.submitting = true
-      this.setState(newSubmitting)
+      this.setState({ validation: false })
       if (files.preview !== '' && files.preview !== formInfo.logo) {
+        this.submiting = true
         this.handleUploadImage()
       } else {
         isSetting ? updateInformation(formInfo) : tempCreateStore({ store: formInfo })
@@ -124,12 +121,11 @@ class InformationStore extends React.Component {
   }
 
   handleButton () {
-    const { submitting } = this.state
     const { query } = this.props
     const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     return (
       <button
-        className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
+        className={`button is-primary is-large is-fullwidth ${this.submiting ? 'is-loading' : ''}`}
         onClick={(e) => this.postInfoStore(e)} >
         { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
       </button>
@@ -138,14 +134,39 @@ class InformationStore extends React.Component {
 
   componentDidMount () {
     const { profile, formInfo } = this.state
-    const { query, getProfile } = this.props
-    if (query.type === 'settingStore') {
-      NProgress.start()
-      if (!profile.isFound) {
-        this.setState({ setStateStart: true })
-        getProfile()
-      } else {
-        const newState = { formInfo, setStateStart: false }
+    const { isLogin, query, getProfile } = this.props
+    if (isLogin) {
+      if (query.type === 'settingStore') {
+        NProgress.start()
+        if (!profile.isFound) {
+          this.fetchingFirst = true
+          getProfile()
+        } else {
+          this.fetchingFirst = false
+          const newState = { formInfo }
+          const splitLogo = profile.user.store.logo.split('/')
+          const logo = splitLogo.pop() || splitLogo.pop()
+          newState.formInfo['name'] = profile.user.store.name
+          newState.formInfo['slogan'] = profile.user.store.slogan
+          newState.formInfo['description'] = profile.user.store.description
+          newState.formInfo['logo'] = logo
+          newState.formInfo['path'] = splitLogo.join('/')
+          this.setState(newState)
+        }
+      }
+    } else {
+      Router.push('/signin')
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { formInfo } = this.state
+    const { query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const { profile, updateStore, upload } = nextProps
+    if (!isFetching(profile) && this.fetchingFirst) {
+      this.fetchingFirst = false
+      if (isFound(profile)) {
+        const newState = { formInfo }
         const splitLogo = profile.user.store.logo.split('/')
         const logo = splitLogo.pop() || splitLogo.pop()
         newState.formInfo['name'] = profile.user.store.name
@@ -154,15 +175,14 @@ class InformationStore extends React.Component {
         newState.formInfo['logo'] = logo
         newState.formInfo['path'] = splitLogo.join('/')
         this.setState(newState)
+        this.setState({ profile })
+      }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message) })
       }
     }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { formInfo, submitting, notification, setStateStart } = this.state
-    const { query, isFetching, isFound, isError, notifError } = this.props
-    const { profile, updateStore, upload } = nextProps
-    if (!isFetching(upload) && submitting) {
+    if (!isFetching(upload) && this.submiting) {
+      this.submiting = false
       if (isFound(upload)) {
         const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
         const logo = upload.payload.images[0].name
@@ -175,61 +195,23 @@ class InformationStore extends React.Component {
           this.props.updateInformation(formInfo)
         } else {
           this.props.tempCreateStore({ store: formInfo })
+          Router.push('/shipping-expedition')
         }
       }
       if (isError(upload)) {
         this.setState({ notification: notifError(upload.message) })
       }
     }
-    if (nextProps.formInfo.name !== '') {
-      this.setState({ submitting: false })
-      Router.push('/shipping-expedition')
-    }
 
-    if (!isFetching(profile) && setStateStart) {
-      if (isFound(profile)) {
-        const newState = { formInfo, setStateStart: false }
-        const splitLogo = profile.user.store.logo.split('/')
-        const logo = splitLogo.pop() || splitLogo.pop()
-        newState.formInfo['name'] = profile.user.store.name
-        newState.formInfo['slogan'] = profile.user.store.slogan
-        newState.formInfo['description'] = profile.user.store.description
-        newState.formInfo['logo'] = logo
-        newState.formInfo['path'] = splitLogo.join('/')
-        this.setState(newState)
-        this.setState({ profile })
+    if (!isFetching(updateStore) && this.submiting) {
+      this.submiting = false
+      if (isFound(updateStore)) {
+        this.props.getProfile()
+        this.setState({ notification: notifSuccess(updateStore.message) })
       }
-      if (isError(upload)) {
-        this.setState({ notification: notifError(upload.message), setStateStart: false })
+      if (isError(updateStore)) {
+        this.setState({ notification: notifError(updateStore.message) })
       }
-    }
-    if (!isFetching(updateStore) && submitting) {
-
-    }
-    if (!updateStore.isLoading && updateStore.isFound && submitting) {
-      switch (updateStore.status) {
-        case Status.SUCCESS: {
-          this.props.getProfile()
-          const newNotification = { notification, submitting: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = updateStore.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = updateStore.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
-      }
-      this.setState({ notification })
     }
   }
 
