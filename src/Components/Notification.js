@@ -71,7 +71,7 @@ export const NotificationBox = ({ notifClass, icon, children }) => (
 export default (props) => {
   if (!props.isShow) return null
   return (
-    <div className={`notification ${props.type}`}>
+    <div className={`notification ${props.type}`} style={{ position: 'fixed', width: '100%', left: '0', top: '64px', zIndex: '8' }}>
       { props.activeClose ? <button className='delete' onClick={props.onClose} /> : null }
       { props.message }
     </div>

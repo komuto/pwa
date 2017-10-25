@@ -4,10 +4,9 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
+import Notification from '../../Components/Notification'
 // actions
 import * as actionTypes from '../../actions/catalog'
-// services
-import { Status } from '../../Services/Status'
 
 class AddEditCatalog extends Component {
   constructor (props) {
@@ -15,8 +14,16 @@ class AddEditCatalog extends Component {
     this.state = {
       catalog: '',
       validation: false,
-      submitting: false,
-      setStateStart: false
+      submiting: {
+        create: false,
+        update: false
+      },
+      fetchingFirst: false,
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
@@ -44,11 +51,16 @@ class AddEditCatalog extends Component {
     e.preventDefault()
     const { updateCatalog, createCatalog, query } = this.props
     const { catalog } = this.state
-    const isUpdate = this.props.hasOwnProperty('query') && query.id !== ''
+    const isUpdate = this.props.query.hasOwnProperty('id') && query.id !== ''
     let isValid = catalog.length > 0
     if (isValid) {
-      isUpdate ? updateCatalog({ id: query.id, name: catalog }) : createCatalog({ name: catalog })
-      this.setState({ submitting: true })
+      if (isUpdate) {
+        updateCatalog({ id: query.id, name: catalog })
+        this.setState({ submiting: { create: false, update: true } })
+      } else {
+        createCatalog({ name: catalog })
+        this.setState({ submiting: { create: true, update: false } })
+      }
     } else {
       this.setState({ validation: true })
     }
@@ -57,74 +69,64 @@ class AddEditCatalog extends Component {
   componentDidMount () {
     const { catalog } = this.state
     const { query, getCatalog } = this.props
-    if (this.props.hasOwnProperty('query') && query.id !== '') {
+    if (this.props.query.hasOwnProperty('id') && query.id !== '') {
       if (catalog === '') {
-        this.setState({ setStateStart: true })
+        this.setState({ fetchingFirst: true })
         getCatalog({ id: query.id })
+        NProgress.start()
       }
     }
-    NProgress.done()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { submitting, notification, setStateStart } = this.state
+    const { submiting, fetchingFirst } = this.state
     const { statusCreateCatalog, statusUpdateCatalog, statusGetCatalog } = nextProps
-    if (!statusCreateCatalog.isLoading && submitting) {
-      switch (statusCreateCatalog.status) {
-        case Status.SUCCESS: {
-          this.setState({ submitting: false })
-          const href = `/catalog-list?isSuccess`
-          const as = 'catalog-list'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false })
-          const href = `/catalog-list?isSuccess`
-          const as = 'catalog-list'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        default:
-          break
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(statusCreateCatalog) && submiting.create) {
+      this.setState({ submiting: { create: false, update: false } })
+      if (isFound(statusCreateCatalog)) {
+        const href = `/catalog-list?isSuccess`
+        const as = 'catalog-list'
+        Router.push(href, as, { shallow: true })
       }
-      this.setState({ notification })
-    }
-    if (!statusUpdateCatalog.isLoading && submitting) {
-      switch (statusUpdateCatalog.status) {
-        case Status.SUCCESS: {
-          this.setState({ submitting: false })
-          const href = `/catalog-list?isSuccess`
-          const as = 'catalog-list'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false })
-          const href = `/catalog-list?isSuccess`
-          const as = 'catalog-list'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        default:
-          break
+      if (isError(statusCreateCatalog)) {
+        const href = `/catalog-list?isSuccess`
+        const as = 'catalog-list'
+        Router.push(href, as, { shallow: true })
       }
-      this.setState({ notification })
     }
-    if (statusGetCatalog.isFound && setStateStart) {
-      this.setState({ catalog: statusGetCatalog.catalog.name })
+    if (!isFetching(statusUpdateCatalog) && submiting.update) {
+      this.setState({ submiting: { create: false, update: false } })
+      if (isFound(statusUpdateCatalog)) {
+        const href = `/catalog-list?isSuccess`
+        const as = 'catalog-list'
+        Router.push(href, as, { shallow: true })
+      }
+      if (isError(statusUpdateCatalog)) {
+        const href = `/catalog-list?isSuccess`
+        const as = 'catalog-list'
+        Router.push(href, as, { shallow: true })
+      }
+    }
+    if (!isFetching(statusGetCatalog) && fetchingFirst) {
+      this.setState({ fetchingFirst: false })
+      if (isFound(statusGetCatalog)) {
+        this.setState({ catalog: statusGetCatalog.catalog.name })
+      }
+      if (isError(statusGetCatalog)) {
+        this.setState({ notification: notifError(statusGetCatalog.message) })
+      }
+      NProgress.done()
     }
   }
 
   handleButton () {
-    const { submitting } = this.state
+    const { submiting } = this.state
     const { query } = this.props
     const isUpdate = this.props.hasOwnProperty('query') && query.id !== ''
     return (
       <button
-        className={`button is-primary is-large is-fullwidth ${submitting ? 'is-loading' : ''}`}
+        className={`button is-primary is-large is-fullwidth ${(submiting.create || submiting.update) ? 'is-loading' : ''}`}
         onClick={(e) => this.postCatalog(e)} >
         { isUpdate ? 'Simpan Perubahan' : 'Buat Katalog Baru'}
       </button>
@@ -132,9 +134,15 @@ class AddEditCatalog extends Component {
   }
 
   render () {
-    const { catalog, validation } = this.state
+    const { catalog, validation, notification } = this.state
     return (
       <section className='content'>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <div className='container is-fluid'>
           <form className='form edit'>
             <div className='has-text-centered noted' />

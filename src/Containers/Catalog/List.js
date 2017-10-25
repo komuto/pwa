@@ -4,10 +4,9 @@ import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import Notification from '../../Components/Notification'
 // actions
 import * as actionTypes from '../../actions/catalog'
-// services
-import { Status } from '../../Services/Status'
 
 class CatalogList extends React.Component {
   constructor (props) {
@@ -19,8 +18,8 @@ class CatalogList extends React.Component {
       deleteCatalogTemp: '',
       failedDelete: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
@@ -65,13 +64,11 @@ class CatalogList extends React.Component {
 
   toEditCatalog (e, catalog) {
     e.preventDefault()
-    NProgress.start()
     Router.push(`/catalog-edit?id=${catalog.id}`)
   }
 
   toAddCatalog (e) {
     e.preventDefault()
-    NProgress.start()
     Router.push('/catalog-add')
   }
 
@@ -81,91 +78,47 @@ class CatalogList extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { notification, listCatalog, deleteCatalogTemp, submitting } = this.state
-    const { createCatalog, updateCatalog, statusDeleteCatalog, query } = nextProps
-    if (nextProps.listCatalog.isFound) {
-      this.setState({ listCatalog: nextProps.listCatalog })
-      NProgress.done()
+    const { listCatalog, createCatalog, updateCatalog, statusDeleteCatalog } = nextProps
+    const { deleteCatalogTemp, submitting } = this.state
+    const { query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    if (!isFetching(listCatalog)) {
+      if (isFound(listCatalog)) {
+        this.setState({ listCatalog })
+        NProgress.done()
+      }
+      if (isError(listCatalog)) {
+        this.setState({ notification: notifError(listCatalog.message) })
+      }
     }
     if (query.hasOwnProperty('isSuccess')) {
-      if (!createCatalog.isLoading) {
-        switch (createCatalog.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = createCatalog.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = createCatalog.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
+      if (!isFetching(createCatalog)) {
+        if (isFound(createCatalog)) {
+          this.setState({ notification: notifSuccess(createCatalog.message) })
         }
-        this.setState({ notification })
+        if (isError(createCatalog)) {
+          this.setState({ notification: notifError(createCatalog.message) })
+        }
       }
-      if (updateCatalog.isFound) {
-        switch (updateCatalog.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = updateCatalog.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = updateCatalog.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
+      if (!isFetching(updateCatalog)) {
+        if (isFound(updateCatalog)) {
+          this.setState({ notification: notifSuccess(updateCatalog.message) })
         }
-        this.setState({ notification })
+        if (isError(updateCatalog)) {
+          this.setState({ notification: notifError(updateCatalog.message) })
+        }
       }
     }
-    if (!statusDeleteCatalog.isLoading && submitting) {
-      switch (statusDeleteCatalog.status) {
-        case Status.SUCCESS: {
-          let newData = listCatalog.catalogs.filter(data => data.id !== deleteCatalogTemp.id)
-          let newListCatalog = {
-            ...listCatalog, catalogs: newData
-          }
-          this.setState({ listCatalog: newListCatalog, submitting: false, confirmDelete: false, dropdownSelected: '' })
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusDeleteCatalog.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
+    if (!isFetching(statusDeleteCatalog) && submitting) {
+      if (isFound(statusDeleteCatalog)) {
+        let newData = listCatalog.catalogs.filter(data => data.id !== deleteCatalogTemp.id)
+        let newListCatalog = {
+          ...listCatalog, catalogs: newData
         }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false, confirmDelete: false, dropdownSelected: '' })
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusDeleteCatalog.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+        this.setState({ listCatalog: newListCatalog, submitting: false, confirmDelete: false, dropdownSelected: '', notification: notifSuccess(statusDeleteCatalog.message) })
       }
-      this.setState({ notification })
+      if (isError(statusDeleteCatalog)) {
+        this.setState({ submitting: false, confirmDelete: false, dropdownSelected: '', notification: notifError(statusDeleteCatalog.message) })
+      }
     }
   }
 
@@ -173,12 +126,12 @@ class CatalogList extends React.Component {
     const { listCatalog, dropdownSelected, confirmDelete, deleteCatalogTemp, notification, failedDelete, submitting } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         { listCatalog.catalogs.length !== 0 ? listCatalog.catalogs.map(val => {
           return (
             <section className='section is-paddingless bg-white' key={val.id}>

@@ -21,10 +21,13 @@ class ShippingExpedition extends React.Component {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
+      },
+      submiting: {
+        createStore: false,
+        updateStore: false
       }
     }
     this.fetchingFirst = false
-    this.submiting = false
   }
 
   handleNotification (e) {
@@ -46,7 +49,7 @@ class ShippingExpedition extends React.Component {
     }
     this.setState({ selectedServices: newExpeditions }, () => {
       if (this.state.selectedServices.indexOf(id) !== -1) {
-        let isSame = (getServicesId.length === this.state.selectedServices.length) && getServicesId.every((id, i) => id === this.state.selectedServices[i])
+        let isSame = this.state.selectedServices.filter(id => getServicesId.includes(id))
         if (isSame) {
           let newExpeditions = [...selectedExpeditions, expeditionId]
           this.setState({ selectedExpeditions: newExpeditions })
@@ -82,7 +85,7 @@ class ShippingExpedition extends React.Component {
 
   submitExpedition (e) {
     e.preventDefault()
-    const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
+    const { expeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
     const { postExpedition, updateExpedition, query } = this.props
     const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
     const tempExpeditionServices = {
@@ -90,8 +93,8 @@ class ShippingExpedition extends React.Component {
       selectedServices: selectedServices
     }
     if (selectedServices.length !== 0) {
-      this.submiting = true
       if (isSetting) {
+        this.setState({ submiting: { ...submiting, updateStore: true } })
         const dataServices = []
         expeditions.expeditions.map(expedition => {
           return expedition.services.map(service => {
@@ -108,6 +111,7 @@ class ShippingExpedition extends React.Component {
         })
         updateExpedition({ data: newExpedition })
       } else {
+        this.setState({ submiting: { ...submiting, createStore: true } })
         postExpedition({ expedition_services: tempExpeditionServices })
       }
     } else {
@@ -132,7 +136,7 @@ class ShippingExpedition extends React.Component {
   }
 
   componentDidMount () {
-    const { expeditions, manageExpeditions, selectedServices } = this.state
+    const { expeditions, manageExpeditions, selectedServices, selectedExpeditions } = this.state
     const { getExpedition, query, manageStoreExpeditions, isFound } = this.props
     if (!isFound(expeditions)) {
       getExpedition()
@@ -144,21 +148,28 @@ class ShippingExpedition extends React.Component {
         manageStoreExpeditions()
         NProgress.start()
       } else {
+        let expeditionId = []
         let serviceId = []
         manageExpeditions.manageExpeditions.map(exp => {
+          if (exp.is_active) {
+            expeditionId.push(exp.id)
+          }
           return exp.services.map(service => {
-            serviceId.push(service.id)
+            if (service.is_checked) {
+              serviceId.push(service.id)
+            }
           })
         })
-        const newService = { selectedServices }
+        const newService = { selectedServices, selectedExpeditions }
         newService.selectedServices = serviceId
+        newService.selectedExpeditions = expeditionId
         this.setState(newService)
       }
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { selectedServices } = this.state
+    const { selectedServices, selectedExpeditions, submiting } = this.state
     const { processCreateStore, expeditions, manageExpeditions, statusUpdateExpedition } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(expeditions)) {
@@ -170,8 +181,8 @@ class ShippingExpedition extends React.Component {
         this.setState({ notification: notifError(expeditions.message) })
       }
     }
-    if (processCreateStore.expedition_services.selectedServices.length !== 0 && this.submiting) {
-      this.submiting = false
+    if (processCreateStore.expedition_services.selectedServices.length !== 0 && submiting.createStore) {
+      this.setState({ submiting: { updateStore: false, createStore: false } })
       Router.push('/owner-information')
     }
 
@@ -180,21 +191,28 @@ class ShippingExpedition extends React.Component {
       NProgress.done()
       if (isFound(manageExpeditions)) {
         let serviceId = []
+        let expeditionId = []
         manageExpeditions.manageExpeditions.map(exp => {
+          if (exp.is_active) {
+            expeditionId.push(exp.id)
+          }
           return exp.services.map(service => {
-            serviceId.push(service.id)
+            if (service.is_checked) {
+              serviceId.push(service.id)
+            }
           })
         })
-        const newService = { selectedServices }
+        const newService = { selectedServices, selectedExpeditions }
         newService.selectedServices = serviceId
+        newService.selectedExpeditions = expeditionId
         this.setState(newService)
       }
       if (isError(manageExpeditions)) {
         this.setState({ notification: notifError(manageExpeditions.message) })
       }
     }
-    if (!isFetching(statusUpdateExpedition) && this.submiting) {
-      this.submiting = false
+    if (!isFetching(statusUpdateExpedition) && submiting.updateStore) {
+      this.setState({ submiting: { updateStore: false, createStore: false } })
       if (isFound(statusUpdateExpedition)) {
         this.props.manageStoreExpeditions()
         this.setState({ notification: notifSuccess(statusUpdateExpedition.message) })
@@ -206,7 +224,6 @@ class ShippingExpedition extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
     return (
       <div>
