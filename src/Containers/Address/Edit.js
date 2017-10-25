@@ -193,7 +193,7 @@ class EditAddress extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { formAddress, convertToForm, provinces, districts, subdistricts, villages, notification, submiting } = this.state
+    const { formAddress, convertToForm, provinces, districts, subdistricts, villages, submiting } = this.state
     const { address, statusUpdateAddress } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
     if (!isFetching(address) && convertToForm) {
