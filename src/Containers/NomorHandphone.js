@@ -4,22 +4,21 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 // components
 import Link from 'next/link'
+import Notification from '../Components/Notification'
 import Router from 'next/router'
 import {Images} from '../Themes'
 // actions
 import * as actionTypes from '../actions/user'
-// services
-import { Status } from '../Services/Status'
 
 class NomorHandphone extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       profile: props.profile,
-      submitting: false,
+      submiting: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
@@ -34,80 +33,60 @@ class NomorHandphone extends React.Component {
 
   sendOTPPhone (e) {
     e.preventDefault()
-    this.setState({ submitting: true })
+    this.setState({ submiting: true })
     this.props.sendOTPToPhone()
   }
 
   componentDidMount () {
-    const { notification } = this.state
-    const { verifyPhone, query } = this.props
+    const { verifyPhone, query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     this.props.getProfile()
     NProgress.start()
     if (query.hasOwnProperty('isSuccess')) {
-      if (!verifyPhone.isLoading) {
-        switch (verifyPhone.status) {
-          case Status.SUCCESS:
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = verifyPhone.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          case Status.OFFLINE :
-          case Status.FAILED :
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = verifyPhone.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          default:
-            break
+      if (!isFetching(verifyPhone)) {
+        if (isFound(verifyPhone)) {
+          this.setState({ notification: notifSuccess(verifyPhone.message) })
         }
-        this.setState({ notification })
+        if (isError(verifyPhone)) {
+          this.setState({ notification: notifError(verifyPhone.message) })
+        }
       }
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    let { notification, submitting } = this.state
+    let { submiting } = this.state
     const { statusOTPPhone, profile } = nextProps
-    notification = {status: false, message: 'Error, default message.'}
-    if (profile.isFound) {
-      this.setState({ profile: nextProps.profile })
-      NProgress.done()
-    }
-    if (!statusOTPPhone.isLoading && statusOTPPhone.isFound && submitting) {
-      switch (statusOTPPhone.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false })
-          Router.push('/verify-no-hp')
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusOTPPhone.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(profile)) {
+      if (isFound(profile)) {
+        this.setState({ profile })
+        NProgress.done()
       }
-      this.setState({ notification })
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
+    }
+    if (!isFetching(statusOTPPhone) && submiting) {
+      this.setState({ submiting: false })
+      if (isFound(statusOTPPhone)) {
+        Router.push('/verify-no-hp')
+      }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(statusOTPPhone.message) })
+      }
     }
   }
 
   render () {
-    const { profile, submitting, notification } = this.state
+    const { profile, submiting, notification } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='content'>
           <div className='container is-fluid'>
             <div className='desc has-text-centered'>
@@ -126,7 +105,7 @@ class NomorHandphone extends React.Component {
               <div className='column'>
                 { profile.user.hasOwnProperty('user') && !profile.user.user.is_phone_verified &&
                   <button
-                    className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+                    className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
                     onClick={(e) => this.sendOTPPhone(e)}>
                     Verifikasi Sekarang
                   </button>

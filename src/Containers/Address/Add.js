@@ -9,8 +9,6 @@ import * as actionLocationTypes from '../../actions/location'
 import * as actionAddressTypes from '../../actions/address'
 // validation
 import { inputNumber } from '../../Validations/Input'
-// services
-import { Status } from '../../Services/Status'
 
 class AddAddress extends React.Component {
   constructor (props) {
@@ -44,10 +42,11 @@ class AddAddress extends React.Component {
         alias_address: '',
         is_primary: false
       },
-      submitting: false,
+      submiting: false,
       showAddress: false,
       validation: false,
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
@@ -134,17 +133,17 @@ class AddAddress extends React.Component {
     )
   }
 
-  componentWillMount () {
+  componentDidMount () {
     const { provinces } = this.state
-    const { getProvince } = this.props
-    if (provinces.data.provinces.length === 0) {
+    const { getProvince, isFound } = this.props
+    if (!isFound(provinces)) {
       getProvince()
     }
   }
 
   submitAddressInfo (e) {
     e.preventDefault()
-    const { formAddress, submitting } = this.state
+    const { formAddress, submiting } = this.state
     let provinceId = formAddress.province_id
     let districtId = formAddress.district_id
     let subDistrictId = formAddress.sub_district_id
@@ -165,8 +164,8 @@ class AddAddress extends React.Component {
     let aliasAddressRequired = aliasAddress.length > 0
     let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired && nameRequired && phoneNumberRequired && aliasAddressRequired
     if (isValid) {
-      const newSubmitting = { submitting }
-      newSubmitting.submitting = true
+      const newSubmitting = { submiting }
+      newSubmitting.submiting = true
       this.setState(newSubmitting)
       this.setState({ validation: false })
       this.proccessCreateAddress()
@@ -187,28 +186,49 @@ class AddAddress extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { provinces, districts, subdistricts, villages, submitting } = this.state
-    if (nextProps.provinces.status === 200) {
-      const newProvince = { provinces }
-      newProvince.provinces['data'] = nextProps.provinces
-      this.setState(newProvince)
+    const { provinces, districts, subdistricts, villages, submiting } = this.state
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(nextProps.provinces)) {
+      if (isFound(nextProps.provinces)) {
+        const newProvince = { provinces }
+        newProvince.provinces['data'] = nextProps.provinces
+        this.setState(newProvince)
+      }
+      if (isError(nextProps.provinces)) {
+        this.setState({ notification: notifError(nextProps.provinces.message) })
+      }
     }
-    if (nextProps.districts.status === 200) {
-      const newDistrict = { districts }
-      newDistrict.districts['data'] = nextProps.districts
-      this.setState(newDistrict)
+    if (!isFetching(nextProps.districts)) {
+      if (isFound(nextProps.districts)) {
+        const newDistrict = { districts }
+        newDistrict.districts['data'] = nextProps.districts
+        this.setState(newDistrict)
+      }
+      if (isError(nextProps.districts)) {
+        this.setState({ notification: notifError(nextProps.districts.message) })
+      }
     }
-    if (nextProps.subdistricts.status === 200) {
-      const newSubdistrict = { subdistricts }
-      newSubdistrict.subdistricts['data'] = nextProps.subdistricts
-      this.setState(newSubdistrict)
+    if (!isFetching(nextProps.subdistricts)) {
+      if (isFound(nextProps.subdistricts)) {
+        const newSubdistrict = { subdistricts }
+        newSubdistrict.subdistricts['data'] = nextProps.subdistricts
+        this.setState(newSubdistrict)
+      }
+      if (isError(nextProps.subdistricts)) {
+        this.setState({ notification: notifError(nextProps.subdistricts.message) })
+      }
     }
-    if (nextProps.villages.status === 200) {
-      const newVillage = { villages }
-      newVillage.villages['data'] = nextProps.villages
-      this.setState(newVillage)
+    if (!isFetching(nextProps.villages)) {
+      if (isFound(nextProps.villages)) {
+        const newVillage = { villages }
+        newVillage.villages['data'] = nextProps.villages
+        this.setState(newVillage)
+      }
+      if (isError(nextProps.villages)) {
+        this.setState({ notification: notifError(nextProps.villages.message) })
+      }
     }
-    if (nextProps.districts.isLoading) {
+    if (isFetching(nextProps.districts)) {
       const resetSubdistricts = { subdistricts }
       resetSubdistricts.subdistricts.data['subdistricts'] = []
       const resetVillages = { villages }
@@ -216,43 +236,29 @@ class AddAddress extends React.Component {
       this.setState(resetSubdistricts)
       this.setState(resetVillages)
     }
-    if (nextProps.subdistricts.isLoading) {
+    if (isFetching(nextProps.subdistricts)) {
       const resetVillages = { villages }
       resetVillages.villages.data['villages'] = []
       this.setState(resetVillages)
     }
-    if (!nextProps.statusAddAddress.isLoading && submitting) {
-      let { notification } = this.state
-      notification = {status: false, message: 'Error, default message.'}
-      switch (nextProps.statusAddAddress.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false })
-          const href = `/manage-address?isSuccess`
-          const as = 'data-address'
-          Router.push(href, as, { shallow: true })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: nextProps.statusAddAddress.message}
-          this.setState({ submitting: false, notification })
-          break
-        default:
-          break
-      }
+    if (!isFetching(nextProps.statusAddAddress) && submiting) {
+      this.setState({ submiting: false })
+      const href = `/manage-address?isSuccess`
+      const as = 'data-address'
+      Router.push(href, as, { shallow: true })
     }
   }
 
   render () {
-    const { formAddress, provinces, districts, subdistricts, villages, notification, submitting } = this.state
+    const { formAddress, provinces, districts, subdistricts, villages, notification, submiting } = this.state
     return (
       <div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <section className='section is-paddingless has-shadow'>
           <div className='container is-fluid'>
             <div className='title'>
@@ -446,7 +452,7 @@ class AddAddress extends React.Component {
         <section className='section is-paddingless'>
           <div className='edit-data-delivery'>
             <a
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
               onClick={(e) => this.submitAddressInfo(e)}>
               Simpan Perubahan
             </a>

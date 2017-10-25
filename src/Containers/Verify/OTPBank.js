@@ -8,8 +8,6 @@ import Notification from '../../Components/Notification'
 import * as actionTypes from '../../actions/user'
 import * as actionBankTypes from '../../actions/bank'
 import * as saldoActions from '../../actions/saldo'
-// services
-import { Status } from '../../Services/Status'
 // validation
 import { inputNumber } from '../../Validations/Input'
 
@@ -27,18 +25,17 @@ class VerifyNoTelp extends React.Component {
         digit5: ''
       },
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
       },
-      submitting: false,
+      submiting: false,
       submitOTPBank: false
     }
 
-    this.submitting = {
+    this.submiting = {
       withdrawal: false
     }
-
-    console.log({props})
   }
 
   handleInput (e) {
@@ -107,7 +104,7 @@ class VerifyNoTelp extends React.Component {
           code: code,
           amount: query.amount
         }
-        this.submitting = { ...this.submitting, withdrawal: true }
+        this.submiting = { ...this.submiting, withdrawal: true }
         this.props.withdraw(params)
         break
       case 'delete':
@@ -116,7 +113,7 @@ class VerifyNoTelp extends React.Component {
       default:
         break
     }
-    this.setState({ submitting: true })
+    this.setState({ submiting: true })
   }
 
   sendOTPBank (e) {
@@ -132,52 +129,45 @@ class VerifyNoTelp extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { isFetching, isError, isFound, notifError } = this.props
-    const { bankAccount, statusSendOTPBank, withdrawal } = nextProps
-    let { notification, submitting, submitOTPBank } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    this.setState({ profile: nextProps.profile })
-    if (!bankAccount.isLoading && submitting) {
-      switch (bankAccount.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false })
-          let href = ''
-          if (this.props.query.source === 'balance-withdraw') {
-            href = `/balance-withdraw?addAccount=success`
-          } else {
-            href = `/data-rekening?isSuccess`
-          }
-          Router.push(href)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ submitting: false })
-          notification = {status: true, message: bankAccount.message}
-          break
-        default:
-          break
+    const { isFetching, isError, isFound, notifError, notifSuccess } = this.props
+    const { profile, bankAccount, statusSendOTPBank, withdrawal } = nextProps
+    let { submiting, submitOTPBank } = this.state
+    if (!isFetching(profile)) {
+      if (isFound(profile)) {
+        this.setState({ profile })
       }
-      this.setState({ notification })
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
     }
-    if (!statusSendOTPBank.isLoading && submitOTPBank) {
-      switch (statusSendOTPBank.status) {
-        case Status.SUCCESS:
-          this.setState({ submitOTPBank: false })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ submitOTPBank: false })
-          notification = {status: true, message: statusSendOTPBank.message}
-          break
-        default:
-          break
+    if (!isFetching(bankAccount) && submiting) {
+      this.setState({ submiting: false })
+      if (isFound(bankAccount)) {
+        let href
+        if (this.props.query.source === 'balance-withdraw') {
+          href = `/balance-withdraw?addAccount=success`
+        } else {
+          href = `/data-rekening?isSuccess`
+        }
+        Router.push(href)
       }
-      this.setState({ notification })
+      if (isError(bankAccount)) {
+        this.setState({ notification: notifError(bankAccount.message) })
+      }
+    }
+    if (!isFetching(statusSendOTPBank) && submitOTPBank) {
+      this.setState({ submitOTPBank: false })
+      if (isFound(statusSendOTPBank)) {
+        this.setState({ notification: notifSuccess(statusSendOTPBank.message) })
+      }
+      if (isError(statusSendOTPBank)) {
+        this.setState({ notification: notifError(statusSendOTPBank.message) })
+      }
     }
 
     /** handling withdraw balance  */
-    if (!isFetching(withdrawal) && this.submitting.withdrawal) {
-      this.submitting = { ...this.submitting, withdrawal: false }
+    if (!isFetching(withdrawal) && this.submiting.withdrawal) {
+      this.submiting = { ...this.submiting, withdrawal: false }
       if (isError(withdrawal)) {
         this.setState({ notification: notifError(withdrawal.message) })
       }
@@ -188,16 +178,15 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submitting, submitOTPBank } = this.state
+    const { formVerify, verify, profile, notification, submiting, submitOTPBank } = this.state
     return (
       <div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <section className='content'>
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
@@ -267,7 +256,7 @@ class VerifyNoTelp extends React.Component {
                 </div>
               </div>
               <a
-                className={`button is-primary is-large is-fullwidth js-sort ${submitting && 'is-loading'}`}
+                className={`button is-primary is-large is-fullwidth js-sort ${submiting && 'is-loading'}`}
                 onClick={(e) => this.handleVerify(e)}>
                 Verifikasi Kode OTP
               </a>

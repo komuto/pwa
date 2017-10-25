@@ -6,8 +6,6 @@ import Router from 'next/router'
 import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
-// services
-import { Status } from '../Services/Status'
 
 class NomorHandphone extends Component {
   constructor (props) {
@@ -15,7 +13,10 @@ class NomorHandphone extends Component {
     this.state = {
       phoneNumber: '',
       validation: false,
-      submitting: false,
+      submiting: {
+        sendOTP: false,
+        updatePhone: false
+      },
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -46,57 +47,43 @@ class NomorHandphone extends Component {
 
   postPhone (e) {
     e.preventDefault()
-    const { updatePhone, sendOTPToPhone } = this.props
     const { phoneNumber } = this.state
     const regex = /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/g
     let isValid = regex.test(phoneNumber)
     if (isValid) {
-      this.setState({ submitting: true })
-      updatePhone({phone_number: phoneNumber})
-      sendOTPToPhone()
+      this.setState({ submiting: { updatePhone: true, sendOTP: false } })
+      this.props.updatePhone({phone_number: phoneNumber})
     } else {
       this.setState({ validation: true })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    let { notification } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    switch (nextProps.statusUpdatePhone.status) {
-      case Status.SUCCESS:
-        break
-      case Status.OFFLINE :
-      case Status.FAILED :
-        notification = {status: true, message: nextProps.statusUpdatePhone.message}
-        this.setState({ notification })
-        break
-      default:
-        break
+    let { submiting } = this.state
+    const { isFetching, isFound, isError, notifError } = this.props
+    const { statusUpdatePhone, statusOTPPhone } = nextProps
+    if (!isFetching(statusUpdatePhone) && submiting.updatePhone) {
+      this.setState({ submiting: { updatePhone: false, sendOTP: true } })
+      if (isFound(statusUpdatePhone)) {
+        this.props.sendOTPToPhone()
+      }
+      if (isError(statusUpdatePhone)) {
+        this.setState({ notification: notifError(statusUpdatePhone.message) })
+      }
     }
-    if (!nextProps.statusOTPPhone.isLoading) {
-      switch (nextProps.statusOTPPhone.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false })
-          this.statusOTPSuccess = true
-          if (this.statusOTPSuccess) {
-            Router.push('/verify-no-hp')
-            this.statusOTPSuccess = false
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: nextProps.statusUpdatePhone.message}
-          this.setState({ notification })
-          this.setState({ submitting: false })
-          break
-        default:
-          break
+    if (!isFetching(statusOTPPhone) && submiting.sendOTP) {
+      this.setState({ submiting: { updatePhone: false, sendOTP: false } })
+      if (isFound(statusUpdatePhone)) {
+        Router.push('/verify-no-hp')
+      }
+      if (isError(statusUpdatePhone)) {
+        this.setState({ notification: notifError(statusUpdatePhone.message) })
       }
     }
   }
 
   render () {
-    const { phoneNumber, validation, notification, submitting } = this.state
+    const { phoneNumber, validation, notification, submiting } = this.state
     return (
       <section className='content'>
         <Notification
@@ -123,7 +110,7 @@ class NomorHandphone extends Component {
               {validation && this.renderValidation('phoneNumber', 'No handphone anda tidak valid')}
             </div>
             <a
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${(submiting.updatePhone || submiting.sendOTP) && 'is-loading'}`}
               onClick={(e) => this.postPhone(e)}>
               Simpan Nomor Handphone
             </a>

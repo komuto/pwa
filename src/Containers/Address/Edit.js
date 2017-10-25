@@ -4,13 +4,12 @@ import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import Notification from '../../Components/Notification'
 // actions
 import * as actionLocationTypes from '../../actions/location'
 import * as actionAddressTypes from '../../actions/address'
 // validation
 import { inputNumber } from '../../Validations/Input'
-// services
-import { Status } from '../../Services/Status'
 
 class EditAddress extends React.Component {
   constructor (props) {
@@ -47,9 +46,14 @@ class EditAddress extends React.Component {
         is_primary: false
       },
       convertToForm: false,
-      submitting: false,
+      submiting: false,
       showAddress: false,
-      validation: false
+      validation: false,
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
@@ -147,7 +151,7 @@ class EditAddress extends React.Component {
 
   submitAddressInfo (e) {
     e.preventDefault()
-    const { formAddress, submitting } = this.state
+    const { formAddress, submiting } = this.state
     let provinceId = formAddress.province_id
     let districtId = formAddress.district_id
     let subDistrictId = formAddress.sub_district_id
@@ -168,8 +172,8 @@ class EditAddress extends React.Component {
     let aliasAddressRequired = aliasAddress.length > 0
     let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired && nameRequired && phoneNumberRequired && aliasAddressRequired
     if (isValid) {
-      const newSubmitting = { submitting, validation: false }
-      newSubmitting.submitting = true
+      const newSubmitting = { submiting, validation: false }
+      newSubmitting.submiting = true
       this.setState(newSubmitting)
       this.proccessCreateAddress()
     } else {
@@ -189,54 +193,81 @@ class EditAddress extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { formAddress, convertToForm, provinces, districts, subdistricts, villages, notification, submitting } = this.state
+    const { formAddress, convertToForm, provinces, districts, subdistricts, villages, submiting } = this.state
     const { address, statusUpdateAddress } = nextProps
-    if (address.status === 200 && convertToForm) {
-      const newState = { formAddress, convertToForm: false }
-      newState.formAddress['id'] = address.address.id
-      newState.formAddress['province_id'] = address.address.province.id
-      newState.formAddress['district_id'] = address.address.district.id
-      newState.formAddress['sub_district_id'] = address.address.subDistrict.id
-      newState.formAddress['village_id'] = address.address.village.id
-      newState.formAddress['address'] = address.address.address
-      newState.formAddress['postal_code'] = address.address.postal_code
-      newState.formAddress['name'] = address.address.name
-      newState.formAddress['phone_number'] = address.address.phone_number
-      newState.formAddress['alias_address'] = address.address.alias_address
-      newState.formAddress['is_primary'] = address.address.is_primary_address
-      this.setState(newState)
-      if (districts.data.districts.length === 0) {
-        this.props.getDistrict({ province_id: formAddress.province_id })
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(address) && convertToForm) {
+      this.setState({ convertToForm: false })
+      if (isFound(address)) {
+        const newState = { formAddress }
+        newState.formAddress['id'] = address.address.id
+        newState.formAddress['province_id'] = address.address.province.id
+        newState.formAddress['district_id'] = address.address.district.id
+        newState.formAddress['sub_district_id'] = address.address.subDistrict.id
+        newState.formAddress['village_id'] = address.address.village.id
+        newState.formAddress['address'] = address.address.address
+        newState.formAddress['postal_code'] = address.address.postal_code
+        newState.formAddress['name'] = address.address.name
+        newState.formAddress['phone_number'] = address.address.phone_number
+        newState.formAddress['alias_address'] = address.address.alias_address
+        newState.formAddress['is_primary'] = address.address.is_primary_address
+        this.setState(newState)
+        if (districts.data.districts.length === 0) {
+          this.props.getDistrict({ province_id: formAddress.province_id })
+        }
+        if (subdistricts.data.subdistricts.length === 0) {
+          this.props.getSubDistrict({ district_id: formAddress.district_id })
+        }
+        if (villages.data.villages.length === 0) {
+          this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
+        }
+        NProgress.done()
       }
-      if (subdistricts.data.subdistricts.length === 0) {
-        this.props.getSubDistrict({ district_id: formAddress.district_id })
+      if (isError(address)) {
+        this.setState({ notification: notifError(address.message) })
       }
-      if (villages.data.villages.length === 0) {
-        this.props.getVillage({ sub_district_id: formAddress.sub_district_id })
+    }
+    if (!isFetching(nextProps.provinces)) {
+      if (isFound(nextProps.provinces)) {
+        const newProvince = { provinces }
+        newProvince.provinces['data'] = nextProps.provinces
+        this.setState(newProvince)
       }
-      NProgress.done()
+      if (isError(nextProps.provinces)) {
+        this.setState({ notification: notifError(nextProps.provinces.message) })
+      }
     }
-    if (nextProps.provinces.status === 200) {
-      const newProvince = { provinces }
-      newProvince.provinces['data'] = nextProps.provinces
-      this.setState(newProvince)
+    if (!isFetching(nextProps.districts)) {
+      if (isFound(nextProps.districts)) {
+        const newDistrict = { districts }
+        newDistrict.districts['data'] = nextProps.districts
+        this.setState(newDistrict)
+      }
+      if (isError(nextProps.districts)) {
+        this.setState({ notification: notifError(nextProps.districts.message) })
+      }
     }
-    if (nextProps.districts.status === 200) {
-      const newDistrict = { districts }
-      newDistrict.districts['data'] = nextProps.districts
-      this.setState(newDistrict)
+    if (!isFetching(nextProps.subdistricts)) {
+      if (isFound(nextProps.subdistricts)) {
+        const newSubdistrict = { subdistricts }
+        newSubdistrict.subdistricts['data'] = nextProps.subdistricts
+        this.setState(newSubdistrict)
+      }
+      if (isError(nextProps.subdistricts)) {
+        this.setState({ notification: notifError(nextProps.subdistricts.message) })
+      }
     }
-    if (nextProps.subdistricts.status === 200) {
-      const newSubdistrict = { subdistricts }
-      newSubdistrict.subdistricts['data'] = nextProps.subdistricts
-      this.setState(newSubdistrict)
+    if (!isFetching(nextProps.villages)) {
+      if (isFound(nextProps.villages)) {
+        const newVillage = { villages }
+        newVillage.villages['data'] = nextProps.villages
+        this.setState(newVillage)
+      }
+      if (isError(nextProps.villages)) {
+        this.setState({ notification: notifError(nextProps.villages.message) })
+      }
     }
-    if (nextProps.villages.status === 200) {
-      const newVillage = { villages }
-      newVillage.villages['data'] = nextProps.villages
-      this.setState(newVillage)
-    }
-    if (nextProps.districts.isLoading) {
+    if (isFetching(nextProps.districts)) {
       const resetSubdistricts = { subdistricts }
       resetSubdistricts.subdistricts.data['subdistricts'] = []
       const resetVillages = { villages }
@@ -244,39 +275,29 @@ class EditAddress extends React.Component {
       this.setState(resetSubdistricts)
       this.setState(resetVillages)
     }
-    if (nextProps.subdistricts.isLoading) {
+    if (isFetching(nextProps.subdistricts)) {
       const resetVillages = { villages }
       resetVillages.villages.data['villages'] = []
       this.setState(resetVillages)
     }
-    if (!statusUpdateAddress.isLoading && submitting) {
-      switch (statusUpdateAddress.status) {
-        case Status.SUCCESS: {
-          this.setState({ submitting: false })
-          const href = `/manage-address?isSuccess`
-          const as = 'manage-address'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false })
-          const href = `/manage-address?isSuccess`
-          const as = 'manage-address'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        default:
-          break
-      }
-      this.setState({ notification })
+    if (!isFetching(statusUpdateAddress) && submiting) {
+      this.setState({ submiting: false })
+      const href = `/manage-address?isSuccess`
+      const as = 'manage-address'
+      Router.push(href, as, { shallow: true })
     }
   }
 
   render () {
-    const { formAddress, provinces, districts, subdistricts, villages, submitting } = this.state
+    const { formAddress, provinces, districts, subdistricts, villages, submiting, notification } = this.state
     return (
       <div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow'>
           <div className='container is-fluid'>
             <div className='title'>
@@ -470,7 +491,7 @@ class EditAddress extends React.Component {
         <section className='section is-paddingless'>
           <div className='edit-data-delivery'>
             <a
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
               onClick={(e) => this.submitAddressInfo(e)}>
               Simpan Perubahan
             </a>
