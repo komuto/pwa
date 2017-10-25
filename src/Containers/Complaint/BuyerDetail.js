@@ -147,7 +147,6 @@ class Detail extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { buyerComplainedOrderDetail, buyerComplaintDiscussion } = nextProps
-
     const { isFetching, isError, isFound, notifError } = this.props
 
     /** handling state status complaint resolved true */
@@ -240,28 +239,53 @@ const DetailContent = ({ orderDetail }) => {
    * REVIEWED: 9
    */
   /** is refund  */
-  // let isRefund = orderDetail.solution === 1
-  /** is exchange  */
-  // let isExchange = orderDetail.solution === 2
+  let isRefund = orderDetail.solution === 1
   /** complaint no respon */
-  let isComplaintNew = (orderDetail.response_status === 0 && orderDetail.status === 1)
+  let isComplaintNewRefund = isRefund && (orderDetail.response_status === 0 && orderDetail.status === 1)
   /** complaint product received by seller */
-  let isComplaintReceived = (orderDetail.response_status === 0 && orderDetail.status === 4)
+  let isComplaintReceivedRefund = isRefund && (orderDetail.response_status === 0 && orderDetail.status === 4)
   /** complaint finish need review */
-  let isComplaintNeedReview = (orderDetail.response_status !== 0 && orderDetail.status === 8)
+  let isComplaintNeedReviewRefund = isRefund && (orderDetail.response_status !== 0 && orderDetail.status === 8)
   /** complaint finish */
-  let isComplaintDone = (orderDetail.response_status !== 0 && orderDetail.status === 9)
+  let isComplaintDoneRefund = isRefund && (orderDetail.response_status !== 0 && orderDetail.status === 9)
+
+  /** is exchange  */
+  let isExchange = orderDetail.solution === 2
+  /** complaint no respon */
+  let isComplaintNewExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 1)
+  /** product send by sellet */
+  let isSendBySellerExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 5)
 
   return (
     <Content>
+      {
+        isExchange &&
+        <Section className='has-shadow'>
+          {/* -- exchange-- */}
+          { isComplaintNewExchange && <ComplaintNewExchange /> }
+          { isSendBySellerExchange && <SendBySellerExchange /> }
+          { isSendBySellerExchange && <Item title='No Resi' data={orderDetail.airway_bill} type='standard' /> }
+          { isSendBySellerExchange && <Item title='Status Resi' data={'NULL'} type='standard' /> }
+          <div className='info-purchase'>
+            <div className='detail-rate is-purchase'>
+              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                <div className='column'>
+                  <a className='button is-primary is-large is-fullwidth js-option'>Barang sudah saya terima</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Section>
+      }
       <Section className='has-shadow'>
-        { isComplaintNew && <ComplaintNew /> }
-        { isComplaintReceived && <ComplaintReceived /> }
-        { isComplaintDone && <ComplaintDone /> }
-        { isComplaintNeedReview && <ComplaintReview id={orderDetail.id} /> }
+        {/* -- refund -- */}
+        { isComplaintNewRefund && <ComplaintNewRefund /> }
+        { isComplaintReceivedRefund && <ComplaintReceivedRefund /> }
+        { isComplaintNeedReviewRefund && <ComplaintReviewRefund id={orderDetail.id} /> }
+        { isComplaintDoneRefund && <ComplaintDoneRefund /> }
         <Item title='No Invoice' data={orderDetail.invoice.invoice_number} type='standard' />
         <Item title='Tanggal Transaksi' data={createdAt} type='standard' />
-        <Item title='Status Penyelesaian' data={isComplaintDone ? <SolutionDone /> : <SolutionWaiting />} type='status' />
+        <Item title='Status Komplain' data={isComplaintDoneRefund ? <SolutionDone /> : <SolutionWaiting />} type='status' />
         <Item title='Penjual' data={<SellerInfo {...orderDetail} />} type='custom' />
         <Item title='Solusi yang diinginkan' data={SolutionType[orderDetail.solution - 1]} type='standard' />
       </Section>
@@ -294,7 +318,7 @@ const DetailContent = ({ orderDetail }) => {
 const DiscussionContent = ({ comment }) => <Comment {...comment} />
 
 /** item component */
-const Item = ({ title, data, type, children }) => (
+export const Item = ({ title, data, type, children }) => (
   <div className='info-purchase'>
     <div className='detail-rate is-purchase'>
       <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
@@ -324,59 +348,57 @@ const Item = ({ title, data, type, children }) => (
   </div>
 )
 
+// --------- EXCHANGE --------- //
+
 /** complaint no proccess */
-const ComplaintNew = () => (
-  <NotificationBox
+const ComplaintNewExchange = () => (
+  <NotifWrapper
     notifClass={`notif-payment`}
-    icon={Images.IconInfoYellow}>
-    <p>
-      <strong>
-        Anda memilih solusi Refund Dana, untuk itu Anda harus mengirim barang kembali ke Seller ,
-        paling lambat tanggal 5 September 2017. atau admin akan mengirimkan dana ke Seller
-      </strong>
-    </p>
-  </NotificationBox>
+    icon={Images.IconInfoYellow}
+    message='Anda memilih solusi Tukar Barang, untuk itu Anda harus mengirim barang kembali ke Seller, paling lambat tanggal 5 September 2017. atau admin akan mengirimkan dana ke Seller' />
+)
+
+/** product send by seller */
+const SendBySellerExchange = () => (
+  <NotifWrapper
+    notifClass={`notif-payment-waiting`}
+    icon={Images.IconInfoBlue}
+    message='Penjual telah mengirim ulang barang. Klik tombol "barang sudah saya terima" setelah Anda menerima barang tersebut.' />
+)
+
+// --------- REFUND --------- //
+
+/** complaint no proccess */
+const ComplaintNewRefund = () => (
+  <NotifWrapper
+    notifClass={`notif-payment`}
+    icon={Images.IconInfoYellow}
+    message='Anda memilih solusi Refund Dana, untuk itu Anda harus mengirim barang kembali ke Seller, paling lambat tanggal 5 September 2017. atau admin akan mengirimkan dana ke Seller' />
 )
 
 /** complaint product received by seller */
-const ComplaintReceived = () => (
-  <NotificationBox
+const ComplaintReceivedRefund = () => (
+  <NotifWrapper
     notifClass={`notif-payment-waiting`}
-    icon={Images.IconInfoBlue}>
-    <p>
-      <strong>
-        Terimakasih telah bersifat kooperatif. Kini Admin akan mengirimkan kembali uang Anda.
-        Dan segera setelah itu Admin akan menandai komplain ini sudah terselesaikan.
-      </strong>
-    </p>
-  </NotificationBox>
+    icon={Images.IconInfoBlue}
+    message='Terimakasih telah bersifat kooperatif. Kini Admin akan mengirimkan kembali uang Anda. Dan segera setelah itu Admin akan menandai komplain ini sudah terselesaikan.' />
 )
 
 /** complaint finish */
-const ComplaintDone = () => (
-  <NotificationBox
+const ComplaintDoneRefund = () => (
+  <NotifWrapper
     notifClass={`notif-payment-success`}
-    icon={Images.paymentDone}>
-    <p>
-      <strong>
-        Komplain telah terselesaikan
-      </strong>
-    </p>
-  </NotificationBox>
+    icon={Images.paymentDone}
+    message='Komplain telah terselesaikan' />
 )
 
 /** complaint finish but need review for fine product */
-const ComplaintReview = ({ id }) => (
+const ComplaintReviewRefund = ({ id }) => (
   <Section className='has-shadow'>
-    <NotificationBox
+    <NotifWrapper
       notifClass={`notif-payment-waiting`}
-      icon={Images.IconInfoBlue}>
-      <p>
-        <strong>
-          Silahkan mengisi review dari beberapa barang di invoice ini, setelah itu kami akan mengirim dana refund ke saldo Anda.
-        </strong>
-      </p>
-    </NotificationBox>
+      icon={Images.IconInfoBlue}
+      message='Silahkan mengisi review dari beberapa barang di invoice ini, setelah itu kami akan mengirim dana refund ke saldo Anda.' />
     <div className='info-purchase'>
       <ButtonFullWidth
         isLoading={false}
@@ -384,6 +406,18 @@ const ComplaintReview = ({ id }) => (
         text='Beri review untuk barang lainya' />
     </div>
   </Section>
+)
+
+const NotifWrapper = ({ notifClass, icon, message }) => (
+  <NotificationBox
+    notifClass={notifClass}
+    icon={icon}>
+    <p>
+      <strong>
+        { message }
+      </strong>
+    </p>
+  </NotificationBox>
 )
 
 /** media card content */
@@ -424,13 +458,13 @@ const TabsName = ['Detail', 'Diskusi']
 const SolutionType = ['Refund Dana', 'Tukar Barang']
 
 /** content when solution is waiting */
-const SolutionWaiting = () => (<div className='item-status md right reject'>Menunggu Penyelesaian</div>)
+export const SolutionWaiting = () => (<div className='item-status md right reject'>Menunggu Penyelesaian</div>)
 
 /** content when solution is done */
-const SolutionDone = () => (<div className='item-status md right accepted'>Terselesaikan</div>)
+export const SolutionDone = () => (<div className='item-status md right accepted'>Terselesaikan</div>)
 
 /** content seller */
-const SellerInfo = ({store}) => (
+export const SellerInfo = ({store}) => (
   <ul className='seller-items'>
     <li>
       <a className='is-bordered inline-text'>
