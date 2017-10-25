@@ -1,8 +1,13 @@
+import os from 'os'
+
+console.log('os.hostname(): ', os.hostname())
+console.log('os.platform(): ', os.platform())
+
+const hostName = os.hostname()
 const baseURL = 'http://localhost:8889/'
 const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
-const MarketPlaceID = '4690fa4c3d68f93b'
-const apiKomuto = `https://api.komuto.skyshi.com/${MarketPlaceID}/`
 const languages = 'ID' // ID , EN
+const apiKomuto = hostName !== 'localhost' ? `https://api.${hostName}` : `https://api.komuto.skyshi.com/`
 
 const midTrans = {
   production: {
