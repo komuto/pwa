@@ -9,7 +9,6 @@ import LoginAlert from '../Components/LoginAlert'
 import Localize from '../Utils/Localize'
 import AppConfig from '../Config/AppConfig'
 import * as handlingState from '../Services/Status'
-import os from 'os'
 
 let clientTask = null
 
@@ -35,9 +34,6 @@ export default function reduxWrapper (ReduxComponent) {
         token: props.token,
         mustLogin: false
       }
-
-      console.log('os.hostname(): ', os.hostname())
-      console.log('os.platform(): ', os.platform())
     }
 
     async componentDidMount () {

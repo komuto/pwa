@@ -255,6 +255,8 @@ const DetailContent = ({ orderDetail }) => {
   let isComplaintNewExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 1)
   /** product send by sellet */
   let isSendBySellerExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 5)
+  /** product send by sellet */
+  let isClosedExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 8)
 
   return (
     <Content>
@@ -266,15 +268,22 @@ const DetailContent = ({ orderDetail }) => {
           { isSendBySellerExchange && <SendBySellerExchange /> }
           { isSendBySellerExchange && <Item title='No Resi' data={orderDetail.airway_bill} type='standard' /> }
           { isSendBySellerExchange && <Item title='Status Resi' data={'NULL'} type='standard' /> }
-          <div className='info-purchase'>
-            <div className='detail-rate is-purchase'>
-              <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                <div className='column'>
-                  <a className='button is-primary is-large is-fullwidth js-option'>Barang sudah saya terima</a>
+          {
+            isClosedExchange &&
+            <div className='info-purchase'>
+              <div className='detail-rate is-purchase'>
+                <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                  <div className='column'>
+                    <a onClick={() =>
+                      Router.push(
+                        `/complaint?type=buyer&id=${orderDetail.id}&sub=confirmation`,
+                        `/complaint/buyer/${orderDetail.id}/confirmation`
+                      )} className='button is-primary is-large is-fullwidth js-option'>Barang sudah saya terima</a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          }
         </Section>
       }
       <Section className='has-shadow'>

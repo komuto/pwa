@@ -15,12 +15,12 @@ import FormData from 'form-data'
 /** including component */
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
-// import Notification, { FieldError } from '../../Components/Notification'
+import Notification from '../../Components/Notification'
 // import MyImage from '../../Components/MyImage'
 // import MyRating from '../../Components/MyRating'
 /** including actions */
 import * as transactionActions from '../../actions/transaction'
-import * as reviewActions from '../../actions/review'
+// import * as reviewActions from '../../actions/review'
 import * as storesActions from '../../actions/stores'
 /** including containter */
 import { Item, SolutionWaiting, SolutionDone, SellerInfo } from './BuyerDetail'
@@ -65,10 +65,7 @@ class BuyerConfirmation extends Component {
       notAcceptedFileType: [],
       notAcceptedFileSize: [],
       error: null,
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      },
+      notification: props.notification,
       method: {
         matching: {
           onSelectQualityProduct: (e, p) => this.onSelectQualityProduct(e, p),
@@ -133,8 +130,8 @@ class BuyerConfirmation extends Component {
 
   onCheckProducts (e, myItem) {
     e.preventDefault()
-    let { buyerInvoiceDetail } = this.state
-    buyerInvoiceDetail.invoice.items.map((item) => {
+    let { buyerComplainedOrderDetail } = this.state
+    buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
       if (myItem.id === item.id) {
         if (item.selected === undefined) {
           item.selected = true
@@ -144,7 +141,7 @@ class BuyerConfirmation extends Component {
         }
       }
     })
-    this.setState({ buyerInvoiceDetail })
+    this.setState({ buyerComplainedOrderDetail })
   }
 
   onCheckProblems (e, myProblem) {
@@ -223,37 +220,37 @@ class BuyerConfirmation extends Component {
   }
 
   onSelectQualityProduct (v, myItem) {
-    let { buyerInvoiceDetail } = this.state
-    buyerInvoiceDetail.invoice.items.map((item) => {
+    let { buyerComplainedOrderDetail } = this.state
+    buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
       if (myItem.id === item.id) {
         item.quality = v
       }
     })
-    this.setState({ buyerInvoiceDetail })
+    this.setState({ buyerComplainedOrderDetail })
   }
 
   onSelectAccuracyProduct (v, myItem) {
-    let { buyerInvoiceDetail } = this.state
-    buyerInvoiceDetail.invoice.items.map((item) => {
+    let { buyerComplainedOrderDetail } = this.state
+    buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
       if (myItem.id === item.id) {
         item.accuracy = v
       }
     })
-    this.setState({ buyerInvoiceDetail })
+    this.setState({ buyerComplainedOrderDetail })
   }
 
   onChangeNoteReview (e, myItem) {
-    let { buyerInvoiceDetail } = this.state
-    buyerInvoiceDetail.invoice.items.map((item) => {
+    let { buyerComplainedOrderDetail } = this.state
+    buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
       if (myItem.id === item.id) {
         item.note = e.target.value
       }
     })
-    this.setState({ buyerInvoiceDetail })
+    this.setState({ buyerComplainedOrderDetail })
   }
 
   validateProducts () {
-    return this.state.buyerInvoiceDetail.invoice.items.filter((item) => {
+    return this.state.buyerComplainedOrderDetail.orderDetail.invoice.items.filter((item) => {
       return item.selected
     }).length < 1
   }
@@ -291,7 +288,7 @@ class BuyerConfirmation extends Component {
 
     // define products selected
     let products = []
-    this.state.buyerInvoiceDetail.invoice.items.map((item) => {
+    this.state.buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
       if (item.selected) {
         products.push(item.product.id)
       }
@@ -345,9 +342,9 @@ class BuyerConfirmation extends Component {
   }
 
   submitReview () {
-    let { buyerInvoiceDetail, id, invoiceId } = this.state
+    let { buyerComplainedOrderDetail, id } = this.state
     let error = false
-    buyerInvoiceDetail.invoice.items.some((item) => {
+    buyerComplainedOrderDetail.orderDetail.invoice.items.some((item) => {
       if (item.quality === undefined) {
         item.error = 'quality'
         error = true
@@ -365,13 +362,13 @@ class BuyerConfirmation extends Component {
       }
     })
 
-    this.setState({ buyerInvoiceDetail })
+    this.setState({ buyerComplainedOrderDetail })
 
     if (error) return
 
-    let reviews = []
-    buyerInvoiceDetail.invoice.items.map((item) => {
-      reviews.push({
+    let data = []
+    buyerComplainedOrderDetail.orderDetail.invoice.items.map((item) => {
+      data.push({
         'product_id': item.product.id,
         'review': item.note,
         'quality': item.quality,
@@ -380,37 +377,44 @@ class BuyerConfirmation extends Component {
     })
 
     NProgress.start()
-    this.submiting = {
-      ...this.submiting,
-      review: true
-    }
+    this.submiting = { ...this.submiting, review: true }
 
-    this.props.setAddReviews({
-      transId: id,
-      invoiceId,
-      reviews
-    })
+    this.props.buyerDisputeReceived({ id, data })
   }
 
   componentDidMount () {
     NProgress.start()
     let { id } = this.state
-    this.submitting = { ...this.submitting, buyerComplainedOrderDetail: true }
+    this.submiting = { ...this.submiting, buyerComplainedOrderDetail: true }
     this.props.getComplainedOrderDetailBuyer({ id })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { buyerComplainedOrderDetail, upload, addComplaint } = nextProps
+    const { buyerComplainedOrderDetail, upload, addComplaint, buyerReceived } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
     /** handling state status complaint resolved true */
-    if (!isFetching(buyerComplainedOrderDetail) && this.submitting.buyerComplainedOrderDetail) {
+    if (!isFetching(buyerComplainedOrderDetail) && this.submiting.buyerComplainedOrderDetail) {
       NProgress.done()
-      this.submitting = { ...this.submitting, buyerComplainedOrderDetail: false }
+      this.submiting = { ...this.submiting, buyerComplainedOrderDetail: false }
       if (isError(buyerComplainedOrderDetail)) {
         this.setState({ notification: notifError(buyerComplainedOrderDetail.message) })
       }
       if (isFound(buyerComplainedOrderDetail)) {
         console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
+        /** adding dispute_products, fine_products to object invoice.items */
+        let tamProductReview = []
+
+        buyerComplainedOrderDetail.orderDetail.dispute_products.map((product) => {
+          tamProductReview.push({ product })
+        })
+
+        buyerComplainedOrderDetail.orderDetail.fine_products.map((product) => {
+          tamProductReview.push({ product })
+        })
+
+        buyerComplainedOrderDetail.orderDetail.invoice.items = tamProductReview
+        /** end of add products */
+
         this.setState({
           buyerComplainedOrderDetail,
           comment: {
@@ -455,12 +459,32 @@ class BuyerConfirmation extends Component {
         )
       }
     }
+
+    if (!isFetching(buyerReceived) && this.submiting.review) {
+      NProgress.done()
+      this.submiting = { ...this.submiting, review: false }
+      if (isError(buyerReceived)) {
+        this.setState({ notification: notifError(buyerReceived.message) })
+      }
+      if (isFound(buyerReceived)) {
+        Router.push(
+          '/transaction-confirmation-review',
+          '/transaction-confirmation/review'
+        )
+      }
+    }
   }
   render () {
-    const { buyerComplainedOrderDetail } = this.state
+    const { buyerComplainedOrderDetail, notification } = this.state
     const { isFound } = this.props
     return (
       <Content>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         {
           isFound(buyerComplainedOrderDetail) &&
           <BuyerConfimationContent
@@ -477,7 +501,7 @@ class BuyerConfirmation extends Component {
 }
 
 const BuyerConfimationContent = ({ props, state, submiting, field, setMatching, orderDetail }) => {
-  const { invoice } = orderDetail
+  let { invoice } = orderDetail
   let createdAt = moment.unix(invoice.created_at).format('Do MMMM YYYY')
   let statusComplaint = orderDetail.solution !== 0
   let { isMatching } = state
@@ -532,14 +556,14 @@ BuyerConfirmation.defaultProps = {
 const mapStateToProps = (state) => ({
   buyerComplainedOrderDetail: state.buyerComplainedOrderDetail,
   addComplaint: state.addComplaint,
-  addReviews: state.addReviews,
+  buyerReceived: state.buyerReceived,
   upload: state.upload
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getComplainedOrderDetailBuyer: (params) => dispatch(transactionActions.getComplainedOrderDetailBuyer(params)),
   setAddComplaint: (params) => dispatch(transactionActions.addComplaint(params)),
-  setAddReviews: (params) => dispatch(reviewActions.addReviews(params)),
+  buyerDisputeReceived: (params) => dispatch(transactionActions.buyerDisputeReceived(params)),
   photoUpload: (params) => dispatch(storesActions.photoUpload({ data: params }))
 })
 
