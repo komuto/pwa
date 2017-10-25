@@ -43,6 +43,7 @@ class ManageBiodata extends React.Component {
       time: new Date(),
       isOpen: false
     }
+    this.convertToForm = false
   }
 
   handleCancel (e) {
@@ -205,16 +206,18 @@ class ManageBiodata extends React.Component {
     }
     NProgress.start()
     this.props.getProfile()
+    this.convertToForm = true
   }
 
   componentWillReceiveProps (nextProps) {
     const { districts, upload, statusUpdateProfile, profile } = nextProps
     const { formBiodata, submiting, uploading } = this.state
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    if (!isFetching(profile)) {
+    if (!isFetching(profile) && this.convertToForm) {
+      this.convertToForm = false
+      NProgress.done()
       if (isFound(profile)) {
         this.setState({ profile })
-        NProgress.done()
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
@@ -229,6 +232,7 @@ class ManageBiodata extends React.Component {
       }
     }
     if (!isFetching(upload) && uploading) {
+      this.setState({ uploading: false })
       if (isFound(upload)) {
         const logo = upload.payload.images[0].name
         const newData = {
@@ -238,14 +242,14 @@ class ManageBiodata extends React.Component {
           place_of_birth: formBiodata.place_of_birth,
           date_of_birth: formBiodata.date_of_birth
         }
-        this.setState({ uploading: false, submiting: true }, () => {
+        this.setState({ submiting: true }, () => {
           if (this.state.submiting) {
             this.props.updateProfile(newData)
           }
         })
       }
       if (isError(upload)) {
-        this.setState({ notification: notifError(upload.message), uploading: false })
+        this.setState({ notification: notifError(upload.message) })
       }
     }
     if (!isFetching(statusUpdateProfile) && submiting) {
@@ -310,6 +314,8 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
+    console.log('date_of_birth', moment.unix(this.state.formBiodata.date_of_birth).format('MM/DD/YYYY'))
+    console.log('state', this.state)
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
     let photoOrIcon
     if (formBiodata.photo !== '') {
