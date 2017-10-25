@@ -9,12 +9,11 @@ import LoginAlert from '../Components/LoginAlert'
 import Localize from '../Utils/Localize'
 import AppConfig from '../Config/AppConfig'
 import * as handlingState from '../Services/Status'
-
 let clientTask = null
-
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ req, isServer, query }) {
+      console.log('req: ', req)
       let token = await GET_TOKEN.getToken()
       if (isServer) {
         // /const rootTask = sagaMiddleware.run(dataSaga)
@@ -51,6 +50,8 @@ export default function reduxWrapper (ReduxComponent) {
         status: false,
         message: 'Error, default message.'
       }
+
+      console.log(this.props)
 
       return (
         <Content>

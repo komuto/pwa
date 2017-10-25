@@ -256,7 +256,7 @@ const DetailContent = ({ orderDetail }) => {
   /** product send by sellet */
   let isSendBySellerExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 5)
   /** product send by sellet */
-  let isClosedExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 8)
+  // let isClosedExchange = isExchange && (orderDetail.response_status === 0 && orderDetail.status === 8)
 
   return (
     <Content>
@@ -269,7 +269,7 @@ const DetailContent = ({ orderDetail }) => {
           { isSendBySellerExchange && <Item title='No Resi' data={orderDetail.airway_bill} type='standard' /> }
           { isSendBySellerExchange && <Item title='Status Resi' data={'NULL'} type='standard' /> }
           {
-            isClosedExchange &&
+            isSendBySellerExchange &&
             <div className='info-purchase'>
               <div className='detail-rate is-purchase'>
                 <div className='columns total-items is-mobile is-multiline no-margin-bottom'>

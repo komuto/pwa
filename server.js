@@ -17,6 +17,7 @@ app.prepare().then(_ => {
   const server = express()
   const defineASURL = (as, url) => (
     server.get(as, (req, res) => {
+      console.log('cekekek', req.gethost)
       const params = Object.assign(req.query, req.params)
       return app.render(req, res, url, params)
     })
@@ -72,6 +73,7 @@ app.prepare().then(_ => {
   defineASURL('/discussion/:type', '/discussion')
 
   server.get('*', (req, res) => {
+    global.hostNameServer = req.headers.host
     return handle(req, res)
   })
 

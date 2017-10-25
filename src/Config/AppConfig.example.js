@@ -1,13 +1,21 @@
 import os from 'os'
 
-console.log('os.hostname(): ', os.hostname())
-console.log('os.platform(): ', os.platform())
+let hostName = 'localhost'
+// for server rendering
+if (typeof hostNameServer !== 'undefined') {
+  hostName = hostNameServer
+} else {
+  hostName = os.hostname()
+}
+const isLocalhost = hostName.includes('localhost')
 
-const hostName = os.hostname()
-const baseURL = 'http://localhost:8889/'
+console.log('hostName: ', hostName)
+console.log('isLocalhost: ', isLocalhost)
+
+const baseURL = isLocalhost ? 'http://localhost:8889/' : `https://${hostName}/`
 const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
 const languages = 'ID' // ID , EN
-const apiKomuto = hostName !== 'localhost' ? `https://api.${hostName}` : `https://api.komuto.skyshi.com/`
+const apiKomuto = isLocalhost ? `https://api.komuto.skyshi.com/` : `https://api.${hostName}/`
 
 const midTrans = {
   production: {

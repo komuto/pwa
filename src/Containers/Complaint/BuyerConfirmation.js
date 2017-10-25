@@ -54,7 +54,7 @@ class BuyerConfirmation extends Component {
         }
       ],
       solution: {
-        selected: null,
+        selected: SOLUTIONS[0],
         data: SOLUTIONS
       },
       note: {
@@ -158,7 +158,7 @@ class BuyerConfirmation extends Component {
 
   onSelectSolution (e, selected) {
     e.preventDefault()
-    this.setState({ solution: { ...this.state.solution, selected } })
+    this.setState({ solution: { ...this.state.solution, selected: 'Refund' } })
   }
 
   onChangeNoteComplaint (e) {
@@ -303,12 +303,7 @@ class BuyerConfirmation extends Component {
     })
 
     // define solutions selected
-    let solution = 1
-    this.state.solution.data.map((d, index) => {
-      if (this.state.solution.selected === d) {
-        solution = index
-      }
-    })
+    let solution = SOLUTIONS.indexOf(this.state.solution.selected) + 1
 
     // define note
     let note = this.state.note.complaint
@@ -433,7 +428,7 @@ class BuyerConfirmation extends Component {
       if (isFound(upload)) {
         let { orderDetail } = buyerComplainedOrderDetail
         this.props.setAddComplaint({
-          id: orderDetail.id,
+          id: orderDetail.invoice.bucket_id,
           invoiceId: orderDetail.invoice.id,
           ...this.params,
           ...upload.payload

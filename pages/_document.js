@@ -1,7 +1,6 @@
 // @flow
 import Document, { Head, Main, NextScript } from 'next/document'
 import AppConfig from '../src/Config/AppConfig'
-
 export default class HomeDocument extends Document {
   static async getInitialProps (ctx) {
     const props = await Document.getInitialProps(ctx)
