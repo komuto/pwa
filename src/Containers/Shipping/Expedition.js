@@ -49,7 +49,7 @@ class ShippingExpedition extends React.Component {
     }
     this.setState({ selectedServices: newExpeditions }, () => {
       if (this.state.selectedServices.indexOf(id) !== -1) {
-        let isSame = (getServicesId.length === this.state.selectedServices.length) && getServicesId.every((id, i) => id === this.state.selectedServices[i])
+        let isSame = this.state.selectedServices.filter(id => getServicesId.includes(id))
         if (isSame) {
           let newExpeditions = [...selectedExpeditions, expeditionId]
           this.setState({ selectedExpeditions: newExpeditions })
@@ -136,7 +136,7 @@ class ShippingExpedition extends React.Component {
   }
 
   componentDidMount () {
-    const { expeditions, manageExpeditions, selectedServices } = this.state
+    const { expeditions, manageExpeditions, selectedServices, selectedExpeditions } = this.state
     const { getExpedition, query, manageStoreExpeditions, isFound } = this.props
     if (!isFound(expeditions)) {
       getExpedition()
@@ -148,21 +148,28 @@ class ShippingExpedition extends React.Component {
         manageStoreExpeditions()
         NProgress.start()
       } else {
+        let expeditionId = []
         let serviceId = []
         manageExpeditions.manageExpeditions.map(exp => {
+          if (exp.is_active) {
+            expeditionId.push(exp.id)
+          }
           return exp.services.map(service => {
-            serviceId.push(service.id)
+            if (service.is_checked) {
+              serviceId.push(service.id)
+            }
           })
         })
-        const newService = { selectedServices }
+        const newService = { selectedServices, selectedExpeditions }
         newService.selectedServices = serviceId
+        newService.selectedExpeditions = expeditionId
         this.setState(newService)
       }
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { selectedServices, submiting } = this.state
+    const { selectedServices, selectedExpeditions, submiting } = this.state
     const { processCreateStore, expeditions, manageExpeditions, statusUpdateExpedition } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(expeditions)) {
@@ -184,13 +191,20 @@ class ShippingExpedition extends React.Component {
       NProgress.done()
       if (isFound(manageExpeditions)) {
         let serviceId = []
+        let expeditionId = []
         manageExpeditions.manageExpeditions.map(exp => {
+          if (exp.is_active) {
+            expeditionId.push(exp.id)
+          }
           return exp.services.map(service => {
-            serviceId.push(service.id)
+            if (service.is_checked) {
+              serviceId.push(service.id)
+            }
           })
         })
-        const newService = { selectedServices }
+        const newService = { selectedServices, selectedExpeditions }
         newService.selectedServices = serviceId
+        newService.selectedExpeditions = expeditionId
         this.setState(newService)
       }
       if (isError(manageExpeditions)) {
@@ -210,7 +224,6 @@ class ShippingExpedition extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
     return (
       <div>
