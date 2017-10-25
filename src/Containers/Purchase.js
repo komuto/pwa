@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
+import ReactNotify from 'react-notify'
+
 // components
 import Section from '../Components/Section'
 import Content from '../Components/Content'
@@ -18,8 +20,6 @@ import * as addressActions from '../actions/address'
 import * as purchaseActions from '../actions/purchase'
 import * as cartActions from '../actions/cart'
 import * as expeditionActions from '../actions/expedition'
-// services
-import { Status } from '../Services/Status'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
 // validations
@@ -64,15 +64,17 @@ class Purchase extends Component {
         show: false,
         selected: props.insurance.insurance
       },
-      notification: {
-        type: 'is-danger',
-        status: false,
-        message: 'Error, default message.'
-      },
+      notification: props.notification,
       noted: props.noted.noted,
       error: null,
-      submiting: false,
       cartNotification: false
+    }
+
+    this.submiting = {
+      estimatedCharges: false,
+      listAddress: false,
+      addToCart: false,
+      productDetail: false
     }
 
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
@@ -95,7 +97,7 @@ class Purchase extends Component {
   }
 
   // address event
-  onClickAddress = (e) => {
+  onClickAddress (e) {
     if (!e.target.className.includes('addressButton')) return
     this.setState({ address: { ...this.state.address, show: !this.state.address.show } })
   }
@@ -103,6 +105,7 @@ class Purchase extends Component {
   async addressSelected (e, selected) {
     e.preventDefault()
     const { id, productDetail } = this.state
+    this.submiting = { ...this.submiting, estimatedCharges: true }
     await this.props.setEstimatedShipping({
       id,
       origin_id: productDetail.detail.location.district.ro_id,
@@ -118,7 +121,7 @@ class Purchase extends Component {
   }
 
   // expedition event
-  onClickExpedition = (e) => {
+  onClickExpedition (e) {
     if (!e.target.className.includes('expeditionButton')) return
     this.setState({ expeditions: { ...this.state.expeditions, show: !this.state.expeditions.show } })
   }
@@ -133,7 +136,7 @@ class Purchase extends Component {
   }
 
   // expedition package event
-  onClickExpeditionPackage = (e) => {
+  onClickExpeditionPackage (e) {
     if (!e.target.className.includes('expeditionPackageButton')) return
     this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: !this.state.expeditionsPackage.show } })
   }
@@ -145,7 +148,7 @@ class Purchase extends Component {
   }
 
   // insurance event
-  onClickInsurance = (e) => {
+  onClickInsurance (e) {
     if (!e.target.className.includes('insuranceButton')) return
     this.setState({ insurance: { ...this.state.insurance, show: !this.state.insurance.show } })
   }
@@ -170,8 +173,6 @@ class Purchase extends Component {
     e.preventDefault()
     const { productDetail, id, amountProduct, address, expeditions, expeditionsPackage, insurance, noted } = this.state
 
-    console.log(insurance)
-
     if (!address.selected.status) {
       this.setState({ error: 'addressSelected' })
       return
@@ -192,7 +193,7 @@ class Purchase extends Component {
       return
     }
 
-    this.setState({ submiting: true })
+    this.submiting = { ...this.submiting, addToCart: true }
     this.props.setAddToCart({
       'destination_ro_id': address.selected.district.ro_id,
       'origin_ro_id': productDetail.detail.location.district.ro_id,
@@ -206,103 +207,76 @@ class Purchase extends Component {
       'is_insurance': insurance.selected === 'Ya'
     })
   }
-  async componentDidMount () {
-    const { id, productDetail, listAddress } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      await this.props.getProduct({ id })
-    }
 
-    if (!listAddress.isFound) {
-      NProgress.start()
-      await this.props.getListAddress()
-    }
+  async componentDidMount () {
+    const { id } = this.state
+    NProgress.start()
+    this.submiting = { ...this.submiting, productDetail: true, listAddress: true }
+    await this.props.getProduct({ id })
+    await this.props.getListAddress()
   }
 
   componentWillReceiveProps (nextProps) {
     const { productDetail, listAddress, addToCart, estimatedCharges } = nextProps
-    let { notification, submiting } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    if (!listAddress.isLoading) {
-      switch (listAddress.status) {
-        case Status.SUCCESS :
-          if (!listAddress.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: listAddress.message}
-          break
-        default:
-          break
+    const { isFetching, isFound, isError, notifError } = this.props
+    /** handling state get address */
+    if (!isFetching(listAddress) && this.submiting.listAddress) {
+      NProgress.done()
+      this.submiting = { ...this.submiting, listAddress: false }
+      if (isError(listAddress)) {
+        this.setState({ notification: notifError(listAddress.message) })
       }
-      this.setState({
-        listAddress,
-        address: { ...this.state.address, data: listAddress.address },
-        notification
-      })
+      if (isFound(listAddress)) {
+        this.setState({
+          listAddress,
+          address: { ...this.state.address, data: listAddress.address }
+        })
+      }
     }
 
-    if (!estimatedCharges.isLoading) {
-      switch (estimatedCharges.status) {
-        case Status.SUCCESS :
-          if (!estimatedCharges.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: estimatedCharges.message}
-          break
-        default:
-          break
+    /** handling state get estimated charges */
+    if (!isFetching(estimatedCharges) && this.submiting.estimatedCharges) {
+      this.submiting = { ...this.submiting, estimatedCharges: false }
+      if (isError(estimatedCharges)) {
+        this.refs.notificator.success('', estimatedCharges.message, 4000)
       }
-
-      this.setState({
-        expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
-        address: { ...this.state.address, data: listAddress.address, submiting: false },
-        notification
-      })
+      if (isFound(estimatedCharges)) {
+        this.setState({
+          expeditionsPackage: { ...this.state.expeditionsPackage, data: estimatedCharges.charges },
+          address: { ...this.state.address, data: listAddress.address, submiting: false }
+        })
+      }
     }
 
-    if (!addToCart.isLoading) {
-      switch (addToCart.status) {
-        case Status.SUCCESS :
-          if (!addToCart.status === 200) notification = {type: 'is-danger', status: true, message: 'Gagal menambahkan data keranjang belanja'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: addToCart.message}
-          break
-        default:
-          break
+    /** handling state addtocart */
+    if (!isFetching(addToCart) && this.submiting.addToCart) {
+      this.submiting = { ...this.submiting, addToCart: false }
+      if (isError(addToCart)) {
+        this.setState({ notification: notifError(addToCart.message) })
       }
-      submiting &&
-      this.setState({
-        submiting: false,
-        addToCart,
-        notification,
-        cartNotification: addToCart.status === 200
-      })
+      if (isFound(addToCart)) {
+        this.setState({
+          submiting: false,
+          addToCart,
+          cartNotification: true
+        })
+      }
     }
 
-    if (!productDetail.isLoading) {
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          if (!productDetail.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
-          break
-        default:
-          break
+    /** handling state get detail product */
+    if (!isFetching(productDetail) && this.submiting.productDetail) {
+      NProgress.done()
+      this.submiting = { ...this.submiting, productDetail: false }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
       }
-      this.setState({
-        productDetail,
-        expeditions: { ...this.state.expeditions, data: productDetail.detail.expeditions },
-        notification
-      })
+      if (isFound(productDetail)) {
+        this.setState({
+          productDetail,
+          expeditions: { ...this.state.expeditions, data: productDetail.detail.expeditions }
+        })
+      }
     }
-
-    if (!listAddress.isLoading && !productDetail.isLoading) NProgress.done()
   }
 
   render () {
@@ -349,6 +323,7 @@ class Purchase extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <Section className='section is-paddingless has-shadow'>
+          <ReactNotify ref='notificator' />
           <div className='detail-product'>
             <div className='purchase'>
               <figure className='img-item' style={{ width: 30 }}>
@@ -474,12 +449,12 @@ class Purchase extends Component {
             </section>
           }
         <Section className='section is-paddingless has-shadow'>
-          <a className={`column is-paddingless expeditionButton ${error === 'expeditions' && 'is-error'}`} onClick={(e) => !address.submiting && this.onClickExpedition(e)}>
+          <a className={`column is-paddingless expeditionButton ${error === 'expeditions' && 'is-error'}`} onClick={(e) => !this.submiting.estimatedCharges && this.onClickExpedition(e)}>
             <div className='see-all expeditionButton'>
               <span className={`link expeditionButton ${expeditions.selected.id && 'black'}`}> { expeditions.selected.id ? 'Kurir Pengiriman' : 'Pilih Kurir Pengiriman' }
                 <span className='kurir expeditionButton'>{ expeditions.selected.name }</span>
                 {
-                    address.submiting
+                    this.submiting.estimatedCharges
                     ? this.loadingSpan
                     : <span className='icon-arrow-down expeditionButton' />
                 }
@@ -488,12 +463,12 @@ class Purchase extends Component {
             <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
           </a>
 
-          <a className={`column is-paddingless expeditionPackageButton ${error === 'expeditionsPackage' && 'is-error'}`} onClick={(e) => !address.submiting && this.onClickExpeditionPackage(e)}>
+          <a className={`column is-paddingless expeditionPackageButton ${error === 'expeditionsPackage' && 'is-error'}`} onClick={(e) => !this.submiting.estimatedCharges && this.onClickExpeditionPackage(e)}>
             <div className='see-all expeditionPackageButton'>
               <span className={`link  expeditionPackageButton ${expeditionsPackage.selected.id && 'black'}`}> { expeditionsPackage.selected.id ? 'Paket Pengiriman' : 'Pilih Paket Pengiriman' }
                 <span className='kurir expeditionPackageButton'> { expeditionsPackage.selected.name }</span>
                 {
-                    address.submiting
+                    this.submiting.estimatedCharges
                     ? this.loadingSpan
                     : <span className='icon-arrow-down expeditionPackageButton' />
                 }

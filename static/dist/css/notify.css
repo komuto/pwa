@@ -1,0 +1,50 @@
+.notify-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  align-content: flex-start;
+  position: fixed;
+  z-index: 100;
+  align-items: center;
+  bottom: 70px;
+  width: 100%;
+}
+ 
+.notify-item {
+  width: auto;
+  margin: 5px 10px;
+  color: #FFF;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 20px;
+  display: table;
+}
+ 
+.notify-item:hover {
+  opacity: 0.8;
+  box-shadow: 0 0 10px 0 rgb(15, 15, 15);
+}
+ 
+.notify-item > p {
+  text-align: center;
+  margin: 10px;
+  opacity: 1;
+}
+ 
+.notify-item.success {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+ 
+.notify-item.error {
+  background-color: rgba(203, 100, 94, 0.8);
+}
+ 
+.notify-item.info {
+  background-color: rgba(33, 150, 243, 0.8);
+}
+ 
+.notify-title {
+  font-weight: 700;
+}

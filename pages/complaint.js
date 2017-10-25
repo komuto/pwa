@@ -7,6 +7,7 @@ import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 import Buyer from '../src/Containers/Complaint/Buyer'
 import BuyerDetail from '../src/Containers/Complaint/BuyerDetail'
 import BuyerReview from '../src/Containers/Complaint/BuyerReview'
+import BuyerConfirmation from '../src/Containers/Complaint/BuyerConfirmation'
 
 const Index = (props) => {
   const { type, id, sub } = props.query
@@ -40,8 +41,8 @@ const Index = (props) => {
       )
     }
 
-    /** detail sub page */
-    if (id && sub) {
+    /** review  complaint */
+    if (id && sub === 'review') {
       const params = {
         style: 'main detail bg-grey',
         header: {
@@ -56,6 +57,25 @@ const Index = (props) => {
       return (
         <DefaultLayout {...params} {...props}>
           <BuyerReview {...props} />
+        </DefaultLayout>
+      )
+    }
+    /** confirmation complaint */
+    if (id && sub === 'confirmation') {
+      const params = {
+        style: 'main detail bg-grey',
+        header: {
+          title: 'Konfirmasi Barang Diterima'
+        },
+        navbar: {
+          searchBoox: false,
+          path: '/',
+          textPath: 'Konfirmasi Barang Diterima'
+        }
+      }
+      return (
+        <DefaultLayout {...params} {...props}>
+          <BuyerConfirmation {...props} />
         </DefaultLayout>
       )
     }

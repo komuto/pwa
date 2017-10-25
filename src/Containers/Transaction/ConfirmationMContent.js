@@ -14,7 +14,7 @@ const MatchingContent = (props) => {
         </div>
         <div className='edit-data-delivery bg-white'>
           {
-            invoice.items.map((item, index) => {
+            invoice.items && invoice.items.map((item, index) => {
               return <div key={index}>
                 <div className='box'>
                   <div className='media'>
