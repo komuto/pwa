@@ -20,7 +20,7 @@ const Index = (props) => {
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <AddressAdd />
+      <AddressAdd {...props} />
     </DefaultLayout>
   )
 }

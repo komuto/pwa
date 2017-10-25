@@ -5,14 +5,13 @@ import Dropzone from 'react-dropzone'
 import DatePicker from 'react-mobile-datepicker'
 import moment from 'moment'
 // components
+import Notification from '../../Components/Notification'
 import NProgress from 'nprogress'
 import {Images} from '../../Themes'
 // actions
 import * as actionTypes from '../../actions/stores'
 import * as actionUserTypes from '../../actions/user'
 import * as actionLocationTypes from '../../actions/location'
-// services
-import { Status } from '../../Services/Status'
 import FormData from 'form-data'
 
 class ManageBiodata extends React.Component {
@@ -33,12 +32,12 @@ class ManageBiodata extends React.Component {
       },
       districts: props.districts,
       modalPlaceOfBirth: false,
-      submitting: false,
+      submiting: false,
       uploading: false,
       validation: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       },
       time: new Date(),
@@ -148,8 +147,8 @@ class ManageBiodata extends React.Component {
           }
         })
       } else {
-        this.setState({ submitting: true }, () => {
-          if (this.state.submitting) {
+        this.setState({ submiting: true }, () => {
+          if (this.state.submiting) {
             this.processUpdateUser()
           }
         })
@@ -201,7 +200,7 @@ class ManageBiodata extends React.Component {
 
   componentDidMount () {
     const { districts } = this.state
-    if (!districts.isFound) {
+    if (!this.props.isFound(districts)) {
       this.props.getDistrict()
     }
     NProgress.start()
@@ -210,55 +209,54 @@ class ManageBiodata extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { districts, upload, statusUpdateProfile, profile } = nextProps
-    const { formBiodata, submitting, notification, uploading } = this.state
-    if (profile.isFound) {
-      this.setState({ profile: nextProps.profile })
-      NProgress.done()
-    }
-    if (districts.isFound) {
-      this.setState({ districts: nextProps.districts })
-    }
-    if (upload.isFound && uploading) {
-      const logo = upload.payload.images[0].name
-      const newData = {
-        name: formBiodata.name,
-        photo: logo,
-        gender: formBiodata.gender,
-        place_of_birth: formBiodata.place_of_birth,
-        date_of_birth: formBiodata.date_of_birth
+    const { formBiodata, submiting, uploading } = this.state
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    if (!isFetching(profile)) {
+      if (isFound(profile)) {
+        this.setState({ profile })
+        NProgress.done()
       }
-      this.setState({ uploading: false, submitting: true }, () => {
-        if (this.state.submitting) {
-          this.props.updateProfile(newData)
-        }
-      })
-    }
-    if (!statusUpdateProfile.isLoading && submitting) {
-      switch (statusUpdateProfile.status) {
-        case Status.SUCCESS: {
-          this.props.getProfile()
-          this.setState({ submitting: false })
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusUpdateProfile.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false })
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusUpdateProfile.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
       }
-      this.setState({ notification })
+    }
+    if (!isFetching(districts)) {
+      if (isFound(districts)) {
+        this.setState({ districts })
+      }
+      if (isError(districts)) {
+        this.setState({ notification: notifError(districts.message) })
+      }
+    }
+    if (!isFetching(upload) && uploading) {
+      if (isFound(upload)) {
+        const logo = upload.payload.images[0].name
+        const newData = {
+          name: formBiodata.name,
+          photo: logo,
+          gender: formBiodata.gender,
+          place_of_birth: formBiodata.place_of_birth,
+          date_of_birth: formBiodata.date_of_birth
+        }
+        this.setState({ uploading: false, submiting: true }, () => {
+          if (this.state.submiting) {
+            this.props.updateProfile(newData)
+          }
+        })
+      }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message), uploading: false })
+      }
+    }
+    if (!isFetching(statusUpdateProfile) && submiting) {
+      this.setState({ submiting: false })
+      if (isFound(statusUpdateProfile)) {
+        this.props.getProfile()
+        this.setState({ notification: notifSuccess(statusUpdateProfile.message) })
+      }
+      if (isError(statusUpdateProfile)) {
+        this.setState({ notification: notifError(statusUpdateProfile.message) })
+      }
     }
   }
 
@@ -312,21 +310,22 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
-    const { formBiodata, searchDistrict, notification, submitting, uploading } = this.state
+    const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
     let photoOrIcon
     if (formBiodata.photo !== '') {
       photoOrIcon = formBiodata.photo
     } else {
       photoOrIcon = Images.iconCamera
     }
+    let timeValue = formBiodata.date_of_birth !== '' ? moment.unix(formBiodata.date_of_birth).format('MM/DD/YYYY') : time
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless'>
           <Dropzone
             style={{}}
@@ -392,8 +391,8 @@ class ManageBiodata extends React.Component {
               <div className='field'>
                 <p className='control detail-address'>
                   <DatePicker
-                    value={this.state.time}
-                    isOpen={this.state.isOpen}
+                    value={new Date(timeValue)}
+                    isOpen={isOpen}
                     onSelect={(e) => this.handleSelect(e)}
                     onCancel={(e) => this.handleCancel(e)}
                     confirmText='Set Tanggal Lahir'
@@ -406,7 +405,7 @@ class ManageBiodata extends React.Component {
               </div>
               <div className='field'>
                 <a
-                  className={`button is-primary is-large is-fullwidth ${(submitting || uploading) && 'is-loading'}`}
+                  className={`button is-primary is-large is-fullwidth ${(submiting || uploading) && 'is-loading'}`}
                   onClick={(e) => this.postUpdateProfile(e)}>Simpan Perubahan
                 </a>
               </div>

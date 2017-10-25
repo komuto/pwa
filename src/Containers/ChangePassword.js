@@ -5,8 +5,6 @@ import Router from 'next/router'
 // components
 // actions
 import * as actionTypes from '../actions/user'
-// services
-import { Status } from '../Services/Status'
 
 class ChangePassword extends React.Component {
   constructor (props) {
@@ -93,29 +91,13 @@ class ChangePassword extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { notification } = this.state
     const { statusChangePassword } = nextProps
-    if (!statusChangePassword.isLoading) {
-      switch (statusChangePassword.status) {
-        case Status.SUCCESS: {
-          this.setState({ submitting: false })
-          const href = `/manage-account?isSuccess`
-          const as = 'manage-account'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false })
-          const href = `/manage-account?isSuccess=false`
-          const as = 'manage-account'
-          Router.push(href, as, { shallow: true })
-          break
-        }
-        default:
-          break
-      }
-      this.setState({ notification })
+    const { isFetching } = this.props
+    if (!isFetching(statusChangePassword)) {
+      this.setState({ submitting: false })
+      const href = `/manage-account?isSuccess`
+      const as = 'manage-account'
+      Router.push(href, as, { shallow: true })
     }
   }
 

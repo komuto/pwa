@@ -4,11 +4,10 @@ import { connect } from 'react-redux'
 // components
 import NProgress from 'nprogress'
 import Router from 'next/router'
+import Notification from '../../Components/Notification'
 // actions
 import * as actionTypes from '../../actions/stores'
 import * as actionUserTypes from '../../actions/user'
-// services
-import { Status } from '../../Services/Status'
 
 class AddressStore extends React.Component {
   constructor (props) {
@@ -18,24 +17,18 @@ class AddressStore extends React.Component {
       profile: props.profile,
       editAddress: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
-  }
-
-  handleNotification (e) {
-    const { notification } = this.state
-    const newState = { notification }
-    newState.notification['status'] = !notification.status
-    this.setState(newState)
+    this.fetchingFirst = false
   }
 
   modalEditAddress (e) {
     e.preventDefault()
     const { editAddress, profile } = this.state
-    if (profile.user.store.is_verified === true) {
+    if (profile.user.store.is_verified) {
       this.setState({ editAddress: !editAddress })
     }
   }
@@ -43,7 +36,7 @@ class AddressStore extends React.Component {
   toEditAddress (e) {
     e.preventDefault()
     const { profile } = this.state
-    if (profile.user.store.is_verified === true) {
+    if (profile.user.store.is_verified) {
       Router.push(`/address-info?type=settingStore`)
     }
   }
@@ -60,50 +53,48 @@ class AddressStore extends React.Component {
   }
 
   componentDidMount () {
-    const { profile, notification } = this.state
-    const { query, updateStoreAddress } = this.props
+    const { profile } = this.state
+    const { query, updateStoreAddress, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     NProgress.start()
     this.props.getStoreAddress()
-    if (!profile.isFound) {
+    if (!isFound(profile)) {
+      this.fetchingFirst = true
       this.props.getProfile()
     }
     if (query.hasOwnProperty('isSuccess')) {
       this.props.getStoreAddress()
-      if (!updateStoreAddress.isLoading) {
-        switch (updateStoreAddress.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = updateStoreAddress.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = updateStoreAddress.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
+      if (!isFetching(updateStoreAddress)) {
+        if (isFound(updateStoreAddress)) {
+          this.setState({ notification: notifSuccess(updateStoreAddress.message) })
         }
-        this.setState({ notification })
+        if (isError(updateStoreAddress)) {
+          this.setState({ notification: notifError(updateStoreAddress.message) })
+        }
       }
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { storeAddress, profile } = nextProps
-    if (!storeAddress.isLoading && storeAddress.isFound) {
-      this.setState({ storeAddress })
-      NProgress.done()
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(storeAddress)) {
+      if (isFound(storeAddress)) {
+        this.setState({ storeAddress })
+        NProgress.done()
+      }
+      if (isError(storeAddress)) {
+        this.setState({ notification: notifError(storeAddress.message) })
+      }
     }
-    if (!profile.isLoading && profile.isFound) {
-      this.setState({ profile })
+    if (!isFetching(profile) && this.fetchingFirst) {
+      this.fetchingFirst = false
+      NProgress.done()
+      if (isFound(profile)) {
+        this.setState({ profile })
+      }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
     }
   }
 
@@ -112,12 +103,12 @@ class AddressStore extends React.Component {
     if (storeAddress.isFound) {
       return (
         <div>
-          <div
-            className={`notification ${notification.status && notification.color}`}
-            style={{display: notification.status ? 'block' : 'none'}}>
-            <button className='delete' onClick={(e) => this.handleNotification(e)} />
-            {notification.message}
-          </div>
+          <Notification
+            type={notification.type}
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
           {this.renderUnverified()}
           <section className='section is-paddingless'>
             <div className='container is-fluid info-address'>

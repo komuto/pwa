@@ -192,8 +192,8 @@ class InformationStore extends React.Component {
       }
     }
     if (!isFetching(upload) && submiting.upload) {
-      this.setState({ submiting: { ...submiting, upload: true } })
       if (isFound(upload)) {
+        this.setState({ submiting: { ...submiting, upload: true } })
         const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
         const logo = upload.payload.images[0].name
         const path = upload.payload.path
@@ -210,7 +210,7 @@ class InformationStore extends React.Component {
         }
       }
       if (isError(upload)) {
-        this.setState({ notification: notifError(upload.message) })
+        this.setState({ notification: notifError(upload.message), uploading: false })
       }
     }
 

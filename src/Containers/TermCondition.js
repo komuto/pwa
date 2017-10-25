@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
+import NProgress from 'nprogress'
 // components
+import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/stores'
 import * as actionUserTypes from '../actions/user'
-// services
-import { Status } from '../Services/Status'
 
 class TermCondition extends React.Component {
   constructor (props) {
@@ -14,14 +14,15 @@ class TermCondition extends React.Component {
     this.state = {
       profile: props.profile,
       term: '',
-      submitting: false,
+      submiting: false,
       validation: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
   }
 
   handleNotification (e) {
@@ -53,11 +54,11 @@ class TermCondition extends React.Component {
 
   updateTerm (e) {
     e.preventDefault()
-    const { term, submitting } = this.state
+    const { term, submiting } = this.state
     let isValid = term.length > 0
     if (isValid) {
-      const newSubmitting = { submitting, validation: false }
-      newSubmitting.submitting = true
+      const newSubmitting = { submiting, validation: false }
+      newSubmitting.submiting = true
       this.setState(newSubmitting)
       this.props.updateTerm({ term_condition: term })
     } else {
@@ -66,49 +67,47 @@ class TermCondition extends React.Component {
   }
 
   componentDidMount () {
+    this.fetchingFirst = true
     this.props.getProfile()
+    NProgress.start()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { submitting, notification } = this.state
+    const { submiting } = this.state
     const { updateStore, profile } = nextProps
-    if (!updateStore.isLoading && updateStore.isFound && submitting) {
-      switch (updateStore.status) {
-        case Status.SUCCESS:
-          const newNotification = { notification, submitting: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = updateStore.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = updateStore.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        default:
-          break
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    if (!isFetching(updateStore) && submiting) {
+      this.setState({ submiting: false })
+      if (isFound(updateStore)) {
+        this.setState({ notification: notifSuccess(updateStore.message) })
+      }
+      if (isError(updateStore)) {
+        this.setState({ notification: notifError(updateStore.message) })
       }
     }
-    if (!profile.isLoading && profile.isFound) {
-      this.setState({ profile, term: profile.user.store.term_condition })
+    if (!isFetching(profile) && this.fetchingFirst) {
+      this.fetchingFirst = false
+      NProgress.done()
+      if (isFound(profile)) {
+        this.setState({ profile, term: profile.user.store.term_condition })
+      }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
     }
   }
 
   render () {
-    const { submitting, term, profile, notification } = this.state
+    const { submiting, term, profile, notification } = this.state
     if (profile.isFound) {
       return (
         <div>
-          <div
-            className={`notification ${notification.status && notification.color}`}
-            style={{display: notification.status ? 'block' : 'none'}}>
-            <button className='delete' onClick={(e) => this.handleNotification(e)} />
-            {notification.message}
-          </div>
+          <Notification
+            type={notification.type}
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
           <div className='note-head'>
             <p>Terms and Conditions akan ditampilkan pada profil toko dan detail barang Anda. </p>
           </div>
@@ -131,7 +130,7 @@ class TermCondition extends React.Component {
                   </p>
                 </div>
                 <a
-                  className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+                  className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
                   onClick={(e) => this.updateTerm(e)}>Simpan Perubahan
                 </a>
               </form>

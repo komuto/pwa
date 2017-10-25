@@ -4,8 +4,7 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
-// services
-import { Status } from '../../Services/Status'
+import Notification from '../../Components/Notification'
 // actions
 import * as actionUserTypes from '../../actions/user'
 import * as actionTypes from '../../actions/bank'
@@ -18,9 +17,10 @@ class DataRekening extends React.Component {
       dropdownSelected: '',
       confirmDelete: '',
       deleteBankAccountTemp: '',
+      submiting: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
@@ -49,9 +49,8 @@ class DataRekening extends React.Component {
 
   modalConfirmDelete (e) {
     e.preventDefault()
-    const { deleteBankAccountTemp } = this.state
+    this.setState({ submiting: false })
     this.props.sendOTPBank()
-    Router.push(`/verify-otp-bank?action=delete&&id=${deleteBankAccountTemp}`)
   }
 
   toEditRekening (e, bank) {
@@ -60,81 +59,56 @@ class DataRekening extends React.Component {
   }
 
   componentDidMount () {
-    const { getBankAccounts } = this.props
+    const { query, getBankAccounts, bankAccount, isFound, isError, notifError, notifSuccess } = this.props
     getBankAccounts()
     NProgress.start()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { notification } = this.state
-    const { bankAccount, query } = this.props
-    if (nextProps.listBankAccounts.status) {
-      this.setState({ listBankAccounts: nextProps.listBankAccounts })
-      NProgress.done()
-    }
     if (query.hasOwnProperty('isSuccess')) {
       if (bankAccount.type === 'add') {
-        switch (bankAccount.status) {
-          case Status.SUCCESS:
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = bankAccount.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          case Status.OFFLINE :
-          case Status.FAILED :
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = bankAccount.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          default:
-            break
+        if (isFound(bankAccount)) {
+          this.setState({ notification: notifSuccess(bankAccount.message) })
+        }
+        if (isError(bankAccount)) {
+          this.setState({ notification: notifError(bankAccount.message) })
         }
       }
       if (bankAccount.type === 'update') {
-        switch (bankAccount.status) {
-          case Status.SUCCESS:
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = bankAccount.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          case Status.OFFLINE :
-          case Status.FAILED :
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = bankAccount.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          default:
-            break
+        if (isFound(bankAccount)) {
+          this.setState({ notification: notifSuccess(bankAccount.message) })
+        }
+        if (isError(bankAccount)) {
+          this.setState({ notification: notifError(bankAccount.message) })
         }
       }
       if (bankAccount.type === 'delete') {
-        switch (bankAccount.status) {
-          case Status.SUCCESS:
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = bankAccount.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          case Status.OFFLINE :
-          case Status.FAILED :
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = bankAccount.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          default:
-            break
+        if (isFound(bankAccount)) {
+          this.setState({ notification: notifSuccess(bankAccount.message) })
         }
+        if (isError(bankAccount)) {
+          this.setState({ notification: notifError(bankAccount.message) })
+        }
+      }
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { listBankAccounts, statusSendOTPBank } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(listBankAccounts)) {
+      if (isFound(listBankAccounts)) {
+        this.setState({ listBankAccounts })
+        NProgress.done()
+      }
+      if (isError(listBankAccounts)) {
+        this.setState({ notification: notifError(listBankAccounts.message) })
+      }
+    }
+    if (!isFetching(statusSendOTPBank) && this.state.submiting) {
+      this.setState({ submiting: false })
+      if (isFound(statusSendOTPBank)) {
+        Router.push(`/verify-otp-bank?action=delete&id=${this.state.deleteBankAccountTemp}`)
+      }
+      if (isError(statusSendOTPBank)) {
+        this.setState({ notification: notifError(statusSendOTPBank.message) })
       }
     }
   }
@@ -145,15 +119,15 @@ class DataRekening extends React.Component {
   }
 
   render () {
-    const { listBankAccounts, notification, dropdownSelected, confirmDelete, submitting } = this.state
+    const { listBankAccounts, notification, dropdownSelected, confirmDelete, submiting } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         { (listBankAccounts.listBankAccounts.length !== 0 && Array.isArray(listBankAccounts.listBankAccounts)) ? listBankAccounts.listBankAccounts.map(bank => {
           return (
             <section className='section is-paddingless bg-white has-shadow' key={bank.id}>
@@ -206,7 +180,7 @@ class DataRekening extends React.Component {
           <div className='notif-report'>
             <h3>Anda yakin akan menghapus rekening tersebut?</h3>
             <button
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
               onClick={(e) => this.modalConfirmDelete(e)}>Ya, Hapus Rekening</button>
             <a className='cancel' onClick={(e) => this.modalShowDelete(e, '')}>Batal</a>
           </div>
@@ -219,7 +193,8 @@ class DataRekening extends React.Component {
 const mapStateToProps = (state) => {
   return {
     listBankAccounts: state.listBankAccounts,
-    bankAccount: state.bankAccount
+    bankAccount: state.bankAccount,
+    statusSendOTPBank: state.sendOTPBank
   }
 }
 

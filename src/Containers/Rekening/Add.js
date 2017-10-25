@@ -2,13 +2,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
-
+import Notification from '../../Components/Notification'
 // validation
 import { inputNumber } from '../../Validations/Input'
 // actions
-import * as actionTypes from '../../actions/bank'
-import * as actionUserTypes from '../../actions/user'
+import * as actionBank from '../../actions/bank'
+import * as actionUser from '../../actions/user'
 
 class AddRekening extends React.Component {
   constructor (props) {
@@ -24,8 +25,14 @@ class AddRekening extends React.Component {
       },
       selectedBank: '',
       showListBank: false,
-      submitting: false,
-      validation: false
+      submiting: false,
+      validation: false,
+      queryCodeBank: '',
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      }
     }
   }
 
@@ -92,19 +99,35 @@ class AddRekening extends React.Component {
     let bbonRequired = bankBranchOfficeName.length > 0
     let isValid = codeRequired && holderNameRequired && hanRequired && bbonRequired
     if (isValid) {
-      this.setState({ submitting: true, validation: false })
+      this.setState({ submiting: true, validation: false, queryCodeBank: `action=add&master_bank_id=${masterBankId}&holder_name=${holderName}&holder_account_number=${holderAccountNumber}&bank_branch_office_name=${bankBranchOfficeName}` })
       this.props.sendOTPBank()
-      const href = `/verify-otp-bank?action=add&&master_bank_id=${masterBankId}&&holder_name=${holderName}&&holder_account_number=${holderAccountNumber}&&bank_branch_office_name=${bankBranchOfficeName}`
-      const as = 'verify-otp-bank'
-      Router.push(href, as, { shallow: true })
     } else {
       this.setState({ validation: true })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.banks.status === 200) {
-      this.setState({ banks: nextProps.banks })
+    const { banks, statusSendOTPBank } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(banks)) {
+      if (isFound(banks)) {
+        this.setState({ banks })
+        NProgress.done()
+      }
+      if (isError(banks)) {
+        this.setState({ notification: notifError(banks.message) })
+      }
+    }
+    if (!isFetching(statusSendOTPBank) && this.state.submiting) {
+      this.setState({ submiting: false })
+      if (isFound(statusSendOTPBank)) {
+        const href = `/verify-otp-bank?${this.state.queryCodeBank}`
+        const as = 'verify-otp-bank'
+        Router.push(href, as, { shallow: true })
+      }
+      if (isError(statusSendOTPBank)) {
+        this.setState({ notification: notifError(statusSendOTPBank.message) })
+      }
     }
   }
 
@@ -144,10 +167,15 @@ class AddRekening extends React.Component {
   }
 
   render () {
-    const { formBank, selectedBank, submitting } = this.state
-    console.log('state', this.state)
+    const { formBank, selectedBank, submiting, notification } = this.state
     return (
       <section className='section is-paddingless'>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <div className='edit-data-delivery bg-white edit'>
           <form className='form edit'>
             <div className='field '>
@@ -198,7 +226,7 @@ class AddRekening extends React.Component {
             </div>
             <div className='field'>
               <a
-                className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+                className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
                 onClick={(e) => this.postCreateBankAccount(e)}>Simpan Perubahan
               </a>
             </div>
@@ -212,13 +240,14 @@ class AddRekening extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    banks: state.banks
+    banks: state.banks,
+    statusSendOTPBank: state.sendOTPBank
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  listBank: () => dispatch(actionTypes.listBank()),
-  sendOTPBank: () => dispatch(actionUserTypes.sendOTPBank())
+  listBank: () => dispatch(actionBank.listBank()),
+  sendOTPBank: () => dispatch(actionUser.sendOTPBank())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddRekening)

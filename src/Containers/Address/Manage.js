@@ -4,10 +4,9 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
+import Notification from '../../Components/Notification'
 // actions
 import * as actionTypes from '../../actions/address'
-// services
-import { Status } from '../../Services/Status'
 
 class DataAddress extends React.Component {
   constructor (props) {
@@ -18,8 +17,8 @@ class DataAddress extends React.Component {
       confirmDelete: '',
       deleteAddressTemp: '',
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
@@ -49,7 +48,7 @@ class DataAddress extends React.Component {
   modalConfirmDelete (e) {
     e.preventDefault()
     const {deleteAddressTemp} = this.state
-    this.setState({ submitting: true })
+    this.setState({ submiting: true })
     this.props.deleteAddress({id: deleteAddressTemp})
   }
 
@@ -59,97 +58,55 @@ class DataAddress extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { notification, listAddress, deleteAddressTemp, submitting } = this.state
-    const { addAddress, updateAddress, statusDeleteAddress, query } = nextProps
-    if (nextProps.listAddress.status === 200) {
-      this.setState({ listAddress: nextProps.listAddress })
+    const { deleteAddressTemp, submiting } = this.state
+    const { statusDeleteAddress, listAddress } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    if (!isFetching(listAddress)) {
       NProgress.done()
-    }
-    if (query.hasOwnProperty('isSuccess')) {
-      if (!addAddress.isLoading) {
-        switch (addAddress.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = addAddress.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = addAddress.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
-        }
-        this.setState({ notification })
+      if (isFound(listAddress)) {
+        this.setState({ listAddress })
       }
-      if (updateAddress.isFound) {
-        switch (updateAddress.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = updateAddress.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = updateAddress.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
-        }
-        this.setState({ notification })
+      if (isError(listAddress)) {
+        this.setState({ notification: notifError(listAddress.message) })
       }
     }
-    if (!statusDeleteAddress.isLoading && submitting) {
-      switch (statusDeleteAddress.status) {
-        case Status.SUCCESS: {
-          let newData = listAddress.address.filter(data => data.id !== deleteAddressTemp)
-          let newListAddress = {
-            ...listAddress, address: newData
-          }
-          this.setState({ listAddress: newListAddress, submitting: false, confirmDelete: false, dropdownSelected: '' })
-          const newNotification = { notification }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = statusDeleteAddress.message
-          newNotification.notification['color'] = 'is-success'
-          this.setState(newNotification)
-          break
+    if (!isFetching(statusDeleteAddress) && submiting) {
+      this.setState({ submiting: false, confirmDelete: false, dropdownSelected: '' })
+      if (isFound(statusDeleteAddress)) {
+        let newData = listAddress.address.filter(data => data.id !== deleteAddressTemp)
+        let newListAddress = {
+          ...listAddress, address: newData
         }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ submitting: false, confirmDelete: false, dropdownSelected: '' })
-          const newNotif = { notification }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = statusDeleteAddress.message
-          newNotif.notification['color'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+        this.setState({ listAddress: newListAddress, notification: notifSuccess(statusDeleteAddress.message) })
       }
-      this.setState({ notification })
+      if (isError(statusDeleteAddress)) {
+        this.setState({ notification: notifError(statusDeleteAddress.message) })
+      }
     }
   }
 
-  componentWillMount () {
+  componentDidMount () {
+    const { query, addAddress, updateAddress, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     this.props.getListAddress()
     NProgress.start()
+    if (query.hasOwnProperty('isSuccess')) {
+      if (!isFetching(addAddress)) {
+        if (isFound(addAddress)) {
+          this.setState({ notification: notifSuccess(addAddress.message) })
+        }
+        if (isError(addAddress)) {
+          this.setState({ notification: notifError(addAddress.message) })
+        }
+      }
+      if (!isFetching(updateAddress)) {
+        if (isFound(updateAddress)) {
+          this.setState({ notification: notifSuccess(updateAddress.message) })
+        }
+        if (isError(updateAddress)) {
+          this.setState({ notification: notifError(updateAddress.message) })
+        }
+      }
+    }
   }
 
   toAddAddress (e) {
@@ -158,15 +115,15 @@ class DataAddress extends React.Component {
   }
 
   render () {
-    const { listAddress, dropdownSelected, confirmDelete, notification, submitting } = this.state
+    const { listAddress, dropdownSelected, confirmDelete, notification, submiting } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         { listAddress.address.length !== 0 ? listAddress.address.map(val => {
           return (
             <section className='section is-paddingless bg-white has-shadow' key={val.id}>
@@ -214,7 +171,7 @@ class DataAddress extends React.Component {
           <div className='notif-report'>
             <h3>Anda yakin akan menghapus Alamat tersebut?</h3>
             <button
-              className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
               onClick={(e) => this.modalConfirmDelete(e)}>Ya, Hapus Alamat</button>
             <a className='cancel' onClick={(e) => this.modalShowDelete(e, '')}>Batal</a>
           </div>
