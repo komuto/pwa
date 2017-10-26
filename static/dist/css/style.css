@@ -6864,9 +6864,19 @@ strong.total {
       color: #41475e;
       margin: 0 auto; }
 
-@media screen and (max-width: 319px) {
+@media screen and (max-width: 320px) {
   .notif-report .button {
-    font-size: 12px; } }
+    font-size: 12px; }
+  .button.btn-fave {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 12px; }
+    .button.btn-fave > span {
+      margin-right: 0; }
+      .button.btn-fave > span.icon-selected-sign {
+        width: 20px;
+        height: 20px;
+        background-size: 100%; } }
 
 .level.header {
   position: fixed;
@@ -7503,12 +7513,12 @@ strong.total {
       overflow-x: hidden;
       position: absolute;
       width: auto;
-      left: 173px; }
+      left: 160px; }
       .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
         background-color: #ffffff;
         width: 100%;
         right: -20px;
-        padding-left: 0; }
+        padding-left: 20px; }
         .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
           padding: 29.1px 20px; }
           .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
@@ -7627,7 +7637,7 @@ strong.total {
         .filter-option .sort-list .checkbox .field .select:after {
           display: none; }
 
-@media screen and (max-width: 479px) {
+@media screen and (max-width: 480px) {
   .modal-filter .modal-card .modal-card-body {
     padding-left: 145px; }
     .modal-filter .modal-card .modal-card-body .fiter-side {
@@ -7636,12 +7646,14 @@ strong.total {
         font-size: 11px; }
       .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active:after {
         right: 8px; }
-    .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
-      padding-left: 0; }
-      .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
-        padding: 29.1px 10px; }
-        .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
-          font-size: 11px; } }
+    .modal-filter .modal-card .modal-card-body .filter-option {
+      left: 146px; }
+      .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
+        padding-left: 0; }
+        .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
+          padding: 29.1px 10px; }
+          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
+            font-size: 11px; } }
 
 .filter-price {
   position: relative; }
@@ -7655,6 +7667,19 @@ strong.total {
     top: 6px;
     left: 0;
     z-index: 2; }
+
+@media screen and (max-width: 320px) {
+  .modal-filter .modal-card .modal-card-body .fiter-side {
+    width: 130px; }
+    .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a {
+      padding: 20px 20px 20px 10px; }
+    .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li.is-active:after {
+      right: 8px; }
+  .modal-filter .modal-card .modal-card-body .filter-option {
+    left: 130px; }
+    .modal-filter .modal-card .modal-card-body .filter-option .sort-list {
+      right: -10px;
+      padding-right: 0; } }
 
 .main.categories {
   padding-bottom: 0; }
@@ -8469,6 +8494,10 @@ strong.total {
       border-bottom: 0.5px solid #dedede; }
   .content-body .input {
     border-bottom: none; }
+
+@media screen and (max-width: 320px) {
+  .detail .qty {
+    max-width: 45px; } }
 
 .photo-content {
   margin-top: 0;
@@ -9964,7 +9993,8 @@ strong.total {
   width: 100%;
   height: 46px;
   border-top: 1px solid #cccccc;
-  background-color: #ffffff; }
+  background-color: #ffffff;
+  z-index: 99; }
   .level.nav-bottom.nav-button {
     height: 66px;
     padding: 10px; }
