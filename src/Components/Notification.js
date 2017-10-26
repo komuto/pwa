@@ -19,7 +19,7 @@ export const FieldError = (props) => {
 /**
  * Notification full page
  */
-export const NotificationPage = ({ icon, title, subTitle, path, text }) => {
+export const NotificationPage = ({ icon, title, subTitle, path, alias, text }) => {
   return (
     <div className='main user user-success'>
       <section className='content'>
@@ -33,6 +33,7 @@ export const NotificationPage = ({ icon, title, subTitle, path, text }) => {
             <div className='column'>
               <ButtonFullWidthLink
                 path={path}
+                alias={alias}
                 text={text} />
             </div>
           </div>

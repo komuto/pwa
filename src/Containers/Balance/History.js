@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 import InfiniteScroll from 'react-infinite-scroller'
 /** including component */
 import Content from '../../Components/Content'
@@ -103,6 +104,7 @@ class History extends Component {
   componentDidMount () {
     /** set submitting balance true then call get balance api */
     this.submitting = { ...this.submitting, saldoHistory: true }
+    NProgress.start()
     this.props.getSaldoHistory({})
   }
 
@@ -114,6 +116,7 @@ class History extends Component {
      * only when fetching is FALSE and submitting TRUE
      */
     if (!isFetching(saldoHistory) && this.submitting.saldoHistory) {
+      NProgress.done()
       this.submitting = { ...this.submitting, saldoHistory: false }
       if (isError(saldoHistory)) {
         this.setState({ notification: notifError(saldoHistory.message) })

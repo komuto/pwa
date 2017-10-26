@@ -44,7 +44,8 @@ const Index = (props) => {
         icon: Images.phoneSuccess,
         title: 'Anda berhasil melalukan topup saldo',
         subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-        path: '/balance-topup-status',
+        path: '/balance?type=topup',
+        alias: '/balance/topup',
         text: 'Lihat balance status'
       }
       return <NotificationPage {...params} />
@@ -56,7 +57,8 @@ const Index = (props) => {
         icon: Images.phoneAccount,
         title: 'Gagal melakukan topup saldo',
         subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-        path: '/balance-topup-status',
+        path: '/balance?type=topup',
+        alias: '/balance/topup',
         text: 'Lihat balance status'
       }
       return <NotificationPage {...params} />
@@ -68,7 +70,8 @@ const Index = (props) => {
         icon: Images.phoneAccount,
         title: 'Topup saldo error',
         subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-        path: '/balance-topup-status',
+        path: '/balance?type=topup',
+        alias: '/balance/topup',
         text: 'Lihat balance status'
       }
       return <NotificationPage {...params} />

@@ -8,6 +8,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import NProgress from 'nprogress'
 /** including component */
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -51,6 +52,7 @@ class TopupStatus extends Component {
 
   componentDidMount () {
     /** set submitting topupStatus true then call get topupStatus api */
+    NProgress.start()
     this.submitting = { ...this.submitting, topupStatus: true }
     this.props.getTopupStatus({})
   }
@@ -64,6 +66,7 @@ class TopupStatus extends Component {
      * only when fetching is FALSE and submitting TRUE
      */
     if (!isFetching(topupStatus) && this.submitting.topupStatus) {
+      NProgress.done()
       this.submitting = { ...this.submitting, topupStatus: false }
       if (isError(topupStatus)) {
         this.setState({ notification: notifError(topupStatus.message) })

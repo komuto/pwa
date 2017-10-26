@@ -62,7 +62,7 @@ export class Navbar extends PureComponent {
 
   render () {
     const { deleteButton, messageType, navbar, productDetail, productImages, moreButton, messageButton, productId, share } = this.props
-    const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage } = navbar
+    const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage, countCart } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
       <div>
@@ -114,7 +114,11 @@ export class Navbar extends PureComponent {
             searchBoox
             ? <div className='nav-right'>
               <span className='icon-love' onClick={() => this.wishListPress()} />
-              <span className='icon-cart' onClick={() => this.shoppingCartPress()}><span className='notif-cart'>4</span></span>
+              <span className='icon-cart' onClick={() => this.shoppingCartPress()}>
+                {
+                  countCart !== 0 && <span className='notif-cart'>{ countCart }</span>
+                }
+              </span>
             </div>
             : null
           }
