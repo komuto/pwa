@@ -75,6 +75,7 @@ app.prepare().then(_ => {
     global.hostNameServer = req.headers.host
 
     console.log('global.hostNameServer: ', global.hostNameServer)
+    console.log('global.hostNameServer: ', global.hostNameServer)
 
     return handle(req, res)
   })
