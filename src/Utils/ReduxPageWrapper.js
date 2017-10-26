@@ -13,7 +13,6 @@ let clientTask = null
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ req, isServer, query }) {
-      console.log('req: ', req)
       let token = await GET_TOKEN.getToken()
       if (isServer) {
         // /const rootTask = sagaMiddleware.run(dataSaga)
@@ -50,8 +49,6 @@ export default function reduxWrapper (ReduxComponent) {
         status: false,
         message: 'Error, default message.'
       }
-
-      console.log(this.props)
 
       return (
         <Content>

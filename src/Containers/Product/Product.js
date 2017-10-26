@@ -32,14 +32,16 @@ import * as locationActions from '../../actions/location'
 import * as brandActions from '../../actions/brand'
 /** including themes */
 import Images from '../../Themes/Images'
+/** including Libs */
+import ReadAbleText from '../../Lib/ReadAbleText'
 
 class MyProduct extends Component {
   constructor (props) {
     super(props)
-    // console.log('constructor()', props.productBySearch)
     this.state = ({
       max: 50,
       query: {
+        slug: props.query.slug || null,
         page: props.query.page || null,
         limit: props.query.limit || null,
         brands: props.query.brands || null,
@@ -48,7 +50,9 @@ class MyProduct extends Component {
         services: props.query.services || null,
         q: props.query.q || null,
         sort: props.query.sort || null,
-        id: props.query.id || null
+        id: props.query.id || null,
+        ids: props.query.ids || null, // id store
+        idc: props.query.idc || null // id catalog
       },
       productBySearch: props.productBySearch || null,
       categories: props.subCategory.categories || [],
@@ -180,7 +184,7 @@ class MyProduct extends Component {
   }
 
   componentDidMount () {
-    const { id, page, limit, sort, q, condition, services, other, brands } = this.state.query
+    const { id, page, limit, sort, q, condition, services, other, brands, ids, idc } = this.state.query
     // window.scrollTo(0, 0)
     this.scrollToTop()
     // const { id } = this.state.query
@@ -197,6 +201,10 @@ class MyProduct extends Component {
     if (services) this.params.services = services
     if (other) this.params.other = other
     if (brands) this.params.brands = brands
+    if (ids && idc) {
+      this.params.store_id = ids
+      this.params.catalog_id = idc
+    }
 
     /** start loading */
     NProgress.start()
@@ -425,8 +433,9 @@ class MyProduct extends Component {
   render () {
     const { categories, isEmpty, expeditionServices, provinces, brands, districts, notification, filterActive, viewActive } = this.state
     const { isFound } = this.props
-    const { q, sort } = this.state.query
-    // console.log('render()')
+    const { q, sort, ids, idc, slug } = this.state.query
+
+    const isCatalog = ids && idc
     /** define params for navbar */
     let params = {
       navbar: {
@@ -453,6 +462,11 @@ class MyProduct extends Component {
       params.navbar.textPath = indexSortType > -1 ? SortTypeMessage[indexSortType] : 'Produk'
     }
 
+    /** calog product */
+    if (isCatalog) {
+      params.navbar.textPath = ReadAbleText(slug)
+    }
+
     return (
       <Content>
         <Navbar {...params} />
@@ -474,7 +488,7 @@ class MyProduct extends Component {
         </Section>
         <TabbarCategories
           sortButton
-          filterButton
+          filterButton={!isCatalog}
           viewButton
           sortOnClick={(e) => this.sortOnClick(e)}
           filterOnClick={() => this.filterOnClick()}

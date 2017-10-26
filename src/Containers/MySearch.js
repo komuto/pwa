@@ -40,9 +40,9 @@ class MySearch extends Component {
     this.timeout = setTimeout(() => {
       if (searchText) {
         this.submitting = { ...this.submitting, searchProduct: true }
-        this.props.search({query: searchText})
+        this.props.search({q: searchText})
       }
-    }, 1000)
+    }, 500)
   }
 
   /** focusing to input search */

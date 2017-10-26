@@ -20,6 +20,7 @@ import * as productActions from '../../actions/product'
 import * as userActions from '../../actions/user'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+import UrlParam from '../../Lib/UrlParam'
 
 class Store extends Component {
   constructor (props) {
@@ -495,6 +496,7 @@ const ContentProduk = (props) => {
     <Content>
       {
         myStore.catalogs.map((catalog, index) => {
+          console.log('catalog: ', catalog)
           let listCatalog = catalog.products.map((product, index) => { return props.itemCatalog(product, index) })
           return (
             <Element name={String(catalog.id)} className={`section is-paddingless`} key={index}>
@@ -502,7 +504,11 @@ const ContentProduk = (props) => {
                 <div className='column'>
                   <p>{ catalog.name }</p><p /></div>
                 <div className='column has-text-right'>
-                  <span className='link'>Lihat Semuanya<span /></span></div>
+                  <span onClick={() =>
+                    Router.push(
+                      `/product?slug=${UrlParam(catalog.name)}&ids=${catalog.store_id}&idc=${catalog.id}`,
+                      `/p/${UrlParam(catalog.name)}?ids=${catalog.store_id}&idc=${catalog.id}`
+                    )} className='link'>Lihat Semuanya<span /></span></div>
               </div>
               {
                 catalog.products.length > 0 &&
