@@ -206,7 +206,7 @@ class MessageDetail extends Component {
     }
   }
 
-  scrollToBottom = () => {
+  scrollToBottom () {
     animateScroll.scrollToBottom()
   }
 

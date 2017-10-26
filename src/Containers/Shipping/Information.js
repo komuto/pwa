@@ -71,22 +71,34 @@ class ShippingInformation extends Component {
   }
 
   // alias event
-  onChangeAlias = (e) => this.setState({ formData: { ...this.state.formData, alias: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'alias') && null })
+  onChangeAlias (e) {
+    this.setState({ formData: { ...this.state.formData, alias: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'alias') && null })
+  }
 
   // name event
-  onChangeRecipient = (e) => this.setState({ formData: { ...this.state.formData, recipient: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'recipient') && null })
+  onChangeRecipient (e) {
+    this.setState({ formData: { ...this.state.formData, recipient: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'recipient') && null })
+  }
 
   // phone number event
-  onChangeHandphone = (e) => this.setState({ formData: { ...this.state.formData, handphone: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'handphone') && null })
+  onChangeHandphone (e) {
+    this.setState({ formData: { ...this.state.formData, handphone: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'handphone') && null })
+  }
 
   // adress event
-  onChangeAddress = (e) => this.setState({ formData: { ...this.state.formData, address: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'address') && null })
+  onChangeAddress (e) {
+    this.setState({ formData: { ...this.state.formData, address: inputValidations.inputNormal(e.target.value) }, error: (this.state.error === 'address') && null })
+  }
 
   // postal code event
-  onChangePostalCode = (e) => this.setState({ formData: { ...this.state.formData, postalCode: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'postalCode') && null })
+  onChangePostalCode (e) {
+    this.setState({ formData: { ...this.state.formData, postalCode: inputValidations.inputNumber(e.target.value) }, error: (this.state.error === 'postalCode') && null })
+  }
 
   // provinces event
-  onClickProvince = () => this.setState({ provinces: { ...this.state.provinces, show: true } })
+  onClickProvince () {
+    this.setState({ provinces: { ...this.state.provinces, show: true } })
+  }
 
   async provinceSelected (selected) {
     await this.props.dispatch(locationActions.getDistrict({province_id: selected.id}))
@@ -100,7 +112,9 @@ class ShippingInformation extends Component {
   }
 
   // district event
-  onClickDistrict = () => this.setState({ districts: { ...this.state.districts, show: true } })
+  onClickDistrict () {
+    this.setState({ districts: { ...this.state.districts, show: true } })
+  }
 
   async districtSelected (selected) {
     const { id, productDetail } = this.state
@@ -123,7 +137,9 @@ class ShippingInformation extends Component {
   }
 
   // sub districs event
-  onClickSubDistrict = () => this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
+  onClickSubDistrict () {
+    this.setState({ subDistricts: { ...this.state.subDistricts, show: true } })
+  }
 
   async subDistrictSelected (selected) {
     await this.props.dispatch(locationActions.getVillage({sub_district_id: selected.id}))
@@ -135,7 +151,9 @@ class ShippingInformation extends Component {
   }
 
   // village event
-  onClickVillage = () => this.setState({ villages: { ...this.state.villages, show: true } })
+  onClickVillage () {
+    this.setState({ villages: { ...this.state.villages, show: true } })
+  }
 
   villageSelected (selected) {
     this.setState({

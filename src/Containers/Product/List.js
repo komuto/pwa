@@ -83,7 +83,7 @@ class ProductList extends Component {
     this.setState({ tabs: (tabs === TAB_SHOW_IN_PAGE) ? TAB_HIDDEN_IN_PAGE : TAB_SHOW_IN_PAGE })
   }
 
-  showListCatalogPress = () => { this.setState({ showListCatalog: !this.state.showListCatalog }) }
+  showListCatalogPress () { this.setState({ showListCatalog: !this.state.showListCatalog }) }
 
   componentDidMount () {
     NProgress.start()

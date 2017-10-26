@@ -76,9 +76,9 @@ class Store extends Component {
     this.props.favoriteStore({ id })
   }
 
-  showListCatalogPress = () => { this.setState({ showListCatalog: !this.state.showListCatalog }) }
+  showListCatalogPress () { this.setState({ showListCatalog: !this.state.showListCatalog }) }
 
-  tabSelected = (selected) => {
+  tabSelected (selected) {
     Router.push(`/store?id=${this.state.id}&idProduct=${this.state.idProduct}&tab=${selected}`)
     this.setState({ tabs: {...this.state.tabs, selected}, boxSeller: {...this.state.boxSeller, height: selected === 'Produk' ? 200 : 0} })
   }

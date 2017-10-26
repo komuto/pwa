@@ -100,16 +100,22 @@ class ProductAddFromDropshipper extends React.Component {
   }
 
   // sort button event
-  sortOnClick = (e) => {
+  sortOnClick (e) {
     if (!e.target.className.includes('sortButton')) return
     this.setState({ sortActive: !this.state.sortActive })
   }
   // filter button event
-  filterOnClick = () => this.setState({ filterActive: true })
+  filterOnClick () {
+    this.setState({ filterActive: true })
+  }
   // filter view close
-  filterClose = () => this.setState({ filterActive: false })
+  filterClose () {
+    this.setState({ filterActive: false })
+  }
   // fetch district by province id
-  onChangeProvinces = (id) => this.props.getDistrict({province_id: id})
+  onChangeProvinces (id) {
+    this.props.getDistrict({province_id: id})
+  }
 
   viewOnClick () {
     let { viewActive } = this.state

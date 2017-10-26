@@ -169,7 +169,7 @@ class ComplainItemDetail extends React.Component {
       classNotif = 'box notif-payment-waiting'
     }
     // kondisi ketika refund dan status terselesaikan
-    if (solution === 1 && responseStatus === 1 && status === 8) {
+    if (solution === 1 && responseStatus === 1 && (status === 8 || status === 9)) {
       statement = STATEMENT_TEMP[5]
       icon = Images.paymentDone
       classNotif = 'box notif-payment-success'
@@ -193,7 +193,7 @@ class ComplainItemDetail extends React.Component {
       classNotif = 'box notif-payment-waiting'
     }
     // kondisi ketika tukar dan status terselesaikan
-    if (solution === 2 && responseStatus === 1 && status === 8) {
+    if (solution === 2 && responseStatus === 1 && (status === 8 || status === 9)) {
       statement = STATEMENT_TEMP[5]
       icon = Images.paymentDone
       classNotif = 'box notif-payment-success'
@@ -379,6 +379,18 @@ const ListComplainOrderDetail = (props) => {
   const { sellerComplainedOrderDetail } = props
   if (sellerComplainedOrderDetail === undefined) return null
   const { solution, response_status, status } = sellerComplainedOrderDetail.orderDetail
+  let statusDispute
+  if ((sellerComplainedOrderDetail.orderDetail.status === 8 || sellerComplainedOrderDetail.orderDetail.status === 9)) {
+    statusDispute = {
+      className: 'item-status md right accepted',
+      condition: 'Terselesaikan'
+    }
+  } else {
+    statusDispute = {
+      className: 'item-status md right reject',
+      condition: 'Menunggu Penyelesaian'
+    }
+  }
   return (
     <div>
       <section className='section is-paddingless has-shadow'>
@@ -427,7 +439,7 @@ const ListComplainOrderDetail = (props) => {
               </div>
               <div className='column'>
                 <div className='rating-content item-qty has-text-right'>
-                  <div className={sellerComplainedOrderDetail.orderDetail.status !== 8 ? 'item-status md right reject' : 'item-status md right accepted'}>{sellerComplainedOrderDetail.orderDetail.status !== 8 ? 'Menunggu Penyelesaian' : 'Terselesaikan' }</div>
+                  <div className={statusDispute.className}>{statusDispute.condition}</div>
                 </div>
               </div>
             </div>
