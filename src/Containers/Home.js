@@ -12,6 +12,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import url from 'url'
 import { animateScroll } from 'react-scroll'
+import { StickyContainer, Sticky } from 'react-sticky'
 /** including components */
 import Slider from 'react-slick'
 import Content from '../Components/Content'
@@ -27,14 +28,20 @@ import * as cartActions from '../actions/cart'
 /** including themes */
 import Images from '../Themes/Images'
 
+import Menu from '../Config/Menu'
+import Tabbar from '../Containers/Tabbar'
+import { Navbar, SearchBoox } from '../Containers/Navbar'
+
 class Home extends Component {
   constructor (props) {
+    console.log('constructor: ', props)
     super(props)
     this.state = {
       products: props.products || null,
       countCart: props.countCart || null,
       category: props.category || null,
-      notification: props.notification
+      notification: props.notification,
+      a: 'a'
     }
     this.submitting = {
       products: false,
@@ -63,17 +70,17 @@ class Home extends Component {
   }
 
   componentDidMount () {
+    console.log('componentDidMount: ')
     this.scrollToTop()
     NProgress.start()
     this.submitting = { ...this.submitting, products: true, category: true, countCart: true }
     this.props.getProducts(this.params)
     this.props.getCategoryList()
-    if (this.props.isLogin) {
-      this.props.getCountCart()
-    }
+    this.props.getCountCart()
   }
 
   componentWillReceiveProps (nextProps) {
+    // console.log('nextProps: ', nextProps);
     let { products, addWishlist, category, countCart } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
     // console.log(products)
@@ -125,7 +132,7 @@ class Home extends Component {
     /** handling state get category */
     if (!isFetching(countCart) && this.submitting.countCart) {
       if (isError(countCart)) {
-        this.setState({ notification: notifError(countCart.message) })
+        // this.setState({ notification: notifError(countCart.message) })
       }
       if (isFound(countCart)) {
         this.setState({ countCart })
@@ -138,18 +145,51 @@ class Home extends Component {
   }
 
   render () {
-    const { notification } = this.state
+    const { notification, countCart } = this.state
+    const { localize, isFound } = this.props
+    let params = {
+      style: 'home bg-grey',
+      header: {
+        title: localize.home
+      },
+      navbar: {
+        searchBoox: true,
+        textPath: 'Galaksi Parabola',
+        countCart: 0
+      },
+      tabbar: {
+        active: Menu.HOME,
+        isShow: true
+      }
+    }
+
+    if (isFound(countCart)) {
+      params.navbar.countCart = countCart.cartCount
+    }
     return (
-      <Content>
-        <Notification
-          type='is-danger'
-          isShow={notification.status}
-          activeClose
-          onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message} />
-        <SliderContent {...this.props} />
-        <CategoryContent {...this.props} {...this.state} />
-        <ProductContent {...this.props} {...this.state} />
+      <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
+        <Content className={`main ${params.style}`}>
+          <Navbar {...this.props} {...params} />
+          <StickyContainer>
+            <Sticky>
+              {
+                ({ isSticky, wasSticky, style, distanceFromTop, distanceFromBottom, calculatedHeight }) => {
+                  return <SearchBoox sbStyle={style} isSticky={isSticky} {...this.props} />
+                }
+              }
+            </Sticky>
+            <Notification
+              type={notification.type}
+              isShow={notification.status}
+              activeClose
+              onClose={() => this.setState({notification: {status: false, message: ''}})}
+              message={notification.message} />
+            <SliderContent {...this.props} />
+            <CategoryContent {...this.props} {...this.state} />
+            <ProductContent {...this.props} {...this.state} />
+            { (params.tabbar) && <Tabbar {...this.props} {...params} /> }
+          </StickyContainer>
+        </Content>
       </Content>
     )
   }
