@@ -7,6 +7,10 @@ export default class HomeDocument extends Document {
     return { ...props }
   }
 
+  randomStringDate () {
+    return new Date(+(new Date()) - Math.floor(Math.random() * 10000000000))
+  }
+
   render () {
     return (
       <html lang='id'>
@@ -15,11 +19,11 @@ export default class HomeDocument extends Document {
           <title>Komuto</title>
           <meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
-          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.css`} />
-          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.css`} />
-          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.css`} />
-          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.css`} />
-          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.css`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.css?${this.randomStringDate()}`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.css?${this.randomStringDate()}`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.css?${this.randomStringDate()}`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.css?${this.randomStringDate()}`} />
+          <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.css?${this.randomStringDate()}`} />
           <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
           <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
