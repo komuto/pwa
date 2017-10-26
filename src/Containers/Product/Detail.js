@@ -182,8 +182,8 @@ class ProductDetail extends Component {
       moreButton: true,
       productId: productDetail.isFound && detail.product.id,
       share: {
-        link: productDetail.isFound && detail.share_link,
-        title: productDetail.isFound && detail.product.name
+        link: productDetail.isFound ? detail.share_link : '',
+        title: productDetail.isFound ? detail.product.name : ''
       }
     }
     return (

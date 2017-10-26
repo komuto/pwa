@@ -63,9 +63,13 @@ class ShoppingCart extends Component {
     this.addToCartPress = false
   }
 
-  minPress = (myItem) => this.updateCart(myItem, 'min')
+  minPress (myItem) {
+    this.updateCart(myItem, 'min')
+  }
 
-  plusPress = (myItem) => this.updateCart(myItem, 'plus')
+  plusPress (myItem) {
+    this.updateCart(myItem, 'plus')
+  }
 
   async updateCart (myItem, pressStatus) {
     let { cart } = this.state
@@ -95,9 +99,13 @@ class ShoppingCart extends Component {
     this.setState({ deleteItem: { ...this.state.deleteItem, productClick: item.id, submitting: true } })
   }
 
-  voucherShow = () => this.setState({ voucher: { ...this.state.voucher, show: !this.state.voucher.show } })
+  voucherShow () {
+    this.setState({ voucher: { ...this.state.voucher, show: !this.state.voucher.show } })
+  }
 
-  voucherOnChange = (e) => this.setState({ voucher: { ...this.state.voucher, code: inputValidations.inputNormal(e.target.value), invalid: e.target.value === '' } })
+  voucherOnChange (e) {
+    this.setState({ voucher: { ...this.state.voucher, code: inputValidations.inputNormal(e.target.value), invalid: e.target.value === '' } })
+  }
 
   async voucherSubmit () {
     const { voucher } = this.state

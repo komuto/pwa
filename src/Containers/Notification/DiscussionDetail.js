@@ -130,7 +130,7 @@ class DiscussionDetail extends Component {
     }
   }
 
-  scrollToBottom = () => {
+  scrollToBottom () {
     animateScroll.scrollToBottom()
   }
 

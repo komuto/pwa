@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 
 class Modal extends Component {
-  outsideModaPress = (e) => (e.target.className === 'sort-option') && this.props.closePress()
+  outsideModaPress (e) {
+    (e.target.className === 'sort-option') && this.props.closePress()
+  }
 
   render () {
     const { show, title, children, closePress } = this.props

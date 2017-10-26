@@ -69,11 +69,11 @@ class Detail extends Component {
     this.props.getComment({ productId: id, id: idd, ...this.state.params })
   }
 
-  scrollToBottom = () => {
+  scrollToBottom () {
     animateScroll.scrollToBottom()
   }
 
-  commentOnChange = (e) => {
+  commentOnChange (e) {
     e.preventDefault()
     const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
     this.setState({ comment: { ...this.state.comment, value } })

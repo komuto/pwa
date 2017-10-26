@@ -82,7 +82,7 @@ class ShippingDetail extends Component {
   }
 
   // address event
-  onClickAddress = (e) => {
+  onClickAddress (e) {
     if (!e.target.className.includes('addressButton')) return
     this.setState({ address: { ...this.state.address, show: !this.state.address.show } })
   }
@@ -112,7 +112,7 @@ class ShippingDetail extends Component {
   }
 
   // expedition event
-  onClickExpedition = (e) => {
+  onClickExpedition (e) {
     if (!e.target.className.includes('expeditionButton')) return
     this.setState({ expeditions: { ...this.state.expeditions, show: !this.state.expeditions.show } })
   }
@@ -128,7 +128,7 @@ class ShippingDetail extends Component {
   }
 
   // expedition package event
-  onClickExpeditionPackage = (e) => {
+  onClickExpeditionPackage (e) {
     if (!e.target.className.includes('expeditionPackageButton')) return
     this.setState({ expeditionsPackage: { ...this.state.expeditionsPackage, show: !this.state.expeditionsPackage.show } })
   }
@@ -144,7 +144,7 @@ class ShippingDetail extends Component {
   }
 
   // insurance event
-  onClickInsurance = (e) => {
+  onClickInsurance (e) {
     if (!e.target.className.includes('insuranceButton')) return
     this.setState({ insurance: { ...this.state.insurance, show: !this.state.insurance.show } })
   }
