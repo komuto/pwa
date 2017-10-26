@@ -13,8 +13,8 @@ export default (props) => {
     <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
       <Header {...header} />
       <Content className={`main ${style}`}>
-        { (navbar) ? <Navbar {...props} /> : null}
-        { (hero) ? <Hero {...props.hero} /> : null}
+        { (navbar) && <Navbar {...props} /> }
+        { (hero) && <Hero {...props.hero} />}
         { children }
         { (tabbar) && <Tabbar {...props} /> }
       </Content>

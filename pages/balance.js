@@ -27,6 +27,7 @@ const Index = (props) => {
       navbar: {
         searchBoox: false,
         path: '/',
+        callBack: () => Router.push('/profile'),
         textPath: 'Saldo'
       }
     }
