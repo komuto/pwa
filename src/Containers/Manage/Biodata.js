@@ -4,31 +4,40 @@ import { connect } from 'react-redux'
 import Dropzone from 'react-dropzone'
 import DatePicker from 'react-mobile-datepicker'
 import moment from 'moment'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
 import NProgress from 'nprogress'
-import {Images} from '../../Themes'
+// import {Images} from '../../Themes'
 // actions
 import * as actionTypes from '../../actions/stores'
 import * as actionUserTypes from '../../actions/user'
 import * as actionLocationTypes from '../../actions/location'
 import FormData from 'form-data'
 
+moment.locale('id')
+
 class ManageBiodata extends React.Component {
   constructor (props) {
     super(props)
+    let name = props.profile.isFound ? props.profile.user.name : ''
+    let photo = props.profile.isFound ? props.profile.user.photo : ''
+    let gender = props.profile.isFound ? props.profile.user.gender : ''
+    let pob = props.profile.isFound ? props.profile.user.place_of_birth_id : ''
+    let dob = props.profile.isFound ? props.profile.user.date_of_birth : ''
+    let selected = props.profile.isFound ? props.profile.user.place_of_birth : ''
     this.state = {
       profile: props.profile,
       formBiodata: {
-        name: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.name : '',
-        photo: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.photo : '',
-        gender: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.gender : '',
-        place_of_birth: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.place_of_birth_id : '',
-        date_of_birth: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.date_of_birth : ''
+        name,
+        photo,
+        gender,
+        place_of_birth: pob,
+        date_of_birth: dob
       },
       searchDistrict: {
         name: '',
-        selected: props.profile.user.hasOwnProperty('user') ? props.profile.user.user.place_of_birth : ''
+        selected
       },
       districts: props.districts,
       modalPlaceOfBirth: false,
@@ -68,9 +77,7 @@ class ManageBiodata extends React.Component {
     newFormBiodata.formBiodata['date_of_birth'] = moment(times).unix()
     newTime.time = times
     newIsOpen.isOpen = false
-    this.setState(newTime)
-    this.setState(newFormBiodata)
-    this.setState(newIsOpen)
+    this.setState({ ...newFormBiodata, ...newTime, ...newIsOpen })
   }
 
   onDrop (files) {
@@ -110,7 +117,7 @@ class ManageBiodata extends React.Component {
     let gender = formBiodata.gender
     let placeOfBirth = formBiodata.place_of_birth
     let dateOfBirth = formBiodata.date_of_birth
-    let photoRequired = type === 'photo' && (photo.hasOwnProperty('preview') || photo !== '')
+    let photoRequired = type === 'photo' && (photo !== '')
     let nameRequired = type === 'name' && nameUser !== ''
     let genderRequired = type === 'gender' && gender !== ''
     let pobRequired = type === 'place_of_birth' && placeOfBirth !== null
@@ -136,7 +143,7 @@ class ManageBiodata extends React.Component {
     let photoRequired = (photo.hasOwnProperty('preview') || photo.length > 0)
     let nameRequired = nameUser !== ''
     let genderRequired = gender !== ''
-    let pobRequired = placeOfBirth !== null
+    let pobRequired = !!placeOfBirth !== null
     let dobRequired = dateOfBirth !== null
     let isValid = photoRequired && nameRequired && genderRequired && pobRequired && dobRequired
     if (isValid) {
@@ -205,19 +212,26 @@ class ManageBiodata extends React.Component {
       this.props.getDistrict()
     }
     NProgress.start()
-    this.props.getProfile()
+    this.props.getProfileManage()
     this.convertToForm = true
   }
 
   componentWillReceiveProps (nextProps) {
     const { districts, upload, statusUpdateProfile, profile } = nextProps
-    const { formBiodata, submiting, uploading } = this.state
-    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const { formBiodata, submiting, uploading, searchDistrict } = this.state
+    const { isFetching, isFound, isError, notifError } = this.props
     if (!isFetching(profile) && this.convertToForm) {
       this.convertToForm = false
       NProgress.done()
       if (isFound(profile)) {
-        this.setState({ profile })
+        const newState = { formBiodata, profile: profile, searchDistrict }
+        newState.formBiodata['name'] = profile.user.name
+        newState.formBiodata['photo'] = profile.user.photo
+        newState.formBiodata['gender'] = profile.user.gender
+        newState.formBiodata['place_of_birth'] = profile.user.place_of_birth_id
+        newState.formBiodata['date_of_birth'] = profile.user.date_of_birth
+        newState.searchDistrict['selected'] = profile.user.place_of_birth
+        this.setState(newState)
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
@@ -254,13 +268,9 @@ class ManageBiodata extends React.Component {
     }
     if (!isFetching(statusUpdateProfile) && submiting) {
       this.setState({ submiting: false })
-      if (isFound(statusUpdateProfile)) {
-        this.props.getProfile()
-        this.setState({ notification: notifSuccess(statusUpdateProfile.message) })
-      }
-      if (isError(statusUpdateProfile)) {
-        this.setState({ notification: notifError(statusUpdateProfile.message) })
-      }
+      const href = `/manage-account?isSuccess`
+      const as = 'manage-account'
+      Router.push(href, as, { shallow: true })
     }
   }
 
@@ -314,15 +324,7 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
-    console.log('date_of_birth', moment.unix(this.state.formBiodata.date_of_birth).format('MM/DD/YYYY'))
-    console.log('state', this.state)
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
-    let photoOrIcon
-    if (formBiodata.photo !== '') {
-      photoOrIcon = formBiodata.photo
-    } else {
-      photoOrIcon = Images.iconCamera
-    }
     let timeValue = formBiodata.date_of_birth !== '' ? moment.unix(formBiodata.date_of_birth).format('MM/DD/YYYY') : time
     return (
       <div>
@@ -339,8 +341,7 @@ class ManageBiodata extends React.Component {
             onDrop={this.onDrop.bind(this)}>
             <div className='photo-content has-text-centered margin-top'>
               <div className='photo'>
-                <img style={{marginTop: formBiodata.photo.hasOwnProperty('preview') ? '0px' : '20px'}}
-                  src={formBiodata.photo.hasOwnProperty('preview') ? formBiodata.photo.preview : photoOrIcon} alt='komuto' />
+                <img src={typeof formBiodata.photo === 'object' ? formBiodata.photo.preview : formBiodata.photo} alt='komuto' />
               </div>
             </div>
             <p className='has-text-centered'>
@@ -389,7 +390,7 @@ class ManageBiodata extends React.Component {
               <div className='field'>
                 <p className='control detail-address' onClick={(e) => this.handleModalPOB(e)}>
                   <span className='location-label modal-button'>
-                    { searchDistrict.selected !== null && searchDistrict.selected.length > 0 ? searchDistrict.selected : 'Tempat Lahir Anda' }
+                    { searchDistrict.selected !== '' ? searchDistrict.selected : 'Tempat Lahir Anda' }
                   </span>
                 </p>
                 {this.renderValidation('place_of_birth', 'Mohon isi tempat lahir anda')}
@@ -437,7 +438,7 @@ const mapDispatchToProps = dispatch => ({
   photoUpload: (params) => dispatch(actionTypes.photoUpload({data: params})),
   getDistrict: () => dispatch(actionLocationTypes.getDistrict()),
   updateProfile: (params) => dispatch(actionUserTypes.updateProfile(params)),
-  getProfile: () => dispatch(actionUserTypes.getProfile())
+  getProfileManage: () => dispatch(actionUserTypes.getProfileManage())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageBiodata)

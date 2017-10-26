@@ -4,20 +4,20 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 // components
 import NProgress from 'nprogress'
+import Notification from '../../Components/Notification'
 // actions
 import * as actionTypes from '../../actions/user'
-// services
-import { Status } from '../../Services/Status'
 
 class ManageAccount extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      profile: props.profile,
+      profileUser: props.profileUser || null,
+      isPhoneVerified: null,
       loadingBiodata: false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       },
       submitSignOut: false
@@ -32,44 +32,36 @@ class ManageAccount extends Component {
   }
 
   componentDidMount () {
-    const { notification, profile } = this.state
-    const { getProfile, query, changePassword } = this.props
-    if (!profile.isFound) {
-      getProfile()
-    }
+    const { query, changePassword, statusUpdateProfile, isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    this.props.getProfile()
     if (query.hasOwnProperty('isSuccess')) {
-      if (!changePassword.isLoading) {
-        switch (changePassword.status) {
-          case Status.SUCCESS: {
-            const newNotification = { notification }
-            newNotification.notification['status'] = true
-            newNotification.notification['message'] = changePassword.message
-            newNotification.notification['color'] = 'is-success'
-            this.setState(newNotification)
-            break
-          }
-          case Status.OFFLINE :
-          case Status.FAILED : {
-            const newNotif = { notification }
-            newNotif.notification['status'] = true
-            newNotif.notification['message'] = changePassword.message
-            newNotif.notification['color'] = 'is-danger'
-            this.setState(newNotif)
-            break
-          }
-          default:
-            break
+      if (!isFetching(changePassword)) {
+        if (isFound(changePassword)) {
+          this.setState({ notification: notifSuccess(changePassword.message) })
         }
-        this.setState({ notification })
+        if (isError(changePassword)) {
+          this.setState({ notification: notifError(changePassword.message) })
+        }
+      }
+      if (!isFetching(statusUpdateProfile)) {
+        if (isFound(statusUpdateProfile)) {
+          this.setState({ notification: notifSuccess(statusUpdateProfile.message) })
+        }
+        if (isError(statusUpdateProfile)) {
+          this.setState({ notification: notifError(statusUpdateProfile.message) })
+        }
       }
     }
   }
 
-  async componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps) {
     const { submitSignOut } = this.state
-    const { profile, isLogin } = nextProps
-    if (profile.isFound) {
-      this.setState({ profile })
+    const { profileUser, isLogin } = nextProps
+    const { isFetching, isFound } = this.props
+    if (!isFetching(profileUser)) {
+      if (isFound(profileUser)) {
+        this.setState({ profileUser, isPhoneVerified: profileUser.user.user.is_phone_verified })
+      }
     }
     if (!isLogin.login && submitSignOut) {
       this.setState({ submitSignOut: false })
@@ -82,8 +74,8 @@ class ManageAccount extends Component {
 
   toNomorHandphone (e) {
     e.preventDefault()
-    const { profile } = this.state
-    if (!profile.user.user.phone_number) {
+    const { profileUser } = this.state
+    if (!profileUser.user.user.phone_number) {
       Router.push('/add-no-handphone')
     } else {
       Router.push('/nomor-handphone')
@@ -124,15 +116,15 @@ class ManageAccount extends Component {
   }
 
   render () {
-    const { profile, notification } = this.state
+    const { isPhoneVerified, notification } = this.state
     return (
       <div>
-        <div
-          className={`notification ${notification.status && notification.color}`}
-          style={{display: notification.status ? 'block' : 'none'}}>
-          <button className='delete' onClick={(e) => this.handleNotification(e)} />
-          {notification.message}
-        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <section className='section is-paddingless has-shadow'>
           <div className='seller-akun'>
             <div className='profile-wrapp'>
@@ -168,10 +160,10 @@ class ManageAccount extends Component {
                         <div className='content'>
                           <p>
                             <strong>Nomor Handphone</strong><br />
-                            <span>{profile.status === 200 && !profile.user.user.is_phone_verified && 'Belum terverifikasi'}</span>
+                            {<span>{(!isPhoneVerified) ? 'Belum terverifikasi' : ''}</span>}
                           </p>
                           <div className='val-right'>
-                            {profile.status === 200 && !profile.user.user.is_phone_verified && <span className='notif-akun'>1</span>}
+                            {(!isPhoneVerified) ? <span className='notif-akun'>1</span> : ''}
                           </div>
                         </div>
                       </div>
@@ -294,10 +286,11 @@ class ManageAccount extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    profile: state.profile,
+    profileUser: state.profile,
     changePassword: state.changePassword,
     user: state.user,
-    isLogin: state.isLogin
+    isLogin: state.isLogin,
+    statusUpdateProfile: state.updateProfile
   }
 }
 
