@@ -50,7 +50,6 @@ class Product extends Component {
 
   render () {
     const { product, store, viewActive } = this.props
-    console.log('this.props: ', this.props)
     const { pressId } = this.state
     // set commission
     let commission = null

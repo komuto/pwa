@@ -12,7 +12,6 @@ const Index = (props) => {
   if (!query.id) {
     query.id = generateId(props.query)
   }
-
   const params = {
     style: 'categories detail bg-grey',
     header: {

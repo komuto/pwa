@@ -21,6 +21,7 @@ import Notification from '../Components/Notification'
 import Product from '../Components/Product'
 import ProductContainers from '../Components/ProductContainers'
 import MyImage from '../Components/MyImage'
+import Header from './Header'
 /** including actions */
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
@@ -34,7 +35,6 @@ import { Navbar, SearchBoox } from '../Containers/Navbar'
 
 class Home extends Component {
   constructor (props) {
-    console.log('constructor: ', props)
     super(props)
     this.state = {
       products: props.products || null,
@@ -70,13 +70,14 @@ class Home extends Component {
   }
 
   componentDidMount () {
-    console.log('componentDidMount: ')
     this.scrollToTop()
     NProgress.start()
     this.submitting = { ...this.submitting, products: true, category: true, countCart: true }
     this.props.getProducts(this.params)
     this.props.getCategoryList()
-    this.props.getCountCart()
+    if (this.props.isLogin) {
+      this.props.getCountCart()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -142,6 +143,10 @@ class Home extends Component {
     if (!isFetching(products) && !isFetching(category)) {
       NProgress.done()
     }
+
+    if (!isFetching(products) && !isFound(countCart) && nextProps.isLogin) {
+      this.props.getCountCart()
+    }
   }
 
   render () {
@@ -168,6 +173,7 @@ class Home extends Component {
     }
     return (
       <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
+        <Header {...this.props} {...params} />
         <Content className={`main ${params.style}`}>
           <Navbar {...this.props} {...params} />
           <StickyContainer>
