@@ -36,7 +36,6 @@ export default class HomeDocument extends Document {
           <script src={`${AppConfig.baseURL}static/js/index.js`} />
           <NextScript />
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
-          <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
           <script src={`${AppConfig.baseURL}static/js/nprogress.js`} />
         </body>
       </html>
