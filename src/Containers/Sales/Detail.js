@@ -496,7 +496,7 @@ const DeliveryStatus = (props) => {
         </section>
         <section className='section is-paddingless'>
           <div className='container is-fluid'>
-            <a className='button is-primary is-outlined is-large is-fullwidth'>Ke Detail Komplain</a>
+            <a className='button is-primary is-outlined is-large is-fullwidth' onClick={() => Router.push(`/complain-seller-detail?id=${saleDetail.sale.dispute.id}`)}>Ke Detail Komplain</a>
           </div>
         </section>
         </div>

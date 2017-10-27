@@ -169,7 +169,7 @@ class ComplainItemDetail extends React.Component {
       classNotif = 'box notif-payment-waiting'
     }
     // kondisi ketika refund dan status terselesaikan
-    if (solution === 1 && responseStatus === 1 && (status === 8 || status === 9)) {
+    if (solution === 1 && (status === 8 || status === 9)) {
       statement = STATEMENT_TEMP[5]
       icon = Images.paymentDone
       classNotif = 'box notif-payment-success'
@@ -193,7 +193,7 @@ class ComplainItemDetail extends React.Component {
       classNotif = 'box notif-payment-waiting'
     }
     // kondisi ketika tukar dan status terselesaikan
-    if (solution === 2 && responseStatus === 1 && (status === 8 || status === 9)) {
+    if (solution === 2 && (status === 8 || status === 9)) {
       statement = STATEMENT_TEMP[5]
       icon = Images.paymentDone
       classNotif = 'box notif-payment-success'
