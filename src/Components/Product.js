@@ -33,7 +33,7 @@ class Product extends Component {
           pathname: '/product-detail',
           query: {id: product.id, type: 'dropship', commission}
         }),
-        `/detail/${UrlParam(store.name)}/${product.slug}?&id=${product.id}&type=dropship&commission=${commission}`
+        `/detail/${UrlParam(store.name)}/${product.slug}-${product.id}?type=dropship&commission=${commission}`
       )
       this.setState({ pressId: product.id })
     } else {
@@ -42,7 +42,7 @@ class Product extends Component {
           pathname: '/product-detail',
           query: {id: product.id}
         }),
-        `/detail/${UrlParam(store.name)}/${product.slug}?id=${product.id}`
+        `/detail/${UrlParam(store.name)}/${product.slug}-${product.id}`
       )
       this.setState({ pressId: product.id })
     }
@@ -50,6 +50,7 @@ class Product extends Component {
 
   render () {
     const { product, store, viewActive } = this.props
+    console.log('this.props: ', this.props)
     const { pressId } = this.state
     // set commission
     let commission = null

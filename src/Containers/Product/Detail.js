@@ -171,6 +171,7 @@ class ProductDetail extends Component {
 
   render () {
     const { productDetail, notification, submiting, submitingDiscussion } = this.state
+    console.log('productDetail: ', productDetail)
     const { isFound, query } = this.props
     const { detail } = productDetail
     const params = {

@@ -5,8 +5,14 @@ import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
 import ProductDetail from '../src/Containers/Product/Detail'
+import generateId from '../src/Lib/GenerateId'
 
 const Index = (props) => {
+  let { query } = props
+  if (!query.id) {
+    query.id = generateId(props.query)
+  }
+
   const params = {
     style: 'categories detail bg-grey',
     header: {
