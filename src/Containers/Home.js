@@ -41,7 +41,7 @@ class Home extends Component {
       countCart: props.countCart || null,
       category: props.category || null,
       notification: props.notification,
-      a: 'a'
+      isLogin: null
     }
     this.submitting = {
       products: false,
@@ -72,10 +72,11 @@ class Home extends Component {
   componentDidMount () {
     this.scrollToTop()
     NProgress.start()
-    this.submitting = { ...this.submitting, products: true, category: true, countCart: true }
+    this.submitting = { ...this.submitting, products: true, category: true }
     this.props.getProducts(this.params)
     this.props.getCategoryList()
     if (this.props.isLogin) {
+      this.submitting = { ...this.submitting, countCart: true }
       this.props.getCountCart()
     }
   }
@@ -132,6 +133,7 @@ class Home extends Component {
 
     /** handling state get category */
     if (!isFetching(countCart) && this.submitting.countCart) {
+      this.submitting = { ...this.submitting, countCart: false }
       if (isError(countCart)) {
         // this.setState({ notification: notifError(countCart.message) })
       }
@@ -142,10 +144,6 @@ class Home extends Component {
 
     if (!isFetching(products) && !isFetching(category)) {
       NProgress.done()
-    }
-
-    if (!isFetching(products) && !isFound(countCart) && nextProps.isLogin) {
-      this.props.getCountCart()
     }
   }
 
