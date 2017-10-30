@@ -22,7 +22,7 @@ const Index = (props) => {
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <ResolutionAdd />
+      <ResolutionAdd {...props} />
     </DefaultLayout>
   )
 }

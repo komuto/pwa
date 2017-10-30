@@ -1,27 +1,28 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // component
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as homeActions from '../../actions/home'
 import * as brandActions from '../../actions/brand'
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
-// Utils
-import { Status, isFetching, validateResponseAlter } from '../../Services/Status'
 
 class ProductUpdateNameCategory extends Component {
   constructor (props) {
     super(props)
+    const isFound = props.storeProductDetail.isFound
     const { storeProductDetail } = props.storeProductDetail
-    let name = props.storeProductDetail.isFound ? storeProductDetail.product.name : ''
-    let categoryOne = props.storeProductDetail.isFound ? storeProductDetail.category.parents[0].id : ''
-    let categoryTwo = props.storeProductDetail.isFound ? storeProductDetail.category.parents[1].id : ''
-    let categoryThree = props.storeProductDetail.isFound ? storeProductDetail.category.parents[2].id : ''
-    let categoryId = props.storeProductDetail.isFound ? storeProductDetail.category.id : ''
-    let brandId = props.storeProductDetail.isFound ? storeProductDetail.brand.id : ''
-    let description = props.storeProductDetail.isFound ? storeProductDetail.product.description : ''
+    let name = isFound ? storeProductDetail.product.name : ''
+    let categoryOne = isFound ? storeProductDetail.category.parents[0].id : ''
+    let categoryTwo = isFound ? storeProductDetail.category.parents[1].id : ''
+    let categoryThree = isFound ? storeProductDetail.category.parents[2].id : ''
+    let categoryId = isFound ? storeProductDetail.category.id : ''
+    let brandId = isFound ? storeProductDetail.brand.id : ''
+    let description = isFound ? storeProductDetail.product.description : ''
     this.state = {
       id: props.query.id || null,
       storeProductDetail: props.storeProductDetail || null,
@@ -41,14 +42,14 @@ class ProductUpdateNameCategory extends Component {
       },
       includeBrand: false,
       error: null,
-      submiting: false,
-      convertToForm: false,
       notification: {
         status: false,
         type: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
+    this.submiting = false
   }
 
   formHandling (e) {
@@ -120,7 +121,7 @@ class ProductUpdateNameCategory extends Component {
     const params = {
       id: this.state.id.split('.')[0],
       name: form.name,
-      catalog_id: form.catalog_id,
+      category_id: form.category_id,
       brand_id: brandId,
       description: form.description
     }
@@ -128,12 +129,12 @@ class ProductUpdateNameCategory extends Component {
   }
 
   async componentDidMount () {
-    const { category, brands, id, storeProductDetail } = this.state
-    if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
+    const { category, brands, id } = this.state
+    if (id !== '') {
       NProgress.start()
       const productId = id.split('.')[0]
       await this.props.getStoreProductDetail({ id: productId })
-      this.setState({convertToForm: true})
+      this.fetchingFirst = true
     }
     if (!category.isFound) {
       NProgress.start()
@@ -147,64 +148,91 @@ class ProductUpdateNameCategory extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProductDetail, form, convertToForm } = this.state
+    const { storeProductDetail, form } = this.state
     const { category, alterProducts, subCategory, subCategory2, subCategory3, brands } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-    if (!category.isLoading) {
+    if (!isFetching(category)) {
       NProgress.done()
-      if (category.status === Status.SUCCESS) this.setState({ category })
-      if (category.status === Status.OFFLINE || category.status === Status.FAILED) this.setState({ notification: {status: true, message: category.message} })
+      if (isFound(category)) {
+        this.setState({ category })
+      }
+      if (isError(category)) {
+        this.setState({ notification: notifError(category.message) })
+      }
     }
-    if (!subCategory.isLoading) {
+    if (!isFetching(subCategory)) {
       NProgress.done()
-      if (subCategory.status === Status.SUCCESS) this.setState({ subCategory })
-      if (subCategory.status === Status.OFFLINE || subCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory.message} })
+      if (isFound(subCategory)) {
+        this.setState({ subCategory })
+      }
+      if (isError(subCategory)) {
+        this.setState({ notification: notifError(subCategory.message) })
+      }
     }
-    if (!subCategory2.isLoading) {
+    if (!isFetching(subCategory2)) {
       NProgress.done()
-      if (subCategory2.status === Status.SUCCESS) this.setState({ subCategory2 })
-      if (subCategory2.status === Status.OFFLINE || subCategory2.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory2.message} })
+      if (isFound(subCategory2)) {
+        this.setState({ subCategory2 })
+      }
+      if (isError(subCategory2)) {
+        this.setState({ notification: notifError(subCategory2.message) })
+      }
     }
-    if (!subCategory3.isLoading) {
+    if (!isFetching(subCategory3)) {
       NProgress.done()
-      if (subCategory3.status === Status.SUCCESS) this.setState({ subCategory3 })
-      if (subCategory3.status === Status.OFFLINE || subCategory3.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory3.message} })
+      if (isFound(subCategory3)) {
+        this.setState({ subCategory3 })
+      }
+      if (isError(subCategory3)) {
+        this.setState({ notification: notifError(subCategory3.message) })
+      }
     }
-    if (!brands.isLoading) {
+    if (!isFetching(brands)) {
       NProgress.done()
-      if (brands.status === Status.SUCCESS) this.setState({ brands })
-      if (brands.status === Status.OFFLINE || brands.status === Status.FAILED) this.setState({ notification: {status: true, message: brands.message} })
+      if (isFound(brands)) {
+        this.setState({ brands })
+      }
+      if (isError(brands)) {
+        this.setState({ notification: notifError(brands.message) })
+      }
     }
 
-    if (nextProps.storeProductDetail.isFound && convertToForm) {
-      switch (nextProps.storeProductDetail.status) {
-        case Status.SUCCESS :
-          const newState = { storeProductDetail, form, convertToForm: false }
-          newState.form['name'] = nextProps.storeProductDetail.storeProductDetail.product.name
-          newState.form['categoryOne'] = nextProps.storeProductDetail.storeProductDetail.category.parents[0].id
-          newState.form['categoryTwo'] = nextProps.storeProductDetail.storeProductDetail.category.parents[1].id
-          newState.form['categoryThree'] = nextProps.storeProductDetail.storeProductDetail.category.parents[2].id
-          newState.form['category_id'] = nextProps.storeProductDetail.storeProductDetail.category.id
-          newState.form['brand_id'] = nextProps.storeProductDetail.storeProductDetail.brand.id
-          newState.form['description'] = nextProps.storeProductDetail.storeProductDetail.product.description
-          newState.storeProductDetail = nextProps.storeProductDetail
-          this.setState(newState)
-          this.props.getSubCategory({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[0].id })
-          this.props.getSubCategory2({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[1].id })
-          this.props.getSubCategory3({ id: nextProps.storeProductDetail.storeProductDetail.category.parents[2].id })
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, type: 'is-danger', message: storeProductDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(nextProps.storeProductDetail) && this.fetchingFirst) {
+      this.fetchingFirst = false
+      NProgress.done()
+      if (isFound(nextProps.storeProductDetail)) {
+        const nextStoreProductDetail = nextProps.storeProductDetail.storeProductDetail
+        const newState = { storeProductDetail, form }
+        newState.form['name'] = nextStoreProductDetail.product.name
+        newState.form['categoryOne'] = nextStoreProductDetail.category.parents[0].id
+        newState.form['categoryTwo'] = nextStoreProductDetail.category.parents[1].id
+        newState.form['categoryThree'] = nextStoreProductDetail.category.parents[2].id
+        newState.form['category_id'] = nextStoreProductDetail.category.id
+        newState.form['brand_id'] = !nextStoreProductDetail.brand ? '' : nextStoreProductDetail.brand.id
+        newState.form['description'] = nextStoreProductDetail.product.description
+        newState.storeProductDetail = nextProps.storeProductDetail
+        this.setState(newState)
+        this.props.getSubCategory({ id: nextStoreProductDetail.category.parents[0].id })
+        this.props.getSubCategory2({ id: nextStoreProductDetail.category.parents[1].id })
+        this.props.getSubCategory3({ id: nextStoreProductDetail.category.parents[2].id })
+      }
+      if (isError(nextProps.storeProductDetail)) {
+        this.setState({ notification: notifError(nextProps.storeProductDetail.message) })
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
-      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Nama dan Kategori', 'Gagal memperbarui Nama dan Kategori') })
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -217,8 +245,7 @@ class ProductUpdateNameCategory extends Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={storeProductDetail.storeProductDetail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>

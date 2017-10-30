@@ -8,6 +8,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
 import Loading from '../../Components/Loading'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as transactionAction from '../../actions/transaction'
 // lib
@@ -120,7 +121,7 @@ class OrdersNew extends React.Component {
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
                                       <figure className='image list-transaction xs'>
-                                        <a><img src={order.products[0].image} alt='Pict' /></a>
+                                        <a><MyImage src={order.products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
                                     <div className='media-content'>
@@ -139,7 +140,7 @@ class OrdersNew extends React.Component {
                                           return (
                                             <div className='media-left sm-margin' key={i}>
                                               <figure className='image list-transaction xs'>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -148,7 +149,7 @@ class OrdersNew extends React.Component {
                                             <div className='media-left sm-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )

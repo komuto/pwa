@@ -7,6 +7,7 @@ import moment from 'moment'
 // components
 import { Navbar } from '../Navbar'
 import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as messageAction from '../../actions/message'
@@ -88,7 +89,7 @@ class MessageDetail extends React.Component {
       if (replyMessage.isFound) {
         this.props.getBuyerDetailMessage({ id: this.state.id, is_archived: false })
       } else {
-        this.setState({ notification: validateResponse(buyerDetailMessage, 'Gagal mengirim pesan') })
+        this.setState({ notification: validateResponse(buyerDetailMessage, buyerDetailMessage.message) })
       }
     }
     if (!isFetching(updateMessage) && this.moveMessage) {
@@ -122,7 +123,7 @@ class MessageDetail extends React.Component {
               <article className='media'>
                 <div className='media-left top sm'>
                   <figure className='image user-pict'>
-                    <img src={message.user.photo} alt='pict' />
+                    <MyImage src={message.user.photo} alt='pict' />
                   </figure>
                 </div>
                 <div className='media-content'>
@@ -143,7 +144,7 @@ class MessageDetail extends React.Component {
       return (
         <div className='container is-fluid'>
           <div className='desc has-text-centered'>
-            <img src={Images.emptyStatesMessage} alt='komuto' />
+            <MyImage src={Images.emptyStatesMessage} alt='komuto' />
             <br /><br />
             <p><strong className='bold'>Belum ada Percakapan</strong></p>
             <p>Anda belum pernah melakukan percakapan dengan seller manapun</p>

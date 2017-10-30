@@ -2,10 +2,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
-// services
-import { Status } from '../../Services/Status'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as productActions from '../../actions/product'
 // validation
@@ -17,14 +17,15 @@ class ProductStockManage extends React.Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
-      submitting: false,
       stock: props.productDetail.isFound ? props.productDetail.detail.product.stock : '',
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
+    this.submiting = false
   }
 
   handleInput (e) {
@@ -37,71 +38,51 @@ class ProductStockManage extends React.Component {
 
   updateStock (e, id) {
     e.preventDefault()
-    this.setState({ submitting: true }, () => {
-      if (this.state.submitting) {
-        this.props.updateProduct({ stock: this.state.stock, id: this.state.id.split('.')[0] })
-      }
-    })
+    this.submiting = true
+    this.props.updateProduct({ stock: this.state.stock, id: this.state.id.split('.')[0] })
   }
 
   async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    const { id } = this.state
+    if (id) {
       NProgress.start()
       await this.props.getProduct({ id })
+      this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { submitting, notification, productDetail } = this.state
-    const { alterProducts } = nextProps
+    const { alterProducts, productDetail } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
-    if (!nextProps.productDetail.isLoading) {
-      NProgress.done()
-      switch (nextProps.productDetail.status) {
-        case Status.SUCCESS :
-          const newState = { productDetail }
-          newState.productDetail = nextProps.productDetail
-          this.setState(newState)
 
-          if (String(nextProps.productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(productDetail) && this.fetchingFirst) {
+      NProgress.done()
+      this.fetchingFirst = false
+      if (isFound(productDetail)) {
+        this.setState({ productDetail: productDetail, stock: productDetail.detail.product.stock })
+        if (String(productDetail.detail.product.id) !== String(nextId)) {
+          NProgress.start()
+          this.fetchingFirst = true
+          await this.props.getProduct({ id: nextId })
+        }
+      }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
       }
     }
-    if (alterProducts.isFound && submitting) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          this.setState({ stock: alterProducts.product.stock })
-          const newNotification = { notification, submitting: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil mengubah Stock Barang'
-          newNotification.notification['type'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal mengubah Stock Barang'
-          newNotif.notification['type'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+    if (!isFetching(alterProducts) && this.submiting) {
+      this.submiting = false
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
       }
-      this.setState({ notification })
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -114,8 +95,7 @@ class ProductStockManage extends React.Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={productDetail.detail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
@@ -137,7 +117,7 @@ class ProductStockManage extends React.Component {
   }
 
   render () {
-    const { notification, stock, submitting } = this.state
+    const { notification, stock } = this.state
     return (
       <div>
         <Notification
@@ -165,7 +145,7 @@ class ProductStockManage extends React.Component {
                 </p>
               </div>
 
-              <a className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              <a className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}
                 onClick={(e) => this.updateStock(e)}>Simpan Perubahan</a>
             </form>
           </div>

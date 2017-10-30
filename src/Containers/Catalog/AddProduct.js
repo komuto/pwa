@@ -221,7 +221,7 @@ class CatalogAddProduct extends React.Component {
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left'>
-                <figure className='image product-pict'>
+                <figure className='image user-pict'>
                   <img src={productDetail.detail.images[0].file}
                     style={{width: '50px', height: '50px'}} alt='pict' />
                 </figure>

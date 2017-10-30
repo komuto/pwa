@@ -6,6 +6,7 @@ import moment from 'moment'
 // components
 import Router from 'next/router'
 import Images from '../Themes/Images'
+import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
@@ -128,7 +129,7 @@ class InputShipmentNumber extends React.Component {
         </section>
         <div className='sort-option' style={{ display: showModal && 'block' }}>
           <div className='notif-report'>
-            <img src={Images.transaksiDetail} alt='pict' />
+            <MyImage src={Images.transaksiDetail} alt='pict' />
             <h3>Nomor Resi telah diinfokan</h3>
             <p>Nomor Resi telah diinfokan ke buyer. Order ini dipindahkan ke daftar penjualan. Silahkan cek untuk melihat status transaksi Anda</p>
             <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/sales-list')}>Lihat Daftar Penjualan</button>
@@ -177,7 +178,7 @@ const ShipmentReceiptNumber = (props) => {
                     if (i < 3) {
                       return (
                         <li style={{paddingLeft: 0, paddingRight: 5}} key={i}>
-                          <a><img src={p.product.image} alt='Pict' /></a>
+                          <a><MyImage src={p.product.image} alt='Pict' /></a>
                         </li>
                       )
                     } else {
@@ -185,7 +186,7 @@ const ShipmentReceiptNumber = (props) => {
                         <li style={{paddingLeft: 0}}>
                           <figure className='list-transaction xs plus3'>
                             <span>+{i++}</span>
-                            <a><img src={p.product.image} alt='Pict' /></a>
+                            <a><MyImage src={p.product.image} alt='Pict' /></a>
                           </figure>
                         </li>
                       )
@@ -334,7 +335,7 @@ const OrderDetail = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><img src={processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.logo : processingOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
+                          <a><MyImage src={processingOrderDetail.orderDetail.invoice.type === 'seller' ? processingOrderDetail.orderDetail.reseller.store.logo : processingOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>
@@ -373,7 +374,7 @@ const OrderDetail = (props) => {
                   <div className='media'>
                     <div className='media-left is-bordered top'>
                       <figure className='image list-transaction lg'>
-                        <a><img src={item.product.image} alt='Image' /></a>
+                        <a><MyImage src={item.product.image} alt='Image' /></a>
                       </figure>
                     </div>
                     <div className='media-content'>

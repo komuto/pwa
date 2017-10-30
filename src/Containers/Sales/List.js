@@ -9,6 +9,7 @@ import moment from 'moment'
 import Router from 'next/router'
 import Notification from '../../Components/Notification'
 import Loading from '../../Components/Loading'
+import MyImage from '../../Components/MyImage'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
@@ -259,7 +260,7 @@ const MyItemsSales = (props) => {
                                 ? <div className='media is-right-content'>
                                   <div className='media-left'>
                                     <figure className='image list-transaction xs'>
-                                      <a><img src={sale.products[0].image} alt='Pict' /></a>
+                                      <a><MyImage src={sale.products[0].image} alt='Pict' /></a>
                                     </figure>
                                   </div>
                                   <div className='media-content'>
@@ -278,7 +279,7 @@ const MyItemsSales = (props) => {
                                         return (
                                           <div className='media-left sm-margin' key={i}>
                                             <figure className='image list-transaction xs'>
-                                              <a><img src={p.image} alt='Pict' /></a>
+                                              <a><MyImage src={p.image} alt='Pict' /></a>
                                             </figure>
                                           </div>
                                         )
@@ -287,7 +288,7 @@ const MyItemsSales = (props) => {
                                           <div className='media-left sm-margin'>
                                             <figure className='image list-transaction xs plus3'>
                                               <span>+{i++}</span>
-                                              <a><img src={p.image} alt='Pict' /></a>
+                                              <a><MyImage src={p.image} alt='Pict' /></a>
                                             </figure>
                                           </div>
                                         )
@@ -356,7 +357,7 @@ const ItemsDropshipperSales = (props) => {
                                 ? <div className='media is-right-content'>
                                   <div className='media-left'>
                                     <figure className='image list-transaction xs'>
-                                      <a><img src={sale.products[0].image} alt='Pict' /></a>
+                                      <a><MyImage src={sale.products[0].image} alt='Pict' /></a>
                                     </figure>
                                   </div>
                                   <div className='media-content'>
@@ -375,7 +376,7 @@ const ItemsDropshipperSales = (props) => {
                                         return (
                                           <div className='media-left sm-margin' key={i}>
                                             <figure className='image list-transaction xs'>
-                                              <a><img src={p.image} alt='Pict' /></a>
+                                              <a><MyImage src={p.image} alt='Pict' /></a>
                                             </figure>
                                           </div>
                                         )
@@ -384,7 +385,7 @@ const ItemsDropshipperSales = (props) => {
                                           <div className='media-left sm-margin'>
                                             <figure className='image list-transaction xs plus3'>
                                               <span>+{i++}</span>
-                                              <a><img src={p.image} alt='Pict' /></a>
+                                              <a><MyImage src={p.image} alt='Pict' /></a>
                                             </figure>
                                           </div>
                                         )

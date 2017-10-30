@@ -6,6 +6,7 @@ import moment from 'moment'
 // components
 import Images from '../../Themes/Images'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as transactionAction from '../../actions/transaction'
 // services
@@ -204,7 +205,7 @@ class ComplainItemDetail extends React.Component {
           <article className='media'>
             <div className='media-left top'>
               <figure className='image'>
-                <img src={icon} alt='pict' />
+                <MyImage src={icon} alt='pict' />
               </figure>
             </div>
             <div className='media-content'>
@@ -456,7 +457,7 @@ const ListComplainOrderDetail = (props) => {
               <ul className='seller-items'>
                 <li>
                   <a className='is-bordered inline-text'>
-                    <img src={sellerComplainedOrderDetail.orderDetail.user.photo} alt='photo' />
+                    <MyImage src={sellerComplainedOrderDetail.orderDetail.user.photo} alt='photo' />
                   </a>
                   <strong>{sellerComplainedOrderDetail.orderDetail.user.name}</strong>
                 </li>
@@ -497,7 +498,7 @@ const ListComplainOrderDetail = (props) => {
                 <div className='media'>
                   <div className='media-left is-bordered'>
                     <figure className='image list-transaction sm'>
-                      <a><img src={p.image} alt='Image' /></a>
+                      <a><MyImage src={p.image} alt='Image' /></a>
                     </figure>
                   </div>
                   <div className='media-content middle'>
@@ -550,7 +551,7 @@ const ListComplainOrderDetail = (props) => {
                           return (
                             <div className='media-left md-margin' key={i}>
                               <figure className='image list-transaction lgx'>
-                                <a><img src={p.image} alt='Image' /></a>
+                                <a><MyImage src={p.image} alt='Image' /></a>
                               </figure>
                             </div>
                           )
@@ -606,7 +607,7 @@ const ListDiscustionComplainOrders = (props) => {
                     <article className='media'>
                       <div className='media-left top sm'>
                         <figure className='image user-pict'>
-                          <img src={res.user.photo} alt='pict' />
+                          <MyImage src={res.user.photo} alt='pict' />
                         </figure>
                       </div>
                       <div className='media-content'>
@@ -648,7 +649,7 @@ const EmptyDiscussion = () => {
   return (
     <div className='container is-fluid'>
       <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesDiscussion} alt='komuto' />
+        <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
         <br /><br />
         <p><strong className='bold'>Diskusi Anda Kosong</strong></p>
         <p>Anda belum pernah melakukan tanya jawab kepada pembeli untuk menyelesaikan masalah</p>

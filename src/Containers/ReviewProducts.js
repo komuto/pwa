@@ -9,10 +9,9 @@ import Images from '../Themes/Images'
 import Notification from '../Components/Notification'
 import InfiniteScroll from 'react-infinite-scroller'
 import Loading from '../Components/Loading'
+import MyImage from '../Components/MyImage'
 // actions
 import * as reviewActions from '../actions/review'
-// services
-import { isFetching, isFound, validateResponse } from '../Services/Status'
 
 class ReviewProducts extends Component {
   constructor (props) {
@@ -24,6 +23,7 @@ class ReviewProducts extends Component {
         limit: 10
       },
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
@@ -47,7 +47,7 @@ class ReviewProducts extends Component {
 
   async componentDidMount () {
     const { buyerReview, pagination } = this.state
-    if (!isFound(buyerReview)) {
+    if (!this.props.isFound(buyerReview)) {
       NProgress.start()
       this.fetchingFirst = true
       this.props.getBuyerReview(pagination)
@@ -56,10 +56,31 @@ class ReviewProducts extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { buyerReview } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!isFetching(buyerReview)) {
+    if (!isFetching(buyerReview) && this.fetchingFirst) {
       NProgress.done()
-      this.setState({ buyerReview, notification: validateResponse(buyerReview, 'Data review tidak ditemukan!') })
+      this.fetchingFirst = false
+      if (isFound(buyerReview)) {
+        this.setState({ buyerReview })
+        this.hasMore = buyerReview.buyerReview.length > 9
+      }
+      if (isError(buyerReview)) {
+        this.setState({ notification: notifError(buyerReview.message) })
+      }
+    }
+    if (!isFetching(buyerReview) && this.fetching) {
+      this.fetching = false
+      if (isFound(buyerReview)) {
+        let stateBuyerReview = this.state.buyerReview
+        this.hasMore = buyerReview.buyerReview.length > 9
+        stateBuyerReview.buyerReview = stateBuyerReview.buyerReview.concat(buyerReview.buyerReview)
+        this.setState({ buyerReview: stateBuyerReview })
+      }
+      if (isError(buyerReview)) {
+        this.setState({ notification: notifError(buyerReview.message) })
+        this.hasMore = false
+      }
     }
     // if (!isFetching(buyerReview) && this.fetching) {
     //   let stateBuyerReview = this.state.buyerReview
@@ -75,13 +96,12 @@ class ReviewProducts extends Component {
   }
 
   render () {
-    console.log('state', this.state)
-    const { buyerReview, notification, hasMore } = this.state
+    const { buyerReview, notification } = this.state
     if (!buyerReview.isFound) return null
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
@@ -89,7 +109,7 @@ class ReviewProducts extends Component {
         <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(this.loadMore.bind(this), 500)}
-          hasMore={hasMore}
+          hasMore={this.hasMore}
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
           buyerReview.buyerReview.length > 0
@@ -104,7 +124,7 @@ class ReviewProducts extends Component {
                           <article className='media'>
                             <div className='media-left is-bordered'>
                               <figure className='image'>
-                                <img src={review.product.image} alt='pict' />
+                                <MyImage src={review.product.image} alt='pict' />
                               </figure>
                             </div>
                             <div className='media-content'>
@@ -169,7 +189,7 @@ const EmptyReview = () => {
   return (
     <div className='container is-fluid'>
       <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesReview} alt='komuto' />
+        <MyImage src={Images.emptyStatesReview} alt='komuto' />
         <br /><br />
         <p><strong className='bold'>Review Anda Kosong</strong></p>
         <p>Anda belum pernah meninggalkan review untuk barang manapun</p>

@@ -3,34 +3,33 @@ import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 // components
+import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
+import Router from 'next/router'
 // actions
 import * as actionTypes from '../../actions/catalog'
 import * as productActions from '../../actions/product'
-// services
-import { validateResponse, isFetching, Status } from '../../Services/Status'
 
 class ProductCatalogManage extends React.Component {
   constructor (props) {
     super(props)
+    const isFound = props.productDetail.isFound
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
-      listCatalog: props.listCatalog,
-      submitting: {
-        submitCatalog: false,
-        submitChangeCatalog: false
-      },
+      listCatalog: props.listCatalog || null,
       validation: false,
       modalAddCatalog: false,
-      selectedCatalog: props.productDetail.detail.product.catalog_id,
+      selectedCatalog: isFound ? props.productDetail.detail.product.catalog_id : null,
       catalog: '',
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = { productDetail: false, listCatalog: false }
+    this.submiting = { createCatalog: false, changeCatalogProducts: false }
   }
 
   handleInput (e) {
@@ -58,11 +57,11 @@ class ProductCatalogManage extends React.Component {
   postCatalog (e) {
     e.preventDefault()
     const { createCatalog } = this.props
-    const { catalog, submitting } = this.state
+    const { catalog } = this.state
     let isValid = catalog.length > 0
     if (isValid) {
       createCatalog({ name: catalog })
-      this.setState({ submitting: { ...submitting, submitCatalog: true } })
+      this.submiting = { ...this.submiting, createCatalog: true }
     } else {
       this.setState({ validation: true })
     }
@@ -71,10 +70,10 @@ class ProductCatalogManage extends React.Component {
   changeCatalogProduct (e) {
     e.preventDefault()
     const { query, changeCatalogProducts } = this.props
-    const { selectedCatalog, submitting } = this.state
+    const { selectedCatalog } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submitting: { ...submitting, submitChangeCatalog: true } })
+      this.submiting = { ...this.submiting, changeCatalogProducts: true }
       changeCatalogProducts({ catalog_id: selectedCatalog, product_ids: [query.id.split('.')[0]] })
     } else {
       this.setState({ validation: true })
@@ -82,99 +81,74 @@ class ProductCatalogManage extends React.Component {
   }
 
   async componentDidMount () {
-    const { id, productDetail, listCatalog } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    const { id, listCatalog } = this.state
+    if (id) {
       NProgress.start()
       await this.props.getProduct({ id })
+      this.fetchingFirst = { ...this.fetchingFirst, productDetail: true }
     }
     if (!listCatalog.isFound) {
+      NProgress.start()
+      this.fetchingFirst = { ...this.fetchingFirst, listCatalog: true }
       this.props.getListCatalog()
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { submitting, notification } = this.state
     const { statusCreateCatalog, listCatalog, productDetail, alterProducts } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
 
-    if (!productDetail.isLoading) {
+    if (!isFetching(productDetail) && this.fetchingFirst.productDetail) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          const newState = { productDetail, selectCatalog: nextProps.productDetail.detail.product.catalog_id }
-          newState.productDetail = nextProps.productDetail
-          this.setState(newState)
+      this.fetchingFirst = { ...this.fetchingFirst, productDetail: false }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail: productDetail, selectCatalog: productDetail.detail.product.catalog_id })
+        if (String(productDetail.detail.product.id) !== String(nextId)) {
+          NProgress.start()
+          this.fetchingFirst = true
+          await this.props.getProduct({ id: nextId })
+        }
+      }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+    }
 
-          if (String(productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
-          break
-        default:
-          break
+    if (!isFetching(listCatalog) && this.fetchingFirst.listCatalog) {
+      NProgress.done()
+      this.fetchingFirst = { ...this.fetchingFirst, listCatalog: false }
+      if (isFound(listCatalog)) {
+        this.setState({ listCatalog })
+      }
+      if (isError(listCatalog)) {
+        this.setState({ notification: notifError(listCatalog.message) })
       }
     }
-    if (!isFetching(listCatalog)) {
-      this.setState({ listCatalog, notification: validateResponse(listCatalog, 'Daftar katalog tidak ditemukan') })
-    }
-    if (!statusCreateCatalog.isLoading && submitting.submitCatalog) {
-      switch (statusCreateCatalog.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting, modalAddCatalog: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menambahkan katalog'
-          newNotification.notification['type'] = 'is-success'
-          newNotification.submitting['submitCatalog'] = false
-          this.setState(newNotification)
-          this.props.getListCatalog()
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting, modalAddCatalog: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menambahkan katalog'
-          newNotif.notification['type'] = 'is-danger'
-          newNotif.submitting['submitCatalog'] = false
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+    if (!isFetching(statusCreateCatalog) && this.submiting.createCatalog) {
+      this.submiting = { ...this.submiting, createCatalog: false }
+      if (isFound(statusCreateCatalog)) {
+        let stateCatalog = this.state.listCatalog
+        stateCatalog.catalogs.push(statusCreateCatalog.catalog)
+        this.setState({ listCatalog: stateCatalog, modalAddCatalog: false, notification: notifSuccess(statusCreateCatalog.message) })
       }
-      this.setState({ notification })
-    }
-    if (!alterProducts.isLoading && submitting.submitChangeCatalog) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil memindahkan Barang'
-          newNotification.notification['type'] = 'is-success'
-          newNotification.submitting['submitChangeCatalog'] = false
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal memindahkan Barang'
-          newNotif.notification['type'] = 'is-danger'
-          newNotif.submitting['submitChangeCatalog'] = false
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+      if (isError(statusCreateCatalog)) {
+        this.setState({ notification: notifError(statusCreateCatalog.message) })
       }
-      this.setState({ notification })
     }
-    console.log('nextProps ', nextProps)
+    if (!isFetching(alterProducts) && this.submiting.changeCatalogProducts) {
+      this.submiting = { ...this.submiting, changeCatalogProducts: false }
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
+    }
   }
 
   renderProductDetail () {
@@ -186,8 +160,7 @@ class ProductCatalogManage extends React.Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={productDetail.detail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
@@ -235,9 +208,7 @@ class ProductCatalogManage extends React.Component {
   }
 
   render () {
-    console.log('state ', this.state)
-    console.log('props ', this.props)
-    const { catalog, modalAddCatalog, validation, notification, submitting } = this.state
+    const { catalog, modalAddCatalog, validation, notification } = this.state
     return (
       <div>
         <Notification
@@ -279,7 +250,7 @@ class ProductCatalogManage extends React.Component {
           <div className='payment-detail action'>
             <ul>
               <li>
-                <a className={`button is-primary is-large is-fullwidth ${submitting.submitChangeCatalog && 'is-loading'}`}
+                <a className={`button is-primary is-large is-fullwidth ${this.submiting.changeCatalogProducts && 'is-loading'}`}
                   onClick={(e) => this.changeCatalogProduct(e)} >Simpan Perubahan</a>
               </li>
             </ul>
@@ -301,7 +272,7 @@ class ProductCatalogManage extends React.Component {
               </p>
               {validation && this.renderValidation('catalog', 'Mohon isi nama katalog')}
             </div>
-            <button className={`button is-primary is-large is-fullwidth ${submitting.submitCatalog && 'is-loading'}`}
+            <button className={`button is-primary is-large is-fullwidth ${this.submiting.createCatalog && 'is-loading'}`}
               onClick={(e) => this.postCatalog(e)}
               >Buat Katalog Baru
             </button>

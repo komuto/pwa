@@ -2,8 +2,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as messageAction from '../../actions/message'
 import * as transactionAction from '../../actions/transaction'
@@ -134,6 +136,10 @@ class SendMessage extends React.Component {
       if (isFound(transactionMessage)) {
         this.submitting = false
         this.setState({ notification: validateResponseAlter(transactionMessage, 'Berhasil mengirim Pesan', 'Gagal mengirim Pesan') })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
       }
       if (isError(transactionMessage)) {
         this.submitting = false
@@ -143,7 +149,6 @@ class SendMessage extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { processingOrderDetail, type, form, validation, notification } = this.state
     if (!processingOrderDetail.isFound) return null
     return (
@@ -160,8 +165,8 @@ class SendMessage extends React.Component {
               <div className='box is-paddingless'>
                 <article className='media'>
                   <div className='media-left'>
-                    <figure className='image product-pict'>
-                      <img src={this.photoType(type, processingOrderDetail)} alt='pict' />
+                    <figure className='image user-pict'>
+                      <MyImage src={this.photoType(type, processingOrderDetail)} alt='pict' />
                     </figure>
                   </div>
                   <div className='media-content'>
