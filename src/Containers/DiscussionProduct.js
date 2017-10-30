@@ -9,11 +9,10 @@ import _ from 'lodash'
 // components
 import Loading from '../Components/Loading'
 import Images from '../Themes/Images'
+import MyImage from '../Components/MyImage'
 import Notification from '../Components/Notification'
 // actions
 import * as userAction from '../actions/user'
-// services
-import { isFetching, isFound, isError, validateResponse } from '../Services/Status'
 
 class DiscussionProduct extends React.Component {
   constructor (props) {
@@ -30,7 +29,7 @@ class DiscussionProduct extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.hasMore = true
+    this.hasMore = false
     this.fetching = false
     this.fetchingFirst = false
   }
@@ -51,7 +50,7 @@ class DiscussionProduct extends React.Component {
   }
 
   componentDidMount () {
-    if (!isFound(this.state.userDiscussion)) {
+    if (!this.props.isFound(this.state.userDiscussion)) {
       NProgress.start()
       this.fetchingFirst = true
       this.props.getDiscussion({ page: 1, limit: 10 })
@@ -60,32 +59,30 @@ class DiscussionProduct extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { userDiscussion } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
     if (!isFetching(userDiscussion) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false
       if (isFound(userDiscussion)) {
-        this.setState({ userDiscussion, notification: validateResponse(userDiscussion, userDiscussion.message) })
+        this.setState({ userDiscussion })
+        this.hasMore = userDiscussion.discussions.length > 9
       }
       if (isError(userDiscussion)) {
-        this.setState({ notification: validateResponse(userDiscussion, userDiscussion.message) })
+        this.setState({ notification: notifError(userDiscussion.message) })
       }
     }
+
     if (!isFetching(userDiscussion) && this.fetching) {
+      this.fetching = false
       let newUserDiscussion = this.state.userDiscussion
       if (isFound(userDiscussion)) {
-        if (userDiscussion.discussions.length > 0) {
-          this.fetching = false
-          newUserDiscussion.discussions = newUserDiscussion.discussions.concat(userDiscussion.discussions)
-          this.setState({ userDiscussion: newUserDiscussion })
-        } else {
-          this.hasMore = false
-          this.fetching = false
-        }
+        this.hasMore = userDiscussion.discussions.length > 9
+        newUserDiscussion.discussions = newUserDiscussion.discussions.concat(userDiscussion.discussions)
+        this.setState({ discussions: newUserDiscussion })
       }
       if (isError(userDiscussion)) {
-        this.setState({ notification: validateResponse(userDiscussion, userDiscussion.message) })
+        this.setState({ notification: notifError(userDiscussion.message) })
         this.hasMore = false
-        this.fetching = false
       }
     }
   }
@@ -120,7 +117,7 @@ class DiscussionProduct extends React.Component {
                             <article className='media'>
                               <div className='media-left top sm'>
                                 <figure className='image user-pict'>
-                                  <img src={discussion.product.image} alt='pict' />
+                                  <MyImage src={discussion.product.image} alt='pict' />
                                 </figure>
                               </div>
                               <div className='media-content'>
@@ -154,7 +151,7 @@ const EmptyDiscussion = () => {
   return (
     <div className='container is-fluid'>
       <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesDiscussion} alt='komuto' />
+        <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
         <br /><br />
         <p><strong className='bold'>Diskusi Produk Anda Kosong</strong></p>
         <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk produk apapun</p>

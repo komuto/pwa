@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
 // components
+import MyImage from '../Components/MyImage'
 import Share from '../Components/Share'
 // libs
 import RupiahFormat from '../Lib/RupiahFormat'
@@ -84,9 +85,9 @@ export class Navbar extends PureComponent {
               productDetail
               ? <div className='box is-paddingless'>
                 <article className='media'>
-                  <div className='media-left'>
+                  <div className='media-left is-bordered'>
                     <figure className='image product-pict'>
-                      <img style={{width: '40', height: '40'}} src={productImages[0].file} alt='pict' />
+                      <MyImage src={productImages[0].file} alt='pict' style={{ width: '40px', height: '40px' }} />
                     </figure>
                   </div>
                   <div className='media-content'>
@@ -94,7 +95,7 @@ export class Navbar extends PureComponent {
                       <p className='products-name' style={{paddingRight: '10'}}>
                         <strong>{productDetail.name}</strong>
                         <br />
-                        Rp { RupiahFormat(productDetail.price) }
+                        <strong>Rp { RupiahFormat(productDetail.price) }</strong>
                       </p>
                     </div>
                   </div>

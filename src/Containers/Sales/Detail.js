@@ -8,6 +8,7 @@ import Router from 'next/router'
 import Images from '../../Themes/Images'
 import Notification from '../../Components/Notification'
 import MyRating from '../../Components/MyRating'
+import MyImage from '../../Components/MyImage'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
@@ -166,7 +167,7 @@ class SalesDetail extends React.Component {
         <article className='media'>
           <div className='media-left'>
             <figure className='image user-pict'>
-              <img src={imageIcon} alt='icon' />
+              <MyImage src={imageIcon} alt='icon' />
             </figure>
           </div>
           <div className='media-content'>
@@ -321,7 +322,7 @@ const DeliveryStatus = (props) => {
                     if (i < 3) {
                       return (
                         <li style={{paddingLeft: 0, paddingRight: 5}} key={i}>
-                          <a><img src={p.product.image} alt='Pict' /></a>
+                          <a><MyImage src={p.product.image} alt='Pict' /></a>
                         </li>
                       )
                     } else {
@@ -329,7 +330,7 @@ const DeliveryStatus = (props) => {
                         <li style={{paddingLeft: 0}}>
                           <figure className='list-transaction xs plus3'>
                             <span>+{i++}</span>
-                            <a><img src={p.product.image} alt='Pict' /></a>
+                            <a><MyImage src={p.product.image} alt='Pict' /></a>
                           </figure>
                         </li>
                       )
@@ -447,7 +448,7 @@ const DeliveryStatus = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><img src={p.product.image} alt='Image' /></a>
+                          <a><MyImage src={p.product.image} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content middle'>
@@ -561,7 +562,7 @@ const OrderDetail = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><img src={saleDetail.sale.invoice.type === 'seller' ? saleDetail.sale.reseller.store.logo : saleDetail.sale.buyer.photo} alt='Image' /></a>
+                          <a><MyImage src={saleDetail.sale.invoice.type === 'seller' ? saleDetail.sale.reseller.store.logo : saleDetail.sale.buyer.photo} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>
@@ -600,7 +601,7 @@ const OrderDetail = (props) => {
                   <div className='media'>
                     <div className='media-left is-bordered top'>
                       <figure className='image list-transaction lg'>
-                        <a><img src={item.product.image} alt='Image' /></a>
+                        <a><MyImage src={item.product.image} alt='Image' /></a>
                       </figure>
                     </div>
                     <div className='media-content'>
@@ -820,7 +821,7 @@ const OrderDetailDropship = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><img src={saleDetail.sale.buyer.photo} alt='Image' /></a>
+                          <a><MyImage src={saleDetail.sale.buyer.photo} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>
@@ -855,7 +856,7 @@ const OrderDetailDropship = (props) => {
                   <div className='media'>
                     <div className='media-left is-bordered top'>
                       <figure className='image list-transaction lg'>
-                        <a><img src={item.product.image} alt='Image' /></a>
+                        <a><MyImage src={item.product.image} alt='Image' /></a>
                       </figure>
                     </div>
                     <div className='media-content'>
@@ -998,7 +999,7 @@ const ReviewProduct = (props) => {
                         <article className='media'>
                           <div className='media-left is-bordered'>
                             <figure className='image'>
-                              <img src={item.product.image} alt='pict' />
+                              <MyImage src={item.product.image} alt='pict' />
                             </figure>
                           </div>
                           <div className='media-content middle'>

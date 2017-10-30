@@ -42,7 +42,7 @@
   font-family: 'nunitoregular', sans-serif;
   font-weight: 400; }
 
-.nunito-semibold, strong, .label-semi, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .block-add-resi a.waiting, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery .field .control.with-currency .cur-val, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .content-header .btn-change, .content-body strong, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .box.notif-payment-expiry .media .media-content p strong, .box.notif-payment-waiting .media .media-content p strong, .box.notif-payment-success .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .list-transaction.plus3 > span, .saldo .payment-detail ul li .columns .column .rating-content .semi-bold, .list-saldo li .columns .column .label-text, .transaction, .notif-admin, .level.nav-bottom .level-item {
+.nunito-semibold, strong, .label-semi, .button.is-medium, .input, .field .radio strong, .title, .link.bold, .see-all .link, .notif-akun, .sort-option .sort-list.catalog-list ul li a, .popup-option .radio .opt-title, .title-content h3, .title-content, .remove-wrapp .remove, .remove, .rating-content strong, .dropship-worldsports, .dropship-item, .main-collapse .collpase-content .collapse-title, .nav-tabs a, .menu-top .option-dropdown li a, .block-add-resi a.waiting, .search-form .dropdown-search .main-search ul li span, .on-search .body-search .search-list ul li, .user.user-success .content .desc .no-hp-verify, .profile-wrapp ul li .box .content p strong, .discuss ul li .box .content p strong, .notif-verify .box .media .media-content p, .notif-verify .box .media .media-content p strong, .notif-verify .box .media .media-content p .button, .modal-filter .modal-card .modal-card-foot .columns .button, .modal-filter .modal-card .modal-card-body .fiter-side .tabs ul li a, .filter-option .sort-list p strong, .seller-info .box.seller .media .media-content .content h4, .nav-seller .nav-info .nav-item.is-active a, .detail-rating h3, .columns.detail-rating .column .rating-content h3, .columns.detail-rating .column .rating-content .value-rate, .detail .detail-product h3, .detail .detail-product .purchase h3, .detail .detail-rate .columns.detail-rating .column .rating-content strong, .detail .detail-result.solid strong, .detail .detail-result .columns.custom .column strong, .info-purchase .detail-purchase h3, .info-purchase .detail-purchase.summary .btn-change, .edit-data-delivery .field .control.with-currency .cur-val, .edit-data-delivery.edit .field .control.detail-address .location-label, .edit-data-delivery.edit .field .control .input, .code-voucher p, .content-header .btn-change, .content-body strong, .edit .noted p strong, .title-head, .box.notif-payment .media .media-content p strong, .box.notif-payment-expiry .media .media-content p strong, .box.notif-payment-waiting .media .media-content p strong, .box.notif-payment-success .media .media-content p strong, .payment-detail ul li .columns .column .label-text > span, .payment-detail ul li .columns .column .detail-collapsed, .payment-detail ul li .columns .column .pay-code, .payment-detail ul li .columns .column .step-num, .columns.notif-pay .column .label-text, .payment .total-detail ul li span, .payment .payment-method > .icon-arrow-right, .token-msg span, .digit.notif-payment p, .filter-option .sort-list a, .filter-option .sort-list.top .checkbox .sort-text, .filter-option .sort-list.left .checkbox .sort-text, .filter-option .sort-list.middle .checkbox .sort-text, .form-seller .field .control strong, .form-seller .field .select select, .label-text strong, .add-product .add-option li .box .media .media-content .content p strong, .product-view li .products-name, .form-product .field .input, .form-product .field .select select, .spec-price .price .currency, .spec-price .discount .disc, .spec-price .prod-qty span, .spec-price a, .detail.spec h3, .box .media .media-left .image.list-transaction.plus3 > span, .saldo .payment-detail ul li .columns .column .rating-content .semi-bold, .list-saldo li .columns .column .label-text, .transaction, .notif-admin, .level.nav-bottom .level-item {
   font-family: 'nunitosemibold', sans-serif;
   font-weight: 600; }
 
@@ -858,6 +858,16 @@
   background-image: url("../../images/komuto-icon/110_icon_komplain_produk.svg");
   background-repeat: no-repeat;
   vertical-align: middle; }
+
+.icon-btn-send-inactive {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../../images/komuto-icon/112_button_send_inactive.svg");
+  background-repeat: no-repeat;
+  vertical-align: middle; }
+  .icon-btn-send-inactive.active {
+    background-image: url("../../images/komuto-icon/111_button_send_active.svg"); }
 
 @-webkit-keyframes spinAround {
   from {
@@ -5894,7 +5904,12 @@ strong {
       .box .media .media-left.is-full-bordered img {
         border-radius: 700px; }
       .box .media .media-left .image {
-        position: relative; }
+        position: relative;
+        width: 100%;
+        max-width: 150px;
+        margin: 0 auto; }
+        .box .media .media-left .image img {
+          max-width: 100%; }
         .box .media .media-left .image.list-detail {
           width: 100%;
           max-width: 65px;
@@ -5964,9 +5979,12 @@ strong {
           position: absolute;
           right: -14px;
           bottom: -14px; }
-  .box.list .media .media-left .image {
-    width: 100%;
-    max-width: 140px; }
+  .box.list .media .media-left {
+    margin-right: 10px; }
+    .box.list .media .media-left .image {
+      width: 100%;
+      max-width: 150px;
+      margin: 0 auto; }
   .box.grid .media {
     display: block; }
     .box.grid .media .media-left {
@@ -5996,6 +6014,8 @@ strong {
           position: absolute;
           right: 0;
           bottom: 0; }
+        .box.grid .media .media-content .content.in-slide {
+          min-height: 100px; }
 
 .notif-akun {
   width: 25px;
@@ -6677,6 +6697,13 @@ strong.total {
     width: 100%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%); }
+  .middle-content .mid {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
 
 .right-top {
   position: absolute;
@@ -6864,6 +6891,16 @@ strong.total {
       color: #41475e;
       margin: 0 auto; }
 
+@media screen and (max-width: 360px) {
+  .box.list .media .media-left {
+    width: 40%; }
+  .box .media .media-left {
+    width: 40%; }
+  .main-discuss .box.list .media .media-left {
+    width: inherit; }
+  .main-discuss .box .media .media-left {
+    width: inherit; } }
+
 @media screen and (max-width: 320px) {
   .notif-report .button {
     font-size: 12px; }
@@ -6937,8 +6974,13 @@ strong.total {
         background-color: transparent; }
     .level.header .nav-left .box {
       background-color: transparent; }
-      .level.header .nav-left .box .media .media-content p strong {
-        color: #ffffff; }
+      .level.header .nav-left .box .media {
+        padding-top: 6px; }
+        .level.header .nav-left .box .media .media-left {
+          width: 30px;
+          height: 30px; }
+        .level.header .nav-left .box .media .media-content p strong {
+          color: #ffffff; }
   .level.header.bg-white {
     background-color: #ffffff;
     border-bottom: 1px solid #dedede; }
@@ -7023,6 +7065,10 @@ strong.total {
       opacity: 1;
       height: auto;
       display: block; */
+@media screen and (max-width: 320px) {
+  .level.header .nav-left .box .media .media-content p {
+    font-size: 12px; } }
+
 .main.home {
   background-color: #f4f5f6;
   padding-top: 0; }
@@ -7191,6 +7237,9 @@ strong.total {
   .user .columns.detail-rating:not(:last-child) {
     margin-bottom: 0; }
 
+.content .desc {
+  padding: 30px 30px 20px 30px; }
+
 .profile-wrapp, .discuss {
   padding: 0 20px; }
   .profile-wrapp ul, .discuss ul {
@@ -7251,7 +7300,8 @@ strong.total {
               display: inline-block; }
             .profile-wrapp ul li .box .content p .date-discuss, .discuss ul li .box .content p .date-discuss {
               display: block;
-              opacity: 0.5; }
+              opacity: 0.5;
+              margin-bottom: 5px; }
             .profile-wrapp ul li .box .content p a, .discuss ul li .box .content p a {
               display: block;
               color: #41475e; }
@@ -7358,6 +7408,30 @@ strong.total {
 
 .profile-wrapp.border-bottom {
   border-bottom: solid 0.5px #dedede; }
+
+.columns.custom .slick-slide {
+  height: 295px; }
+  .columns.custom .slick-slide .column {
+    height: 100%; }
+    .columns.custom .slick-slide .column .box.grid .media .media-content .content {
+      max-width: 150px;
+      margin: 0 auto; }
+      .columns.custom .slick-slide .column .box.grid .media .media-content .content h4 {
+        min-height: 32px;
+        font-size: 12px; }
+      .columns.custom .slick-slide .column .box.grid .media .media-content .content .detail .price {
+        font-size: 14px; }
+  .columns.custom .slick-slide:last-child .column .box.grid {
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
+    .columns.custom .slick-slide:last-child .column .box.grid .media .media-left .image {
+      width: 40px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto; }
+    .columns.custom .slick-slide:last-child .column .box.grid .media .media-content .content span {
+      font-size: 12px; }
 
 @media screen and (max-width: 360px) {
   .discuss ul li .time-discuss.relativeMobile {
@@ -8511,7 +8585,8 @@ strong.total {
     border-radius: 700px;
     border: 7px solid rgba(183, 183, 183, 0.2);
     margin: 0 auto;
-    margin-bottom: 20px; }
+    margin-bottom: 20px;
+    overflow: hidden; }
     .photo-content .photo img {
       border-radius: 700px; }
   .photo-content.margin-top {
@@ -9507,27 +9582,27 @@ strong.total {
   border-radius: 3px;
   margin-top: 15px; }
 
-.list-transaction {
+.box .media .media-left .image.list-transaction {
   width: 45px;
   height: 45px;
   border-radius: 3px;
   position: relative;
   overflow: hidden; }
-  .list-transaction.xs {
+  .box .media .media-left .image.list-transaction.xs {
     width: 30px;
     height: 30px; }
-  .list-transaction.sm {
+  .box .media .media-left .image.list-transaction.sm {
     width: 35px;
     height: 35px; }
-  .list-transaction.lg {
+  .box .media .media-left .image.list-transaction.lg {
     width: 60px;
     height: 60px; }
-  .list-transaction.lgx {
+  .box .media .media-left .image.list-transaction.lgx {
     width: 72px;
     height: 72px; }
-  .list-transaction img {
+  .box .media .media-left .image.list-transaction img {
     border-radius: 3px; }
-  .list-transaction.plus3:after {
+  .box .media .media-left .image.list-transaction.plus3:after {
     content: "";
     position: absolute;
     top: 0;
@@ -9536,7 +9611,7 @@ strong.total {
     height: 100%;
     background-color: rgba(117, 117, 117, 0.74);
     z-index: 1; }
-  .list-transaction.plus3 > span {
+  .box .media .media-left .image.list-transaction.plus3 > span {
     color: #ffffff;
     position: absolute;
     top: 50%;
@@ -9544,6 +9619,9 @@ strong.total {
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     z-index: 2; }
+
+.box .media .media-left.is-full-bordered .image.list-transaction img {
+  border-radius: 700px; }
 
 .price-items {
   display: inline-block;
@@ -10086,6 +10164,14 @@ strong.total {
   bottom: 0;
   width: 100%;
   height: 46px; }
+  .add-comment .control {
+    position: relative; }
+    .add-comment .control button {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      background-color: transparent;
+      border: none; }
   .add-comment .textarea {
     border-radius: 0;
     border: none;
@@ -10093,7 +10179,7 @@ strong.total {
     font-size: 13px;
     color: #a0a3ae;
     margin-bottom: 0;
-    padding: 14px 20px;
+    padding: 14px 20px 14px 24px;
     max-height: inherit;
     min-height: 46px;
     overflow: hidden; }

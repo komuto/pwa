@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 // components
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as userAction from '../../actions/user'
 // services
@@ -123,7 +124,7 @@ class ResolutionDetail extends React.Component {
   }
 
   render () {
-    // console.log('state', this.state)
+    console.log('state', this.state)
     const { notification, tabs, resolutionDetail, message } = this.state
     return (
       <div>
@@ -242,7 +243,7 @@ const InformationResolution = (props) => {
                   ? resolutionDetail.resolution.images.map((image, i) => {
                     return (
                       <div className='column' key={i}>
-                        <img src={image.file} alt='pict' />
+                        <MyImage src={image.file} alt='pict' />
                       </div>
                     )
                   })
@@ -273,7 +274,7 @@ const ListDiscustionSolutions = (props) => {
                     <article className='media'>
                       <div className='media-left top sm'>
                         <figure className='image user-pict'>
-                          <img src='' alt='pict' />
+                          <MyImage src={res.photo} alt='pict' />
                         </figure>
                       </div>
                       <div className='media-content'>

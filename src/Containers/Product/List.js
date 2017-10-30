@@ -204,7 +204,7 @@ class ProductList extends Component {
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onChange={(e) => this.searchOnChange(e)} />
+              <input className='input is-medium' type='text' placeholder='Cari barang ' onChange={(e) => this.searchOnChange(e)} />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>
@@ -243,8 +243,8 @@ const ContentHidden = (props) => {
             <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
               <div className='detail-product' key={i}>
                 <div className='remove rightTop'>
-                  <span className='icon-discount-sign' />
-                  <span className='icon-grosir-sign' />
+                  { p.is_discount && <span className='icon-discount-sign' /> }
+                  { p.is_wholesaler && <span className='icon-grosir-sign' /> }
                 </div>
                 <div className='purchase'>
                   <figure className='img-item xx'>

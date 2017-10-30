@@ -9,6 +9,7 @@ import Section from '../../Components/Section'
 import Notification from '../../Components/Notification'
 // import { ButtonFullWidth } from '../Components/Button'
 import {Images} from '../../Themes'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as userActions from '../../actions/user'
 // lib
@@ -140,7 +141,7 @@ class Account extends Component {
                 <article className='media'>
                   <div className='media-left'>
                     <figure className='image user-pict'>
-                      { isHasStoreprofile ? <img src={profile.user.store.logo} /> : <span className='icon-toko' /> }
+                      { isHasStoreprofile ? <MyImage src={profile.user.store.logo} /> : <span className='icon-toko' /> }
                     </figure>
                   </div>
                   <div className='media-content'>

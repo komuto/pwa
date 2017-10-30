@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import Router from 'next/router'
 import NProgress from 'nprogress'
 // component
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // libs
 import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
-// services
-import { Status, isFetching, validateResponseAlter } from '../../Services/Status'
 
 class ProductPriceSpecificationManage extends Component {
   constructor (props) {
@@ -35,11 +35,12 @@ class ProductPriceSpecificationManage extends Component {
       },
       error: null,
       notification: {
-        status: false,
         type: 'is-success',
+        status: false,
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
     this.submiting = false
   }
 
@@ -85,43 +86,50 @@ class ProductPriceSpecificationManage extends Component {
   }
 
   async componentDidMount () {
-    const { storeProductDetail, id } = this.state
-    if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
+    const { id } = this.state
+    if (id) {
       NProgress.start()
+      this.fetchingFirst = true
       const productId = id.split('.')[0]
-      this.setState({convertToForm: true})
       await this.props.getStoreProductDetail({ id: productId })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProductDetail, form, convertToForm } = this.state
-    const { alterProducts } = nextProps
-    if (!nextProps.storeProductDetail.isLoading && convertToForm) {
-      switch (nextProps.storeProductDetail.status) {
-        case Status.SUCCESS :
-          const newState = { storeProductDetail, form, convertToForm: false }
-          newState.form['discount'] = nextProps.storeProductDetail.storeProductDetail.product.discount
-          newState.form['condition'] = nextProps.storeProductDetail.storeProductDetail.product.condition
-          newState.form['is_insurance'] = nextProps.storeProductDetail.storeProductDetail.product.is_insurance
-          newState.form['price'] = nextProps.storeProductDetail.storeProductDetail.product.price
-          newState.form['stock'] = nextProps.storeProductDetail.storeProductDetail.product.stock
-          newState.form['weight'] = nextProps.storeProductDetail.storeProductDetail.product.weight
-          newState.storeProductDetail = nextProps.storeProductDetail
-          this.setState(newState)
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: nextProps.storeProductDetail.message} })
-          break
-        default:
-          break
+    const { form } = this.state
+    const { storeProductDetail, alterProducts } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+
+    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
+      NProgress.done()
+      this.fetchingFirst = false
+      if (isFound) {
+        const dataStoreProduct = storeProductDetail.storeProductDetail
+        const newState = { form, storeProductDetail: storeProductDetail }
+        newState.form['discount'] = dataStoreProduct.product.discount
+        newState.form['condition'] = dataStoreProduct.product.condition
+        newState.form['is_insurance'] = dataStoreProduct.product.is_insurance
+        newState.form['price'] = dataStoreProduct.product.price
+        newState.form['stock'] = dataStoreProduct.product.stock
+        newState.form['weight'] = dataStoreProduct.product.weight
+        this.setState(newState)
+      }
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
-      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Harga dan Spesifikasi', 'Gagal memperbarui Harga dan Spesifikasi') })
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -134,8 +142,7 @@ class ProductPriceSpecificationManage extends Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={storeProductDetail.storeProductDetail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>

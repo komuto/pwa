@@ -2,11 +2,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
-// components
 import Router from 'next/router'
+// components
 import Notification from '../Components/Notification'
-// services
-import { Status } from '../Services/Status'
+import MyImage from '../Components/MyImage'
 // actions
 import * as productActions from '../actions/product'
 
@@ -16,14 +15,15 @@ class DropshippingOption extends React.Component {
     this.state = {
       id: props.query.id || null,
       productDetail: props.productDetail || null,
-      submitting: false,
       isDropship: props.productDetail.isFound ? props.productDetail.detail.product.is_dropship : false,
       notification: {
+        type: 'is-success',
         status: false,
-        color: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
+    this.submiting = false
   }
 
   handleInput (e) {
@@ -35,70 +35,50 @@ class DropshippingOption extends React.Component {
 
   changeDropship (e, id) {
     e.preventDefault()
-    this.setState({ submitting: true }, () => {
-      if (this.state.submitting) {
-        this.props.updateDropshipStatus({ product_ids: [this.state.id.split('.')[0]] })
-      }
-    })
+    this.submiting = true
+    this.props.updateProduct({ id: this.state.id.split('.')[0], is_dropship: this.state.isDropship })
   }
 
   async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    const { id } = this.state
+    if (id) {
       NProgress.start()
       await this.props.getProduct({ id })
+      this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { submitting, notification, productDetail } = this.state
-    const { alterProducts } = nextProps
-    const nextId = nextProps.query.id
-    if (!nextProps.productDetail.isLoading) {
-      NProgress.done()
-      switch (nextProps.productDetail.status) {
-        case Status.SUCCESS :
-          let newState = { productDetail }
-          newState.productDetail = nextProps.productDetail
-          this.setState(newState)
+    const { alterProducts, productDetail, query } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-          if (String(nextProps.productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(productDetail) && this.fetchingFirst) {
+      NProgress.done()
+      this.fetchingFirst = false
+      if (isFound(productDetail)) {
+        this.setState({ productDetail: productDetail, isDropship: productDetail.detail.product.is_dropship })
+        if (String(productDetail.detail.product.id) !== String(query.id)) {
+          NProgress.start()
+          this.fetchingFirst = true
+          await this.props.getProduct({ id: query.id })
+        }
+      }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
       }
     }
-    if (alterProducts.isFound && submitting) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menjadikan Barang sebagai dropship'
-          newNotification.notification['type'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menjadikan Barang sebagai dropship'
-          newNotif.notification['type'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+    if (!isFetching(alterProducts) && this.submiting) {
+      this.submiting = false
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
       }
-      this.setState({ notification })
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -111,8 +91,7 @@ class DropshippingOption extends React.Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={productDetail.detail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
@@ -134,7 +113,7 @@ class DropshippingOption extends React.Component {
   }
 
   render () {
-    const { notification, isDropship, submitting } = this.state
+    const { notification, isDropship } = this.state
     return (
       <div>
         <Notification
@@ -171,7 +150,7 @@ class DropshippingOption extends React.Component {
               </a>
             </div>
             <div className='field'>
-              <a className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}
+              <a className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}
                 onClick={(e) => this.changeDropship(e)}>
                 Simpan Perubahan
               </a>
@@ -192,7 +171,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   getProduct: (params) => dispatch(productActions.getProduct(params)),
-  updateDropshipStatus: (params) => dispatch(productActions.updateDropshipStatus(params))
+  updateProduct: (params) => dispatch(productActions.updateProduct(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DropshippingOption)

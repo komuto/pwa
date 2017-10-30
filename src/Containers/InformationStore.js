@@ -7,6 +7,7 @@ import Router from 'next/router'
 import Notification from '../Components/Notification'
 import {Images} from '../Themes'
 import NProgress from 'nprogress'
+import MyImage from '../Components/MyImage'
 // actions
 import * as actionTypes from '../actions/stores'
 import * as actionUserTypes from '../actions/user'
@@ -260,7 +261,7 @@ class InformationStore extends React.Component {
               onDrop={this.onDrop.bind(this)}>
               <div className='pict-wrapper'>
                 {
-                  <img src={files.preview !== '' ? files.preview : logoImages} alt='' />
+                  <MyImage src={files.preview !== '' ? files.preview : logoImages} alt='' />
                 }
               </div>
               <p className='has-text-centered'>
