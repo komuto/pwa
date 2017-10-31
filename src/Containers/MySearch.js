@@ -103,7 +103,7 @@ class MySearch extends Component {
 /** define input search */
 const InputSearchContent = ({submitting, doSearch, refInput}) => (
   <div className='header-search'>
-    <a className='back back-on-seacrh' onClick={() => Router.back()}><span className='icon-arrow-left black' /></a>
+    <a className='back back-on-seacrh' onClick={() => Router.push('/')}><span className='icon-arrow-left black' /></a>
     <div className='field'>
       <p className={`control has-icons-left`}>
         <span className={`${submitting.searchProduct && 'button self is-loading right'}`} />
