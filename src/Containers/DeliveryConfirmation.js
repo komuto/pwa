@@ -7,6 +7,7 @@ import moment from 'moment'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
+import MyImage from '../Components/MyImage'
 import Loading from '../Components/Loading'
 // actions
 import * as transactionAction from '../actions/transaction'
@@ -125,7 +126,7 @@ class DeliveryConfirmation extends React.Component {
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
                                       <figure className='image list-transaction xs'>
-                                        <a><img src={order.products[0].image} alt='Pict' /></a>
+                                        <a><MyImage src={order.products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
                                     <div className='media-content'>
@@ -144,7 +145,7 @@ class DeliveryConfirmation extends React.Component {
                                           return (
                                             <div className='media-left sm-margin' key={i}>
                                               <figure className='image list-transaction xs'>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -153,7 +154,7 @@ class DeliveryConfirmation extends React.Component {
                                             <div className='media-left sm-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )

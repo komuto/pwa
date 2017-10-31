@@ -2,14 +2,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-// components
+import InfiniteScroll from 'react-infinite-scroller'
+import _ from 'lodash'
 import Router from 'next/router'
+import NProgress from 'nprogress'
+// components
+import Loading from '../../Components/Loading'
 import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as messageAction from '../../actions/message'
 // services
-import { isFetching, validateResponse, validateResponseAlter } from '../../Services/Status'
+import { validateResponseAlter } from '../../Services/Status'
 
 const TAB_CONVERSATION = 'TAB_CONVERSATION'
 const TAB_ARCHIVE = 'TAB_ARCHIVE'
@@ -21,12 +26,23 @@ class Messages extends React.Component {
       buyerMessages: props.buyerMessages || null,
       archiveBuyerMessages: props.archiveBuyerMessages || null,
       tabs: TAB_CONVERSATION,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
+      pagination2: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.hasMore = { buyerMessages: false, archiveBuyerMessages: false }
+    this.fetching = { buyerMessages: false, archiveBuyerMessages: false }
+    this.fetchingFirst = { buyerMessages: false, archiveBuyerMessages: false }
   }
 
   switchTab (e) {
@@ -38,19 +54,89 @@ class Messages extends React.Component {
     Router.push(`/message-detail?id=${messageId}`)
   }
 
+  async loadMoreBuyerMessages () {
+    let { pagination } = this.state
+    if (!this.fetching.buyerMessages) {
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = { ...this.fetching, buyerMessages: true }
+      await this.props.getBuyerMessages({ ...this.state.pagination, is_archived: false })
+    }
+  }
+
+  async loadMoreArchiveBuyerMessages () {
+    let { pagination2 } = this.state
+    if (!this.fetching.archiveBuyerMessages) {
+      const newState = { pagination2 }
+      pagination2['page'] = pagination2.page + 1
+      this.setState(newState)
+      this.fetching = { ...this.fetching, archiveBuyerMessages: true }
+      await this.props.getArchiveBuyerMessages(this.state.pagination2)
+    }
+  }
+
   componentDidMount () {
-    this.props.getBuyerMessages({ is_archived: false })
-    this.props.getArchiveBuyerMessages()
+    NProgress.start()
+    this.fetchingFirst = { buyerMessages: true, archiveBuyerMessages: true }
+    this.props.getBuyerMessages({ is_archived: false, page: 1, limit: 10 })
+    this.props.getArchiveBuyerMessages({ page: 1, limit: 10 })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { query } = this.props
+    const { query, isFetching, isFound, isError, notifError } = this.props
     const { buyerMessages, archiveBuyerMessages, updateMessage, deleteMessage } = nextProps
-    if (!isFetching(buyerMessages)) {
-      this.setState({ buyerMessages: nextProps.buyerMessages, notification: validateResponse(buyerMessages, buyerMessages.message) })
+
+    if (!isFetching(buyerMessages) && this.fetchingFirst.buyerMessages) {
+      NProgress.done()
+      this.fetchingFirst = { ...this.fetchingFirst, buyerMessages: false }
+      if (isFound(buyerMessages)) {
+        this.setState({ buyerMessages })
+        this.hasMore = { ...this.hasMore, buyerMessages: buyerMessages.buyerMessages.length > 9 }
+      }
+      if (isError(buyerMessages)) {
+        this.setState({ notification: notifError(buyerMessages.message) })
+      }
     }
-    if (!isFetching(archiveBuyerMessages)) {
-      this.setState({ archiveBuyerMessages: nextProps.archiveBuyerMessages, notification: validateResponse(archiveBuyerMessages, archiveBuyerMessages.message) })
+
+    if (!isFetching(buyerMessages) && this.fetching.buyerMessages) {
+      this.fetching = { ...this.fetching, buyerMessages: false }
+      let newBuyerMessages = this.state.buyerMessages
+      if (isFound(buyerMessages)) {
+        this.hasMore = { ...this.hasMore, buyerMessages: buyerMessages.buyerMessages.length > 9 }
+        newBuyerMessages.buyerMessages = newBuyerMessages.buyerMessages.concat(buyerMessages.buyerMessages)
+        this.setState({ buyerMessages: newBuyerMessages })
+      }
+      if (isError(buyerMessages)) {
+        this.setState({ notification: notifError(buyerMessages.message) })
+        this.hasMore = { ...this.hasMore, buyerMessages: false }
+      }
+    }
+
+    if (!isFetching(archiveBuyerMessages) && this.fetchingFirst.archiveBuyerMessages) {
+      NProgress.done()
+      this.fetchingFirst = { ...this.fetchingFirst, archiveBuyerMessages: false }
+      if (isFound(archiveBuyerMessages)) {
+        this.setState({ archiveBuyerMessages })
+        this.hasMore = { ...this.hasMore, archiveBuyerMessages: archiveBuyerMessages.archiveMessages.length > 9 }
+      }
+      if (isError(archiveBuyerMessages)) {
+        this.setState({ notification: notifError(archiveBuyerMessages.message) })
+      }
+    }
+
+    if (!isFetching(archiveBuyerMessages) && this.fetching.archiveBuyerMessages) {
+      this.fetching = { ...this.fetching, archiveBuyerMessages: false }
+      let newArchiveBuyerMessages = this.state.archiveBuyerMessages
+      if (isFound(archiveBuyerMessages)) {
+        this.hasMore = { ...this.hasMore, archiveBuyerMessages: archiveBuyerMessages.archiveMessages.length > 9 }
+        newArchiveBuyerMessages.archiveMessages = newArchiveBuyerMessages.archiveMessages.concat(archiveBuyerMessages.archiveMessages)
+        this.setState({ archiveBuyerMessages: newArchiveBuyerMessages })
+      }
+      if (isError(archiveBuyerMessages)) {
+        this.setState({ notification: notifError(archiveBuyerMessages.message) })
+        this.hasMore = { ...this.hasMore, archiveBuyerMessages: false }
+      }
     }
     if (query.hasOwnProperty('archeived')) {
       this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Arsip', 'Gagal memindahkan ke Arsip') })
@@ -87,10 +173,14 @@ class Messages extends React.Component {
                 tabs === TAB_CONVERSATION
                 ? <ListConversationMessages
                   buyerMessages={buyerMessages}
-                  messageDetail={(id) => this.messageDetail(id)} />
+                  messageDetail={(id) => this.messageDetail(id)}
+                  hasMore={this.hasMore.buyerMessages}
+                  loadMore={() => this.loadMoreBuyerMessages()} />
                 : <ListArcheiveMessages
                   archiveBuyerMessages={archiveBuyerMessages}
-                  messageDetail={(id) => this.messageDetail(id)} />
+                  messageDetail={(id) => this.messageDetail(id)}
+                  hasMore2={this.hasMore.archiveBuyerMessages}
+                  loadMore2={() => this.loadMoreArchiveBuyerMessages()} />
               }
             </ul>
           </div>
@@ -108,33 +198,41 @@ const ListConversationMessages = (props) => {
     <div>
       {
         buyerMessages.buyerMessages.length > 0
-        ? buyerMessages.buyerMessages.map((message, i) => {
-          return (
-            <li key={i}>
-              <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
-                <article className='media'>
-                  <div className='media-left top'>
-                    <figure className='image user-pict'>
-                      <img src={message.store.logo}
-                        style={{width: '50px', height: '50px'}} alt='pict' />
-                    </figure>
+        ? <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMore.bind(this), 500)}
+          hasMore={props.hasMore}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            buyerMessages.buyerMessages.map((message, i) => {
+              return (
+                <li key={i}>
+                  <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
+                    <article className='media'>
+                      <div className='media-left top'>
+                        <figure className='image user-pict'>
+                          <MyImage src={message.store.logo}
+                            style={{width: '50px', height: '50px'}} alt='pict' />
+                        </figure>
+                      </div>
+                      <div className='media-content'>
+                        <div className='content'>
+                          <p className='user-name'>
+                            <strong>{message.subject}</strong>
+                            <span>{message.store.name}</span>
+                            <br />
+                            {message.detail_message.content}
+                          </p>
+                        </div>
+                        <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
+                      </div>
+                    </article>
                   </div>
-                  <div className='media-content'>
-                    <div className='content'>
-                      <p className='user-name'>
-                        <strong>{message.subject}</strong>
-                        <span>{message.store.name}</span>
-                        <br />
-                        {message.detail_message.content}
-                      </p>
-                    </div>
-                    <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
-                  </div>
-                </article>
-              </div>
-            </li>
-          )
-        })
+                </li>
+              )
+            })
+          }
+        </InfiniteScroll>
         : <EmptyMessage />
       }
     </div>
@@ -149,33 +247,41 @@ const ListArcheiveMessages = (props) => {
     <div>
       {
         archiveBuyerMessages.archiveMessages.length > 0
-        ? archiveBuyerMessages.archiveMessages.map((message, i) => {
-          return (
-            <li key={i}>
-              <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
-                <article className='media'>
-                  <div className='media-left top'>
-                    <figure className='image user-pict'>
-                      <img src={message.store.logo}
-                        style={{width: '50px', height: '50px'}} alt='pict' />
-                    </figure>
+        ? <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMore2.bind(this), 500)}
+          hasMore={props.hasMore2}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            archiveBuyerMessages.archiveMessages.map((message, i) => {
+              return (
+                <li key={i}>
+                  <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
+                    <article className='media'>
+                      <div className='media-left top'>
+                        <figure className='image user-pict'>
+                          <MyImage src={message.store.logo}
+                            style={{width: '50px', height: '50px'}} alt='pict' />
+                        </figure>
+                      </div>
+                      <div className='media-content'>
+                        <div className='content'>
+                          <p className='user-name'>
+                            <strong>{message.subject}</strong>
+                            <span>{message.store.name}</span>
+                            <br />
+                            {message.detail_message.content}
+                          </p>
+                        </div>
+                        <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
+                      </div>
+                    </article>
                   </div>
-                  <div className='media-content'>
-                    <div className='content'>
-                      <p className='user-name'>
-                        <strong>{message.subject}</strong>
-                        <span>{message.store.name}</span>
-                        <br />
-                        {message.detail_message.content}
-                      </p>
-                    </div>
-                    <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
-                  </div>
-                </article>
-              </div>
-            </li>
-          )
-        })
+                </li>
+              )
+            })
+          }
+        </InfiniteScroll>
         : <EmptyMessage />
       }
     </div>
@@ -186,7 +292,7 @@ const EmptyMessage = () => {
   return (
     <div className='container is-fluid'>
       <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesMessage} alt='komuto' />
+        <MyImage src={Images.emptyStatesMessage} alt='komuto' />
         <br /><br />
         <p><strong className='bold'>Belum ada Percakapan</strong></p>
         <p>Anda belum pernah melakukan percakapan dengan seller manapun</p>

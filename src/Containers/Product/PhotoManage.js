@@ -3,14 +3,13 @@ import { connect } from 'react-redux'
 import FlipMove from 'react-flip-move'
 import winurl from 'winurl'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // component
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as productActions from '../../actions/product'
 import * as storesAction from '../../actions/stores'
-// services
-import { Status, isFetching, validateResponseAlter } from '../../Services/Status'
 
 let FormData = require('form-data')
 
@@ -34,14 +33,14 @@ class ProductPhotoManage extends Component {
       images: [],
       notAcceptedFileType: [],
       notAcceptedFileSize: [],
-      submiting: false,
-      uploading: false,
       notification: {
         status: false,
         type: 'is-success',
         message: 'Error, default message.'
       }
     }
+    this.submiting = false
+    this.uploading = false
   }
 
   triggerFileUpload () {
@@ -122,7 +121,7 @@ class ProductPhotoManage extends Component {
     })
     images.append('type', 'product')
     if (images) {
-      this.setState({ uploading: true })
+      this.uploading = true
       this.props.photoUpload(images)
     }
   }
@@ -135,73 +134,85 @@ class ProductPhotoManage extends Component {
       }
       return dataImages
     })
-    this.setState({ submiting: true }, () => {
-      if (this.state.submiting) {
-        this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
-      }
-    })
+    this.submiting = true
+    this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
   }
 
   async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    const { id } = this.state
+    if (id) {
       NProgress.start()
       await this.props.getProduct({ id })
+      this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { submiting, productDetail, images, uploading, imagesOrigin, id } = this.state
+    const { productDetail, images, imagesOrigin, id } = this.state
     const { alterProducts, upload } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
-    if (!nextProps.productDetail.isLoading) {
-      switch (nextProps.productDetail.status) {
-        case Status.SUCCESS :
-          const newState = { productDetail, images }
-          // add property preview & name
-          let addPropPreview = nextProps.productDetail.detail.images.map(image => {
-            const splitPhoto = image.file.split('/')
-            const namePhoto = splitPhoto.pop() || splitPhoto.pop()
-            image['preview'] = image.file
-            image['name'] = namePhoto
-            return image
-          })
-          newState.imagesOrigin = addPropPreview
-          newState.productDetail = nextProps.productDetail
-          this.setState(newState)
 
-          if (String(nextProps.productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(productDetail) && this.fetchingFirst) {
+      NProgress.done()
+      this.fetchingFirst = false
+      if (isFound(productDetail)) {
+        const newState = { productDetail, images }
+        // add property preview & name
+        let addPropPreview = nextProps.productDetail.detail.images.map(image => {
+          const splitPhoto = image.file.split('/')
+          const namePhoto = splitPhoto.pop() || splitPhoto.pop()
+          image['preview'] = image.file
+          image['name'] = namePhoto
+          return image
+        })
+        newState.imagesOrigin = addPropPreview
+        newState.productDetail = nextProps.productDetail
+        this.setState(newState)
+        if (String(productDetail.detail.product.id) !== String(nextId)) {
+          NProgress.start()
+          this.fetchingFirst = true
+          await this.props.getProduct({ id: nextId })
+        }
+      }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
       }
     }
-    if (!upload.isLoading && uploading) {
-      this.setState({ uploading: false, submiting: true })
-      const concatImages = imagesOrigin.concat(upload.payload.images)
-      let newImage = concatImages.map(image => {
-        let dataImages = {
-          name: image.name
-        }
-        return dataImages
-      })
-      this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
+    if (!isFetching(upload) && this.uploading) {
+      this.uploading = false
+      if (isFound(upload)) {
+        this.submiting = true
+        const concatImages = imagesOrigin.concat(upload.payload.images)
+        let newImage = concatImages.map(image => {
+          let dataImages = {
+            name: image.name
+          }
+          return dataImages
+        })
+        this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
+      }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message) })
+      }
     }
-    if (!isFetching(alterProducts) && submiting) {
-      this.setState({ submiting: false, notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Photo', 'Gagal memperbarui Photo') })
+    if (!isFetching(alterProducts) && this.submiting) {
+      this.submiting = false
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
   render () {
-    const { imagesOrigin, images, notification, submiting, uploading } = this.state
+    const { imagesOrigin, images, notification } = this.state
     const concatImages = imagesOrigin.concat(images)
     return (
       <section className='section is-paddingless'>
@@ -247,7 +258,7 @@ class ProductPhotoManage extends Component {
             <div className='field'>
               <p className='control'>
                 <button onClick={() => this.submit()}
-                  className={`button is-primary is-large is-fullwidth ${submiting || uploading ? 'is-loading' : ''}`}>
+                  className={`button is-primary is-large is-fullwidth ${this.submiting || this.uploading ? 'is-loading' : ''}`}>
                   Lanjutkan
                 </button>
               </p>

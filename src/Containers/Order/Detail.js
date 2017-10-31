@@ -6,6 +6,7 @@ import moment from 'moment'
 // components
 import Router from 'next/router'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // lib
 import Images from '../../Themes/Images'
 import RupiahFormat from '../../Lib/RupiahFormat'
@@ -148,7 +149,7 @@ class OrderDetail extends React.Component {
                       <div className='media'>
                         <div className='media-left is-full-bordered'>
                           <figure className='image list-transaction sm'>
-                            <a><img src={newOrderDetail.orderDetail.invoice.type === 'seller' ? newOrderDetail.orderDetail.reseller.store.logo : newOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
+                            <a><MyImage src={newOrderDetail.orderDetail.invoice.type === 'seller' ? newOrderDetail.orderDetail.reseller.store.logo : newOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
                           </figure>
                         </div>
                         <div className='media-content middle is-right-content'>
@@ -187,7 +188,7 @@ class OrderDetail extends React.Component {
                     <div className='media'>
                       <div className='media-left is-bordered top'>
                         <figure className='image list-transaction lg'>
-                          <a><img src={item.product.image} alt='Image' /></a>
+                          <a><MyImage src={item.product.image} alt='Image' /></a>
                         </figure>
                       </div>
                       <div className='media-content'>
@@ -352,7 +353,7 @@ class OrderDetail extends React.Component {
 
         <div className='sort-option' style={{ display: this.state.showModalConfirm ? 'block' : 'none', zIndex: 1000 }}>
           <div className='notif-report'>
-            <img src={Images.transaksiDetail} alt='pict' />
+            <MyImage src={Images.transaksiDetail} alt='pict' />
             <h3>Order Diterima</h3>
             <p>Order telah dipindahkan ke bagian konfirmasi pengiriman. Silahkan memproses order dan jika sudah dikirim Anda tinggal memasukkan nomor resinya</p>
             <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/delivery-confirmation')}>Lihat Daftar Pengiriman</button>
@@ -370,7 +371,7 @@ class OrderDetail extends React.Component {
 
         <div className='sort-option' style={{ display: this.state.showModalReject ? 'block' : 'none', zIndex: 1000 }}>
           <div className='notif-report'>
-            <img src={Images.transaksiDetail} alt='pict' />
+            <MyImage src={Images.transaksiDetail} alt='pict' />
             <h3>Anda akan menolak order</h3>
             <p>Anda yakin akan menolak order ini? </p>
             <div className='columns is-mobile'>

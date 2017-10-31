@@ -8,6 +8,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import Loading from '../../Components/Loading'
 import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as transactionAction from '../../actions/transaction'
@@ -235,7 +236,7 @@ const ListComplainOrderWaiting = (props) => {
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
                                       <figure className='image list-transaction xs'>
-                                        <a><img src={order.dispute_products[0].image} alt='Pict' /></a>
+                                        <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
                                     <div className='media-content'>
@@ -251,7 +252,7 @@ const ListComplainOrderWaiting = (props) => {
                                           return (
                                             <div className='media-left sm-margin' key={i}>
                                               <figure className='image list-transaction xs'>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -260,7 +261,7 @@ const ListComplainOrderWaiting = (props) => {
                                             <div className='media-left sm-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -332,7 +333,7 @@ const ListComplainOrderDone = (props) => {
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
                                       <figure className='image list-transaction xs'>
-                                        <a><img src={order.dispute_products[0].image} alt='Pict' /></a>
+                                        <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
                                     <div className='media-content'>
@@ -348,7 +349,7 @@ const ListComplainOrderDone = (props) => {
                                           return (
                                             <div className='media-left sm-margin' key={i}>
                                               <figure className='image list-transaction xs'>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -357,7 +358,7 @@ const ListComplainOrderDone = (props) => {
                                             <div className='media-left sm-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
-                                                <a><img src={p.image} alt='Pict' /></a>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
                                             </div>
                                           )
@@ -388,7 +389,7 @@ const EmptyComplain = () => {
   return (
     <div className='container is-fluid'>
       <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesResolusi} alt='komuto' />
+        <MyImage src={Images.emptyStatesResolusi} alt='komuto' />
         <br /><br />
         <p><strong className='bold'>Komplain Barang Kosong</strong></p>
         <p>Anda belum memiliki barang untuk diselesaikan masalahnya</p>

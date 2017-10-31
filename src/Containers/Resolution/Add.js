@@ -9,8 +9,6 @@ import MyImage from '../../Components/MyImage'
 // actions
 import * as userActions from '../../actions/user'
 import * as storesAction from '../../actions/stores'
-// Services
-import { isFetching } from '../../Services/Status'
 
 let FormData = require('form-data')
 
@@ -153,22 +151,29 @@ class ResolutionAdd extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { upload, createResolution } = nextProps
     const { uploading, submiting, form } = this.state
-    if (!upload.isLoading && uploading) {
+    const { isFetching, isFound, isError, notifError } = this.props
+
+    if (!isFetching(upload) && uploading) {
       this.setState({ uploading: false, submiting: true })
-      let newImage = upload.payload.images.map(image => {
-        let dataImages = {
-          name: image.name
+      if (isFound(upload)) {
+        let newImage = upload.payload.images.map(image => {
+          let dataImages = {
+            name: image.name
+          }
+          return dataImages
+        })
+        let params = {
+          priority: Number.parseInt(form.priority),
+          topic: Number.parseInt(form.topic),
+          title: form.title,
+          message: form.message,
+          images: newImage
         }
-        return dataImages
-      })
-      let params = {
-        priority: Number.parseInt(form.priority),
-        topic: Number.parseInt(form.topic),
-        title: form.title,
-        message: form.message,
-        images: newImage
+        this.props.addResolution(params)
       }
-      this.props.addResolution(params)
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload.message) })
+      }
     }
     if (!isFetching(createResolution) && submiting) {
       this.setState({ submiting: false })
