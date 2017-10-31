@@ -196,7 +196,7 @@ class MyProduct extends Component {
     if (page) this.params.page = page
     if (limit) this.params.limit = limit
     if (sort) this.params.sort = sort
-    if (q) this.params.query = q
+    if (q) this.params.q = q
     if (condition) this.params.condition = condition
     if (services) this.params.services = services
     if (other) this.params.other = other
