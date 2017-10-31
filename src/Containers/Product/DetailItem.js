@@ -15,14 +15,42 @@ class ProductDetailItem extends Component {
   render () {
     const { product, rating, commission, images } = this.props
     let comission = commission && <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
+    let isDiscount = product.is_discount
+    let priceBeforeDiscount = 0
+    let priceAfterDiscount = 0
+    if (isDiscount) {
+      priceBeforeDiscount = product.price
+      priceAfterDiscount = (product.price - (product.price * (product.discount / 100)))
+    }
+    let isWholeSaler = product.is_wholesaler
+    let isNormalPrice = !isDiscount && !isWholeSaler
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
         {
           this.props.images.length > 0 && <ProductDetailSlider images={images} />
         }
         <div className='detail-product'>
-          <h3>{ product.name }</h3>
-          <span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}
+          {
+            (isDiscount || isNormalPrice) && <h3>{ product.name }</h3>
+          }
+          {
+            isDiscount &&
+            <div className='detail-discount'>
+              <div className='pin disc'><span>{product.discount}%</span></div>
+              <div className='discount'>Rp {RupiahFormat(priceBeforeDiscount)}</div>
+              <span className='price'>Rp {RupiahFormat(priceAfterDiscount)}</span>{comission}
+            </div>
+          }
+          {
+            isWholeSaler &&
+            <div className='detail-discount wholesaler'>
+              <div className='pin'><span>Grosir</span></div>
+              <h3>{ product.name }</h3>
+            </div>
+          }
+          {
+            isNormalPrice && <div><span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}</div>
+          }
           <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
         </div>
         <div className='detail-rate'>

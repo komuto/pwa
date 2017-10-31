@@ -24,7 +24,7 @@ class ProductDetail extends Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      productDetail: null,
       addWishlist: props.addWishlist || null,
       submiting: false,
       submitingDiscussion: false,
@@ -171,9 +171,23 @@ class ProductDetail extends Component {
 
   render () {
     const { productDetail, notification, submiting, submitingDiscussion } = this.state
-    console.log('productDetail: ', productDetail)
+    // console.log('productDetail: ', productDetail)
     const { isFound, query } = this.props
-    const { detail } = productDetail
+
+    const productDetailReady = productDetail && isFound(productDetail)
+
+    let detail = null
+    let productId = null
+    let shareLink = null
+    let productName = null
+
+    if (productDetailReady) {
+      detail = productDetail.detail
+      productId = detail.product.id
+      productName = detail.product.name
+      shareLink = detail.share_link
+    }
+
     const params = {
       navbar: {
         searchBoox: false,
@@ -181,10 +195,10 @@ class ProductDetail extends Component {
         textPath: 'Produk Detail'
       },
       moreButton: true,
-      productId: productDetail.isFound && detail.product.id,
+      productId: productId,
       share: {
-        link: productDetail.isFound ? detail.share_link : '',
-        title: productDetail.isFound ? detail.product.name : ''
+        link: shareLink,
+        title: productName
       }
     }
     return (
@@ -197,7 +211,7 @@ class ProductDetail extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-          isFound(productDetail) &&
+          productDetailReady &&
             <Content>
               <ProductDetailItem
                 {...this.props}

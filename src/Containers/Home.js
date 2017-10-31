@@ -190,7 +190,7 @@ class Home extends Component {
               message={notification.message} />
             <SliderContent {...this.props} />
             <CategoryContent {...this.props} {...this.state} />
-            <ProductContent {...this.props} {...this.state} />
+            <ProductContent {...this.props} {...this.state} wishlistPress={(id) => this.wishlistPress(id)} />
             { (params.tabbar) && <Tabbar {...this.props} {...params} /> }
           </StickyContainer>
         </Content>
@@ -252,7 +252,7 @@ const CategoryContent = ({ localize, category }) => (
 )
 
 /** define product content */
-const ProductContent = ({ localize, products }) => (
+const ProductContent = ({ localize, products, wishlistPress }) => (
   <Section>
     <SectionTitle title={localize.product_new} />
     <Content className='columns is-mobile is-multiline custom'>
@@ -265,7 +265,7 @@ const ProductContent = ({ localize, products }) => (
                   key={myProduct.product.id}
                   {...myProduct}
                   viewActive='grid'
-                  wishlistPress={(id) => this.wishlistPress(id)} />
+                  wishlistPress={(id) => wishlistPress(id)} />
               )
             })
           }
