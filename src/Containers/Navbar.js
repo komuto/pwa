@@ -174,7 +174,7 @@ export class Navbar extends PureComponent {
           active={activeMoreOptions}
           shareProduct={() => this.shareProduct()} />
         {
-          share &&
+          share && share.link &&
           <Share
             onShow={this.state.showShareProduct}
             shareProduct={() => this.shareProduct()}
