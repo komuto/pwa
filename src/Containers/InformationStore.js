@@ -90,7 +90,7 @@ class InformationStore extends React.Component {
   postInfoStore () {
     const { formInfo, submiting, files } = this.state
     const { tempCreateStore, updateInformation, query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    const isSetting = query.type === 'settingStore'
     let logo = files
     let nameStore = formInfo.name
     let slogan = formInfo.slogan
@@ -194,7 +194,7 @@ class InformationStore extends React.Component {
     }
     if (!isFetching(upload) && submiting.upload) {
       if (isFound(upload)) {
-        this.setState({ submiting: { ...submiting, upload: true } })
+        this.setState({ submiting: { ...submiting, upload: false } })
         const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
         const logo = upload.payload.images[0].name
         const path = upload.payload.path
@@ -228,6 +228,7 @@ class InformationStore extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { files, formInfo, overSlogan, notification } = this.state
     const isSetting = this.props.hasOwnProperty('query') && this.props.query.type === 'settingStore'
     let logoOnRedux = formInfo.path + formInfo.logo

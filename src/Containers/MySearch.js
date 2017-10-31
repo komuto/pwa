@@ -110,7 +110,7 @@ const InputSearchContent = ({submitting, doSearch, refInput}) => (
         <input
           onChange={doSearch}
           ref={refInput}
-          className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+          className='input is-medium' type='text' placeholder='Cari barang' />
       </p>
     </div>
   </div>

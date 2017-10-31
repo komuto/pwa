@@ -130,7 +130,7 @@ class ProductUpdateNameCategory extends Component {
 
   async componentDidMount () {
     const { category, brands, id } = this.state
-    if (id !== '') {
+    if (id) {
       NProgress.start()
       const productId = id.split('.')[0]
       await this.props.getStoreProductDetail({ id: productId })
@@ -203,19 +203,22 @@ class ProductUpdateNameCategory extends Component {
       NProgress.done()
       if (isFound(nextProps.storeProductDetail)) {
         const nextStoreProductDetail = nextProps.storeProductDetail.storeProductDetail
+        const isCatgoryEmpty = nextStoreProductDetail.category.parents.length === 0
         const newState = { storeProductDetail, form }
         newState.form['name'] = nextStoreProductDetail.product.name
-        newState.form['categoryOne'] = nextStoreProductDetail.category.parents[0].id
-        newState.form['categoryTwo'] = nextStoreProductDetail.category.parents[1].id
-        newState.form['categoryThree'] = nextStoreProductDetail.category.parents[2].id
+        newState.form['categoryOne'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[0].id
+        newState.form['categoryTwo'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[1].id
+        newState.form['categoryThree'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[2].id
         newState.form['category_id'] = nextStoreProductDetail.category.id
         newState.form['brand_id'] = !nextStoreProductDetail.brand ? '' : nextStoreProductDetail.brand.id
         newState.form['description'] = nextStoreProductDetail.product.description
         newState.storeProductDetail = nextProps.storeProductDetail
         this.setState(newState)
-        this.props.getSubCategory({ id: nextStoreProductDetail.category.parents[0].id })
-        this.props.getSubCategory2({ id: nextStoreProductDetail.category.parents[1].id })
-        this.props.getSubCategory3({ id: nextStoreProductDetail.category.parents[2].id })
+        if (!isCatgoryEmpty) {
+          this.props.getSubCategory({ id: nextStoreProductDetail.category.parents[0].id })
+          this.props.getSubCategory2({ id: nextStoreProductDetail.category.parents[1].id })
+          this.props.getSubCategory3({ id: nextStoreProductDetail.category.parents[2].id })
+        }
       }
       if (isError(nextProps.storeProductDetail)) {
         this.setState({ notification: notifError(nextProps.storeProductDetail.message) })

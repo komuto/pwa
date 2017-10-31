@@ -2,13 +2,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import _ from 'lodash'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as storesActions from '../../actions/stores'
 import * as productActions from '../../actions/product'
-// services
-import { Status, isFetching, validateResponseAlter } from '../../Services/Status'
 
 class ProductExpeditionManage extends React.Component {
   constructor (props) {
@@ -19,19 +20,19 @@ class ProductExpeditionManage extends React.Component {
       expeditions: props.expeditions,
       selectedExpeditions: [],
       selectedServices: [],
+      submiting: false,
       notification: {
         status: false,
         type: 'is-success',
         message: 'Error, default message.'
-      },
-      convertToForm: false,
-      submiting: false
+      }
     }
+    this.fetchingFirst = false
   }
 
-  handleSelectedExpeditions (e, id) {
+  handleSelectedExpeditions (e, id, expeditionId, getServicesId) {
     e.preventDefault()
-    const { selectedServices } = this.state
+    const { selectedServices, selectedExpeditions } = this.state
     let newExpeditions
     if (selectedServices.includes(id)) {
       let filterId = selectedServices.filter(val => val !== id)
@@ -39,7 +40,18 @@ class ProductExpeditionManage extends React.Component {
     } else {
       newExpeditions = [...selectedServices, id]
     }
-    this.setState({selectedServices: newExpeditions})
+    this.setState({ selectedServices: newExpeditions }, () => {
+      if (this.state.selectedServices.indexOf(id) !== -1) {
+        let isSame = _.difference(getServicesId, this.state.selectedServices).length === 0
+        if (isSame) {
+          let newExpeditions = [...selectedExpeditions, expeditionId]
+          this.setState({ selectedExpeditions: newExpeditions })
+        }
+      } else {
+        let filterId = selectedExpeditions.filter(val => val !== expeditionId)
+        this.setState({ selectedExpeditions: filterId })
+      }
+    })
   }
 
   handleSelectAll (e, expedition) {
@@ -99,45 +111,59 @@ class ProductExpeditionManage extends React.Component {
   async componentDidMount () {
     const { expeditions, id, storeProductDetail } = this.state
     if (!expeditions.isFound) {
+      NProgress.start()
       this.props.storeExpeditionList()
     }
     if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
       NProgress.start()
       const productId = id.split('.')[0]
       await this.props.getStoreProductDetail({ id: productId })
-      this.setState({convertToForm: true})
+      this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { storeProductDetail, submiting, selectedServices, convertToForm } = this.state
-    const { expeditions, alterProducts } = nextProps
+    const { selectedServices, submiting } = this.state
+    const { expeditions, storeProductDetail, alterProducts } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(expeditions)) {
-      this.setState({ expeditions: expeditions })
       NProgress.done()
-    }
-    if (!nextProps.storeProductDetail.isLoading && convertToForm) {
-      switch (nextProps.storeProductDetail.status) {
-        case Status.SUCCESS :
-          let serviceId = []
-          nextProps.storeProductDetail.storeProductDetail.expedition_services.map(exp => {
-            return serviceId.push(exp.id)
-          })
-          const newService = { selectedServices, convertToForm: false }
-          newService.selectedServices = serviceId
-          this.setState(newService)
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: storeProductDetail.message} })
-          break
-        default:
-          break
+      if (isFound(expeditions)) {
+        this.setState({ expeditions: expeditions })
+      }
+      if (isError(expeditions)) {
+        this.setState({ notification: notifError(expeditions.message) })
       }
     }
+    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
+      this.fetchingFirst = false
+      NProgress.done()
+      if (isFound(storeProductDetail)) {
+        let serviceId = []
+        nextProps.storeProductDetail.storeProductDetail.expedition_services.map(exp => {
+          return serviceId.push(exp.id)
+        })
+        const newService = { selectedServices, storeProductDetail: storeProductDetail }
+        newService.selectedServices = serviceId
+        this.setState(newService)
+      }
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
+      }
+    }
+
     if (!isFetching(alterProducts) && submiting) {
-      this.setState({ submiting: false, notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Ekspedisi Pengiriman', 'Gagal memperbarui Ekspedisi Pengiriman') })
+      this.setState({ submiting: false })
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -150,8 +176,7 @@ class ProductExpeditionManage extends React.Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={storeProductDetail.storeProductDetail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
@@ -198,6 +223,7 @@ class ProductExpeditionManage extends React.Component {
           let isSelectedExpedition = selectedExpeditions.filter((id) => {
             return id === expedition.id
           }).length > 0
+          let getServicesId = expedition.services.map(service => service.id)
           return (
             <section className='section is-paddingless' key={expedition.id}>
               <div className='filter-option active'>
@@ -225,7 +251,7 @@ class ProductExpeditionManage extends React.Component {
                       <label
                         className='checkbox'
                         key={service.id}
-                        onClick={(e) => this.handleSelectedExpeditions(e, service.id)}>
+                        onClick={(e) => this.handleSelectedExpeditions(e, service.id, expedition.id, getServicesId)}>
                         <span className={`sort-text ${isSelected && 'active'}`}>{service.name}</span>
                         <span className={`input-wrapper ${isSelected && 'checked'}`} >
                           <input type='checkbox' />

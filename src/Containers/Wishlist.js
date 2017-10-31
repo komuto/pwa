@@ -151,7 +151,7 @@ class Wishlist extends Component {
         <Section className='section is-paddingless'>
           <div className='field search-form'>
             <p className='control has-icons-left'>
-              <input onChange={(event) => this.searchOnChange(event)} value={search.value} className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+              <input onChange={(event) => this.searchOnChange(event)} value={search.value} className='input is-medium' type='text' placeholder='Cari barang' />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>
