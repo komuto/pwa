@@ -387,12 +387,14 @@ const ListComplainOrderDone = (props) => {
 
 const EmptyComplain = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <MyImage src={Images.emptyStatesResolusi} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Komplain Barang Kosong</strong></p>
-        <p>Anda belum memiliki barang untuk diselesaikan masalahnya</p>
+    <div className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesResolusi} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Komplain Barang Kosong</strong></p>
+          <p>Anda belum memiliki barang untuk diselesaikan masalahnya</p>
+        </div>
       </div>
     </div>
   )

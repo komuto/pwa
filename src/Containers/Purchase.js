@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import ReactNotify from 'react-notify'
-
+import { animateScroll } from 'react-scroll'
 // components
 import Section from '../Components/Section'
 import Content from '../Components/Content'
@@ -14,6 +14,7 @@ import OptionsExpeditions from '../Components/OptionsExpeditions'
 import OptionsExpeditionPackages from '../Components/OptionsExpeditionPackages'
 import OptionsInsurance from '../Components/OptionsInsurance'
 import Loading from '../Components/Loading'
+import { Navbar } from './Navbar'
 // actions
 import * as productActions from '../actions/product'
 import * as addressActions from '../actions/address'
@@ -22,6 +23,7 @@ import * as cartActions from '../actions/cart'
 import * as expeditionActions from '../actions/expedition'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+import UrlParam from '../Lib/UrlParam'
 // validations
 import * as inputValidations from '../Validations/Input'
 // themes
@@ -36,33 +38,43 @@ class Purchase extends Component {
       listAddress: props.listAddress || null,
       addToCart: props.addToCart || null,
       shippingInformation: props.shippingInformation,
-      amountProduct: props.amountProduct.amountProduct,
+      amountProduct: 1,
       address: {
         data: (props.listAddress.isFound && props.listAddress.address) || [],
         show: false,
         submiting: false,
         selected: {
-          ...props.addressSelected
+          status: false
         }
       },
       expeditions: {
         data: (props.productDetail.isFound && props.productDetail.detail.expeditions) || [],
         show: false,
         selected: {
-          ...props.courierExpedition
+          id: null,
+          insurance_fee: 0,
+          is_checked: false,
+          logo: null,
+          name: ''
         }
       },
       expeditionsPackage: {
         data: (props.estimatedCharges.isFound && props.estimatedCharges.charges) || [],
         show: false,
         selected: {
-          ...props.packageExpedition
+          cost: 0,
+          description: null,
+          etd: '',
+          full_name: '',
+          id: null,
+          isFound: false,
+          name: ''
         }
       },
       insurance: {
         data: ['Ya', 'Tidak'],
         show: false,
-        selected: props.insurance.insurance
+        selected: null
       },
       notification: props.notification,
       noted: props.noted.noted,
@@ -78,6 +90,10 @@ class Purchase extends Component {
     }
 
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
+  }
+
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   // min button press
@@ -210,6 +226,7 @@ class Purchase extends Component {
 
   async componentDidMount () {
     const { id } = this.state
+    this.scrollToTop()
     NProgress.start()
     this.submiting = { ...this.submiting, productDetail: true, listAddress: true }
     await this.props.getProduct({ id })
@@ -284,6 +301,23 @@ class Purchase extends Component {
 
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
+
+    const params = {
+      style: 'main detail bg-grey',
+      header: {
+        title: 'Proses Pembelian'
+      },
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        callBack: () => Router.push(
+          `/product-detail?id=${product.id}`,
+          `/detail/${UrlParam(store.name)}/${product.slug}-${product.id}`
+        ),
+        textPath: 'Proses Pembelian'
+      }
+    }
+
     let price = 0
     let insurancePrice = 0
     let deliveryPrice = 0
@@ -316,6 +350,7 @@ class Purchase extends Component {
 
     return (
       <Content style={{paddingBottom: 0}}>
+        <Navbar {...params} />
         <Notification
           type={notification.type}
           isShow={notification.status}
@@ -385,14 +420,14 @@ class Purchase extends Component {
           </div>
         </Section>
         {
-            !address.selected.status
+          !address.selected.status
             ? <section
               className={`section is-paddingless has-shadow addressButton ${error === 'addressSelected' && 'is-error'}`}
               onClick={(e) => this.onClickAddress(e)}>
               <div className={`column is-paddingless ${error === 'addressSelected' && 'is-error'}`}>
                 <div className='see-all addressButton'>
                   <span className='link addressButton'>Isi Informasi Data Pengiriman
-                  <span className='icon-arrow-right' />
+                    <span className='icon-arrow-right' />
                   </span>
                 </div>
               </div>
@@ -447,14 +482,14 @@ class Purchase extends Component {
                 </div>
               </div>
             </section>
-          }
+        }
         <Section className='section is-paddingless has-shadow'>
           <a className={`column is-paddingless expeditionButton ${error === 'expeditions' && 'is-error'}`} onClick={(e) => !this.submiting.estimatedCharges && this.onClickExpedition(e)}>
             <div className='see-all expeditionButton'>
               <span className={`link expeditionButton ${expeditions.selected.id && 'black'}`}> { expeditions.selected.id ? 'Kurir Pengiriman' : 'Pilih Kurir Pengiriman' }
                 <span className='kurir expeditionButton'>{ expeditions.selected.name }</span>
                 {
-                    this.submiting.estimatedCharges
+                  this.submiting.estimatedCharges
                     ? this.loadingSpan
                     : <span className='icon-arrow-down expeditionButton' />
                 }
@@ -468,7 +503,7 @@ class Purchase extends Component {
               <span className={`link  expeditionPackageButton ${expeditionsPackage.selected.id && 'black'}`}> { expeditionsPackage.selected.id ? 'Paket Pengiriman' : 'Pilih Paket Pengiriman' }
                 <span className='kurir expeditionPackageButton'> { expeditionsPackage.selected.name }</span>
                 {
-                    this.submiting.estimatedCharges
+                  this.submiting.estimatedCharges
                     ? this.loadingSpan
                     : <span className='icon-arrow-down expeditionPackageButton' />
                 }

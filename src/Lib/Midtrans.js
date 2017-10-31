@@ -4,7 +4,7 @@ import Router from 'next/router'
 const urlFinish = (i) => ['/payment?type=finish', '/balance?type=topup&status=finish'][i]
 const urlUnFinish = (i) => ['/payment?type=unfinish', '/balance?type=topup&status=unfinish'][i]
 const urlError = (i) => ['/payment?type=error', '/balance?type=topup&status=error'][i]
-const urlClose = (i) => ['/transaction', '/balance-topup'][i]
+const urlClose = (i) => ['/transaction', '/balance?type=topup'][i]
 
 const asFinish = (i) => ['/payment?type=finish', '/balance/topup/finish'][i]
 const asUnFinish = (i) => ['/payment?type=unfinish', '/balance/topup/unfinish'][i]

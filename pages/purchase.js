@@ -1,6 +1,4 @@
-// @flow
-// layout
-import DefaultLayout from '../src/Layout/DefaultLayout'
+import DynamicNavBarLayout from '../src/Layout/DynamicNavBarLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
@@ -11,17 +9,12 @@ const Index = (props) => {
     style: 'main detail bg-grey',
     header: {
       title: 'Proses Pembelian'
-    },
-    navbar: {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Proses Pembelian'
     }
   }
   return (
-    <DefaultLayout {...params} {...props}>
+    <DynamicNavBarLayout {...params} {...props}>
       <Purchase {...props} />
-    </DefaultLayout>
+    </DynamicNavBarLayout>
   )
 }
 

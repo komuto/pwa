@@ -192,6 +192,7 @@ class ProductDetail extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
+        callBack: () => Router.push('/product', '/p'),
         textPath: 'Produk Detail'
       },
       moreButton: true,

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
+import { animateScroll } from 'react-scroll'
 // components
 import Section from '../../Components/Section'
 import Content from '../../Components/Content'
@@ -16,9 +17,7 @@ import * as productActions from '../../actions/product'
 import * as addressActions from '../../actions/address'
 import * as purchaseActions from '../../actions/purchase'
 import * as locationActions from '../../actions/location'
-import * as expeditionActions from '../../actions/expedition'
-// services
-import { Status } from '../../Services/Status'
+// import * as expeditionActions from '../../actions/expedition'
 // validations
 import * as inputValidations from '../../Validations/Input'
 
@@ -68,6 +67,18 @@ class ShippingInformation extends Component {
       submiting: false,
       error: null
     }
+    this.submitting = {
+      productDetail: false,
+      addAddress: false,
+      provinces: false,
+      districts: false,
+      subDistricts: false,
+      villages: false
+    }
+  }
+
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   // alias event
@@ -101,7 +112,8 @@ class ShippingInformation extends Component {
   }
 
   async provinceSelected (selected) {
-    await this.props.dispatch(locationActions.getDistrict({province_id: selected.id}))
+    this.submitting = { ...this.submitting, districts: true }
+    await this.props.getDistrict({province_id: selected.id})
     this.setState({
       provinces: { ...this.state.provinces, selected, show: false },
       districts: { ...this.state.districts, selected: { id: null, name: null } },
@@ -117,17 +129,16 @@ class ShippingInformation extends Component {
   }
 
   async districtSelected (selected) {
-    const { id, productDetail } = this.state
-    const params = {
-      id,
-      origin_id: productDetail.detail.location.district.ro_id,
-      destination_id: selected.ro_id,
-      weight: 1000
-    }
-
-    await this.props.dispatch(expeditionActions.estimatedShipping(params))
-
-    await this.props.dispatch(locationActions.getSubDistrict({district_id: selected.id}))
+    // const { id, productDetail } = this.state
+    // const params = {
+    //   id,
+    //   origin_id: productDetail.detail.location.district.ro_id,
+    //   destination_id: selected.ro_id,
+    //   weight: 1000
+    // }
+    this.submitting = { ...this.submitting, subDistricts: true }
+    // await this.props.estimatedShipping(params)
+    await this.props.getSubDistrict({district_id: selected.id})
     this.setState({
       districts: { ...this.state.districts, selected, show: false },
       subDistricts: { ...this.state.subDistricts, selected: { id: null, name: null } },
@@ -142,7 +153,8 @@ class ShippingInformation extends Component {
   }
 
   async subDistrictSelected (selected) {
-    await this.props.dispatch(locationActions.getVillage({sub_district_id: selected.id}))
+    this.submitting = { ...this.submitting, villages: true }
+    await this.props.getVillage({sub_district_id: selected.id})
     this.setState({
       subDistricts: { ...this.state.subDistricts, selected, show: false },
       villages: { ...this.state.villages, selected: { id: null, name: null } },
@@ -212,7 +224,9 @@ class ShippingInformation extends Component {
       return
     }
 
-    await this.props.dispatch(addressActions.addAddress({
+    this.submitting = { ...this.submitting, addAddress: true }
+
+    await this.props.setAddAddress({
       'province_id': provinces.selected.id,
       'district_id': districts.selected.id,
       'sub_district_id': subDistricts.selected.id,
@@ -223,76 +237,96 @@ class ShippingInformation extends Component {
       'address': formData.address,
       'alias_address': formData.alias,
       'is_primary': true
-    }))
+    })
 
     this.setState({ submiting: true })
   }
 
-  async componentDidMount () {
-    const { provinces } = this.state.provinces.data
-    const { id, productDetail } = this.state
-
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      await this.props.dispatch(productActions.getProduct({ id }))
-    }
-
-    provinces.length < 1 && await this.props.dispatch(locationActions.getProvince())
+  componentDidMount () {
+    NProgress.start()
+    this.scrollToTop()
+    const { id } = this.state
+    this.submitting = { ...this.submitting, productDetail: true, provinces: true }
+    this.props.getProduct({ id })
+    this.props.getProvince()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, provinces, districts, subDistricts, villages, addAddress, addressSelected } = nextProps
+    const { productDetail, provinces, districts, subDistricts, villages, addAddress } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    let { notification } = this.state
-
-    notification = {status: false, message: 'Error, default message.'}
-
-    !provinces.isLoading && this.setState({ provinces: { ...this.state.provinces, data: provinces } })
-
-    !districts.isLoading && this.setState({ districts: { ...this.state.districts, data: districts } })
-
-    !subDistricts.isLoading && this.setState({ subDistricts: { ...this.state.subDistricts, data: subDistricts } })
-
-    !villages.isLoading && this.setState({ villages: { ...this.state.villages, data: villages } })
-
-    if (!productDetail.isLoading) {
+    if (!isFetching(provinces) && this.submitting.provinces) {
+      this.submitting = { ...this.submitting, provinces: false }
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          if (!productDetail.isFound) notification = {type: 'is-danger', status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
-          break
-        default:
-          break
+      if (isError(provinces)) {
+        this.setState({ notification: notifError(provinces.message) })
       }
-      this.setState({ productDetail, notification })
+      if (isFound(provinces)) {
+        this.setState({ provinces: { ...this.state.provinces, data: provinces } })
+      }
     }
 
-    if (!addAddress.isLoading) {
-      switch (addAddress.status) {
-        case Status.SUCCESS :
-          if (!addAddress.isFound) notification = {type: 'is-danger', status: true, message: 'Gagal menambah data informasi pengiriman'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {type: 'is-danger', status: true, message: productDetail.message}
-          break
-        default:
-          break
+    if (!isFetching(districts) && this.submitting.districts) {
+      this.submitting = { ...this.submitting, districts: false }
+      NProgress.done()
+      if (isError(districts)) {
+        this.setState({ notification: notifError(districts.message) })
       }
-      if (addAddress.address.id !== addressSelected.id) {
-        this.props.dispatch(purchaseActions.addressSelected({...addAddress.address, status: true}))
-        Router.back()
+      if (isFound(districts)) {
+        this.setState({ districts: { ...this.state.districts, data: districts } })
       }
-      this.setState({ notification })
+    }
+
+    if (!isFetching(subDistricts) && this.submitting.subDistricts) {
+      this.submitting = { ...this.submitting, subDistricts: false }
+      NProgress.done()
+      if (isError(subDistricts)) {
+        this.setState({ notification: notifError(subDistricts.message) })
+      }
+      if (isFound(subDistricts)) {
+        this.setState({ subDistricts: { ...this.state.subDistricts, data: subDistricts } })
+      }
+    }
+
+    if (!isFetching(villages) && this.submitting.villages) {
+      this.submitting = { ...this.submitting, villages: false }
+      NProgress.done()
+      if (isError(villages)) {
+        this.setState({ notification: notifError(villages.message) })
+      }
+      if (isFound(villages)) {
+        this.setState({ villages: { ...this.state.villages, data: villages } })
+      }
+    }
+
+    if (!isFetching(productDetail) && this.submitting.productDetail) {
+      this.submitting = { ...this.submitting, productDetail: false }
+      NProgress.done()
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
+      }
+    }
+
+    if (!isFetching(addAddress) && this.submitting.addAddress) {
+      this.submitting = { ...this.submitting, addAddress: false }
+      if (isError(addAddress)) {
+        this.setState({ notification: notifError(addAddress.message) })
+      }
+      if (isFound(addAddress)) {
+        // if (addAddress.address.id !== addressSelected.id) {
+        //  this.props.addressSelected({...addAddress.address, status: true})
+        // }
+        NProgress.start()
+        Router.push(`/purchase?id=${this.state.id}`)
+      }
     }
   }
 
   render () {
-    const { formData, provinces, districts, subDistricts, villages, submiting, error, notification } = this.state
+    const { formData, provinces, districts, subDistricts, villages, error, notification } = this.state
     const errorStyle = {
       borderBottomColor: 'red',
       color: 'red'
@@ -383,7 +417,7 @@ class ShippingInformation extends Component {
         </Section>
         <Section className='section is-paddingless'>
           <div className='edit-data-delivery'>
-            <a onClick={(e) => !submiting && this.onSubmit(e)} className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}>Simpan Perubahan</a>
+            <a onClick={(e) => !this.submitting.addAddress && this.onSubmit(e)} className={`button is-primary is-large is-fullwidth ${this.submitting.addAddress && 'is-loading'}`}>Simpan Perubahan</a>
           </div>
         </Section>
         <OptionsProvince
@@ -406,20 +440,26 @@ class ShippingInformation extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    provinces: state.provinces,
-    districts: state.districts,
-    subDistricts: state.subdistricts,
-    villages: state.villages,
-    productDetail: state.productDetail,
-    shippingInformation: state.shippingInformation,
-    addAddress: state.addAddress,
-    addressSelected: state.addressSelected
-  }
-}
+const mapStateToProps = (state) => ({
+  provinces: state.provinces,
+  districts: state.districts,
+  subDistricts: state.subdistricts,
+  villages: state.villages,
+  productDetail: state.productDetail,
+  shippingInformation: state.shippingInformation,
+  addAddress: state.addAddress,
+  addressSelected: state.addressSelected
+})
 
-// ShippingInformation = reduxForm({ form: 'shippingForm' })(ShippingInformation)
-// ShippingInformation = connect(mapStateToProps)(ShippingInformation)
+const mapDispatchToProps = (dispatch) => ({
+  getDistrict: (params) => dispatch(locationActions.getDistrict(params)),
+  // estimatedShipping: (params) => dispatch(expeditionActions.estimatedShipping(params)),
+  getSubDistrict: (params) => dispatch(locationActions.getSubDistrict(params)),
+  setAddAddress: (params) => dispatch(addressActions.addAddress(params)),
+  getVillage: (params) => dispatch(locationActions.getVillage(params)),
+  addressSelected: (params) => dispatch(purchaseActions.addressSelected(params)),
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  getProvince: () => dispatch(locationActions.getProvince())
+})
 
-export default connect(mapStateToProps)(ShippingInformation)
+export default connect(mapStateToProps, mapDispatchToProps)(ShippingInformation)

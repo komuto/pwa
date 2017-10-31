@@ -9,6 +9,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+import Router from 'next/router'
 import InfiniteScroll from 'react-infinite-scroller'
 import { animateScroll } from 'react-scroll'
 /** including components */
@@ -447,6 +448,7 @@ class MyProduct extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
+        callBack: () => Router.push('/'),
         textPath: 'Produk',
         searchActive: !!q
       }
