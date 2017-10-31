@@ -1,71 +1,109 @@
+/**
+ * Safei Muslim
+ * Yogyakarta , 10 Oktober 2017
+ * PT Skyshi Digital Indonesa
+ */
+
+/**
+ * import depedencies
+ */
 import * as firebase from 'firebase'
 import localforage from 'localforage'
 
-const config = {
-  apiKey: 'AIzaSyBTTry2JqI1WJHdtcmYpKHXHXfjJglgvgo',
-  authDomain: 'komuto-dcd83.firebaseapp.com',
-  databaseURL: 'https://komuto-dcd83.firebaseio.com',
-  projectId: 'komuto-dcd83',
-  storageBucket: 'komuto-dcd83.appspot.com',
-  messagingSenderId: '163364818536'
-}
-
-firebase.initializeApp(config)
-const messaging = firebase.messaging()
-
-if (
-  process.env.NODE_ENV === 'production' &&
-  typeof window !== 'undefined' &&
-  'serviceWorker' in navigator
-  ) {
-    // On load register service worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').then((registration) => {
-          // Successfully registers service worker
-        console.log('ServiceWorker registration successful with scope: ', registration.scope)
-        messaging.useServiceWorker(registration)
-      })
-        .then(() => {
-          // Requests user browser permission
-          return requestPermission()
-        })
-        .catch((err) => {
-          console.log('ServiceWorker registration failed: ', err)
-        })
-    })
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  /**
+   * config options fcm
+   */
+  const config = {
+    apiKey: 'AIzaSyDGJZCyRF4dCLNeQJ4PlxhdrS3Iq5uvAzQ',
+    authDomain: 'komuto-274c0.firebaseapp.com',
+    databaseURL: 'https://komuto-274c0.firebaseio.com',
+    projectId: 'komuto-274c0',
+    storageBucket: 'komuto-274c0.appspot.com',
+    messagingSenderId: '577230373666'
   }
-}
+  /**
+   * initializaation firebase
+   */
+  firebase.initializeApp(config)
+  /**
+   * initializaation firebase messaging
+   */
+  const messaging = firebase.messaging()
 
-function requestPermission () {
-  return messaging.requestPermission().then(function () {
-    return getToken()
+  /**
+   * On load register service worker
+   */
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      /**
+       * Successfully registers service worker
+       */
+      messaging.useServiceWorker(registration)
+    })
+      .then(() => {
+        /**
+         * request permission
+         */
+        return messaging.requestPermission()
+      })
+      .then(() => {
+        /**
+         * request token
+         */
+        return messaging.getToken()
+      })
+      .then((token) => {
+        /**
+         * save token to local storage, use when user login/register
+         */
+        localforage.setItem('FCM_TOKEN', token)
+      })
+      .catch((err) => {
+        /**
+         * failed registration
+         */
+        console.log('ServiceWorker registration failed: ', err)
+      })
+  })
+
+  /**
+   * received message when web active(Foreground)
+   */
+  messaging.onMessage(function (payload) {
+    console.log('Message received. ', payload)
   })
 }
 
-function getToken () {
-  return messaging.getToken().then(function (token) {
-    console.log('TOKEN: ', token)
+// function requestPermission () {
+//   return messaging.requestPermission().then(function () {
+//     return getToken()
+//   })
+// }
 
-    if (token) {
-      updatedToken(token)
-    } else {
-      requestPermission()
-    }
-  })
-}
+// function getToken () {
+//   return messaging.getToken().then(function (token) {
+//     console.log('TOKEN: ', token)
 
-function updatedToken (token) {
-  localforage.setItem('FCM_TOKEN', token).then(function () {
-    return localforage.getItem('FCM_TOKEN')
-  }).then(function (value) {
-    // we got our value
-    console.log('SUCESS TOKEN', token)
-  }).catch(function (err) {
-    // we got an error
-    console.log('ERROR TOKEN', err)
-  })
-}
+//     if (token) {
+//       updatedToken(token)
+//     } else {
+//       requestPermission()
+//     }
+//   })
+// }
+
+// function updatedToken (token) {
+//   localforage.setItem('FCM_TOKEN', token).then(function () {
+//     return localforage.getItem('FCM_TOKEN')
+//   }).then(function (value) {
+//     // we got our value
+//     console.log('SUCESS TOKEN', token)
+//   }).catch(function (err) {
+//     // we got an error
+//     console.log('ERROR TOKEN', err)
+//   })
+// }
 
 // if (
 // process.env.NODE_ENV === 'production' &&

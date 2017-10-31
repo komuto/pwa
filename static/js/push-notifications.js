@@ -4,65 +4,91 @@
  * PT Skyshi Digital Indonesa
  */
 
+// curl -X POST --header "Authorization: key=AAAAhmWcgyI:APA91bGC7jtDxaH7tQsFH-zwjiNlwosbDPrvjuFBOlMTiyS60PbIq0aNy_I0-GwPWgVSQvQW2TesbgQdmAqvzr5dtLhE1dgfNMeGR4ijM1pidzNS_0TVifqpAI0PWN77LOSxZMOwvtem" --Header "Content-Type:application/json" https://fcm.googleapis.com/fcm/send -d "{\"to\":\"ftNQTdCWHEk:APA91bFkAp3T_8xtAPr2MWcnZOUN_2B6Uhe74oMD8xGtYgzZ9lsm7S4S6dTWY_YmnjO5Wo7auTtIkTtb0XBqQNrHoYdnbBIGYZMZQbB4gvrLUs49m9jCYveWzMpBwIhIV5QHkriomgVX\",\"data\":{\"notification\":{\"body\":\"Are you coming to our party?\",\"title\":\"This is a tester tester\",\"confirm\":\"https://developers.google.com/web/\",\"decline\":\"https://www.yahoo.com/\"}},\"priority\":10}"
+
 // Give the service worker access to Firebase Messaging.
 // Note that you can only use Firebase Messaging here, other Firebase libraries
 // are not available in the service worker.
-importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-messaging.js');
+/** 
+ * import firebase
+ * import firebase message
+ */
 
+importScripts('https://www.gstatic.com/firebasejs/4.6.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/4.6.0/firebase-messaging.js');
 
-// Initialize the Firebase app in the service worker by passing in the
-// messagingSenderId.
+/**
+ * Initialize the Firebase app in the service worker by passing in the
+ * [messagingSenderId]
+ */
+
 firebase.initializeApp({
-  'messagingSenderId': '163364818536'
+  'messagingSenderId': '577230373666'
 });
 
-// Retrieve an instance of Firebase Messaging so that it can handle background
-// messages.
+/**
+ * define message const
+ */
+
 const messaging = firebase.messaging();
 
+/**
+ * --- Installs service worker ---
+ */
 
-// If you would like to customize notifications that are received in the
-// background (Web app is closed or not in browser focus) then you should
-// implement this optional method.
-// [START background_handler]
-messaging.setBackgroundMessageHandler(function(payload) {
-  // Customize notification here
-  const notificationTitle = 'Background Message Title';
-  const notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
-  };
-
-  return self.registration.showNotification(notificationTitle,
-      notificationOptions);
+self.addEventListener('install', (event) => {
+  console.log('Service worker installed');
 });
 
-self.addEventListener('push', function(event) {
-  
-    console.info('Event: Push');
-  
-    var title = 'New commit on Github Repo: RIL';
-  
-    var body = {
-      'body': 'Click to see the latest commit',
-      'tag': 'pwa',
-      'icon': './images/48x48.png'
-    };
-  
-    event.waitUntil(
-      self.registration.showNotification(title, body)
-    );
-  });
+/**
+ * --- user click notification ---
+ * --- get notification object ---
+ * use event.notification.data
+ */
 
-  self.addEventListener('notificationclick', function(event) {
-    
-      var url = 'http://facebook.com';
-    
-      event.notification.close(); //Close the notification
-    
-      // Open the app and navigate to latest.html after clicking the notification
-      event.waitUntil(
-        clients.openWindow(url)
-      );
-    });
+self.addEventListener('notificationclick', (event) => {
+  // Event actions derived from event.notification.data from data received
+  var eventURL = event.notification.data;
+  event.notification.close();
+  if (event.action === 'confirmAttendance') {
+    clients.openWindow(eventURL.confirm);
+  } else if (event.action === 'cancel') {
+    clients.openWindow(eventURL.decline);
+  } else {
+    clients.openWindow(eventURL.open);
+  }
+}, false);
+
+/**
+ * --- received message(Background) ---
+ * [CUSTOM] dont put notification element in payload
+ * --- payload must be like this ---
+ * payload : {
+ *  data: {
+ *    ...
+ *    notification: {
+ *      title: ''
+ *      body: ''
+ *    }
+ *    ...
+ *  }
+ * }
+ */
+
+messaging.setBackgroundMessageHandler((payload) => {
+  let data = JSON.parse(payload.data.custom_notification);
+  let notificationTitle = `KOMUTO : ${data.title}`;
+  let notificationOptions = {
+    body: data.body,
+    icon: 'https://image.flaticon.com/icons/png/128/107/107822.png',
+    // options event
+    actions: [
+      {action: 'confirmAttendance', title: '👍 Confirm attendance'},
+      {action: 'cancel', title: '👎 Not coming'}
+    ],
+    // For additional data to be sent to event listeners, needs to be set in this data {}
+    data: {confirm: data.confirm, decline: data.decline, open: data.open}
+  };
+
+  return self.registration.showNotification(notificationTitle, notificationOptions);
+});

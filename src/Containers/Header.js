@@ -8,16 +8,16 @@ import AppConfig from '../Config/AppConfig'
 // }
 
 const Header = (props) => {
-  const { title } = props
+  const isBrowser = typeof window !== 'undefined'
   return (
     <Head>
       <title>KOMUTO</title>
-      <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.min.css`} />
-      <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.min.css`} />
-      <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} />
-      <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} />
-      <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} />
-      <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
+      { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.min.css`} /> }
+      { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.min.css`} /> }
+      { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} /> }
+      { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} /> }
+      { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} /> }
+      { isBrowser && <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} /> }
     </Head>
   )
 }
