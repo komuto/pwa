@@ -5,7 +5,7 @@ export default (active = 'ID') => {
   return {
     // home
     'home': ['Beranda', 'Home'][index],
-    'search_placeholder': ['Cari barang atau toko', 'Search product or store'][index],
+    'search_placeholder': ['Cari barang ', 'Search product or store'][index],
     'product_category': ['Kategori Produk', 'Category Product'][index],
     'product_category_all': ['Lihat semua kategori', 'See all category'][index],
     'product_new': ['Produk Terbaru', 'New Product'][index],

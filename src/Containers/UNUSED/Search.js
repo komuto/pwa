@@ -71,7 +71,7 @@ class Search extends Component {
           <a className='back back-on-seacrh' onClick={() => this.props.backPress()}><span className='icon-arrow-left black' /></a>
           <div className='field'>
             <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' onChange={(event) => this.onChange(event)} value={searchValue} />
+              <input className='input is-medium' type='text' placeholder='Cari barang' onChange={(event) => this.onChange(event)} value={searchValue} />
             </p>
           </div>
         </div>

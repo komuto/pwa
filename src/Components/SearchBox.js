@@ -15,7 +15,7 @@ class SearchBox extends Component {
         </div>
         <div className='field search-form is-clearfix'>
           <p className='control has-icons-left'>
-            <input className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+            <input className='input is-medium' type='text' placeholder='Cari barang' />
             <span className='icon is-left'>
               <span className='icon-search' />
             </span>

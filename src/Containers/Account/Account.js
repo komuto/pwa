@@ -207,7 +207,7 @@ class Account extends Component {
                       <article className='media'>
                         <div className='media-left'>
                           <figure className='image user-pict'>
-                            <img src={(profile.user.user.photo) ? profile.user.user.photo : Images.noImage} alt='pict' />
+                            <MyImage src={(profile.user.user.photo) ? profile.user.user.photo : Images.noImage} alt='pict' />
                           </figure>
                         </div>
                         <div className='media-content'>

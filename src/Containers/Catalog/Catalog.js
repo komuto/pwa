@@ -57,7 +57,7 @@ class Catalog extends Component {
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' placeholder='Cari barang atau toko' />
+              <input className='input is-medium' type='text' placeholder='Cari barang ' />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>

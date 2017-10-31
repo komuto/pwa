@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
@@ -49,7 +50,7 @@ class ShippingExpedition extends React.Component {
     }
     this.setState({ selectedServices: newExpeditions }, () => {
       if (this.state.selectedServices.indexOf(id) !== -1) {
-        let isSame = this.state.selectedServices.filter(id => getServicesId.includes(id))
+        let isSame = _.difference(getServicesId, this.state.selectedServices).length === 0
         if (isSame) {
           let newExpeditions = [...selectedExpeditions, expeditionId]
           this.setState({ selectedExpeditions: newExpeditions })
