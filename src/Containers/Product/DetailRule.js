@@ -55,7 +55,7 @@ class ProductDetailRule extends Component {
               </div>
               <div className='column is-half'>
                 <div className='rating-content is-left'>
-                  <a onClick={() => favoritePress()} className={`button ${store.is_favorite ? 'is-primary' : 'is-outlined'}`}><span className={`${store.is_favorite ? 'icon-close white' : 'icon-plus'}`} /> Di Favoritkan</a>
+                  <a onClick={() => favoritePress()} className={`button ${store.is_favorite ? 'is-primary' : 'is-outlined'} btn-fave`}><span className={`${store.is_favorite ? 'icon-close white' : 'icon-plus'}`} /> Di Favoritkan</a>
                 </div>
               </div>
             </div>

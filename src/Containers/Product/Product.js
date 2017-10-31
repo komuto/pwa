@@ -54,7 +54,7 @@ class MyProduct extends Component {
         ids: props.query.ids || null, // id store
         idc: props.query.idc || null // id catalog
       },
-      productBySearch: props.productBySearch || null,
+      productBySearch: null,
       categories: props.subCategory.categories || [],
       expeditionServices: props.expeditionServices || null,
       coba: props.expeditionServices || null,
@@ -304,8 +304,6 @@ class MyProduct extends Component {
     delete this.params.page
     delete this.params.limit
 
-    console.log('this.params: ', this.params)
-
     this.props.listProductBySearch(this.params)
 
     /** close filter */
@@ -340,12 +338,20 @@ class MyProduct extends Component {
             isEmpty
           })
         } else {
-          products = this.state.productBySearch.products.concat(productBySearch.products)
-          this.setState({
-            productBySearch: { ...productBySearch, products },
-            hasMore,
-            isEmpty
-          })
+          if (this.state.productBySearch) {
+            products = this.state.productBySearch.products.concat(productBySearch.products)
+            this.setState({
+              productBySearch: { ...productBySearch, products },
+              hasMore,
+              isEmpty
+            })
+          } else {
+            this.setState({
+              productBySearch,
+              hasMore,
+              isEmpty
+            })
+          }
         }
       }
     }
@@ -518,6 +524,7 @@ class MyProduct extends Component {
 
 /** product content */
 const ProductContent = ({productBySearch, viewActive, hasMore, wishlistPress, handleLoadMore}) => {
+  if (!productBySearch) return null
   return (
     <InfiniteScroll
       pageStart={0}
