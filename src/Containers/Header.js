@@ -17,7 +17,7 @@ const Header = (props) => {
       { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} /> }
       { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} /> }
       { isBrowser && <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} /> }
-      { isBrowser && <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} /> }
+      { <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} /> }
     </Head>
   )
 }
