@@ -134,3 +134,14 @@ export const getUnreadDisputeStore = () => {
   const axios = authApiKomuto()
   return axios.get('pages/store')
 }
+
+export const getStoreProductsByCatalogSearch = (params) => {
+  const axios = authApiKomuto()
+  const query = buildQuery(params)
+  return axios.get(`/users/store/products/search?${query}`)
+}
+
+export const getDropshipperFaq = () => {
+  const axios = authApiKomuto()
+  return axios.get('dropship/faq')
+}

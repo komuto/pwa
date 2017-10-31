@@ -1,6 +1,6 @@
 import * as actions from '../actions/stores'
 import * as apis from '../api/stores'
-import { buildSaga } from '../config'
+import { buildSaga, buildSagaDelay } from '../config'
 
 export const getStores = buildSaga(apis.getStores, actions.GET_STORE)
 export const createStore = buildSaga(apis.createStore, actions.CREATE_STORE)
@@ -21,3 +21,5 @@ export const getStoreDiscussions = buildSaga(apis.getStoreDiscussions, actions.G
 export const getStoreProductDetail = buildSaga(apis.getStoreProductDetail, actions.GET_STORE_PRODUCT_DETAIL)
 export const getStoreProductsByCatalog = buildSaga(apis.getStoreProductsByCatalog, actions.GET_STORE_PRODUCTS_BY_CATALOG)
 export const getUnreadDisputesStore = buildSaga(apis.getUnreadDisputeStore, actions.UNREAD_DISPUTES_STORE)
+export const getStoreProductsByCatalogSearch = buildSagaDelay(apis.getStoreProductsByCatalogSearch, actions.GET_STORE_PRODUCTS_BY_CATALOG_SEARCH)
+export const getDropshipFaq = buildSaga(apis.getDropshipperFaq, actions.GET_DROPSHIPPER_FAQ)

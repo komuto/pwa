@@ -119,7 +119,7 @@ const product = function * () {
   yield takeEvery(typeReq(productActions.UPDATE_PRODUCT), productSaga.updateProduct)
   yield takeEvery(typeReq(productActions.GET_PRODUCT_EXPEDITIONS), productSaga.getProductExpeditions)
   yield takeEvery(typeReq(productActions.ADD_DROPSHIP_PRODUCTS), productSaga.addDropshipProducts)
-  yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCTS), productSaga.getDropshipProducts)
+  yield takeLatest(typeReq(productActions.GET_DROPSHIP_PRODUCTS), productSaga.getDropshipProducts)
   yield takeEvery(typeReq(productActions.UPDATE_DROPSHIP_STATUS), productSaga.updateDropshipStatus)
   yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCT_FOR_ADD), productSaga.getDropshipProductForAdd)
   yield takeEvery(typeReq(productActions.GET_DROPSHIP_PRODUCT_FOR_MANAGE), productSaga.getDropshipProductForManage)
@@ -146,6 +146,8 @@ const store = function * () {
   yield takeEvery(typeReq(storeActions.GET_STORE_DISCUSSIONS), storeSaga.getStoreDiscussions)
   yield takeEvery(typeReq(storeActions.GET_STORE_PRODUCTS_BY_CATALOG), storeSaga.getStoreProductsByCatalog)
   yield takeEvery(typeReq(storeActions.UNREAD_DISPUTES_STORE), storeSaga.getUnreadDisputesStore)
+  yield takeLatest(typeReq(storeActions.GET_STORE_PRODUCTS_BY_CATALOG_SEARCH), storeSaga.getStoreProductsByCatalogSearch)
+  yield takeEvery(typeReq(storeActions.GET_DROPSHIPPER_FAQ), storeSaga.getDropshipFaq)
 }
 
 const address = function * () {
