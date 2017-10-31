@@ -10,7 +10,7 @@
 import * as firebase from 'firebase'
 import localforage from 'localforage'
 
-if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   /**
    * config options fcm
    */
