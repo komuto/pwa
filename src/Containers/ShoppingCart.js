@@ -228,13 +228,16 @@ class ShoppingCart extends Component {
   render () {
     let { cart, notification } = this.state
     return (
-      <Section>
-        <Notification
-          type={notification.type}
-          isShow={notification.status}
-          activeClose
-          onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message} />
+      <Section className={`${cart.emptyCart && 'content'}`}>
+        {
+          !cart.emptyCart &&
+          <Notification
+            type={notification.type}
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
+        }
         { cart.emptyCart && <EmptyCart /> }
         { !cart.emptyCart && cart.data.isFound &&
           <Cart
@@ -426,23 +429,25 @@ const Cart = (props) => {
 
 const EmptyCart = () => {
   return (
-    <section className='content'>
-      <div className='container is-fluid'>
-        <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='notFound' />
-          <p><strong>Belum ada barang di Keranjang Belanja</strong></p>
-          <p>Anda belum memasukkan barang ke keranjang belanja Anda</p>
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#fff', position: 'fixed' }}>
+      <section className='content' style={{ position: 'absolute', top: '40%', left: 0, width: '100%', transform: 'translateY(-50%)' }}>
+        <div className='container is-fluid'>
+          <div className='desc has-text-centered'>
+            <MyImage src={Images.cart} alt='notFound' />
+            <p><strong>Belum ada barang di Keranjang Belanja</strong></p>
+            <p>Anda belum memasukkan barang ke keranjang belanja Anda</p>
+          </div>
+          <a
+            onClick={(e) => {
+              e.preventDefault()
+              Router.push('/product')
+            }}
+            className='button is-primary is-large is-fullwidth'>
+            Belanja Sekarang
+          </a>
         </div>
-        <a
-          onClick={(e) => {
-            e.preventDefault()
-            Router.push('/product')
-          }}
-          className='button is-primary is-large is-fullwidth'>
-          Belanja Sekarang
-        </a>
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }
 

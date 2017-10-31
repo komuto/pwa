@@ -233,7 +233,7 @@ const ListConversationMessages = (props) => {
             })
           }
         </InfiniteScroll>
-        : <EmptyMessage />
+        : <EmptyMessage title='Belum ada Percakapan' message='Anda belum pernah melakukan percakapan dengan seller manapun' />
       }
     </div>
   )
@@ -282,20 +282,22 @@ const ListArcheiveMessages = (props) => {
             })
           }
         </InfiniteScroll>
-        : <EmptyMessage />
+        : <EmptyMessage title='Tidak ada Arsip' message='Anda belum memiliki arsip percakapan dengan seller manapun' />
       }
     </div>
   )
 }
 
-const EmptyMessage = () => {
+const EmptyMessage = ({ title, message }) => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <MyImage src={Images.emptyStatesMessage} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Belum ada Percakapan</strong></p>
-        <p>Anda belum pernah melakukan percakapan dengan seller manapun</p>
+    <div className='content' style={{ paddingTop: '10%' }}>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesMessage} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>{title}</strong></p>
+          <p>{message}</p>
+        </div>
       </div>
     </div>
   )

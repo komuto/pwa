@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="173" height="177" viewBox="0 0 173 177">
+    <defs>
+        <path id="a" d="M3 0h70a3 3 0 0 1 3 3v97H13c-7.18 0-13-5.82-13-13V3a3 3 0 0 1 3-3z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(11 83)">
+            <rect width="73.056" height="54" fill="#F4F4F4" rx="2"/>
+            <g fill="#E0E0E0" transform="translate(8 18)">
+                <rect width="20" height="2" y="16" rx="1"/>
+                <rect width="20" height="2" y="8" rx="1"/>
+                <rect width="10" height="2" rx="1"/>
+            </g>
+        </g>
+        <g transform="matrix(-1 0 0 1 162 119)">
+            <rect width="73.056" height="54" fill="#F4F4F4" rx="2"/>
+            <g fill="#E0E0E0" transform="translate(11 16)">
+                <rect width="20" height="2" y="16" rx="1"/>
+                <rect width="20" height="2" y="8" rx="1"/>
+                <rect width="10" height="2" x="10" rx="1"/>
+            </g>
+        </g>
+        <g transform="translate(0 -1)">
+            <g transform="translate(48)">
+                <path fill="#D5D5D5" d="M17.55 33.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V35.55h1.402a1.05 1.05 0 0 0 0-2.1H17.55z"/>
+                <path fill="#FFDEDE" d="M46.9 36.1v-1.202A.894.894 0 0 0 46 34c-.5 0-.9.402-.9.898V36.1h-1.202A.894.894 0 0 0 43 37c0 .5.402.9.898.9H45.1v1.202c0 .504.403.898.9.898.5 0 .9-.402.9-.898V37.9h1.202A.894.894 0 0 0 49 37c0-.5-.402-.9-.898-.9H46.9z"/>
+                <path fill="#51D881" d="M7.526 7.474l2.003-.035a1.5 1.5 0 0 0 1.47-1.526 1.495 1.495 0 0 0-1.523-1.474l-2.002.035-.035-2.003a1.5 1.5 0 0 0-1.526-1.47 1.495 1.495 0 0 0-1.474 1.523l.035 2.002-2.003.035a1.5 1.5 0 0 0-1.47 1.526 1.495 1.495 0 0 0 1.523 1.474l2.002-.035.035 2.003a1.5 1.5 0 0 0 1.526 1.47 1.495 1.495 0 0 0 1.474-1.523l-.035-2.002z"/>
+                <path fill="#FF9292" d="M66.55 14.45v-1.402a1.05 1.05 0 0 0-2.1 0v1.402h-1.402a1.05 1.05 0 0 0 0 2.1h1.402v1.402a1.05 1.05 0 0 0 2.1 0V16.55h1.402a1.05 1.05 0 0 0 0-2.1H66.55z"/>
+                <circle cx="32" cy="18" r="2" stroke="#89CAFF" stroke-width="2"/>
+            </g>
+            <rect width="173" height="4" y="174" fill="#EEE" rx="2"/>
+        </g>
+        <g transform="translate(47 72)">
+            <mask id="b" fill="#fff">
+                <use xlink:href="#a"/>
+            </mask>
+            <use fill="#F4F5F6" xlink:href="#a"/>
+            <path fill="#FFF" d="M-3 0h70a3 3 0 0 1 3 3v97H7c-7.18 0-13-5.82-13-13V3a3 3 0 0 1 3-3z" mask="url(#b)"/>
+            <path stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 0h70a3 3 0 0 1 3 3v97H13c-7.18 0-13-5.82-13-13V3a3 3 0 0 1 3-3z"/>
+            <rect width="34" height="2" x="21" y="61" fill="#D8D8D8" rx="1"/>
+            <rect width="25" height="2" x="26" y="69" fill="#D8D8D8" rx="1"/>
+            <g transform="translate(23 19)">
+                <circle cx="15" cy="15" r="15" fill="#FF9292" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                <path fill="#FFF" d="M15 10.945a4.308 4.308 0 0 0-7 3.363c-.039 2.408 2.294 4.92 7 7.538 4.657-2.595 6.99-5.107 7-7.538a4.308 4.308 0 0 0-7-3.363z"/>
+            </g>
+            <path fill="#F4F5F6" stroke="#606E81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M84.367 100.08c7.505 0 11.257-4.36 11.257-13.08H26c0 7.18-5.68 13.08-12.86 13.08h71.227z"/>
+        </g>
+        <g stroke="#FD8787" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M38.934 71.518l-4.851-.968M43.084 65.286l-7.272-7.814M49.4 62.897l-.473-5.42"/>
+        </g>
+    </g>
+</svg>

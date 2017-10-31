@@ -28,7 +28,7 @@ class ReviewProducts extends Component {
         message: 'Error, default message.'
       }
     }
-    this.hasMore = true
+    this.hasMore = false
     this.fetching = false
     this.fetchingFirst = false
     this.afterAddComment = false
@@ -187,12 +187,16 @@ class ReviewProducts extends Component {
 
 const EmptyReview = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <MyImage src={Images.emptyStatesReview} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Review Anda Kosong</strong></p>
-        <p>Anda belum pernah meninggalkan review untuk barang manapun</p>
+    <div style={{ width: '100%', height: '100%', position: 'absolute', paddingTop: '10%' }}>
+      <div className='content' style={{ paddingTop: '10%' }}>
+        <div className='container is-fluid'>
+          <div className='desc has-text-centered'>
+            <MyImage src={Images.review} alt='komuto' />
+            <br /><br />
+            <p><strong className='bold' /></p>
+            <p>Anda belum pernah meninggalkan review untuk barang manapun</p>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 import _ from 'lodash'
 // components
 import ProductContainers from '../Components/ProductContainers'
@@ -15,6 +16,7 @@ import { Navbar } from './Navbar'
 // actions
 import * as userActions from '../actions/user'
 import * as productActions from '../actions/product'
+import Images from '../Themes/Images'
 
 class Wishlist extends Component {
   constructor (props) {
@@ -25,6 +27,7 @@ class Wishlist extends Component {
       viewActive: 'list',
       sortActive: false,
       selectedSort: null,
+      emptyWishlist: 'default',
       search: {
         status: false,
         value: '',
@@ -121,19 +124,22 @@ class Wishlist extends Component {
 
     /** handling state get products */
     if (!isFetching(products) && this.submitting.products) {
+      console.log('products: ', products)
       NProgress.done()
       this.submitting = { ...this.submitting, products: false }
       if (isError(products)) {
         this.setState({ notification: notifError(products.message) })
       }
       if (isFound(products)) {
-        this.setState({ products })
+        let emptyWishlist = (products.wishlist.length < 1)
+        this.setState({ products, emptyWishlist })
       }
     }
   }
 
   render () {
-    let { search, products, notification, viewActive } = this.state
+    let { search, products, notification, viewActive, emptyWishlist } = this.state
+    console.log('emptyWishlist: ', emptyWishlist)
     let params = {
       navbar: {
         searchBoox: false,
@@ -145,18 +151,22 @@ class Wishlist extends Component {
     if (products.wishlist) {
       wishlist = search.status ? search.results : products.wishlist
     }
+    let isEmpty = emptyWishlist !== 'default' && emptyWishlist
     return (
       <Content>
         <Navbar {...params} />
         <Section className='section is-paddingless'>
-          <div className='field search-form'>
-            <p className='control has-icons-left'>
-              <input onChange={(event) => this.searchOnChange(event)} value={search.value} className='input is-medium' type='text' placeholder='Cari barang' />
-              <span className='icon is-left'>
-                <span className='icon-search' />
-              </span>
-            </p>
-          </div>
+          {
+            !isEmpty &&
+            <div className='field search-form paddingless is-fixed'>
+              <p className='control has-icons-left'>
+                <input onChange={(event) => this.searchOnChange(event)} value={search.value} className='input is-medium' type='text' placeholder='Cari barang' />
+                <span className='icon is-left'>
+                  <span className='icon-search' />
+                </span>
+              </p>
+            </div>
+          }
           <Notification
             type='is-danger'
             isShow={notification.status}
@@ -164,26 +174,50 @@ class Wishlist extends Component {
             onClose={() => this.setState({notification: {status: false, message: ''}})}
             message={notification.message} />
         </Section>
-        <WishlistContent
-          viewActive={viewActive}
-          wishlist={wishlist}
-          wishlistPress={(id) => this.wishlistPress(id)} />
-        <TabbarCategories
-          sortButton
-          filterButton={false}
-          viewButton
-          sortOnClick={(e) => this.sortOnClick(e)}
-          filterOnClick={() => this.filterOnClick()}
-          viewOnClick={() => this.viewOnClick()}
-          viewActive={viewActive} />
-        <Sort
-          {...this.state}
-          sortOnClick={(e) => this.sortOnClick(e)}
-          sortSelected={(data) => this.sortSelected(data)} />
+        {
+          isEmpty
+            ? <WishlistContentEmpty />
+            : <WishlistContent
+              viewActive={viewActive}
+              wishlist={wishlist}
+              wishlistPress={(id) => this.wishlistPress(id)} />
+        }
+        {
+          !isEmpty &&
+          <TabbarCategories
+            sortButton
+            filterButton={false}
+            viewButton
+            sortOnClick={(e) => this.sortOnClick(e)}
+            filterOnClick={() => this.filterOnClick()}
+            viewOnClick={() => this.viewOnClick()}
+            viewActive={viewActive} />
+        }
+
+        {
+          !isEmpty &&
+          <Sort
+            {...this.state}
+            sortOnClick={(e) => this.sortOnClick(e)}
+            sortSelected={(data) => this.sortSelected(data)} />
+        }
       </Content>
     )
   }
 }
+
+const WishlistContentEmpty = () => (
+  <section className='content'>
+    <div className='container is-fluid'>
+      <div className='desc has-text-centered'>
+        <img src={`${Images.wishlistEmpty}`} alt='komuto' />
+        <p><strong>Wishlist Anda Kosong</strong></p>
+        <p>Anda belum memasukkan barang apapun ke dalam wishlist Anda</p>
+      </div>
+      <a onClick={() => Router.push('/product?sort=newest', '/p?sort=newest')} className='button is-primary is-large is-fullwidth'>Mulai Lihat Barang</a>
+    </div>
+  </section>
+)
 
 const WishlistContent = ({ wishlist, viewActive, wishlistPress }) => (
   <Section className='section is-paddingless' style={{marginBottom: '0px'}}>

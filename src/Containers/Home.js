@@ -219,11 +219,12 @@ const CategoryContent = ({ localize, category }) => (
       <SectionTitle title={localize.product_category} />
       <Content className='columns is-mobile is-multiline custom bg-white'>
         {
-          category.categories.map(category => {
+          category.categories.map((category, index) => {
+            if (index > 5) return null
             return (
               <div
                 className={`column is-one-third effect-display`}
-                key={category.id}
+                key={index}
                 onClick={() => {
                   Router.push(
                     url.format({

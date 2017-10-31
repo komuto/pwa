@@ -8,7 +8,7 @@ import Wishlist from '../src/Containers/Wishlist'
 
 const Index = (props) => {
   const params = {
-    style: 'main wishlist',
+    style: 'main wishlist is-padding-110',
     header: {
       title: 'Search'
     }

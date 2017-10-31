@@ -11,6 +11,7 @@ import moment from 'moment'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 import { animateScroll } from 'react-scroll'
+import url from 'url'
 /** including component */
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
@@ -18,6 +19,8 @@ import MyImage from '../../Components/MyImage'
 import { Navbar } from '../Navbar'
 /** including actions */
 import * as productActions from '../../actions/product'
+/** including libs */
+import UrlParam from '../../Lib/UrlParam'
 
 class DiscussionDetail extends Component {
   constructor (props) {
@@ -43,6 +46,7 @@ class DiscussionDetail extends Component {
 
   render () {
     const { comments, notification } = this.state
+    console.log('comments: ', comments)
     const { isFound } = this.props
     let params = {
       navbar: {
@@ -141,44 +145,55 @@ class DiscussionDetail extends Component {
   }
 }
 
-const MessageDetailContent = ({ comments, newComment, submitting, messagesEnd }) => (
-  <Content>
-    <div className='column is-paddingless'>
-      <div className='see-all is-bordered'>
-        <span onClick={() => Router.push(`/product-detail?id=${comments.comments.product.id}`)} className='link'>Lihat Produk <span className='icon-arrow-right' /></span>
-      </div>
-    </div>
-    <section className='section is-paddingless bg-white'>
-      <div className='discuss'>
-        <ul className='main-discuss notif-detail'>
-          {
-            comments.comments.comments.map((message, index) =>
-              <List key={index} message={message} />
+const MessageDetailContent = ({ comments, newComment, submitting, messagesEnd }) => {
+  let myComment = comments.comments
+  return (
+    <Content>
+      <div className='column is-paddingless'>
+        <div className='see-all is-bordered'>
+          <span onClick={() =>
+            Router.push(
+              url.format({
+                pathname: '/product-detail',
+                query: {id: myComment.product.id}
+              }),
+              `/detail/${UrlParam(myComment.store.name)}/${myComment.product.slug}-${myComment.product.id}`
             )
-          }
-          <div
-            style={{ float: 'left', clear: 'both' }}
-            ref={(el) => { messagesEnd = el }} />
-        </ul>
+          } className='link'>Lihat Produk <span className='icon-arrow-right' /></span>
+        </div>
       </div>
-    </section>
-    <div className='add-comment'>
-      <div className='field'>
-        <p className='control'>
-          <span className={`${submitting.newComment && 'button self is-loading right'}`} />
-          <input
-            name='answer'
-            onChange={(e) => !submitting.newComment && newComment.onChange(e)}
-            value={newComment.answer}
-            onKeyPress={(e) => !submitting.newComment && newComment.submit(e)}
-            className='textarea'
-            placeholder='Tulis pessan Anda disini'
-            readOnly={submitting.newComment} />
-        </p>
+      <section className='section is-paddingless bg-white'>
+        <div className='discuss'>
+          <ul className='main-discuss notif-detail'>
+            {
+              myComment.comments.map((message, index) =>
+                <List key={index} message={message} />
+              )
+            }
+            <div
+              style={{ float: 'left', clear: 'both' }}
+              ref={(el) => { messagesEnd = el }} />
+          </ul>
+        </div>
+      </section>
+      <div className='add-comment'>
+        <div className='field'>
+          <p className='control'>
+            <span className={`${submitting.newComment && 'button self is-loading right'}`} />
+            <input
+              name='answer'
+              onChange={(e) => !submitting.newComment && newComment.onChange(e)}
+              value={newComment.answer}
+              onKeyPress={(e) => !submitting.newComment && newComment.submit(e)}
+              className='textarea'
+              placeholder='Tulis pessan Anda disini'
+              readOnly={submitting.newComment} />
+          </p>
+        </div>
       </div>
-    </div>
-  </Content>
-)
+    </Content>
+  )
+}
 
 const List = ({ message }) => (
   <li>
