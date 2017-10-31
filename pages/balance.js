@@ -49,7 +49,7 @@ const Index = (props) => {
         alias: '/balance/topup',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout> <NotificationPage {...params} /> </DefaultLayout>
     }
 
     /** status topup balance unfinish */
@@ -62,7 +62,7 @@ const Index = (props) => {
         alias: '/balance/topup',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout> <NotificationPage {...params} /> </DefaultLayout>
     }
 
     /** status topup balance error */
@@ -75,7 +75,7 @@ const Index = (props) => {
         alias: '/balance/topup',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout><NotificationPage {...params} /></DefaultLayout>
     }
 
     if (status === 'history') {
