@@ -143,27 +143,27 @@ class InformationStore extends React.Component {
 
   componentDidMount () {
     const { profile, formInfo } = this.state
-    const { isLogin, query, getProfile } = this.props
+    const { query, getProfile } = this.props
     // if (isLogin) {
-      if (query.type === 'settingStore') {
-        if (!profile.isFound) {
-          NProgress.start()
-          this.fetchingFirst = true
-          getProfile()
-        } else {
-          this.fetchingFirst = false
-          const newState = { formInfo, overSlogan: 0 }
-          const splitLogo = profile.user.store.logo.split('/')
-          const logo = splitLogo.pop() || splitLogo.pop()
-          newState.formInfo['name'] = profile.user.store.name
-          newState.formInfo['slogan'] = profile.user.store.slogan
-          newState.formInfo['description'] = profile.user.store.description
-          newState.formInfo['logo'] = logo
-          newState.formInfo['path'] = splitLogo.join('/')
-          this.setState(newState)
-          NProgress.done()
-        }
+    if (query.type === 'settingStore') {
+      if (!profile.isFound) {
+        NProgress.start()
+        this.fetchingFirst = true
+        getProfile()
+      } else {
+        this.fetchingFirst = false
+        const newState = { formInfo, overSlogan: 0 }
+        const splitLogo = profile.user.store.logo.split('/')
+        const logo = splitLogo.pop() || splitLogo.pop()
+        newState.formInfo['name'] = profile.user.store.name
+        newState.formInfo['slogan'] = profile.user.store.slogan
+        newState.formInfo['description'] = profile.user.store.description
+        newState.formInfo['logo'] = logo
+        newState.formInfo['path'] = splitLogo.join('/')
+        this.setState(newState)
+        NProgress.done()
       }
+    }
     // } else {
     //   Router.push('/signin')
     // }
