@@ -68,12 +68,12 @@ class ProductList extends Component {
     Router.push(`/product-change-dropship?id=${id}`)
   }
 
-  productDetail (e, product, storeId) {
+  productDetail (e, product) {
     e.preventDefault()
     if (product.hasOwnProperty('dropship_origin')) {
-      Router.push(`/product-dropship-detail?id=${product.id}.${storeId}&commission=${product.dropship_origin.commission.percent}&type=detailDropship`)
+      Router.push(`/product-dropship-detail?id=${product.id}&commission=${product.dropship_origin.commission.percent}&type=detailDropship`)
     } else {
-      Router.push(`/product-manage?id=${product.id}.${storeId}`)
+      Router.push(`/product-manage?id=${product.id}`)
     }
   }
 
@@ -224,9 +224,11 @@ class ProductList extends Component {
             productMoveCatalogOther={(e, id) => this.productMoveCatalogOther(e, id)}
             productChangeDropship={(e, id) => this.productChangeDropship(e, id)}
             dropdownSelected={dropdownSelected}
-            productDetail={(e, product, storeId) => this.productDetail(e, product, storeId)} />
+            productDetail={(e, product) => this.productDetail(e, product)} />
           : <ContentHidden
-            hiddenProducts={hiddenProducts} />
+            hiddenProducts={hiddenProducts}
+            catalogProducts={catalogProducts}
+            productDetail={(e, product) => this.productDetail(e, product)} />
         }
       </Content>
     )
@@ -235,6 +237,7 @@ class ProductList extends Component {
 
 const ContentHidden = (props) => {
   if (props.hiddenProducts === undefined) return null
+  console.log('test', props.catalogProducts[0])
   return (
     <div>
       {
@@ -242,7 +245,7 @@ const ContentHidden = (props) => {
           let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
           return (
             <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
-              <div className='detail-product' key={i}>
+              <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
                 <div className='remove rightTop'>
                   { p.is_discount && <span className='icon-discount-sign' /> }
                   { p.is_wholesaler && <span className='icon-grosir-sign' /> }
@@ -306,7 +309,7 @@ const ContentShow = (props) => {
                         { p.is_discount && <span className='icon-discount-sign' /> }
                         { p.is_wholesaler && <span className='icon-grosir-sign' /> }
                       </div>
-                      <div className='purchase' onClick={(e) => props.productDetail(e, p, sp.catalog.store_id)}>
+                      <div className='purchase' onClick={(e) => props.productDetail(e, p)}>
                         <figure className='img-item xx'>
                           <MyImage src={p.image} alt='image' />
                         </figure>

@@ -8,14 +8,15 @@ import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 // actions
 import * as productActions from '../../actions/product'
+import * as storesActions from '../../actions/stores'
 
 class ProductStatus extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
-      statusChecked: props.productDetail.isFound ? props.productDetail.detail.product.status : false,
+      storeProductDetail: props.storeProductDetail || null,
+      statusChecked: props.storeProductDetail.isFound ? props.storeProductDetail.storeProductDetail.product.status : false,
       notification: {
         type: 'is-success',
         status: false,
@@ -29,36 +30,36 @@ class ProductStatus extends React.Component {
   updateStatus (e, id) {
     e.preventDefault()
     this.submiting = true
-    this.props.updateProduct({ status: this.state.statusChecked, id: this.state.id.split('.')[0] })
+    this.props.updateProduct({ status: this.state.statusChecked, id: this.state.id })
   }
 
   async componentDidMount () {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      await this.props.getProduct({ id })
+      await this.props.getStoreProductDetail({ id })
       this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { alterProducts, productDetail } = nextProps
+    const { alterProducts, storeProductDetail } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
 
-    if (!isFetching(productDetail) && this.fetchingFirst) {
+    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false
-      if (isFound(productDetail)) {
-        this.setState({ productDetail: productDetail, statusChecked: productDetail.detail.product.status })
-        if (String(productDetail.detail.product.id) !== String(nextId)) {
+      if (isFound(storeProductDetail)) {
+        this.setState({ storeProductDetail: storeProductDetail, statusChecked: storeProductDetail.storeProductDetail.product.status })
+        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
           NProgress.start()
           this.fetchingFirst = true
           await this.props.getProduct({ id: nextId })
         }
       }
-      if (isError(productDetail)) {
-        this.setState({ notification: notifError(productDetail.message) })
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
@@ -77,21 +78,21 @@ class ProductStatus extends React.Component {
   }
 
   renderProductDetail () {
-    const { productDetail } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
                 <div className='content'>
                   <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
+                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
                   </p>
                 </div>
               </div>
@@ -107,8 +108,8 @@ class ProductStatus extends React.Component {
   }
 
   renderStatusInput () {
-    const { productDetail, statusChecked } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail, statusChecked } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <div>
           <label className={`radio ${statusChecked === 1 && 'checked'}`}>
@@ -179,13 +180,13 @@ class ProductStatus extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    productDetail: state.productDetail,
+    storeProductDetail: state.storeProductDetail,
     alterProducts: state.alterProducts
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
   updateProduct: (params) => dispatch(productActions.updateProduct(params))
 })
 

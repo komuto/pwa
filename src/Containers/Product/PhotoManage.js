@@ -9,7 +9,7 @@ import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as productActions from '../../actions/product'
-import * as storesAction from '../../actions/stores'
+import * as storesActions from '../../actions/stores'
 
 let FormData = require('form-data')
 
@@ -24,11 +24,11 @@ const styles = {
 class ProductPhotoManage extends Component {
   constructor (props) {
     super(props)
-    let imagesOrigin = props.productDetail.isFound ? props.productDetail.detail.images : []
+    let imagesOrigin = props.storeProductDetail.isFound ? props.storeProductDetail.storeProductDetail.images : []
 
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      storeProductDetail: props.storeProductDetail || null,
       imagesOrigin,
       images: [],
       notAcceptedFileType: [],
@@ -135,31 +135,31 @@ class ProductPhotoManage extends Component {
       return dataImages
     })
     this.submiting = true
-    this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
+    this.props.updateProduct({ images: newImage, id: id })
   }
 
   async componentDidMount () {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      await this.props.getProduct({ id })
+      await this.props.getStoreProductDetail({ id })
       this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { productDetail, images, imagesOrigin, id } = this.state
+    const { storeProductDetail, images, imagesOrigin, id } = this.state
     const { alterProducts, upload } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
 
-    if (!isFetching(productDetail) && this.fetchingFirst) {
+    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false
-      if (isFound(productDetail)) {
-        const newState = { productDetail, images }
+      if (isFound(storeProductDetail)) {
+        const newState = { storeProductDetail, images }
         // add property preview & name
-        let addPropPreview = nextProps.productDetail.detail.images.map(image => {
+        let addPropPreview = nextProps.storeProductDetail.storeProductDetail.images.map(image => {
           const splitPhoto = image.file.split('/')
           const namePhoto = splitPhoto.pop() || splitPhoto.pop()
           image['preview'] = image.file
@@ -167,16 +167,16 @@ class ProductPhotoManage extends Component {
           return image
         })
         newState.imagesOrigin = addPropPreview
-        newState.productDetail = nextProps.productDetail
+        newState.storeProductDetail = nextProps.storeProductDetail
         this.setState(newState)
-        if (String(productDetail.detail.product.id) !== String(nextId)) {
+        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
           NProgress.start()
           this.fetchingFirst = true
           await this.props.getProduct({ id: nextId })
         }
       }
-      if (isError(productDetail)) {
-        this.setState({ notification: notifError(productDetail.message) })
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
     if (!isFetching(upload) && this.uploading) {
@@ -190,7 +190,7 @@ class ProductPhotoManage extends Component {
           }
           return dataImages
         })
-        this.props.updateProduct({ images: newImage, id: id.split('.')[0] })
+        this.props.updateProduct({ images: newImage, id: id })
       }
       if (isError(upload)) {
         this.setState({ notification: notifError(upload.message) })
@@ -281,14 +281,14 @@ ProductPhotoManage.defaultProps = {
 }
 
 const mapStateToProps = (state) => ({
-  productDetail: state.productDetail,
+  storeProductDetail: state.storeProductDetail,
   alterProducts: state.alterProducts,
   upload: state.upload
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  photoUpload: (params) => dispatch(storesAction.photoUpload({data: params})),
-  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  photoUpload: (params) => dispatch(storesActions.photoUpload({data: params})),
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
   updateProduct: (params) => dispatch(productActions.updateProduct(params))
 })
 

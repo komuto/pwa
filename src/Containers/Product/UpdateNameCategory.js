@@ -21,7 +21,7 @@ class ProductUpdateNameCategory extends Component {
     let categoryTwo = isFound ? storeProductDetail.category.parents[1].id : ''
     let categoryThree = isFound ? storeProductDetail.category.parents[2].id : ''
     let categoryId = isFound ? storeProductDetail.category.id : ''
-    let brandId = isFound ? storeProductDetail.brand.id : ''
+    let brandId = isFound ? storeProductDetail.brand ? storeProductDetail.brand.id : '' : ''
     let description = isFound ? storeProductDetail.product.description : ''
     this.state = {
       id: props.query.id || null,
@@ -117,9 +117,9 @@ class ProductUpdateNameCategory extends Component {
       return
     }
     this.submiting = true
-    const brandId = form.hasOwnProperty('brand_id') ? form.brand_id : 0
+    const brandId = form.brand_id ? form.brand_id : 0
     const params = {
-      id: this.state.id.split('.')[0],
+      id: this.state.id,
       name: form.name,
       category_id: form.category_id,
       brand_id: brandId,
@@ -132,8 +132,7 @@ class ProductUpdateNameCategory extends Component {
     const { category, brands, id } = this.state
     if (id) {
       NProgress.start()
-      const productId = id.split('.')[0]
-      await this.props.getStoreProductDetail({ id: productId })
+      await this.props.getStoreProductDetail({ id })
       this.fetchingFirst = true
     }
     if (!category.isFound) {

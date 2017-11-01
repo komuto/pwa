@@ -12,6 +12,7 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
 import * as catalogActions from '../../actions/catalog'
 import * as productActions from '../../actions/product'
+import * as storesActions from '../../actions/stores'
 // services
 import { Status } from '../../Services/Status'
 
@@ -24,6 +25,7 @@ class ProductAddStepThree extends Component {
         data: props.createCatalog || null,
         submiting: false
       },
+      dropshipfaq: props.dropshipfaq || null,
       tempCreateProduct: props.tempCreateProduct || null,
       catalogs: {
         data: props.catalogs || null,
@@ -51,12 +53,9 @@ class ProductAddStepThree extends Component {
       },
       error: null,
       aboutDropshiping: {
-        isActive: false,
-        what: false,
-        howMany: false,
-        howQuestion: false,
-        howRefund: false
-      }
+        isActive: false
+      },
+      collapse: {}
     }
     this.submiting = false
   }
@@ -204,13 +203,20 @@ class ProductAddStepThree extends Component {
   }
 
   aboutDropshipingPress () {
-    console.log('asd')
     this.setState({
       aboutDropshiping: {
         ...this.state.aboutDropshiping,
         isActive: !this.state.aboutDropshiping.isActive
       }
     })
+  }
+
+  handleCollapse (e, index) {
+    e.preventDefault()
+    const { collapse } = this.state
+    const newState = { collapse }
+    newState.collapse[index] = !collapse[index]
+    this.setState(newState)
   }
 
   onSumbit () {
@@ -251,11 +257,13 @@ class ProductAddStepThree extends Component {
     if (!catalogs.isFound) {
       NProgress.start()
       this.props.getCatalogs()
+      this.props.getDropshipperFaq()
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { catalogs, createCatalog, tempCreateProduct } = nextProps
+    const { catalogs, createCatalog, tempCreateProduct, dropshipfaq } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
     if (!catalogs.isLoading) {
       NProgress.done()
       if (catalogs.status === Status.SUCCESS) this.setState({ catalogs: { ...this.state.catalogs, data: catalogs } })
@@ -275,11 +283,24 @@ class ProductAddStepThree extends Component {
       }
       if (catalogs.status === Status.OFFLINE || catalogs.status === Status.FAILED) this.setState({ notification: {status: true, message: catalogs.message} })
     }
+    if (!isFetching(dropshipfaq)) {
+      NProgress.done()
+      if (isFound(dropshipfaq)) {
+        let collapse = {}
+        dropshipfaq.faq.map((data, i) => {
+          collapse[`${i}`] = false
+        })
+        this.setState({ dropshipfaq, collapse })
+      }
+      if (isError(dropshipfaq)) {
+        this.setState({ notification: notifError(dropshipfaq.message) })
+      }
+    }
     if (this.submiting && tempCreateProduct.stepThree.isFound) Router.push('/product-add-step-four')
   }
 
   render () {
-    const { form, catalogs, createCatalog, wholesalesError, aboutDropshiping, error } = this.state
+    const { form, catalogs, createCatalog, wholesalesError, aboutDropshiping, error, collapse, dropshipfaq } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
       color: '#ef5656'
@@ -525,50 +546,20 @@ class ProductAddStepThree extends Component {
             </header>
             <section className='modal-card-body'>
               <div className='main-collapse'>
-                <div className={`collpase-content ${aboutDropshiping.what ? 'active' : ''}`}>
-                  <a onClick={() => this.setState({ aboutDropshiping: { ...aboutDropshiping, what: !this.state.aboutDropshiping.what } })} className='js-collapse collapse-title'>
-                    Apa itu Dropshipping?
-                    <span className='icon-arrow-down' />
-                  </a>
-                  <div className={`collapse-body ${aboutDropshiping.what ? 'collapsed' : ''}`}>
-                    <div className='collapse-in'>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                { dropshipfaq.isFound && dropshipfaq.faq.map((data, i) => {
+                  return (
+                    <div className={`collpase-content ${collapse[i] && 'active'}`}
+                      onClick={(e) => this.handleCollapse(e, i)} key={i}>
+                      <a className='js-collapse collapse-title'>{data.question} <span className='icon-arrow-down' /></a>
+                      <div className={`collapse-body ${collapse[i] && 'collapsed'}`}>
+                        <div className='collapse-in'>
+                          {data.answer}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className={`collpase-content ${aboutDropshiping.howMany ? 'active' : ''}`}>
-                  <a onClick={() => this.setState({ aboutDropshiping: { ...aboutDropshiping, howMany: !this.state.aboutDropshiping.howMany } })} className='js-collapse collapse-title'>
-                    Berapa persen komisi yang reseller dapat?
-                    <span className='icon-arrow-down' />
-                  </a>
-                  <div className={`collapse-body ${aboutDropshiping.howMany ? 'collapsed' : ''}`}>
-                    <div className='collapse-in'>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    </div>
-                  </div>
-                </div>
-                <div className={`collpase-content ${aboutDropshiping.howQuestion ? 'active' : ''}`}>
-                  <a onClick={() => this.setState({ aboutDropshiping: { ...aboutDropshiping, howQuestion: !this.state.aboutDropshiping.howQuestion } })} className='js-collapse collapse-title'>
-                    Bagaimana jika ada yang bertanya tentang produk ini. siapa yang akan menjawab?. pemilik barang atau reseller?
-                    <span className='icon-arrow-down' />
-                  </a>
-                  <div className={`collapse-body ${aboutDropshiping.howQuestion ? 'collapsed' : ''}`}>
-                    <div className='collapse-in'>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    </div>
-                  </div>
-                </div>
-                <div className={`collpase-content ${aboutDropshiping.howRefund ? 'active' : ''}`}>
-                  <a onClick={() => this.setState({ aboutDropshiping: { ...aboutDropshiping, howRefund: !this.state.aboutDropshiping.howRefund } })} className='js-collapse collapse-title'>
-                    Bagaimana jika terjadi refund?
-                    <span className='icon-arrow-down' />
-                  </a>
-                  <div className={`collapse-body ${aboutDropshiping.howRefund ? 'collapsed' : ''}`}>
-                    <div className='collapse-in'>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    </div>
-                  </div>
-                </div>
+                  )
+                })
+                }
               </div>
             </section>
           </div>
@@ -581,14 +572,16 @@ class ProductAddStepThree extends Component {
 const mapStateToProps = (state) => ({
   catalogs: state.getListCatalog,
   createCatalog: state.createCatalog,
-  tempCreateProduct: state.tempCreateProduct
+  tempCreateProduct: state.tempCreateProduct,
+  dropshipfaq: state.dropshipfaq
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getCatalogs: () => dispatch(catalogActions.getListCatalog()),
   addCatalog: (params) => dispatch(catalogActions.createCatalog(params)),
   resetCreateCatalog: (params) => dispatch(catalogActions.resetCreateCatalog()),
-  setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params))
+  setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params)),
+  getDropshipperFaq: () => dispatch(storesActions.getDropshipperFaq())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAddStepThree)

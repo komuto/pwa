@@ -8,14 +8,15 @@ import Notification from '../Components/Notification'
 import MyImage from '../Components/MyImage'
 // actions
 import * as productActions from '../actions/product'
+import * as storesActions from '../actions/stores'
 
 class DropshippingOption extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
-      isDropship: props.productDetail.isFound ? props.productDetail.detail.product.is_dropship : false,
+      storeProductDetail: props.storeProductDetail || null,
+      isDropship: props.storeProductDetail.isFound ? props.storeProductDetail.storeProductDetail.product.is_dropship : false,
       notification: {
         type: 'is-success',
         status: false,
@@ -36,35 +37,36 @@ class DropshippingOption extends React.Component {
   changeDropship (e, id) {
     e.preventDefault()
     this.submiting = true
-    this.props.updateProduct({ id: this.state.id.split('.')[0], is_dropship: this.state.isDropship })
+    this.props.updateProduct({ id: this.state.id, is_dropship: this.state.isDropship })
   }
 
   async componentDidMount () {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      await this.props.getProduct({ id })
+      await this.props.getStoreProductDetail({ id })
       this.fetchingFirst = true
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { alterProducts, productDetail, query } = nextProps
+    const { alterProducts, storeProductDetail, query } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const nextId = query.id
 
-    if (!isFetching(productDetail) && this.fetchingFirst) {
+    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false
-      if (isFound(productDetail)) {
-        this.setState({ productDetail: productDetail, isDropship: productDetail.detail.product.is_dropship })
-        if (String(productDetail.detail.product.id) !== String(query.id)) {
+      if (isFound(storeProductDetail)) {
+        this.setState({ storeProductDetail: storeProductDetail, isDropship: storeProductDetail.storeProductDetail.product.is_dropship })
+        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
           NProgress.start()
           this.fetchingFirst = true
-          await this.props.getProduct({ id: query.id })
+          await this.props.getProduct({ id: nextId })
         }
       }
-      if (isError(productDetail)) {
-        this.setState({ notification: notifError(productDetail.message) })
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
@@ -83,21 +85,21 @@ class DropshippingOption extends React.Component {
   }
 
   renderProductDetail () {
-    const { productDetail } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
                 <div className='content'>
                   <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
+                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
                   </p>
                 </div>
               </div>
@@ -164,13 +166,13 @@ class DropshippingOption extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    productDetail: state.productDetail,
+    storeProductDetail: state.storeProductDetail,
     alterProducts: state.alterProducts
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
   updateProduct: (params) => dispatch(productActions.updateProduct(params))
 })
 
