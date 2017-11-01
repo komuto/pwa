@@ -28,7 +28,6 @@ class Verificaton extends Component {
     const { isFound, isFetching, isError, notifError } = this.props
 
     if (!isFetching(verifyStore) && this.submitting.verifyStore) {
-      console.log('verifyStore: ', verifyStore)
       this.submitting = { ...this.submitting, verifyStore: false }
       if (isError(verifyStore)) {
         this.setState({ notification: notifError(verifyStore.message) })
