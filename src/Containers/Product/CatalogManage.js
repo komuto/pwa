@@ -9,18 +9,19 @@ import Router from 'next/router'
 // actions
 import * as actionTypes from '../../actions/catalog'
 import * as productActions from '../../actions/product'
+import * as storesActions from '../../actions/stores'
 
 class ProductCatalogManage extends React.Component {
   constructor (props) {
     super(props)
-    const isFound = props.productDetail.isFound
+    const isFound = props.storeProductDetail.isFound
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      storeProductDetail: props.storeProductDetail || null,
       listCatalog: props.listCatalog || null,
       validation: false,
       modalAddCatalog: false,
-      selectedCatalog: isFound ? props.productDetail.detail.product.catalog_id : null,
+      selectedCatalog: isFound ? props.storeProductDetail.storeProductDetail.product.catalog_id : null,
       catalog: '',
       notification: {
         type: 'is-success',
@@ -28,7 +29,7 @@ class ProductCatalogManage extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.fetchingFirst = { productDetail: false, listCatalog: false }
+    this.fetchingFirst = { storeProductDetail: false, listCatalog: false }
     this.submiting = { createCatalog: false, changeCatalogProducts: false }
   }
 
@@ -74,7 +75,7 @@ class ProductCatalogManage extends React.Component {
     let isValid = selectedCatalog !== null
     if (isValid) {
       this.submiting = { ...this.submiting, changeCatalogProducts: true }
-      changeCatalogProducts({ catalog_id: selectedCatalog, product_ids: [query.id.split('.')[0]] })
+      changeCatalogProducts({ catalog_id: selectedCatalog, product_ids: [query.id] })
     } else {
       this.setState({ validation: true })
     }
@@ -84,8 +85,8 @@ class ProductCatalogManage extends React.Component {
     const { id, listCatalog } = this.state
     if (id) {
       NProgress.start()
-      await this.props.getProduct({ id })
-      this.fetchingFirst = { ...this.fetchingFirst, productDetail: true }
+      await this.props.getStoreProductDetail({ id })
+      this.fetchingFirst = { ...this.fetchingFirst, storeProductDetail: true }
     }
     if (!listCatalog.isFound) {
       NProgress.start()
@@ -95,23 +96,23 @@ class ProductCatalogManage extends React.Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { statusCreateCatalog, listCatalog, productDetail, alterProducts } = nextProps
+    const { statusCreateCatalog, listCatalog, storeProductDetail, alterProducts } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const nextId = nextProps.query.id
 
-    if (!isFetching(productDetail) && this.fetchingFirst.productDetail) {
+    if (!isFetching(storeProductDetail) && this.fetchingFirst.storeProductDetail) {
       NProgress.done()
-      this.fetchingFirst = { ...this.fetchingFirst, productDetail: false }
-      if (isFound(productDetail)) {
-        this.setState({ productDetail: productDetail, selectCatalog: productDetail.detail.product.catalog_id })
-        if (String(productDetail.detail.product.id) !== String(nextId)) {
+      this.fetchingFirst = { ...this.fetchingFirst, storeProductDetail: false }
+      if (isFound(storeProductDetail)) {
+        this.setState({ storeProductDetail: storeProductDetail, selectCatalog: storeProductDetail.storeProductDetail.product.catalog_id })
+        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
           NProgress.start()
           this.fetchingFirst = true
           await this.props.getProduct({ id: nextId })
         }
       }
-      if (isError(productDetail)) {
-        this.setState({ notification: notifError(productDetail.message) })
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
 
@@ -152,21 +153,21 @@ class ProductCatalogManage extends React.Component {
   }
 
   renderProductDetail () {
-    const { productDetail } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
                 <div className='content'>
                   <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
+                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
                   </p>
                 </div>
               </div>
@@ -287,7 +288,7 @@ const mapStateToProps = (state) => {
   return {
     listCatalog: state.getListCatalog,
     statusCreateCatalog: state.createCatalog,
-    productDetail: state.productDetail,
+    storeProductDetail: state.storeProductDetail,
     alterProducts: state.alterProducts
   }
 }
@@ -296,7 +297,7 @@ const mapDispatchToProps = dispatch => ({
   getListCatalog: () => dispatch(actionTypes.getListCatalog()),
   createCatalog: (params) => dispatch(actionTypes.createCatalog(params)),
   changeCatalogProducts: (params) => dispatch(productActions.changeCatalogProducts(params)),
-  getProduct: (params) => dispatch(productActions.getProduct(params))
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductCatalogManage)

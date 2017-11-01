@@ -96,8 +96,8 @@ class ProductManage extends React.Component {
   componentDidMount () {
     const { id } = this.state
     if (id) {
-      const productId = id.split('.')[0]
-      this.props.getStoreProductDetail({ id: productId })
+      // const productId = id.split('.')[0]
+      this.props.getStoreProductDetail({ id })
     }
     NProgress.start()
   }

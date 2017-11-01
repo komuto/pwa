@@ -109,16 +109,15 @@ class ProductExpeditionManage extends React.Component {
   }
 
   async componentDidMount () {
-    const { expeditions, id, storeProductDetail } = this.state
+    const { expeditions, id } = this.state
     if (!expeditions.isFound) {
       NProgress.start()
       this.props.storeExpeditionList()
     }
-    if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
+    if (id) {
       NProgress.start()
-      const productId = id.split('.')[0]
-      await this.props.getStoreProductDetail({ id: productId })
       this.fetchingFirst = true
+      await this.props.getStoreProductDetail({ id })
     }
   }
 
