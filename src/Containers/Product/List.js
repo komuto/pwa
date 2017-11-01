@@ -71,7 +71,7 @@ class ProductList extends Component {
   productDetail (e, product, storeId) {
     e.preventDefault()
     if (product.hasOwnProperty('dropship_origin')) {
-      Router.push(`/product-dropship-detail?id=${product.id}.${storeId}&commission=${product.dropship_origin.commission.nominal}&type=detailDropship`)
+      Router.push(`/product-dropship-detail?id=${product.id}.${storeId}&commission=${product.dropship_origin.commission.percent}&type=detailDropship`)
     } else {
       Router.push(`/product-manage?id=${product.id}.${storeId}`)
     }
@@ -160,6 +160,7 @@ class ProductList extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')

@@ -6,6 +6,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import Notification from '../../Components/Notification'
 import Wizard from '../../Components/Wizard'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as actionTypes from '../../actions/catalog'
 import * as productActions from '../../actions/product'
@@ -222,8 +223,7 @@ class CatalogAddProduct extends React.Component {
             <article className='media'>
               <div className='media-left'>
                 <figure className='image user-pict'>
-                  <img src={productDetail.detail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content'>
@@ -231,7 +231,7 @@ class CatalogAddProduct extends React.Component {
                   <p className='products-name'>
                     <strong>{productDetail.detail.product.name}</strong>
                     <br />
-                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission}%</span>
+                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission * 100}%</span>
                   </p>
                 </div>
               </div>

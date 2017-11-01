@@ -106,6 +106,7 @@ class ProductManage extends React.Component {
     const { storeProductDetail } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
     if (!isFetching(storeProductDetail)) {
+      NProgress.done()
       if (isFound) {
         const dataStoreProduct = storeProductDetail.storeProductDetail
         const data = {
@@ -129,7 +130,6 @@ class ProductManage extends React.Component {
           expeditionServices: dataStoreProduct.expedition_services
         }
         this.setState({ data })
-        NProgress.done()
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
