@@ -57,7 +57,7 @@ class InformationStore extends React.Component {
     let { formInfo, overSlogan } = this.state
     const newState = { formInfo }
     const newStateSlogan = { overSlogan }
-    if (name === 'slogan' && value.length < 26 && value.length > 0) {
+    if (name === 'slogan' && value.length < 26 && value.length > 9) {
       newStateSlogan.overSlogan = 25 - value.length
       newState.formInfo[name] = value
     } else {
@@ -75,7 +75,7 @@ class InformationStore extends React.Component {
     let description = formInfo.description
     let logoRequired = name === 'image' && logo
     let nameRequired = name === 'name' && nameStore.length > 0
-    let sloganLength = name === 'slogan' && slogan.length > 24
+    let sloganLength = name === 'slogan' && slogan.length > 9 && slogan.length < 26
     let descRequired = name === 'description' && description.length > 0
     let result = logoRequired || nameRequired || sloganLength || descRequired
     return (
@@ -97,7 +97,7 @@ class InformationStore extends React.Component {
     let description = formInfo.description
     let logoRequired = logo.preview !== '' || formInfo.logo !== ''
     let nameRequired = nameStore.length > 0
-    let sloganLength = slogan.length > 24
+    let sloganLength = slogan.length > 10 && slogan.length < 26
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
@@ -135,7 +135,7 @@ class InformationStore extends React.Component {
     return (
       <button
         className={`button is-primary is-large is-fullwidth ${(this.state.submiting.upload || this.state.submiting.updateStore) ? 'is-loading' : ''}`}
-        onClick={(e) => this.postInfoStore(e)} >
+        onClick={(e) => !this.state.submiting.upload && this.postInfoStore(e)} >
         { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
       </button>
     )
@@ -211,7 +211,7 @@ class InformationStore extends React.Component {
         }
       }
       if (isError(upload)) {
-        this.setState({ notification: notifError(upload.message), uploading: false })
+        this.setState({ notification: notifError(upload.message), upload: false })
       }
     }
 
@@ -294,14 +294,14 @@ class InformationStore extends React.Component {
                 <textarea
                   name='slogan'
                   className='textarea'
-                  placeholder='Tulis Pertanyaan'
+                  placeholder='Tulis Slogan'
                   rows='1'
                   value={formInfo.slogan}
                   onChange={(e) => this.handleInput(e)} />
                 <span className='reg'>
                   {overSlogan} sisa karakter
                 </span>
-                <br />{this.renderValidation('slogan', 'Isi slogan maksimal 25 karakter')}
+                <br />{this.renderValidation('slogan', 'Isi slogan 10-25 karakter')}
               </p>
             </div>
             <div className='field'>
@@ -310,7 +310,7 @@ class InformationStore extends React.Component {
                 <textarea
                   name='description'
                   className='textarea'
-                  placeholder='Tulis Pertanyaan'
+                  placeholder='Tulis Deskripsi'
                   rows='1'
                   value={formInfo.description}
                   onChange={(e) => this.handleInput(e)} />
