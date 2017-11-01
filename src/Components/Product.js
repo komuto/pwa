@@ -62,6 +62,13 @@ class Product extends Component {
     let pin = null
     if (product.is_discount) pin = <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
     if (product.is_wholesaler) pin = <div className='pin'><span>Grossir</span></div>
+
+    if (product.is_discount && product.is_wholesaler) {
+      pin = <div>
+        <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
+        <div className='pin' style={{ marginLeft: '50px' }}><span>Grossir</span></div>
+      </div>
+    }
     // set real price
     const priceBeforeDiscount = (product.discount > 0) ? <div className='discount'> Rp { RupiahFormat(product.price) } </div> : ''
     // set price - dicsount

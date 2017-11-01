@@ -647,12 +647,14 @@ const ListDiscustionComplainOrders = (props) => {
 
 const EmptyDiscussion = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Diskusi Anda Kosong</strong></p>
-        <p>Anda belum pernah melakukan tanya jawab kepada pembeli untuk menyelesaikan masalah</p>
+    <div className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Diskusi Anda Kosong</strong></p>
+          <p>Anda belum pernah melakukan tanya jawab kepada pembeli untuk menyelesaikan masalah</p>
+        </div>
       </div>
     </div>
   )

@@ -87,7 +87,8 @@ class MyProduct extends Component {
       provinces: false,
       districts: false,
       brands: false,
-      addWishlist: false
+      addWishlist: false,
+      sortStatus: false
     }
   }
 
@@ -136,63 +137,101 @@ class MyProduct extends Component {
       pagination.page += 1
       this.params = { ...this.params, ...pagination }
       this.submitting = { ...this.submitting, productBySearch: true }
+      let params = this.generateParamsUrl()
+      Router.replace(`/product?${params}`, `/p?${params}`)
       this.props.listProductBySearch(this.params)
       this.setState({ pagination })
     }
   }
 
+  generateParamsUrl () {
+    let params = ''
+    let { page, limit, sort, q, condition, services, other, brands, ids, idc } = this.params
+    let categoryId = this.params.catalog_id // not camel case
+
+    if (sort) params += `sort=${sort}&`
+    if (categoryId) params += `id=${categoryId}&`
+    if (page) params += `page=${page}&`
+    if (limit) params += `limit=${limit}&`
+    if (q) params += `q=${q}&`
+    if (condition) params += `condition=${condition}&`
+    if (services) params += `services=${services}&`
+    if (other) params += `other=${other}&`
+    if (brands) params += `brands=${brands}&`
+    if (idc) params += `idc=${idc}&`
+    if (ids) params += `ids=${ids}&`
+
+    return params
+  }
+
   /** sort product price cheapest  */
   sortProductByCheapest () {
-    return _.orderBy(this.state.productBySearch.products, ['product.price'], ['asc'])
+    this.params.sort = 'cheapest'
+    this.submitting = { ...this.submitting, productBySearch: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/product?${params}`, `/p?${params}`)
+    this.props.listProductBySearch(this.params)
   }
 
   /** sort product price expensive  */
   sortProductByExpensive () {
-    return _.orderBy(this.state.productBySearch.products, ['product.price'], ['desc'])
+    this.params.sort = 'expensive'
+    this.submitting = { ...this.submitting, productBySearch: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/product?${params}`, `/p?${params}`)
+    this.props.listProductBySearch(this.params)
   }
 
   /** sort product newest  */
   sortProductByNewest () {
-    return _.orderBy(this.state.productBySearch.products, ['product.created_at'], ['desc'])
+    this.params.sort = 'newest'
+    this.submitting = { ...this.submitting, productBySearch: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/product?${params}`, `/p?${params}`)
+    this.props.listProductBySearch(this.params)
   }
 
   /** sort product newest  */
   sortProductBySelling () {
-    return _.orderBy(this.state.productBySearch.products, ['product.count_sold'], ['desc'])
+    this.params.sort = 'selling'
+    this.submitting = { ...this.submitting, productBySearch: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/product?${params}`, `/p?${params}`)
+    this.props.listProductBySearch(this.params)
   }
 
   /** handling sort changed */
   sortSelected (selectedSort) {
-    let { productBySearch } = this.state
+    this.scrollToTop()
+    NProgress.start()
+    this.params.page = 1
+    this.params.limit = 10
 
     if (selectedSort === 'termurah') {
-      productBySearch.products = this.sortProductByCheapest()
+      this.sortProductByCheapest()
     }
 
     if (selectedSort === 'termahal') {
-      productBySearch.products = this.sortProductByExpensive()
+      // productBySearch.products = this.sortProductByExpensive()
+      this.sortProductByExpensive()
     }
 
     if (selectedSort === 'terbaru') {
-      productBySearch.products = this.sortProductByNewest()
+      // productBySearch.products = this.sortProductByNewest()
+      this.sortProductByNewest()
     }
 
     if (selectedSort === 'terlaris') {
-      productBySearch.products = this.sortProductBySelling()
+      // productBySearch.products = this.sortProductBySelling()
+      this.sortProductBySelling()
     }
 
-    this.setState({ selectedSort, sortActive: false, productBySearch })
+    this.setState({ selectedSort, sortActive: false, pagination: { page: 1, limit: 10 } })
   }
 
   componentDidMount () {
-    const { id, page, limit, sort, q, condition, services, other, brands, ids, idc } = this.state.query
-    // window.scrollTo(0, 0)
     this.scrollToTop()
-    // const { id } = this.state.query
-    // console.log('componentDidMount()')
-    /** generate params */
-    // console.log(this.props.query)
-    // this.params = { ...this.state.query }
+    const { id, page, limit, sort, q, condition, services, other, brands, ids, idc } = this.state.query
     if (id) this.params.category_id = id
     if (page) this.params.page = page
     if (limit) this.params.limit = limit
@@ -302,9 +341,11 @@ class MyProduct extends Component {
     // fetch product by params
     this.filterRealizationStatus = true
     this.submitting = { ...this.submitting, productBySearch: true }
-    delete this.params.page
-    delete this.params.limit
-
+    this.params.page = 1
+    this.params.limit = 10
+    delete this.params.sort
+    let params = this.generateParamsUrl()
+    Router.replace(`/product?${params}`, `/p?${params}`)
     this.props.listProductBySearch(this.params)
 
     /** close filter */
@@ -312,12 +353,13 @@ class MyProduct extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productBySearch, subCategory, expeditionServices, provinces, brands, districts, addWishlist } = nextProps
+    const { productBySearch, subCategory, expeditionServices, provinces, brands, districts, addWishlist, query } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-    const { q } = nextProps.query
     let products = []
 
-    if (q) this.setState({ q })
+    // if (q) this.setState({ q })
+
+    console.log('nextProps: ', nextProps.query)
 
     // console.log('componentWillReceiveProps()')
 
@@ -335,6 +377,14 @@ class MyProduct extends Component {
           this.filterRealizationStatus = false
           this.setState({
             productBySearch,
+            hasMore,
+            isEmpty
+          })
+        } else if (this.submitting.sortStatus) {
+          this.submitting = { ...this.submitting, sortStatus: false }
+          this.setState({
+            productBySearch,
+            query: { ...this.state.query, ...query },
             hasMore,
             isEmpty
           })
@@ -530,7 +580,7 @@ const ProductContent = ({productBySearch, viewActive, hasMore, wishlistPress, ha
   return (
     <InfiniteScroll
       pageStart={0}
-      loadMore={_.debounce(handleLoadMore, 250)}
+      loadMore={_.debounce(handleLoadMore, 0)}
       hasMore={hasMore}
       loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
       {
