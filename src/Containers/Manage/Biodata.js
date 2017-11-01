@@ -335,20 +335,28 @@ class ManageBiodata extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <section className='section is-paddingless'>
-          <Dropzone
-            style={{}}
-            accept='image/jpeg, image/png'
-            onDrop={this.onDrop.bind(this)}>
-            <div className='photo-content has-text-centered margin-top'>
-              <div className='photo'>
-                <img src={typeof formBiodata.photo === 'object' ? formBiodata.photo.preview : formBiodata.photo} alt='komuto' />
-              </div>
-            </div>
-            <p className='has-text-centered'>
-              <a>Ganti Foto Profil</a>
-              {this.renderValidation('photo', 'Foto harus di upload')}
-            </p>
-          </Dropzone>
+          <div className='upload-pict'>
+            <Dropzone
+              style={{}}
+              accept='image/jpeg, image/png'
+              onDrop={this.onDrop.bind(this)}>
+              {
+                (typeof formBiodata.photo === 'object') && <div className='pict-wrapper' style={{ backgroundImage: `url(${formBiodata.photo.preview})`, backgroundPosition: 'center', backgroundSize: 'cover', marginBottom: '20px' }} />
+              }
+              {
+                (typeof formBiodata.photo !== 'object') &&
+                  <div className='photo-content has-text-centered margin-top' style={{ marginTop: 0 }}>
+                    <div className='photo'>
+                      <img src={typeof formBiodata.photo === 'object' ? formBiodata.photo.preview : formBiodata.photo} alt='komuto' />
+                    </div>
+                  </div>
+              }
+              <p className='has-text-centered'>
+                <a>Ganti Foto Profil</a>
+                {this.renderValidation('photo', 'Foto harus di upload')}
+              </p>
+            </Dropzone>
+          </div>
           <form className='form edit'>
             <div className='edit-data-delivery bg-white'>
               <div className='field'>
