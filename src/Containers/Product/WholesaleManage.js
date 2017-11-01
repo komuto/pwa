@@ -1,13 +1,45 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // component
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
-// services
-import { Status, isFetching, validateResponseAlter } from '../../Services/Status'
+
+let errorDefault = {
+  status: false
+}
+
+let errorMinOrder = {
+  ...errorDefault,
+  status: true,
+  attribute: 'min',
+  message: 'Min harap diisi'
+}
+
+let errorMaxOrder = {
+  ...errorDefault,
+  status: true,
+  attribute: 'max',
+  message: 'Max harap diisi'
+}
+
+let errorMaxLargeMin = {
+  ...errorDefault,
+  status: true,
+  attribute: 'max',
+  message: 'Max harus lebih besar dari Min'
+}
+
+let errorPriceOrder = {
+  ...errorDefault,
+  status: true,
+  attribute: 'price',
+  message: 'Harga Produk harap diisi'
+}
 
 class ProductWholesaleManage extends Component {
   constructor (props) {
@@ -32,23 +64,36 @@ class ProductWholesaleManage extends Component {
         message: 'Error, default message.'
       }
     }
+    this.convertToForm = false
     this.submiting = false
   }
 
   wholesaleAddPress (e) {
     const { form } = this.state
     form.wholesales.push({
+      id: 0,
       min: '',
       max: '',
-      price: ''
+      price: '',
+      status: 1
     })
     this.setState({ form })
   }
 
-  wholesaleRemovePress (index) {
+  wholesaleRemovePress (id, index) {
     const { form } = this.state
-    delete form.wholesales[index]
-    this.setState({ form })
+    if (id) {
+      let newWholsales = form.wholesales.map(val => {
+        if (val.id === id) {
+          val['status'] = 3
+        }
+        return val
+      })
+      this.setState({ form: { ...form, wholesales: newWholsales } })
+    } else {
+      let newWholsales = form.wholesales.filter((val, i) => index !== i)
+      this.setState({ form: { ...form, wholesales: newWholsales } })
+    }
   }
 
   wholesaleHandling (e, index) {
@@ -66,94 +111,69 @@ class ProductWholesaleManage extends Component {
     if (name === 'price') {
       form.wholesales[index].price = value
     }
-    wholesalesError = this.wholesaleErrorHandling(form.wholesales, index, name)
-    this.setState({ form, wholesalesError })
+    this.setState({ form, wholesalesError: { ...wholesalesError, status: false } })
   }
 
-  wholesaleErrorHandling (wholesales, myIndex = null, attribute = null) {
-    let errorDefault = {
-      status: false
-    }
+  wholesaleErrorHandling () {
+    const { form } = this.state
 
-    let errorMinOrder = {
-      ...errorDefault,
-      status: true,
-      attribute: 'min',
-      message: 'Min order tidak valid'
-    }
-
-    let errorMaxOrder = {
-      ...errorDefault,
-      status: true,
-      attribute: 'max',
-      message: 'Max order tidak valid'
-    }
-
-    for (let index = 0; index < wholesales.length; index++) {
-      /**
-       * before wholesales
-       */
-      let bw = wholesales[index - 1]
-      let bwStatus = bw !== undefined
-      let bwMaxOrder = ''
-      if (bwStatus) {
-        bwMaxOrder = bw.max !== '' ? Number(bw.max) : ''
+    form.wholesales.every((val, index) => {
+      if (!val.min) {
+        this.setState({ wholesalesError: { index, ...errorMinOrder } })
+        return false
       }
-      /**
-       * wholesales
-       */
-      let w = wholesales[index]
-      let wMinOrder = w.min !== '' ? Number(w.min) : ''
-      let wMaxOrder = w.max !== '' ? Number(w.max) : ''
-      /**
-       * after wholesales
-       */
-      let aw = wholesales[index + 1]
-      let awStatus = aw !== undefined
-      let awMinOrder = ''
-      if (awStatus) {
-        awMinOrder = aw.min !== '' ? Number(aw.min) : ''
+      if (!val.max) {
+        this.setState({ wholesalesError: { index, ...errorMaxOrder } })
+        return false
       }
-      /**
-       * validate min order
-       * jika min order lebih besar dari max order
-       * jika min order kurang dari maxorder(bwMaxOrder) list data sebelumny
-       */
-
-      if ((attribute === 'min') && ((wMaxOrder !== '' && wMinOrder >= wMaxOrder) || ((bwStatus && bwMaxOrder !== '') && (wMinOrder < bwMaxOrder)))) {
-        return {
-          index,
-          ...errorMinOrder
-        }
+      if (val.max <= val.min) {
+        this.setState({ wholesalesError: { index, ...errorMaxLargeMin } })
+        return false
       }
-
-      /**
-       * validate max order
-       * jika max order lebih kecil dari min order
-       * jika max order lebih besar dari min order(awMinOrder) list data setelahnya
-       */
-      if ((attribute === 'max') && ((wMinOrder !== '' && wMaxOrder <= wMinOrder) || ((awStatus && awMinOrder !== '') && (wMaxOrder > awMinOrder)))) {
-        return {
-          index,
-          ...errorMaxOrder
-        }
+      if (!val.price) {
+        this.setState({ wholesalesError: { index, ...errorPriceOrder } })
+        return false
       }
-    }
-
-    return errorDefault
+      return true
+    })
   }
 
-  onSumbit () {
+  onSumbit (e) {
+    e.preventDefault()
     let { form, storeProductDetail, id } = this.state
-    this.submiting = true
-    let params = {
-      id: id.split('.')[0],
-      is_wholesaler: JSON.parse(form.is_wholesaler),
-      wholesaler: form.wholesales,
-      status: storeProductDetail.storeProductDetail.product.status
+    let isValid = true
+    form.wholesales.every((val, index) => {
+      if (!val.min) {
+        isValid = false
+        return false
+      }
+      if (!val.max) {
+        isValid = false
+        return false
+      }
+      if (val.max <= val.min) {
+        isValid = false
+        return false
+      }
+      if (!val.price) {
+        isValid = false
+        return false
+      }
+      isValid = true
+      return true
+    })
+    if (!isValid) {
+      this.wholesaleErrorHandling()
+    } else {
+      this.submiting = true
+      let params = {
+        id: id.split('.')[0],
+        is_wholesaler: JSON.parse(form.is_wholesaler),
+        wholesales: form.wholesales,
+        status: storeProductDetail.storeProductDetail.product.status
+      }
+      this.props.updateProduct(params)
     }
-    console.log(params)
-    this.props.updateProduct(params)
   }
 
   async componentDidMount () {
@@ -161,35 +181,47 @@ class ProductWholesaleManage extends Component {
     if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
       NProgress.start()
       const productId = id.split('.')[0]
-      this.setState({convertToForm: true})
+      this.convertToForm = true
       await this.props.getStoreProductDetail({ id: productId })
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { storeProductDetail, form, convertToForm } = this.state
-    const { alterProducts } = nextProps
-    if (!nextProps.storeProductDetail.isLoading && convertToForm) {
-      switch (nextProps.storeProductDetail.status) {
-        case Status.SUCCESS :
-          const newState = { storeProductDetail, form, convertToForm: false }
-          newState.form['is_wholesaler'] = nextProps.storeProductDetail.storeProductDetail.product.is_wholesaler
-          newState.form['wholesales'] = nextProps.storeProductDetail.storeProductDetail.wholesaler
-          newState.storeProductDetail = nextProps.storeProductDetail
-          this.setState(newState)
-          NProgress.done()
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: nextProps.storeProductDetail.message} })
-          break
-        default:
-          break
+    const { form } = this.state
+    const { alterProducts, storeProductDetail } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+
+    if (!isFetching(storeProductDetail) && this.convertToForm) {
+      this.convertToForm = false
+      NProgress.done()
+      if (isFound(storeProductDetail)) {
+        const nextStoreProductDetail = storeProductDetail.storeProductDetail
+        const newState = { form, storeProductDetail: storeProductDetail }
+        newState.form['is_wholesaler'] = nextStoreProductDetail.product.is_wholesaler
+        let addStatusUpdate = nextStoreProductDetail.wholesaler.map(val => {
+          val['status'] = 2
+          return val
+        })
+        newState.form['wholesales'] = addStatusUpdate
+        this.setState(newState)
+      }
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
+
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
-      this.setState({ notification: validateResponseAlter(alterProducts, 'Berhasil memperbarui Harga Grosir', 'Gagal memperbarui Harga Grosir') })
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
@@ -202,8 +234,7 @@ class ProductWholesaleManage extends Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={storeProductDetail.storeProductDetail.images[0].file}
-                    style={{width: '50px', height: '50px'}} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
@@ -248,7 +279,7 @@ class ProductWholesaleManage extends Component {
           </div>
           <div className='spec-price'>
             <label className='switch right'>
-              <input onClick={() => this.setState({ form: {...this.state.form, is_wholesaler: !this.state.form.is_wholesaler} })} type='checkbox' checked={form.is_wholesaler} />
+              <input onClick={() => this.setState({ form: { is_wholesaler: !this.state.form.is_wholesaler, wholesales: [] } })} type='checkbox' checked={form.is_wholesaler} />
               <span className='slider round' />
             </label>
             <h3 className='title-content'>Aktifkan Harga Grosir</h3>
@@ -266,33 +297,36 @@ class ProductWholesaleManage extends Component {
                   let errorStatus = wholesalesError.status && index === wholesalesError.index
                   let errorStatusMinOrder = errorStatus && wholesalesError.attribute === 'min'
                   let errorStatusMaxOrder = errorStatus && wholesalesError.attribute === 'max'
-                  return (
-                    <div className='spec-price effect-display' key={index}>
-                      <div className='field'>
-                        <div className='field-body columns'>
-                          <div className='field column quarter'>
-                            <label className='label' style={errorStatus ? styleError : {}}>Jumlah Produk</label>
-                            <p className='control is-expanded prod-qty'>
-                              <input onChange={(e) => this.wholesaleHandling(e, index)} value={wholesale.min} style={errorStatusMinOrder ? styleError : {}} placeholder='0' name='min' className='input' type='number' />
-                              <span>s/d</span>
-                              <input onChange={(e) => this.wholesaleHandling(e, index)} value={wholesale.max} style={errorStatusMaxOrder ? styleError : {}} placeholder='0' name='max' className='input' type='number' />
-                            </p>
-                          </div>
-                          <div className='field column'>
-                            <label className='label'>Harga Produk</label>
-                            <p className='control is-expanded price'>
-                              <span className='currency'>Rp</span>
-                              <input onChange={(e) => this.wholesaleHandling(e, index)} placeholder='0' name='price' className='input' type='number' value={wholesale.price} />
-                            </p>
+                  let errorStatusPriceOrder = errorStatus && wholesalesError.attribute === 'price'
+                  if (wholesale.status !== 3) {
+                    return (
+                      <div className='spec-price effect-display' key={index}>
+                        <div className='field'>
+                          <div className='field-body columns'>
+                            <div className='field column quarter'>
+                              <label className='label' style={(errorStatusMinOrder || errorStatusMaxOrder) ? styleError : {}}>Jumlah Produk</label>
+                              <p className='control is-expanded prod-qty'>
+                                <input onChange={(e) => this.wholesaleHandling(e, index)} value={wholesale.min} style={errorStatusMinOrder ? styleError : {}} placeholder='0' name='min' className='input' type='number' />
+                                <span>s/d</span>
+                                <input onChange={(e) => this.wholesaleHandling(e, index)} value={wholesale.max} style={errorStatusMaxOrder ? styleError : {}} placeholder='0' name='max' className='input' type='number' />
+                              </p>
+                            </div>
+                            <div className='field column'>
+                              <label className='label' style={errorStatusPriceOrder ? styleError : {}}>Harga Produk</label>
+                              <p className='control is-expanded price'>
+                                <span className='currency'>Rp</span>
+                                <input onChange={(e) => this.wholesaleHandling(e, index)} placeholder='0' name='price' className='input' type='number' value={wholesale.price} />
+                              </p>
+                            </div>
                           </div>
                         </div>
+                        { errorStatus && <span style={styleError}> {wholesalesError.message} </span> }
+                        <div className='remove-wrapp'>
+                          <a onClick={() => this.wholesaleRemovePress(wholesale.id, index)} className='remove'>Hapus</a>
+                        </div>
                       </div>
-                      { errorStatus && <span style={styleError}> {wholesalesError.message} </span> }
-                      <div className='remove-wrapp'>
-                        <a onClick={() => this.wholesaleRemovePress(index)} className='remove'>Hapus</a>
-                      </div>
-                    </div>
-                  )
+                    )
+                  }
                 })
               }
               <div className='spec-price'>
@@ -305,7 +339,7 @@ class ProductWholesaleManage extends Component {
           <div className='payment-detail action'>
             <ul>
               <li>
-                <a onClick={() => this.onSumbit()} className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}>Simpan Perubahan</a>
+                <a onClick={(e) => this.onSumbit(e)} className={`button is-primary is-large is-fullwidth ${this.submiting && 'is-loading'}`}>Simpan Perubahan</a>
               </li>
             </ul>
           </div>

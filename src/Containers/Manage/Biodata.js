@@ -74,7 +74,7 @@ class ManageBiodata extends React.Component {
     const newFormBiodata = { formBiodata }
     const newTime = { time }
     const newIsOpen = { isOpen }
-    newFormBiodata.formBiodata['date_of_birth'] = moment(times).unix()
+    newFormBiodata.formBiodata['date_of_birth'] = moment(times).format('YYYY-MM-DD')
     newTime.time = times
     newIsOpen.isOpen = false
     this.setState({ ...newFormBiodata, ...newTime, ...newIsOpen })
@@ -325,7 +325,7 @@ class ManageBiodata extends React.Component {
 
   render () {
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
-    let timeValue = formBiodata.date_of_birth !== '' ? moment.unix(formBiodata.date_of_birth).format('MM/DD/YYYY') : time
+    let timeValue = formBiodata.date_of_birth !== '' ? moment(formBiodata.date_of_birth).format('MM/DD/YYYY') : time
     return (
       <div>
         <Notification
@@ -405,7 +405,7 @@ class ManageBiodata extends React.Component {
                     confirmText='Set Tanggal Lahir'
                     cancelText='Batal' />
                   <span className='location-label js-option' onClick={(e) => this.handleCancel(e)}>
-                    {!formBiodata.date_of_birth ? 'Tanggal Anda' : moment.unix(formBiodata.date_of_birth).format('DD-MM-YYYY')}
+                    {!formBiodata.date_of_birth ? 'Tanggal Anda' : moment(formBiodata.date_of_birth).format('DD-MM-YYYY')}
                   </span>
                 </p>
                 {this.renderValidation('date_of_birth', 'Mohon pilih tanggal lahir anda')}
