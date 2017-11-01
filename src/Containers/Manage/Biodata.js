@@ -325,7 +325,7 @@ class ManageBiodata extends React.Component {
 
   render () {
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
-    let timeValue = formBiodata.date_of_birth !== '' ? moment(formBiodata.date_of_birth).format('MM/DD/YYYY') : time
+    let timeValue = formBiodata.date_of_birth ? new Date(formBiodata.date_of_birth) : time
     return (
       <div>
         <Notification
@@ -406,7 +406,7 @@ class ManageBiodata extends React.Component {
               <div className='field'>
                 <p className='control detail-address'>
                   <DatePicker
-                    value={new Date(timeValue)}
+                    value={timeValue}
                     isOpen={isOpen}
                     onSelect={(e) => this.handleSelect(e)}
                     onCancel={(e) => this.handleCancel(e)}
