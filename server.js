@@ -70,6 +70,9 @@ app.prepare().then(_ => {
   defineASURL('/signup/:type', '/signup')
   // disscussion
   defineASURL('/discussion/:type', '/discussion')
+  // store verification
+  defineASURL('/store/verification', '/store-verification')
+  defineASURL('/store/manage', '/manage-store')
 
   server.get('*', (req, res) => {
     global.hostNameServer = req.headers.host

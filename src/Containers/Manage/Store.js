@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
+import NProgress from 'nprogress'
 // components
+import Content from '../../Components/Content'
 // actions
 import * as actionTypes from '../../actions/user'
 // services
@@ -19,6 +21,9 @@ class ManageStore extends Component {
         message: 'Error, default message.'
       }
     }
+    this.submitting = {
+      profile: false
+    }
   }
 
   handleNotification (e) {
@@ -28,11 +33,29 @@ class ManageStore extends Component {
     this.setState(newState)
   }
 
-  // componentDidMount () {
-  // }
+  componentDidMount () {
+    const { isFound } = this.props
+    if (!isFound(this.state.profile)) {
+      NProgress.start()
+      this.submitting = { ...this.submitting, profile: true }
+      this.props.getProfile()
+    }
+  }
 
   componentWillReceiveProps (nextProps) {
-    this.setState({ profile: nextProps.profile })
+    const { profile } = nextProps
+    const { isFetching, isError, isFound, notifError } = this.props
+
+    if (!isFetching(profile) && this.submitting.profile) {
+      NProgress.done()
+      this.submitting = { ...this.submitting, profile: false }
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
+      }
+      if (isFound(profile)) {
+        this.setState({ profile })
+      }
+    }
   }
 
   toManageBiodata (e) {
@@ -57,8 +80,14 @@ class ManageStore extends Component {
   }
 
   render () {
+    const { profile } = this.state
+    const { isFound } = this.props
+
     return (
       <div>
+        {
+          isFound(profile) && !profile.user.store.is_verified && <VerificationContent {...this.state.profile.user} />
+        }
         <section className='section is-paddingless bg-white has-shadow'>
           <div className='profile-wrapp'>
             <ul>
@@ -250,12 +279,33 @@ class ManageStore extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    profile: state.profile,
-    changePassword: state.changePassword
-  }
-}
+const VerificationContent = ({ store }) => (
+  <Content>
+    <div className='columns is-mobile no-margin-bottom notif-alfa'>
+      <div className='column'>
+        <div className='is-left'>
+          <ul className='list-inline col2'>
+            <li className='label-text'>
+              <span><strong>Batas Pembayaran :</strong> {store.verification_left} hari</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <section className='section is-paddingless bg-white has-shadow'>
+      <div className='verify-wrapp'>
+        <h4>Toko belum diverifikasi.</h4>
+        <p>Lakukan verifikasi agar bisa melakukan aktifitas penjualan lebih dari 30 hari</p>
+        <button onClick={() => Router.push('/store-verification', '/store/verification')} className='button is-primary is-medium is-fullwidth'>Lanjutkan</button>
+      </div>
+    </section>
+  </Content>
+)
+
+const mapStateToProps = (state) => ({
+  profile: state.profile,
+  changePassword: state.changePassword
+})
 
 const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(actionTypes.getProfile()),

@@ -48,7 +48,7 @@ class Account extends Component {
     e.preventDefault()
     const { profile } = this.props
     if (profile.user.store.hasOwnProperty('name')) {
-      Router.push('/manage-store')
+      Router.push('/manage-store', '/store/manage')
     } else {
       if (profile.user.user.is_phone_verified) {
         Router.push('/information-store')
