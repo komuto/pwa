@@ -67,7 +67,7 @@ class MyProduct extends Component {
       viewActive: 'list',
       selectedSort: null,
       hasMore: false,
-      isEmpty: false,
+      isEmpty: 'default',
       pagination: {
         page: 1,
         limit: 10
@@ -359,8 +359,6 @@ class MyProduct extends Component {
 
     // if (q) this.setState({ q })
 
-    console.log('nextProps: ', nextProps.query)
-
     // console.log('componentWillReceiveProps()')
 
     /** handling state list productBySearch  */
@@ -372,35 +370,35 @@ class MyProduct extends Component {
       }
       if (isFound(productBySearch)) {
         let hasMore = productBySearch.products.length > 9
-        let isEmpty = productBySearch.products.length < 1
         if (this.filterRealizationStatus) {
+          // when user filter
           this.filterRealizationStatus = false
           this.setState({
             productBySearch,
-            hasMore,
-            isEmpty
+            query: { ...this.state.query, ...query },
+            hasMore
           })
         } else if (this.submitting.sortStatus) {
+          // when user sort
           this.submitting = { ...this.submitting, sortStatus: false }
           this.setState({
             productBySearch,
             query: { ...this.state.query, ...query },
-            hasMore,
-            isEmpty
+            hasMore
           })
         } else {
           if (this.state.productBySearch) {
+            // when user scroll
             products = this.state.productBySearch.products.concat(productBySearch.products)
             this.setState({
               productBySearch: { ...productBySearch, products },
-              hasMore,
-              isEmpty
+              hasMore
             })
           } else {
+            // default state
             this.setState({
               productBySearch,
-              hasMore,
-              isEmpty
+              hasMore
             })
           }
         }
@@ -488,9 +486,10 @@ class MyProduct extends Component {
   }
 
   render () {
-    const { categories, isEmpty, expeditionServices, provinces, brands, districts, notification, filterActive, viewActive } = this.state
+    const { productBySearch, categories, expeditionServices, provinces, brands, districts, notification, filterActive, viewActive } = this.state
     const { isFound } = this.props
     const { q, sort, ids, idc, slug } = this.state.query
+    let { isEmpty } = this.state
 
     const isCatalog = ids && idc
     /** define params for navbar */
@@ -525,6 +524,12 @@ class MyProduct extends Component {
       params.navbar.textPath = ReadAbleText(slug)
     }
 
+    if (productBySearch) {
+      if (isFound(productBySearch)) {
+        isEmpty = (productBySearch.products.length < 1)
+      }
+    }
+
     return (
       <Content>
         <Navbar {...params} />
@@ -536,12 +541,12 @@ class MyProduct extends Component {
           message={notification.message} />
         <Section style={{marginBottom: '45px', overflowAnchor: 'none'}}>
           {
-            isEmpty
-            ? <ProductEmpty />
-            : <ProductContent
-              {...this.state}
-              wishlistPress={(id) => this.wishlistPress(id)}
-              handleLoadMore={() => this.handleLoadMore()} />
+            (isEmpty !== 'default' && isEmpty)
+              ? <ProductEmpty />
+              : <ProductContent
+                {...this.state}
+                wishlistPress={(id) => this.wishlistPress(id)}
+                handleLoadMore={() => this.handleLoadMore()} />
           }
         </Section>
         <TabbarCategories
