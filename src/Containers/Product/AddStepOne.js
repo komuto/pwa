@@ -58,6 +58,7 @@ class ProductAddStepOne extends Component {
   }
 
   onDropFile (e) {
+    e.preventDefault()
     let files = e.target.files
     let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
     notification = {
@@ -68,7 +69,6 @@ class ProductAddStepOne extends Component {
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]
-      // console.log(f)
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
@@ -91,7 +91,7 @@ class ProductAddStepOne extends Component {
       }
       f['preview'] = winurl.createObjectURL(f)
       images.push(f)
-      this.setState({ images })
+      this.setState({ images, imageValue: f.name })
       // const reader = new FileReader()
       // reader.onload = (e) => {
       //   images.push(e.target.result)
@@ -111,6 +111,7 @@ class ProductAddStepOne extends Component {
 
   removeImage (picture) {
     const filteredAry = this.state.images.filter((e) => e !== picture)
+    this.inputElementPress.value = ''
     this.setState({images: filteredAry})
   }
 
@@ -171,6 +172,7 @@ class ProductAddStepOne extends Component {
                   <input
                     style={{ display: 'none' }}
                     type='file'
+                    value=''
                     ref={(input) => this.inputElement(input)}
                     name={this.props.name}
                     multiple='multiple'

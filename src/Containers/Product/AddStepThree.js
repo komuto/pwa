@@ -228,17 +228,17 @@ class ProductAddStepThree extends Component {
   onSumbit () {
     let { form, tempCreateProduct } = this.state
 
-    if (form.price === undefined || form.price === '') {
+    if (form.price === undefined || form.price === '' || Number(form.price) < 0) {
       this.setState({ error: 'name' })
       return
     }
 
-    if (form.weight === undefined || form.weight === '') {
+    if (form.weight === undefined || form.weight === '' || Number(form.weight) < 0) {
       this.setState({ error: 'weight' })
       return
     }
 
-    if (form.stock === undefined || form.stock === '') {
+    if (form.stock === undefined || form.stock === '' || Number(form.stock) < 0) {
       this.setState({ error: 'stock' })
       return
     }

@@ -10,7 +10,6 @@ import Wizard from '../../Components/Wizard'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 // actions
-import * as expeditionActions from '../../actions/expedition'
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
 // services
@@ -67,12 +66,12 @@ class ProductAddStepFour extends Component {
   checkItemPress (myService) {
     let { expeditions } = this.state
     expeditions.expeditions.map((expedition) => {
-      (expedition.id === myService.expedition_id) &&
+      (expedition.id === myService.expedition.id) &&
         expedition.services.map((service) => { if (service.id === myService.id) service.is_checked = !myService.is_checked })
     })
 
     let expeditionSelected = expeditions.expeditions.filter((expedition) => {
-      return expedition.id === myService.expedition_id
+      return expedition.id === myService.expedition.id
     })[0]
 
     let countItems = expeditionSelected.services.length
@@ -80,7 +79,7 @@ class ProductAddStepFour extends Component {
       return service.is_checked === true
     }).length
 
-    expeditions.expeditions.map((expedition) => { if (expedition.id === myService.expedition_id) expedition.is_checked = (countItems === countItemsChecked) })
+    expeditions.expeditions.map((expedition) => { if (expedition.id === myService.expedition.id) expedition.is_checked = (countItems === countItemsChecked) })
 
     this.setState({ expeditions })
   }
@@ -122,70 +121,79 @@ class ProductAddStepFour extends Component {
 
     if (this.submiting && tempCreateProduct.stepFour.isFound && !upload.isLoading) {
       const { stepOne, stepTwo, stepThree, stepFour } = tempCreateProduct
-      let expeditionsSelected = []
-      stepFour.expeditions.map((expedition) => {
-        expedition.services.map((service) => {
-          service.is_checked && expeditionsSelected.push({expedition_service_id: service.id})
+      if (!stepOne.isFound) {
+        Router.push('/product-add-step-one', '/product/add/one')
+      } else if (!stepTwo.isFound) {
+        Router.push('/product-add-step-two', '/product/add/two')
+      } else if (!stepThree.isFound) {
+        Router.push('/product-add-step-three', '/product/add/three')
+      } else {
+        let expeditionsSelected = []
+        stepFour.expeditions.map((expedition) => {
+          expedition.services.map((service) => {
+            service.is_checked && expeditionsSelected.push({expedition_service_id: service.id})
+          })
         })
-      })
-
-      const images = new FormData()
-      stepOne.images.map((image) => {
-        images.append('images', image)
-      })
-
-      images.append('type', 'product')
-
-      if (images) {
-        NProgress.start()
-        this.props.photoUpload(images)
-      }
-
-      if (upload.status === Status.SUCCESS) {
-        NProgress.done()
-        this.submiting = false
-        this.submitingProduct = true
-
-        if (stepTwo.brand_id === 'default') {
-          delete stepTwo.brand_id
-        } else {
-          stepTwo.brand_id = Number(stepTwo.brand_id)
+        /** uploading image */
+        const images = new FormData()
+        stepOne.images.map((image) => {
+          images.append('images', image)
+        })
+        images.append('type', 'product')
+        if (images) {
+          NProgress.start()
+          this.props.photoUpload(images)
         }
-
-        stepTwo.categoryOne = Number(stepTwo.categoryOne)
-        stepTwo.categoryTwo = Number(stepTwo.categoryTwo)
-        stepTwo.categoryThree = Number(stepTwo.categoryThree)
-        stepTwo.category_id = Number(stepTwo.category_id)
-
-        if (stepThree.catalog_id === 'default') {
-          delete stepThree.catalog_id
-        } else {
-          stepThree.catalog_id = Number(stepThree.catalog_id)
+        /** finish uploading image */
+        if (upload.status === Status.SUCCESS) {
+          /** upload product with respon image */
+          NProgress.done()
+          this.submiting = false
+          this.submitingProduct = true
+          // check when user not select brand
+          if (stepTwo.brand_id === 'default') {
+            delete stepTwo.brand_id
+          } else {
+            stepTwo.brand_id = Number(stepTwo.brand_id)
+          }
+          // converting to number
+          stepTwo.categoryOne = Number(stepTwo.categoryOne)
+          stepTwo.categoryTwo = Number(stepTwo.categoryTwo)
+          stepTwo.categoryThree = Number(stepTwo.categoryThree)
+          stepTwo.category_id = Number(stepTwo.category_id)
+          // check when user not select catalog
+          if (stepThree.catalog_id === 'default') {
+            delete stepThree.catalog_id
+          } else {
+            stepThree.catalog_id = Number(stepThree.catalog_id)
+          }
+          // check when user not select discount
+          if (stepThree.discount) {
+            stepThree.discount = Number(stepThree.discount)
+          } else {
+            stepThree.discount = 0
+          }
+          // converting value
+          stepThree.is_dropship = (stepThree.is_dropship === 'true')
+          stepThree.is_insurance = (stepThree.is_insurance === 'true')
+          stepThree.price = Number(stepThree.price)
+          stepThree.stock = Number(stepThree.stock)
+          stepThree.weight = Number(stepThree.weight)
+          stepThree.condition = Number(stepThree.condition)
+          // define params
+          let params = {
+            ...stepOne,
+            ...stepTwo,
+            ...stepThree,
+            expeditions: [...expeditionsSelected],
+            status: Number(stepThree.status),
+            ...upload.payload
+          }
+          // start upload product
+          NProgress.start()
+          this.props.createProduct(params)
+          /** upload product with respon image done */
         }
-
-        if (stepThree.discount) {
-          stepThree.discount = Number(stepThree.discount)
-        } else {
-          stepThree.discount = 0
-        }
-
-        stepThree.is_dropship = (stepThree.is_dropship === 'true')
-        stepThree.is_insurance = (stepThree.is_insurance === 'true')
-        stepThree.price = Number(stepThree.price)
-        stepThree.stock = Number(stepThree.stock)
-        stepThree.weight = Number(stepThree.weight)
-        stepThree.condition = Number(stepThree.condition)
-
-        let params = {
-          ...stepOne,
-          ...stepTwo,
-          ...stepThree,
-          expeditions: [...expeditionsSelected],
-          status: Number(stepThree.status),
-          ...upload.payload
-        }
-        NProgress.start()
-        this.props.createProduct(params)
       }
     }
   }
@@ -259,13 +267,13 @@ class ProductAddStepFour extends Component {
 
 const mapStateToProps = (state) => ({
   upload: state.upload,
-  expeditions: state.expeditions,
+  expeditions: state.expeditionListStore,
   tempCreateProduct: state.tempCreateProduct,
   alterProducts: state.alterProducts
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getExpedition: () => dispatch(expeditionActions.getExpedition()),
+  getExpedition: () => dispatch(storesActions.storeExpeditionList()),
   setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params)),
   createProduct: (params) => dispatch(productActions.createProduct(params)),
   photoUpload: (params) => dispatch(storesActions.photoUpload({ data: params }))

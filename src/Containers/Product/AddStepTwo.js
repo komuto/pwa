@@ -48,14 +48,20 @@ class ProductAddStepTwo extends Component {
     }
     // fetch category level 2
     if (e.target.name === 'categoryOne') {
+      delete form.categoryTwo
+      delete form.categoryThree
+      delete form.category_id
       this.props.getSubCategory({ id: e.target.value })
     }
     // fetch category level 3
     if (e.target.name === 'categoryTwo') {
+      delete form.categoryThree
+      delete form.category_id
       this.props.getSubCategory2({ id: e.target.value })
     }
     // fetch category level 4
     if (e.target.name === 'categoryThree') {
+      delete form.category_id
       this.props.getSubCategory3({ id: e.target.value })
     }
     this.setState({ form, error })
@@ -70,9 +76,12 @@ class ProductAddStepTwo extends Component {
   }
 
   submit () {
-    const { form, tempCreateProduct } = this.state
-
+    const { form, tempCreateProduct, subCategory3 } = this.state
     if (form.name === undefined || form.name === '') {
+      // var top = this.inputNameYA.position().top
+      // window.scrollTop(top)
+      this.inputNameYA.scrollIntoView()
+
       this.setState({ error: 'name' })
       return
     }
@@ -92,12 +101,15 @@ class ProductAddStepTwo extends Component {
       return
     }
 
-    if (form.category_id === undefined) {
-      this.setState({ error: 'category_id' })
-      return
+    if (subCategory3.isFound && subCategory3.categories.sub_categories.length > 1) {
+      if (form.category_id === undefined) {
+        this.setState({ error: 'category_id' })
+        return
+      }
+    } else {
+      form.category_id = form.categoryThree
     }
-
-    if (form.description === undefined) {
+    if (form.description === undefined || form.description === '') {
       this.setState({ error: 'description' })
       return
     }
@@ -110,6 +122,10 @@ class ProductAddStepTwo extends Component {
         isFound: true
       }
     })
+  }
+
+  inputName (input) {
+    this.inputNameYA = input
   }
 
   async componentDidMount () {
@@ -179,11 +195,11 @@ class ProductAddStepTwo extends Component {
             <div className='field' style={error === 'name' ? styleError : {}}>
               <label>Nama Produk *</label>
               <p className='control'>
-                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name !== undefined) ? form.name : ''} />
+                <input ref={(input) => this.inputName(input)} onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name !== undefined) ? form.name : ''} />
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryOne' ? styleError : {}}>Kategori</label>
+              <label style={error === 'categoryOne' ? styleError : {}}>Kategori *</label>
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
@@ -199,7 +215,7 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 1</label>
+              <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 1 *</label>
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
@@ -216,7 +232,7 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2</label>
+              <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2 *</label>
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
@@ -276,7 +292,7 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label>Deskripsi Produk</label>
+              <label style={error === 'description' ? styleError : {}}>Deskripsi Produk *</label>
               <p className='control'>
                 <textarea onChange={(e) => this.formHandling(e)} value={form.description !== undefined ? form.description : ''} name='description' className='textarea' rows='2' />
               </p>
