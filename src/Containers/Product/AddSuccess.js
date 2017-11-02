@@ -8,8 +8,9 @@ class ProductAddSuccess extends Component {
       <NotificationPage
         icon={Images.regSuccess}
         title='Berhasil Menambah Produk'
-        subTitle='Anda telah berhadil menambah produk baru ke dalam toko anda'
+        subTitle='Anda telah berhasil menambah produk baru ke dalam toko anda'
         path='/product-list'
+        alias='/product/list'
         text='Lihat Daftar Produk' />
     )
   }

@@ -43,6 +43,7 @@ app.prepare().then(_ => {
   defineASURL('/product/add/two', '/product-add-step-two')
   defineASURL('/product/add/three', '/product-add-step-three')
   defineASURL('/product/add/four', '/product-add-step-four')
+  defineASURL('/product/add/success', '/product-add-success')
   // product detail
   defineASURL('/detail/:store/:slug', '/product-detail')
   // dropship

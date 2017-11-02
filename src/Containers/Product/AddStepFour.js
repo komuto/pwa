@@ -111,7 +111,7 @@ class ProductAddStepFour extends Component {
       NProgress.done()
       if (alterProducts.status === Status.SUCCESS) {
         this.submitingProduct = false
-        Router.push('/product-add-success')
+        Router.push('/product-add-success', '/product/add/success')
       }
 
       if (alterProducts.status === Status.FAILED || alterProducts.status === Status.OFFLINE) {
