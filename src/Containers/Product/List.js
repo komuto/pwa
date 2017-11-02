@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { animateScroll, Element, Link, Events } from 'react-scroll'
+import { Element, Link, Events } from 'react-scroll'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // containers
@@ -38,11 +38,6 @@ class ProductList extends Component {
         message: 'Error, default message.'
       }
     }
-  }
-
-  /** reset scroll */
-  scrollToTop () {
-    animateScroll.scrollTo(0, {duration: 0})
   }
 
   handleDropdown (e, id) {
@@ -91,7 +86,7 @@ class ProductList extends Component {
   showListCatalogPress () { this.setState({ showListCatalog: !this.state.showListCatalog }) }
 
   componentDidMount () {
-    this.scrollToTop()
+    window.scrollTo(0, 0)
     NProgress.start()
     this.props.getStoreProducts({hidden: false})
     if (!this.props.hiddenStoreProducts.isFound) {
