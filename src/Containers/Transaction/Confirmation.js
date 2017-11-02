@@ -284,7 +284,7 @@ class TransactionConfirmation extends Component {
     let solution = 1
     this.state.solution.data.map((d, index) => {
       if (this.state.solution.selected === d) {
-        solution = index
+        solution = index + 1
       }
     })
 
