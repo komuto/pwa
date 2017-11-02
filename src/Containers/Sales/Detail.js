@@ -259,6 +259,7 @@ class SalesDetail extends React.Component {
 
   render () {
     const { notification, tabs, saleDetail, receiptNumber, validation, showModal } = this.state
+    console.log('saleDetail: ', saleDetail)
     if (!saleDetail.isFound) return null
     return (
       <div>
@@ -272,13 +273,7 @@ class SalesDetail extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
-              { this.renderContentTabs(tabs) }
-            </ul>
-          </div>
-        </section>
+        { this.renderContentTabs(tabs) }
         <div className='sort-option' style={{ display: showModal && 'block' }}>
           <div className='notif-report add-voucher'>
             <div className='header-notif'>
@@ -509,6 +504,7 @@ const DeliveryStatus = (props) => {
 const OrderDetail = (props) => {
   const { saleDetail } = props
   if (saleDetail === undefined) return null
+  let subTotal = 0
   moment.locale('id')
   return (
     <div>
@@ -595,6 +591,7 @@ const OrderDetail = (props) => {
         </div>
         <ul className='list-trans-product'>
           { saleDetail.sale.items.map((item, i) => {
+            subTotal += (item.product.price * item.qty)
             return (
               <li key={i}>
                 <div className='box'>
@@ -733,7 +730,7 @@ const OrderDetail = (props) => {
                 <li>
                   <div className='columns custom is-mobile'>
                     <div className='column is-half'><strong>Subtotal</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.total_price) }</span></div>
+                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(subTotal) }</span></div>
                   </div>
                 </li>
                 <li>
@@ -768,6 +765,7 @@ const OrderDetail = (props) => {
 const OrderDetailDropship = (props) => {
   const { saleDetail } = props
   if (saleDetail === undefined) return null
+  let subTotal = 0
   moment.locale('id')
   return (
     <div>
@@ -850,6 +848,7 @@ const OrderDetailDropship = (props) => {
         </div>
         <ul className='list-trans-product'>
           { saleDetail.sale.items.map((item, i) => {
+            subTotal += (item.product.price * item.qty)
             return (
               <li key={i}>
                 <div className='box'>
@@ -950,7 +949,7 @@ const OrderDetailDropship = (props) => {
                 <li>
                   <div className='columns custom is-mobile'>
                     <div className='column is-half'><strong>Subtotal</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.total_price) }</span></div>
+                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(subTotal) }</span></div>
                   </div>
                 </li>
                 <li>

@@ -238,7 +238,7 @@ class ProductAddStepThree extends Component {
       return
     }
 
-    if (form.stock === undefined || form.stock === '' || Number(form.stock) < 0) {
+    if (form.stock === undefined || form.stock === '' || Number(form.stock) < 1) {
       this.setState({ error: 'stock' })
       return
     }
