@@ -3,18 +3,21 @@ import { connect } from 'react-redux'
 import { Element, Link, Events } from 'react-scroll'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import InfiniteScroll from 'react-infinite-scroller'
+import _ from 'lodash'
 // containers
 import { Navbar } from '../Navbar'
 // components
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
+import Loading from '../../Components/Loading'
 // actions
 import * as storeActions from '../../actions/stores'
-// services
-import { Status } from '../../Services/Status'
 // Lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+/** including themes */
+import Images from '../../Themes/Images'
 
 const TAB_SHOW_IN_PAGE = 'TAB_SHOW_IN_PAGE'
 const TAB_HIDDEN_IN_PAGE = 'TAB_HIDDEN_IN_PAGE'
@@ -25,19 +28,28 @@ class ProductList extends Component {
     this.state = {
       storeProducts: props.storeProducts || null,
       hiddenStoreProducts: props.hiddenStoreProducts || null,
+      storeCatalogProductsSearch: props.storeCatalogProductsSearch || null,
       search: {
         status: false,
         value: '',
         results: []
       },
+      pagination: {
+        page: 1,
+        limit: 10
+      },
+      isEmpty: false,
       tabs: TAB_SHOW_IN_PAGE,
       showListCatalog: false,
       dropdownSelected: '',
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.hasMore = false
+    this.fetching = { fetchingMore: false, fetchingFirst: false, searchItem: false }
   }
 
   handleDropdown (e, id) {
@@ -88,16 +100,26 @@ class ProductList extends Component {
   componentDidMount () {
     NProgress.start()
     this.props.getStoreProducts({hidden: false})
-    if (!this.props.hiddenStoreProducts.isFound) {
-      this.props.getHiddenStoreProducts()
-    }
+    this.fetching = { ...this.fetching, fetchingFirst: true }
+    this.props.getHiddenStoreProducts()
     Events.scrollEvent.register('end', (to, element) => {
       this.setState({ showListCatalog: !this.state.showListCatalog })
     })
   }
 
+  async loadMore () {
+    let { id, pagination } = this.state
+    if (!this.fetching.fetchingMore) {
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = { ...this.fetching, fetchingMore: true }
+      await this.props.getHiddenStoreProducts({ id: id, page: this.state.pagination.page })
+    }
+  }
+
   searchOnChange (event) {
-    const { search, tabs, storeProducts, hiddenStoreProducts } = this.state
+    const { search, tabs, storeProducts } = this.state
     search.status = true
     search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
 
@@ -106,9 +128,9 @@ class ProductList extends Component {
         search.status = true
         search.results = []
         storeProducts.storeProducts.map((sp) => {
-          let tamProducts = []
-          sp.products.map((product) => {
-            (product.name.toLowerCase().indexOf(search.value) > -1) && tamProducts.push(product)
+          let tamProducts = sp.products.filter((x) => {
+            let regex = new RegExp(search.value, 'gi')
+            return regex.test(x.name)
           })
           if (tamProducts.length > 0) {
             sp.products = tamProducts
@@ -121,47 +143,89 @@ class ProductList extends Component {
       }
     }
     if (tabs === TAB_HIDDEN_IN_PAGE) {
-      if (search.value !== '') {
-        let filteredData = hiddenStoreProducts.products.filter((x) => {
-          let regex = new RegExp(search.value, 'gi')
-          return regex.test(x.name)
-        })
-        search.results = filteredData
-      } else {
-        search.status = false
-        search.results = []
-      }
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        if (search.value) {
+          this.fetching = { ...this.fetching, searchItem: true }
+          NProgress.start()
+          this.props.getStoreProductsByCatalogSearch({ q: search.value, hidden: true })
+        } else {
+          search.status = false
+          search.results = []
+        }
+        this.setState({ search, isEmpty: false })
+      }, 1000)
     }
     this.setState({ search })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProducts, hiddenStoreProducts } = nextProps
-    let { notification } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    if (!storeProducts.isLoading) {
+    const { storeProducts, hiddenStoreProducts, storeCatalogProductsSearch } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+
+    if (!isFetching(storeProducts)) {
       NProgress.done()
-      switch (storeProducts.status) {
-        case Status.SUCCESS :
-          if (!storeProducts.isFound) notification = {status: true, message: 'Data produk tidak ditemukan'}
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          notification = {status: true, message: storeProducts.message}
-          break
-        default:
-          break
+      if (isFound(storeProducts)) {
+        this.setState({ storeProducts })
       }
-      this.setState({ storeProducts, notification })
+      if (isError(storeProducts)) {
+        this.setState({ notification: notifError(storeProducts.message) })
+      }
     }
-    if (hiddenStoreProducts.isFound) {
-      this.setState({ hiddenStoreProducts })
+
+    if (!isFetching(hiddenStoreProducts) && this.fetching.fetchingFirst) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, fetchingFirst: false }
+      if (isFound(hiddenStoreProducts)) {
+        this.hasMore = hiddenStoreProducts.products.length > 9
+        let isEmpty = hiddenStoreProducts.products.length < 1
+        this.setState({ hiddenStoreProducts, isEmpty })
+      }
+      if (isError(hiddenStoreProducts)) {
+        this.setState({ notification: notifError(hiddenStoreProducts.message) })
+      }
+    }
+
+    if (!isFetching(hiddenStoreProducts) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(hiddenStoreProducts)) {
+        let stateHiddenStoreProducts = this.state.hiddenStoreProducts
+        this.hasMore = hiddenStoreProducts.products.length > 9
+        stateHiddenStoreProducts.products = stateHiddenStoreProducts.products.concat(hiddenStoreProducts.products)
+        this.setState({ hiddenStoreProducts: stateHiddenStoreProducts })
+      }
+      if (isError(hiddenStoreProducts)) {
+        this.setState({ notification: notifError(hiddenStoreProducts.message) })
+        this.hasMore = false
+      }
+    }
+    // handling search
+    if (!isFetching(storeCatalogProductsSearch) && this.fetching.searchItem) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, searchItem: false }
+      this.hasMore = false
+      if (isFound(storeCatalogProductsSearch)) {
+        let uniqData = storeCatalogProductsSearch.products.filter((data, index, self) =>
+          self.findIndex((p) => { return p.id === data.id }) === index
+        )
+        let { search } = this.state
+        let isEmpty = storeCatalogProductsSearch.products.length < 1
+        let searchStatus = storeCatalogProductsSearch.products.length > 0
+        let newState = { storeCatalogProductsSearch, isEmpty, search }
+        newState.storeCatalogProductsSearch['products'] = uniqData
+        newState.search['status'] = searchStatus
+        newState.search['results'] = storeCatalogProductsSearch.products
+        this.setState(newState)
+      }
+      if (isError(storeCatalogProductsSearch)) {
+        this.setState({ notification: notifError(storeCatalogProductsSearch.message) })
+      }
     }
   }
 
   render () {
     console.log('state', this.state)
-    const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected } = this.state
+    const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
     }
@@ -188,6 +252,7 @@ class ProductList extends Component {
       } else {
         hiddenProducts = hiddenStoreProducts.isFound ? hiddenStoreProducts.products : []
       }
+      console.log('hidden', search.status)
     }
     return (
       <Content>
@@ -205,7 +270,7 @@ class ProductList extends Component {
         <section className='section is-paddingless'>
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' placeholder='Cari barang ' onChange={(e) => this.searchOnChange(e)} />
+              <input className='input is-medium' type='text' value={search.value} placeholder='Cari barang ' onChange={(e) => this.searchOnChange(e)} />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>
@@ -225,10 +290,12 @@ class ProductList extends Component {
             productChangeDropship={(e, id) => this.productChangeDropship(e, id)}
             dropdownSelected={dropdownSelected}
             productDetail={(e, product) => this.productDetail(e, product)} />
-          : <ContentHidden
+          : isEmpty ? <ProductEmpty /> : <ContentHidden
             hiddenProducts={hiddenProducts}
             catalogProducts={catalogProducts}
-            productDetail={(e, product) => this.productDetail(e, product)} />
+            productDetail={(e, product) => this.productDetail(e, product)}
+            loadMore={() => this.loadMore()}
+            hasMore={this.hasMore} />
         }
       </Content>
     )
@@ -237,35 +304,42 @@ class ProductList extends Component {
 
 const ContentHidden = (props) => {
   if (props.hiddenProducts === undefined) return null
-  console.log('test', props.catalogProducts[0])
   return (
     <div>
       {
-        props.hiddenProducts.map((p, i) => {
-          let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
-          return (
-            <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
-              <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
-                <div className='remove rightTop'>
-                  { p.is_discount && <span className='icon-discount-sign' /> }
-                  { p.is_wholesaler && <span className='icon-grosir-sign' /> }
-                </div>
-                <div className='purchase'>
-                  <figure className='img-item xx'>
-                    <MyImage src={p.image} alt='image' />
-                  </figure>
-                  <div className='content-product'>
-                    <h3>{ p.name }</h3>
-                    { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
-                    { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
-                    <p>Jumlah Stok : { p.stock }</p>
-                    <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMore.bind(this), 500)}
+          hasMore={props.hasMore}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            props.hiddenProducts.map((p, i) => {
+              let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+              return (
+                <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
+                  <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
+                    <div className='remove rightTop'>
+                      { p.is_discount && <span className='icon-discount-sign' /> }
+                      { p.is_wholesaler && <span className='icon-grosir-sign' /> }
+                    </div>
+                    <div className='purchase'>
+                      <figure className='img-item xx'>
+                        <MyImage src={p.image} alt='image' />
+                      </figure>
+                      <div className='content-product'>
+                        <h3>{ p.name }</h3>
+                        { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
+                        { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                        <p>Jumlah Stok : { p.stock }</p>
+                        <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Element>
-          )
-        })
+                </Element>
+              )
+            })
+          }
+        </InfiniteScroll>
       }
     </div>
   )
@@ -360,14 +434,31 @@ const ContentShow = (props) => {
   )
 }
 
+/** product empty content */
+const ProductEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Produk tidak ditemukan</strong></p>
+          <p>Kami tidak bisa menemukan barang yang anda inginkan</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const mapStateToProps = (state) => ({
   storeProducts: state.storeProducts,
-  hiddenStoreProducts: state.hiddenStoreProducts
+  hiddenStoreProducts: state.hiddenStoreProducts,
+  storeCatalogProductsSearch: state.storeCatalogProductsSearch
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getStoreProducts: (params) => dispatch(storeActions.getStoreProducts(params)),
-  getHiddenStoreProducts: (params) => dispatch(storeActions.getHiddenStoreProducts(params))
+  getHiddenStoreProducts: (params) => dispatch(storeActions.getHiddenStoreProducts(params)),
+  getStoreProductsByCatalogSearch: (params) => dispatch(storeActions.getStoreProductsByCatalogSearch(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductList)

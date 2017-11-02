@@ -62,7 +62,7 @@ class DropshippingOption extends React.Component {
         if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
           NProgress.start()
           this.fetchingFirst = true
-          await this.props.getProduct({ id: nextId })
+          await this.props.getStoreProductDetail({ id: nextId })
         }
       }
       if (isError(storeProductDetail)) {

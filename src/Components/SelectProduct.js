@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import MyImage from '../Components/MyImage'
 
 class SelectProduct extends Component {
   render () {
@@ -10,7 +11,7 @@ class SelectProduct extends Component {
             <article className='media'>
               <div className='media-left is-bordered'>
                 <figure className='image'>
-                  <img src={product.image} alt='pict' />
+                  <MyImage src={product.image} alt='pict' />
                 </figure>
               </div>
               <div className='media-content middle'>
