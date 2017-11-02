@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Element, Link, Events } from 'react-scroll'
+import { animateScroll, Element, Link, Events } from 'react-scroll'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // containers
@@ -38,6 +38,11 @@ class ProductList extends Component {
         message: 'Error, default message.'
       }
     }
+  }
+
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   handleDropdown (e, id) {
@@ -86,6 +91,7 @@ class ProductList extends Component {
   showListCatalogPress () { this.setState({ showListCatalog: !this.state.showListCatalog }) }
 
   componentDidMount () {
+    this.scrollToTop()
     NProgress.start()
     this.props.getStoreProducts({hidden: false})
     if (!this.props.hiddenStoreProducts.isFound) {
@@ -338,7 +344,7 @@ const ContentShow = (props) => {
       <a className='catalog-button js-option' onClick={() => props.showListCatalogPress()}>
         <span className='icon-catalog' /> Daftar Katalog
       </a>
-      <a className='sticky-button' onClick={() => Router.push('/product-add')}><span className='txt'>+</span></a>
+      <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
 
       <div className='sort-option' style={{ display: props.showListCatalog && 'block' }}>
         <div className='sort-list catalog-list' style={{ overflowY: 'inherit' }}>

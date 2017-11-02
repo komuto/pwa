@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import { animateScroll } from 'react-scroll'
 // components
 import Content from '../../Components/Content'
 // actions
@@ -26,6 +27,11 @@ class ManageStore extends Component {
     }
   }
 
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
+  }
+
   handleNotification (e) {
     const { notification } = this.state
     const newState = { notification }
@@ -34,6 +40,7 @@ class ManageStore extends Component {
   }
 
   componentDidMount () {
+    this.scrollToTop()
     const { isFound } = this.props
     if (!isFound(this.state.profile)) {
       NProgress.start()
@@ -71,7 +78,7 @@ class ManageStore extends Component {
 
   toListProducts (e) {
     e.preventDefault()
-    Router.push('/product-list')
+    Router.push('/product-list', '/product/list')
   }
 
   toSales (e) {

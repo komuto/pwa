@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import { animateScroll } from 'react-scroll'
 // component
 import Wizard from '../../Components/Wizard'
 // actions
@@ -29,6 +30,11 @@ class ProductAddStepTwo extends Component {
       error: null
     }
     this.submiting = false
+  }
+
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   formHandling (e) {
@@ -107,6 +113,7 @@ class ProductAddStepTwo extends Component {
   }
 
   async componentDidMount () {
+    this.scrollToTop()
     const { category, brands } = this.state
     if (!category.isFound) {
       NProgress.start()
@@ -151,7 +158,7 @@ class ProductAddStepTwo extends Component {
 
     if (this.submiting && tempCreateProduct.stepTwo.isFound) {
       this.submiting = false
-      Router.push('/product-add-step-three')
+      Router.push('/product-add-step-three', '/product/add/three')
     }
   }
 

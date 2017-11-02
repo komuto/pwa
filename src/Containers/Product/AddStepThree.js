@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import { animateScroll } from 'react-scroll'
 // component
 // import MyImage from '../../Components/MyImage'
 import Content from '../../Components/Content'
@@ -40,7 +41,7 @@ class ProductAddStepThree extends Component {
         condition: 1,
         is_insurance: true,
         is_dropship: false,
-        status: 0,
+        status: 1,
         is_wholesaler: false,
         wholesales: [],
         ...stepThree
@@ -58,6 +59,11 @@ class ProductAddStepThree extends Component {
       collapse: {}
     }
     this.submiting = false
+  }
+
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
   }
 
   formHandling (e) {
@@ -237,10 +243,10 @@ class ProductAddStepThree extends Component {
       return
     }
 
-    if (form.catalog_id === undefined || form.catalog_id === '') {
-      this.setState({ error: 'catalog_id' })
-      return
-    }
+    // if (form.catalog_id === undefined || form.catalog_id === '') {
+    //   this.setState({ error: 'catalog_id' })
+    //   return
+    // }
 
     this.submiting = true
     this.props.setTempCreateProduct({
@@ -253,6 +259,7 @@ class ProductAddStepThree extends Component {
   }
 
   componentDidMount () {
+    this.scrollToTop()
     const { catalogs } = this.state
     if (!catalogs.isFound) {
       NProgress.start()
@@ -296,7 +303,7 @@ class ProductAddStepThree extends Component {
         this.setState({ notification: notifError(dropshipfaq.message) })
       }
     }
-    if (this.submiting && tempCreateProduct.stepThree.isFound) Router.push('/product-add-step-four')
+    if (this.submiting && tempCreateProduct.stepThree.isFound) Router.push('/product-add-step-four', '/product/add/four')
   }
 
   render () {
@@ -430,9 +437,9 @@ class ProductAddStepThree extends Component {
                 </span>
               </label>
               <label className='checkbox'>
-                <span className={`sort-text ${String(form.status) === '1' ? 'active' : ''}`}>Sembunyikan Barang</span>
+                <span className={`sort-text ${String(form.status) === '0' ? 'active' : ''}`}>Sembunyikan Barang</span>
                 <span>Barang yang disembunyikan tidak akan muncul di toko Anda. Tapi tetap dapat di dropshipping kan</span>
-                <span className={`input-wrapper ${String(form.status) === '1' ? 'checked' : ''}`}>
+                <span className={`input-wrapper ${String(form.status) === '0' ? 'checked' : ''}`}>
                   <input onClick={(e) => this.formHandling(e)} name='status' value={String(form.status) === '1' ? '0' : '1'} type='checkbox' />
                 </span>
               </label>

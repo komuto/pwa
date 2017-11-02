@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import FlipMove from 'react-flip-move'
 import winurl from 'winurl'
+import { animateScroll } from 'react-scroll'
 // component
 import MyImage from '../../Components/MyImage'
 import Wizard from '../../Components/Wizard'
@@ -22,7 +23,12 @@ class ProductAddStepOne extends Component {
   constructor (props) {
     super(props)
     let { stepOne } = props.tempCreateProduct
-    let images = stepOne.isFound ? stepOne.images : []
+    let images = []
+    if (stepOne) {
+      if (stepOne.isFound) {
+        images = stepOne.images
+      }
+    }
 
     this.state = {
       tempCreateProduct: props.tempCreateProduct || null,
@@ -38,6 +44,15 @@ class ProductAddStepOne extends Component {
     this.submiting = false
   }
 
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
+  }
+
+  componentDidMount () {
+    this.scrollToTop()
+  }
+
   triggerFileUpload () {
     this.inputElementPress.click()
   }
@@ -49,11 +64,11 @@ class ProductAddStepOne extends Component {
       status: false,
       message: 'Error, default message.'
     }
-    console.log(files)
+    // console.log(files)
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]
-      console.log(f)
+      // console.log(f)
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
@@ -116,7 +131,9 @@ class ProductAddStepOne extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { tempCreateProduct } = nextProps
-    if (this.submiting && tempCreateProduct.stepOne.isFound) Router.push('/product-add-step-two')
+    if (this.submiting && tempCreateProduct && tempCreateProduct.stepOne.isFound) {
+      Router.push('/product-add-step-two', '/product/add/two')
+    }
   }
 
   render () {
@@ -138,7 +155,7 @@ class ProductAddStepOne extends Component {
                 {
                   images.map((picture, index) => {
                     return (
-                      <li key={index}>
+                      <li key={index} style={{ marginBottom: 5 }}>
                         <div className='photo-product'>
                           <a onClick={() => this.removeImage(picture)} className='del-photo'><span className='icon-cross-circle' /></a>
                           <div className='photo-wrapp'>

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import FormData from 'form-data'
 import Router from 'next/router'
+import { animateScroll } from 'react-scroll'
 // component
 import Content from '../../Components/Content'
 import Wizard from '../../Components/Wizard'
@@ -35,7 +36,13 @@ class ProductAddStepFour extends Component {
     this.submitingProduct = false
   }
 
+  /** reset scroll */
+  scrollToTop () {
+    animateScroll.scrollTo(0, {duration: 0})
+  }
+
   componentDidMount () {
+    this.scrollToTop()
     let { expeditions } = this.state
     if (!expeditions.isFound) {
       NProgress.start()
@@ -138,13 +145,43 @@ class ProductAddStepFour extends Component {
         NProgress.done()
         this.submiting = false
         this.submitingProduct = true
+
+        if (stepTwo.brand_id === 'default') {
+          delete stepTwo.brand_id
+        } else {
+          stepTwo.brand_id = Number(stepTwo.brand_id)
+        }
+
+        stepTwo.categoryOne = Number(stepTwo.categoryOne)
+        stepTwo.categoryTwo = Number(stepTwo.categoryTwo)
+        stepTwo.categoryThree = Number(stepTwo.categoryThree)
+        stepTwo.category_id = Number(stepTwo.category_id)
+
+        if (stepThree.catalog_id === 'default') {
+          delete stepThree.catalog_id
+        } else {
+          stepThree.catalog_id = Number(stepThree.catalog_id)
+        }
+
+        if (stepThree.discount) {
+          stepThree.discount = Number(stepThree.discount)
+        } else {
+          stepThree.discount = 0
+        }
+
+        stepThree.is_dropship = (stepThree.is_dropship === 'true')
+        stepThree.is_insurance = (stepThree.is_insurance === 'true')
+        stepThree.price = Number(stepThree.price)
+        stepThree.stock = Number(stepThree.stock)
+        stepThree.weight = Number(stepThree.weight)
+        stepThree.condition = Number(stepThree.condition)
+
         let params = {
           ...stepOne,
           ...stepTwo,
           ...stepThree,
           expeditions: [...expeditionsSelected],
           status: Number(stepThree.status),
-          is_dropship: stepThree.is_dropship === 'true',
           ...upload.payload
         }
         NProgress.start()

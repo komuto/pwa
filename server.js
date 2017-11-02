@@ -36,6 +36,13 @@ app.prepare().then(_ => {
   defineASURL('/p/:slugparent/:slug', '/product')
   defineASURL('/p/:slug', '/product')
   defineASURL('/p', '/product')
+  // manage product
+  defineASURL('/product/add', '/product-add')
+  defineASURL('/product/list', '/product-list')
+  defineASURL('/product/add/one', '/product-add-step-one')
+  defineASURL('/product/add/two', '/product-add-step-two')
+  defineASURL('/product/add/three', '/product-add-step-three')
+  defineASURL('/product/add/four', '/product-add-step-four')
   // product detail
   defineASURL('/detail/:store/:slug', '/product-detail')
   // dropship

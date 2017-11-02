@@ -29,7 +29,7 @@ class ProductAdd extends Component {
                           <span className='icon-upload-product' />
                         </figure>
                       </div>
-                      <div className='media-content' onClick={() => Router.push('/product-add-step-one')}>
+                      <div className='media-content' onClick={() => Router.push('/product-add-step-one', '/product/add/one')}>
                         <div className='content'>
                           <p>
                             <strong>Upload Produk Baru</strong><br />
