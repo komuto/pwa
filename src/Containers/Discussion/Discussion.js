@@ -49,11 +49,31 @@ class Discussion extends Component {
   }
 
   componentDidMount () {
+    console.log('componentDidMount: ')
     const { id } = this.state
     NProgress.start()
-    this.submitting = { ...this.submitting, discussions: true, productDetail: true }
-    this.props.getProduct({ id })
+    this.submitting = { ...this.submitting, discussions: true }
+    this.reGetProduct()
     this.props.getDiscussion({ id, ...this.state.pagination })
+  }
+
+  reGetProduct () {
+    const { id, productDetail } = this.state
+    const { isFound } = this.props
+    if (isFound(productDetail)) {
+      NProgress.start()
+      if (String(productDetail.detail.product.id) !== String(id)) {
+        this.getProduct(id)
+      }
+    } else {
+      this.getProduct(id)
+    }
+  }
+
+  getProduct (id) {
+    NProgress.start()
+    this.submitting = { ...this.submitting, productDetail: true }
+    this.props.getProduct({ id })
   }
 
   async handleLoadMore () {
@@ -95,17 +115,17 @@ class Discussion extends Component {
 
     /** handling state new discussion */
     if (!isFetching(newDiscussion)) {
+      console.log('newDiscussion: ', newDiscussion)
       if (isError(newDiscussion)) {
         this.setState({ notification: notifError(newDiscussion.message) })
       }
       if (isFound(newDiscussion)) {
         this.isAddNewDiscussion = true
+        this.props.resetDiscussion()
         discussions.discussions.unshift(newDiscussion.discussion)
         this.setState({
-          discussions,
           notification: notifSuccess(newDiscussion.message)
         })
-        this.props.resetDiscussion()
       }
     }
 

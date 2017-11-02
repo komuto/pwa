@@ -31,7 +31,22 @@ class New extends Component {
   }
 
   componentDidMount () {
-    const { id } = this.state
+    this.reGetProduct()
+  }
+
+  reGetProduct () {
+    const { id, productDetail } = this.state
+    const { isFound } = this.props
+    if (isFound(productDetail)) {
+      if (String(productDetail.detail.product.id) !== String(id)) {
+        this.getProduct(id)
+      }
+    } else {
+      this.getProduct(id)
+    }
+  }
+
+  getProduct (id) {
     NProgress.start()
     this.submitting = { ...this.submitting, productDetail: true }
     this.props.getProduct({ id })
