@@ -130,6 +130,7 @@ class TransactionDetailStatus extends Component {
             {
             tab === TABS[0]
             ? <TabsStatusContent
+              {...this.state}
               onClickModalMessage={() => this.modalMessage()}
               buyerInvoiceDetail={buyerInvoiceDetail}
               invoiceStatus={invoiceStatus} />
