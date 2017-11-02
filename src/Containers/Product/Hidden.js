@@ -3,20 +3,18 @@ import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
 import SelectProduct from '../../Components/SelectProduct'
 // actions
 import * as storeActions from '../../actions/stores'
 import * as productActions from '../../actions/product'
-// services
-import { validateResponse, isFetching, Status } from '../../Services/Status'
 
 class ProductHidden extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      submitting: false,
       id: props.query.id || null,
       storeProductsByCatalog: props.storeProductsByCatalog || null,
       selectedProducts: [],
@@ -28,6 +26,8 @@ class ProductHidden extends React.Component {
         message: 'Error, default message.'
       }
     }
+    this.fetchingFirst = false
+    this.submiting = false
   }
 
   handleNotification (e) {
@@ -36,11 +36,8 @@ class ProductHidden extends React.Component {
     if (selectedProducts.length === 0) {
       this.setState({ notification: { type: 'is-danger', status: true, message: 'Mohon pilih barang yang akan disembunyikan' } })
     } else {
-      this.setState({ submitting: true }, () => {
-        if (this.state.submitting) {
-          this.props.hideProducts({ product_ids: this.state.selectedProducts })
-        }
-      })
+      this.submiting = true
+      this.props.hideProducts({ product_ids: this.state.selectedProducts })
     }
   }
 
@@ -82,49 +79,48 @@ class ProductHidden extends React.Component {
 
   componentDidMount () {
     const { id } = this.state
-    NProgress.start()
-    this.props.getStoreProductsByCatalog({ id, hidden: false })
+    if (id) {
+      NProgress.start()
+      this.fetchingFirst = true
+      this.props.getStoreProductsByCatalog({ id, hidden: false })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
     const { storeProductsByCatalog, alterProducts } = nextProps
-    const { notification, submitting, selectedProducts } = this.state
-    if (!isFetching(storeProductsByCatalog)) {
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+
+    if (!isFetching(storeProductsByCatalog) && this.fetchingFirst) {
       NProgress.done()
-      this.setState({ storeProductsByCatalog, notification: validateResponse(storeProductsByCatalog, 'Data katalog tidak ditemukan!') })
-    }
-    if (alterProducts.isFound && submitting) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          let newData = storeProductsByCatalog.products.filter(data => selectedProducts.indexOf(data.id) < 0)
-          let newListProduct = {
-            ...storeProductsByCatalog, products: newData
-          }
-          const newNotification = { storeProductsByCatalog: newListProduct, notification, submitting: false, selectAllProduct: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menyembunyikan Barang'
-          newNotification.notification['type'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting: false, selectAllProduct: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menyembunyikan Barang'
-          newNotif.notification['type'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+      this.fetchingFirst = false
+      if (isFound(storeProductsByCatalog)) {
+        this.setState({ storeProductsByCatalog })
       }
-      this.setState({ notification })
+      if (isError(storeProductsByCatalog)) {
+        this.setState({ notification: notifError(storeProductsByCatalog.message) })
+      }
+    }
+    if (!isFetching(alterProducts) && this.submiting) {
+      this.submiting = false
+      if (isFound(alterProducts)) {
+        let newData = storeProductsByCatalog.products.filter(data => this.state.selectedProducts.indexOf(data.id) < 0)
+        let newListProduct = {
+          ...storeProductsByCatalog, products: newData
+        }
+        this.setState({ storeProductsByCatalog: newListProduct, notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
   render () {
-    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, submitting } = this.state
+    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification } = this.state
     const { products } = storeProductsByCatalog
     return (
       <div>
@@ -168,7 +164,7 @@ class ProductHidden extends React.Component {
           </section>
 
           <div className='level nav-bottom nav-button purchase is-mobile'>
-            <a className={`button is-primary is-m-lg is-fullwidth btn-add-cart js-option ${submitting && 'is-loading'}`}
+            <a className={`button is-primary is-m-lg is-fullwidth btn-add-cart js-option ${this.submiting && 'is-loading'}`}
               onClick={(e) => this.handleNotification(e)}> Sembunyikan Barang Terpilih
             </a>
           </div>

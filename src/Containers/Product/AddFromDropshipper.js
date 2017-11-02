@@ -343,7 +343,7 @@ class ProductAddFromDropshipper extends React.Component {
         this.setState(newState)
       }
       if (isError(dropshipProducts)) {
-        this.setState({ notification: notifError(dropshipProducts) })
+        this.setState({ notification: notifError(dropshipProducts.message) })
       }
     }
 
