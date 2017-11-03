@@ -10,8 +10,8 @@ export default () => {
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
           <MyImage src={null} alt='imageNull' />
-          <p><strong>Pembayaran anda belum selesai[unfinish: close, pending] </strong></p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+          <p><strong>Pembayaran gagal </strong></p>
+          <p>Maaf, pembayaran yang anda lakukan gagal</p>
         </div>
         <div className='columns is-mobile'>
           <div className='column'>

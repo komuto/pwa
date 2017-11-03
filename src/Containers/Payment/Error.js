@@ -11,7 +11,7 @@ export default () => {
         <div className='desc has-text-centered'>
           <MyImage src={Images.paymentSuccess} alt='paymentSuccess' />
           <p><strong>Pembayaran Gagal </strong></p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+          <p>Maaf, pembayaran gagal dilakukan</p>
         </div>
         <div className='columns is-mobile'>
           <div className='column'>

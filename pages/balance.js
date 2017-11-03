@@ -43,8 +43,8 @@ const Index = (props) => {
     if (status === 'finish') {
       let params = {
         icon: Images.phoneSuccess,
-        title: 'Anda berhasil melalukan topup saldo',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Pembayaran Telah Berhasil',
+        subTitle: 'Terimakasih telah melakukan topup saldo',
         path: '/balance?type=topup',
         alias: '/balance/topup',
         text: 'Lihat balance status'
@@ -56,8 +56,8 @@ const Index = (props) => {
     if (status === 'unfinish') {
       let params = {
         icon: Images.phoneAccount,
-        title: 'Gagal melakukan topup saldo',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Pembayaran Gagal',
+        subTitle: 'Maaf, anda gagal melakukan topup saldo',
         path: '/balance?type=topup',
         alias: '/balance/topup',
         text: 'Lihat balance status'
@@ -69,8 +69,8 @@ const Index = (props) => {
     if (status === 'error') {
       let params = {
         icon: Images.phoneAccount,
-        title: 'Topup saldo error',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Pembayaran gagal',
+        subTitle: 'Terjadi kesalahan saat pembayaran saldo',
         path: '/balance?type=topup',
         alias: '/balance/topup',
         text: 'Lihat balance status'
@@ -124,8 +124,8 @@ const Index = (props) => {
     if (status === 'finish') {
       let params = {
         icon: Images.phoneSuccess,
-        title: 'Anda berhasil melalukan penarikan saldo',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Penarikan saldo berhasil',
+        subTitle: 'Terimakasih telah melakukan penarikan saldo',
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
@@ -136,8 +136,8 @@ const Index = (props) => {
     if (status === 'unfinish') {
       let params = {
         icon: Images.phoneAccount,
-        title: 'Gagal melakukan penarikan saldo',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Penarikan saldo gagal',
+        subTitle: 'Maaf, anda gagal melakukan penarikan saldo',
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
@@ -148,8 +148,8 @@ const Index = (props) => {
     if (status === 'error') {
       let params = {
         icon: Images.phoneAccount,
-        title: 'Penarikan saldo error',
-        subTitle: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        title: 'Penarikan saldo gagal',
+        subTitle: 'Terjadi kesalahan saat penarikan saldo',
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
