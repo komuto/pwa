@@ -23,3 +23,9 @@ export const getSellerReview = (params) => {
   const query = buildQuery(params)
   return axios.get(`users/store/reviews?${query}`)
 }
+
+export const getStoreReview = ({id, ...params}) => {
+  const axios = authApiKomuto()
+  const query = buildQuery(params)
+  return axios.get(`stores/${id}/reviews?${query}`)
+}

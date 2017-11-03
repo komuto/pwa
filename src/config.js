@@ -193,6 +193,8 @@ export const buildQuery = (params) => Object.keys(params)
  * @param keepParam {function} combine result with params
  */
 export const buildSaga = (callApi, actionType, getState = false, combine = false, keepParam = false) => function * ({ type, ...params }) {
+  // console.log('type: ', type);
+  // console.log('actionType: ', actionType);
   try {
     let res, fromState
     if (getState) {

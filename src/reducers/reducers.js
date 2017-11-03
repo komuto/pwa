@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import * as purchaseReducers from './purchase'
 import * as storage from 'redux-storage'
+import * as purchaseReducers from './purchase'
 import * as userReducers from './user'
 import * as homeReducers from './home'
 import * as brandReducers from './brand'
@@ -188,7 +188,8 @@ const message = {
 
 const other = {
   commission: otherReducers.getCommission,
-  saleCount: otherReducers.getSaleCount
+  saleCount: otherReducers.getSaleCount,
+  marketplace: otherReducers.getMarketPlace
 }
 
 const payment = {
@@ -202,7 +203,8 @@ const review = {
   productReview: reviewReducers.getReviews,
   addReviews: reviewReducers.addReviews,
   buyerReview: reviewReducers.getBuyerReview,
-  sellerReview: reviewReducers.getSellerReview
+  sellerReview: reviewReducers.getSellerReview,
+  storeReview: reviewReducers.storeReview
 }
 
 const saldo = {

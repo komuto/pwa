@@ -48,7 +48,7 @@ export const getArchiveBuyerMessages = () => buildAction(typeReq(GET_ARCHIVE_BUY
 /**
  * @state archiveSellerMessages
  */
-export const getArchiveSellerMessages = () => buildAction(typeReq(GET_ARCHIVE_SELLER_MESSAGES))
+export const getArchiveSellerMessages = params => buildAction(typeReq(GET_ARCHIVE_SELLER_MESSAGES), params)
 
 /**
  * @params id {int} message id

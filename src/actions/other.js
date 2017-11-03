@@ -2,6 +2,7 @@ import { buildAction, typeReq } from '../config'
 
 export const GET_COMMISSION = 'GET_COMMISSION'
 export const GET_SALE_COUNT = 'GET_SALE_COUNT'
+export const GET_MARKETPLACE = 'GET_MARKETPLACE'
 
 /**
  * @params params are the same as the api query
@@ -13,3 +14,5 @@ export const getCommission = params => buildAction(typeReq(GET_COMMISSION), para
  * @state saleCount
  */
 export const getSaleCount = () => buildAction(typeReq(GET_SALE_COUNT))
+
+export const getMarketPlace = () => buildAction(typeReq(GET_MARKETPLACE))

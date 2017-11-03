@@ -25,3 +25,9 @@ export const getSellerReview = createReducer(buildInitState({ sellerReview: [] }
     type: actions.GET_SELLER_REVIEW,
     resultName: 'sellerReview'
   }).run()
+
+export const storeReview = createReducer(buildInitState({ review: [] }, true))
+.addReducer({
+  type: actions.GET_STORE_REVIEW,
+  resultName: 'review'
+}).run()

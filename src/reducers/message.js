@@ -1,13 +1,13 @@
 import * as actions from '../actions/message'
 import { buildInitState, createReducer } from '../config'
 
-export const getBuyerMessages = createReducer(buildInitState({ buyerMessages: [] }))
+export const getBuyerMessages = createReducer(buildInitState({ buyerMessages: [] }, true))
   .addReducer({
     type: actions.GET_BUYER_MESSAGES,
     resultName: 'buyerMessages'
   }).run()
 
-export const getSellerMessages = createReducer(buildInitState({ sellerMessages: [] }))
+export const getSellerMessages = createReducer(buildInitState({ sellerMessages: [] }, true))
   .addReducer({
     type: actions.GET_SELLER_MESSAGES,
     resultName: 'sellerMessages'
@@ -25,7 +25,7 @@ export const getSellerDetailMessage = createReducer(buildInitState({ sellerDetai
     resultName: 'sellerDetailMessage'
   }).run()
 
-export const getArchiveBuyerMessages = createReducer(buildInitState({ archiveMessages: [] }))
+export const getArchiveBuyerMessages = createReducer(buildInitState({ archiveMessages: [] }, true))
   .addReducer({
     type: actions.GET_ARCHIVE_BUYER_MESSAGES,
     resultName: 'archiveMessages'

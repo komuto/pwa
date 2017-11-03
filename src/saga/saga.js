@@ -231,8 +231,9 @@ const message = function * () {
 }
 
 const other = function * () {
-  yield takeEvery(typeReq(otherActions.GET_COMMISSION), otherSaga.getCommission)
+  yield takeLatest(typeReq(otherActions.GET_COMMISSION), otherSaga.getCommission)
   yield takeEvery(typeReq(otherActions.GET_SALE_COUNT), otherSaga.getSaleCount)
+  yield takeEvery(typeReq(otherActions.GET_MARKETPLACE), otherSaga.getMarketPlace)
 }
 
 const payment = function * () {
@@ -248,6 +249,7 @@ const review = function * () {
   yield takeEvery(typeReq(reviewActions.ADD_REVIEWS), reviewSaga.addReviews)
   yield takeEvery(typeReq(reviewActions.GET_BUYER_REVIEW), reviewSaga.getBuyerReview)
   yield takeEvery(typeReq(reviewActions.GET_SELLER_REVIEW), reviewSaga.getSellerReview)
+  yield takeEvery(typeReq(reviewActions.GET_STORE_REVIEW), reviewSaga.getStoreReview)
 }
 
 const saldo = function * () {

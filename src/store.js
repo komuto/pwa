@@ -3,8 +3,8 @@ import createSagaMiddleware from 'redux-saga'
 import komutoApps from './reducers/reducers'
 
 const sagaMiddleware = createSagaMiddleware()
-const reduxStore = createStore(komutoApps, applyMiddleware(sagaMiddleware))
-const store = () => reduxStore
+const reduxStore = (initialState) => createStore(komutoApps, initialState, applyMiddleware(sagaMiddleware))
+const store = (initialState) => reduxStore(initialState)
 
 export function token () {
   const state = reduxStore.getState()

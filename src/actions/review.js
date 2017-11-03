@@ -4,6 +4,7 @@ export const GET_REVIEWS = 'GET_REVIEWS'
 export const ADD_REVIEWS = 'ADD_REVIEWS'
 export const GET_BUYER_REVIEW = 'GET_BUYER_REVIEW'
 export const GET_SELLER_REVIEW = 'GET_SELLER_REVIEW'
+export const GET_STORE_REVIEW = 'GET_STORE_REVIEW'
 
 /**
  * @params id {int} product id
@@ -32,3 +33,5 @@ export const getBuyerReview = (params) => buildAction(typeReq(GET_BUYER_REVIEW),
  * @state sellerReview
  */
 export const getSellerReview = (params) => buildAction(typeReq(GET_SELLER_REVIEW), params)
+
+export const getStoreReview = (params) => buildAction(typeReq(GET_STORE_REVIEW), params)
