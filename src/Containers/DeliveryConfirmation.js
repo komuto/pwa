@@ -13,14 +13,15 @@ import Loading from '../Components/Loading'
 import * as transactionAction from '../actions/transaction'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
-// services
-import { isFetching, validateResponse, isFound, isError } from '../Services/Status'
+/** including themes */
+import Images from '../Themes/Images'
 
 class DeliveryConfirmation extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      processingOrders: props.processingOrders,
+      processingOrders: props.processingOrders || null,
+      isEmpty: false,
       pagination: {
         page: 1,
         limit: 10
@@ -31,9 +32,8 @@ class DeliveryConfirmation extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.hasMore = true
-    this.fetching = false
-    this.fetchingFirst = false
+    this.hasMore = false
+    this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
   detailOrder (id, type) {
@@ -46,54 +46,60 @@ class DeliveryConfirmation extends React.Component {
 
   componentDidMount () {
     NProgress.start()
-    this.fetchingFirst = true
+    this.fetching = { ...this.fetching, fetchingFirst: true }
     this.props.getProcessingOrders(this.state.pagination)
   }
 
   async loadMore () {
     let { pagination } = this.state
-    if (!this.fetching) {
+    if (!this.fetching.fetchingMore) {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
-      this.fetching = true
+      this.fetching = { ...this.fetching, fetchingMore: true }
       await this.props.getProcessingOrders(pagination)
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { processingOrders } = nextProps
-    if (!isFetching(processingOrders) && this.fetchingFirst) {
+    const { isFetching, isFound, isError, notifError } = this.props
+
+    if (!isFetching(processingOrders) && this.fetching.fetchingFirst) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, fetchingFirst: false }
       if (isFound(processingOrders)) {
-        NProgress.done()
-        this.fetchingFirst = false
-        this.setState({ processingOrders })
+        this.hasMore = processingOrders.orders.length > 9
+        let isEmpty = processingOrders.orders.length < 1
+        this.setState({ processingOrders, isEmpty })
       }
       if (isError(processingOrders)) {
-        this.setState({ notification: validateResponse(processingOrders, processingOrders.message) })
+        this.setState({ notification: notifError(processingOrders.message) })
       }
     }
-    if (!isFetching(processingOrders) && this.fetching) {
-      let stateNewOrders = this.state.processingOrders
-      if (processingOrders.orders.length > 0) {
-        this.fetching = false
-        stateNewOrders.orders = stateNewOrders.orders.concat(processingOrders.orders)
-        this.setState({ processingOrders: stateNewOrders, notification: validateResponse(processingOrders, processingOrders.message) })
-      } else {
+
+    if (!isFetching(processingOrders) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(processingOrders)) {
+        let stateProcessingOrders = this.state.processingOrders
+        this.hasMore = processingOrders.orders.length > 9
+        stateProcessingOrders.orders = stateProcessingOrders.orders.concat(processingOrders.orders)
+        this.setState({ processingOrders: stateProcessingOrders })
+      }
+      if (isError(processingOrders)) {
+        this.setState({ notification: notifError(processingOrders.message) })
         this.hasMore = false
-        this.fetching = false
       }
     }
   }
 
   render () {
-    const { processingOrders } = this.state
-    if (!processingOrders.isFound) return null
+    const { processingOrders, isEmpty } = this.state
     moment.locale('id')
     return (
       <div>
         {
-          <InfiniteScroll
+          isEmpty ? <OrdersEmpty /> : <InfiniteScroll
             pageStart={0}
             loadMore={_.debounce(this.loadMore.bind(this), 500)}
             hasMore={this.hasMore}
@@ -186,6 +192,21 @@ class DeliveryConfirmation extends React.Component {
       </div>
     )
   }
+}
+
+/** orders empty content */
+const OrdersEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Data tidak ditemukan</strong></p>
+          <p>Tidak ada data</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {

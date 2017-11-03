@@ -282,6 +282,7 @@ const ShipmentReceiptNumber = (props) => {
 const OrderDetail = (props) => {
   const { processingOrderDetail } = props
   if (processingOrderDetail === undefined) return null
+  let subTotal = 0
   moment.locale('id')
   return (
     <div>
@@ -368,6 +369,7 @@ const OrderDetail = (props) => {
         </div>
         <ul className='list-trans-product'>
           { processingOrderDetail.orderDetail.items.map((item, i) => {
+            subTotal += item.total_price
             return (
               <li key={i}>
                 <div className='box'>
@@ -438,7 +440,7 @@ const OrderDetail = (props) => {
                     <div className='column'>
                       <strong>Info Alamat Penjual</strong>
                       <span className='address'>
-                        {processingOrderDetail.orderDetail.seller.name} ({processingOrderDetail.orderDetail.reseller.store.name})<br />
+                        {processingOrderDetail.orderDetail.seller.name} {processingOrderDetail.orderDetail.reseller ? `(${processingOrderDetail.orderDetail.reseller.store.name})` : ''} <br />
                         {processingOrderDetail.orderDetail.seller.address.address}<br />
                         {processingOrderDetail.orderDetail.seller.address.village.name}, {processingOrderDetail.orderDetail.seller.address.subdistrict.name}, {processingOrderDetail.orderDetail.seller.address.district.name}<br />
                         {processingOrderDetail.orderDetail.seller.address.province.name}, {processingOrderDetail.orderDetail.seller.address.postal_code}<br />
@@ -506,7 +508,7 @@ const OrderDetail = (props) => {
                 <li>
                   <div className='columns custom is-mobile'>
                     <div className='column is-half'><strong>Subtotal</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(processingOrderDetail.orderDetail.invoice.total_price) }</span></div>
+                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(subTotal) }</span></div>
                   </div>
                 </li>
                 <li>
