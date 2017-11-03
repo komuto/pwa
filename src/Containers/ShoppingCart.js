@@ -258,7 +258,6 @@ class ShoppingCart extends Component {
 
 const Cart = (props) => {
   let { localize, cart, voucher, rsAddToCart, cancelPromo, deleteItem, submitting } = props
-  console.log(cart)
   let data = cart.data
   let totalPayment = 0
   let promoCode = '-'

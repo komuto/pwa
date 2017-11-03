@@ -65,7 +65,6 @@ class OrdersNew extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { newOrders } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-
     if (!isFetching(newOrders) && this.fetching.fetchingFirst) {
       NProgress.done()
       this.fetching = { ...this.fetching, fetchingFirst: false }

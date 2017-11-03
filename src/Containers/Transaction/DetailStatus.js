@@ -228,7 +228,7 @@ const TabsDataContent = (props) => {
         <ul className='list-trans-product'>
           {
             invoice.items.map((item, index) => {
-              subTotal += (item.product.price * item.qty)
+              subTotal += item.total_price
               return (
                 <li key={index}>
                   <div className='box'>
