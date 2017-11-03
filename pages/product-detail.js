@@ -14,6 +14,7 @@ const Index = (props) => {
   }
   const params = {
     style: 'categories detail bg-grey',
+    pageType: 'product_detail',
     header: {
       title: 'Produk Detail'
     },

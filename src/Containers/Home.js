@@ -36,7 +36,15 @@ import { Navbar, SearchBoox } from '../Containers/Navbar'
 class Home extends Component {
   constructor (props) {
     super(props)
+
+    let textPath = ''
+
+    if (props.marketplace.isFound) {
+      const { data } = props.marketplace
+      textPath = data.name
+    }
     this.state = {
+      textPath,
       products: props.products || null,
       countCart: props.countCart || null,
       category: props.category || null,
@@ -148,7 +156,7 @@ class Home extends Component {
   }
 
   render () {
-    const { notification, countCart } = this.state
+    const { textPath, notification, countCart } = this.state
     const { localize, isFound } = this.props
     let params = {
       style: 'home bg-grey',
@@ -157,7 +165,7 @@ class Home extends Component {
       },
       navbar: {
         searchBoox: true,
-        textPath: 'Galaksi Parabola',
+        textPath,
         countCart: 0
       },
       tabbar: {
@@ -308,7 +316,8 @@ const mapStateToProps = (state) => ({
   products: state.products,
   category: state.category,
   addWishlist: state.addWishlist,
-  countCart: state.countCart
+  countCart: state.countCart,
+  marketplace: state.marketplace
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -11,7 +11,7 @@ export default (props) => {
   const { style, header, navbar, hero, tabbar, children } = props
   return (
     <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
-      <Header {...header} />
+      <Header {...header} props={props} />
       <Content className={`main ${style}`}>
         { (navbar) && <Navbar {...props} /> }
         { (hero) && <Hero {...props.hero} />}

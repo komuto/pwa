@@ -3,21 +3,30 @@ import React, {Component} from 'react'
 import dataSaga from '../saga/saga'
 import { sagaMiddleware, store } from '../store'
 import withRedux from 'next-redux-wrapper'
+import * as otherActions from '../actions/other'
 import GET_TOKEN from '../Services/GetToken'
 import Content from '../Components/Content'
 import LoginAlert from '../Components/LoginAlert'
 import Localize from '../Utils/Localize'
 import AppConfig from '../Config/AppConfig'
 import * as handlingState from '../Services/Status'
+import {END} from 'redux-saga'
 let clientTask = null
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
-    static async getInitialProps ({ req, isServer, query }) {
+    static async getInitialProps ({ store, req, isServer, query }) {
       let token = await GET_TOKEN.getToken()
       if (isServer) {
-        // /const rootTask = sagaMiddleware.run(dataSaga)
-        sagaMiddleware.run(dataSaga)
-        return {query, token}
+        const rootTask = sagaMiddleware.run(dataSaga)
+        store.dispatch(otherActions.getMarketPlace())
+
+        store.dispatch(END)
+
+        await rootTask.done.then(() => {
+
+        })
+
+        return {query, token, isServer}
       } else {
         return {query, token}
       }
