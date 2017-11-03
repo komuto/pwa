@@ -2,12 +2,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Dropzone from 'react-dropzone'
-// components
+import NProgress from 'nprogress'
 import Router from 'next/router'
+// components
 import Notification from '../Components/Notification'
 import {Images} from '../Themes'
-import NProgress from 'nprogress'
 import MyImage from '../Components/MyImage'
+import Wizard from '../Components/Wizard'
 // actions
 import * as actionTypes from '../actions/stores'
 import * as actionUserTypes from '../actions/user'
@@ -228,9 +229,8 @@ class InformationStore extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { files, formInfo, overSlogan, notification } = this.state
-    const isSetting = this.props.hasOwnProperty('query') && this.props.query.type === 'settingStore'
+    const isSetting = this.props.query.type === 'settingStore'
     let logoOnRedux = formInfo.path + formInfo.logo
     let logoImages
     if (formInfo.path) {
@@ -247,14 +247,7 @@ class InformationStore extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <section className='section is-paddingless'>
-          <div className='seller-bar'>
-            <div className='seller-step active1'>
-              <div className='step1'><span>1</span></div>
-              <div className='step2'><span>2</span></div>
-              <div className='step3'><span>3</span></div>
-              <div className='step4'><span>4</span></div>
-            </div>
-          </div>
+          { !isSetting && <Wizard total={4} active={1} /> }
           <div className='upload-pict'>
             <Dropzone
               style={{}}
