@@ -86,7 +86,7 @@ class ProductDetailSuggestions extends Component {
                 `/p?sort=newest`
               )
             }} >
-            <span className='link'>Lihat semua product terbaru <span className='icon-arrow-right' /></span>
+            <span className='link'>Lihat semua produk terbaru <span className='icon-arrow-right' /></span>
           </div>
         </div>
       </Section>

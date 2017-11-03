@@ -7,6 +7,7 @@ import { animateScroll } from 'react-scroll'
 import Content from '../../Components/Content'
 // actions
 import * as actionTypes from '../../actions/user'
+import * as storesAction from '../../actions/stores'
 // services
 // import { Status } from '../Services/Status'
 
@@ -16,6 +17,7 @@ class ManageStore extends Component {
     this.state = {
       profile: props.profile,
       loadingBiodata: false,
+      unreadDisputesStore: null,
       notification: {
         status: false,
         color: 'is-success',
@@ -23,6 +25,7 @@ class ManageStore extends Component {
       }
     }
     this.submitting = {
+      unreadDisputesStore: false,
       profile: false
     }
   }
@@ -47,11 +50,26 @@ class ManageStore extends Component {
       this.submitting = { ...this.submitting, profile: true }
       this.props.getProfile()
     }
+    this.submitting = { ...this.submitting, unreadDisputesStore: true }
+    this.props.getUnreadDisputeStore()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { profile } = nextProps
+    const { profile, unreadDisputesStore } = nextProps
+
+    console.log('unreadDisputesStore: ', unreadDisputesStore)
+
     const { isFetching, isError, isFound, notifError } = this.props
+
+    if (!isFetching(unreadDisputesStore) && this.submitting.unreadDisputesStore) {
+      this.submitting = { ...this.submitting, unreadDisputesStore: false }
+      if (isError(unreadDisputesStore)) {
+        this.setState({ notification: notifError(unreadDisputesStore.message) })
+      }
+      if (isFound(unreadDisputesStore)) {
+        this.setState({ unreadDisputesStore })
+      }
+    }
 
     if (!isFetching(profile) && this.submitting.profile) {
       NProgress.done()
@@ -87,8 +105,17 @@ class ManageStore extends Component {
   }
 
   render () {
-    const { profile } = this.state
+    const { profile, unreadDisputesStore } = this.state
     const { isFound } = this.props
+    let countDispute = 0
+
+    if (unreadDisputesStore) {
+      if (isFound(unreadDisputesStore)) {
+        const { disputes } = unreadDisputesStore
+        countDispute = disputes.disputes
+        console.log('countDispute: ', countDispute)
+      }
+    }
 
     return (
       <div>
@@ -271,6 +298,10 @@ class ManageStore extends Component {
                           <p>
                             <strong>Komplain Barang</strong><br />
                           </p>
+                          {
+                            countDispute > 0 &&
+                            <div className='val-right'><span className='notif-akun'>{ countDispute }</span></div>
+                          }
                         </div>
                       </div>
                     </article>
@@ -311,12 +342,14 @@ const VerificationContent = ({ store }) => (
 
 const mapStateToProps = (state) => ({
   profile: state.profile,
-  changePassword: state.changePassword
+  changePassword: state.changePassword,
+  unreadDisputesStore: state.unreadDisputesStore
 })
 
 const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(actionTypes.getProfile()),
-  logout: () => dispatch(actionTypes.logout())
+  logout: () => dispatch(actionTypes.logout()),
+  getUnreadDisputeStore: () => dispatch(storesAction.getUnreadDisputeStore())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageStore)
