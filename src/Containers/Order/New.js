@@ -63,6 +63,7 @@ class OrdersNew extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { newOrders } = nextProps
+    console.log('newOrders: ', newOrders);
     if (!isFetching(newOrders) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false

@@ -130,7 +130,7 @@ class Account extends Component {
 
   renderStore () {
     const { profile } = this.state
-    const isHasStoreprofile = profile.user.store.hasOwnProperty('name')
+    const { store } = profile.user
     if (!profile.isFound) return null
     return (
       <Section className='bg-white'>
@@ -141,14 +141,14 @@ class Account extends Component {
                 <article className='media'>
                   <div className='media-left'>
                     <figure className='image user-pict'>
-                      { isHasStoreprofile ? <MyImage src={profile.user.store.logo} /> : <span className='icon-toko' /> }
+                      { store ? <MyImage src={profile.user.store.logo} /> : <span className='icon-toko' /> }
                     </figure>
                   </div>
                   <div className='media-content'>
                     <div className='content'>
                       <p>
-                        <strong>{ isHasStoreprofile ? profile.user.store.name : 'Anda belum memiliki Toko'}</strong><br />
-                        { isHasStoreprofile ? 'Kelola Toko Anda' : 'Buat Sekarang'}
+                        <strong>{ store ? profile.user.store.name : 'Anda belum memiliki Toko'}</strong><br />
+                        { store ? 'Kelola Toko Anda' : 'Buat Sekarang'}
                       </p>
                     </div>
                   </div>
