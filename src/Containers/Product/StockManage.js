@@ -55,18 +55,12 @@ class ProductStockManage extends React.Component {
   async componentWillReceiveProps (nextProps) {
     const { alterProducts, storeProductDetail } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    const nextId = nextProps.query.id
 
     if (!isFetching(storeProductDetail) && this.fetchingFirst) {
       NProgress.done()
       this.fetchingFirst = false
       if (isFound(storeProductDetail)) {
         this.setState({ storeProductDetail: storeProductDetail, stock: storeProductDetail.storeProductDetail.product.stock })
-        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
-          NProgress.start()
-          this.fetchingFirst = true
-          await this.props.getStoreProductDetail({ id: nextId })
-        }
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
