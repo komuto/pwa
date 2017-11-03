@@ -4,12 +4,17 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
 import Router from 'next/router'
+import InfiniteScroll from 'react-infinite-scroller'
 // components
 import Notification from '../../Components/Notification'
+import Loading from '../../Components/Loading'
 import SelectProduct from '../../Components/SelectProduct'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as storeActions from '../../actions/stores'
 import * as productActions from '../../actions/product'
+/** including themes */
+import Images from '../../Themes/Images'
 
 class ProductHidden extends React.Component {
   constructor (props) {
@@ -19,15 +24,20 @@ class ProductHidden extends React.Component {
       storeProductsByCatalog: props.storeProductsByCatalog || null,
       selectedProducts: [],
       selectAllProduct: false,
-      modalListCatalog: false,
+      isEmpty: false,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
-    this.fetchingFirst = false
+    this.hasMore = false
     this.submiting = false
+    this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
   handleNotification (e) {
@@ -77,11 +87,22 @@ class ProductHidden extends React.Component {
     }
   }
 
+  async loadMore () {
+    let { id, pagination } = this.state
+    if (!this.fetching.fetchingMore) {
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = { ...this.fetching, fetchingMore: true }
+      await this.props.getStoreProductsByCatalog({ id, page: this.state.pagination.page, hidden: false })
+    }
+  }
+
   componentDidMount () {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      this.fetchingFirst = true
+      this.fetching = { ...this.fetching, fetchingFirst: true }
       this.props.getStoreProductsByCatalog({ id, hidden: false })
     }
   }
@@ -90,16 +111,33 @@ class ProductHidden extends React.Component {
     const { storeProductsByCatalog, alterProducts } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-    if (!isFetching(storeProductsByCatalog) && this.fetchingFirst) {
+    if (!isFetching(storeProductsByCatalog) && this.fetching.fetchingFirst) {
       NProgress.done()
-      this.fetchingFirst = false
+      this.fetching = { ...this.fetching, fetchingFirst: false }
       if (isFound(storeProductsByCatalog)) {
-        this.setState({ storeProductsByCatalog })
+        this.hasMore = storeProductsByCatalog.products.length > 9
+        let isEmpty = storeProductsByCatalog.products.length < 1
+        this.setState({ storeProductsByCatalog, isEmpty })
       }
       if (isError(storeProductsByCatalog)) {
         this.setState({ notification: notifError(storeProductsByCatalog.message) })
       }
     }
+
+    if (!isFetching(storeProductsByCatalog) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(storeProductsByCatalog)) {
+        let stateStoreProductsByCatalog = this.state.storeProductsByCatalog
+        this.hasMore = storeProductsByCatalog.products.length > 9
+        stateStoreProductsByCatalog.products = stateStoreProductsByCatalog.products.concat(storeProductsByCatalog.products)
+        this.setState({ storeProductsByCatalog: stateStoreProductsByCatalog })
+      }
+      if (isError(storeProductsByCatalog)) {
+        this.setState({ notification: notifError(storeProductsByCatalog.message) })
+        this.hasMore = false
+      }
+    }
+
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
       if (isFound(alterProducts)) {
@@ -120,7 +158,7 @@ class ProductHidden extends React.Component {
   }
 
   render () {
-    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification } = this.state
+    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, isEmpty } = this.state
     const { products } = storeProductsByCatalog
     return (
       <div>
@@ -131,7 +169,7 @@ class ProductHidden extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
 
-        { storeProductsByCatalog.products.length !== 0 ? <div>
+        { isEmpty ? <ProductEmpty /> : <div>
           <section className='section is-paddingless'>
             <div className='note'>
               Barang yang disembunyikan tidak akan muncul di toko Anda. Barang Anda yang terbuka untuk dropshipping tetap dapat di dropship oleh toko lain dan tetap bisa dijual seperti biasa oleh toko lain.
@@ -146,19 +184,27 @@ class ProductHidden extends React.Component {
                 </label>
               </div>
               {
-                storeProductsByCatalog.isFound && products.map((product) => {
-                  let isSelected = selectedProducts.filter((id) => {
-                    return id === product.id
-                  }).length > 0
-                  return (
-                    <SelectProduct
-                      key={product.id}
-                      isSelected={isSelected}
-                      product={product}
-                      handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
-                    />
-                  )
-                })
+                <InfiniteScroll
+                  pageStart={0}
+                  loadMore={_.debounce(this.loadMore.bind(this), 500)}
+                  hasMore={this.hasMore}
+                  loader={<Loading size={30} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+                  {
+                    products.map((product) => {
+                      let isSelected = selectedProducts.filter((id) => {
+                        return id === product.id
+                      }).length > 0
+                      return (
+                        <SelectProduct
+                          key={product.id}
+                          isSelected={isSelected}
+                          product={product}
+                          handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
+                        />
+                      )
+                    })
+                  }
+                </InfiniteScroll>
               }
             </div>
           </section>
@@ -169,11 +215,25 @@ class ProductHidden extends React.Component {
             </a>
           </div>
         </div>
-        : <p style={{textAlign: 'center', paddingTop: '20px'}}>Tidak ada barang di katalog ini</p>
         }
       </div>
     )
   }
+}
+
+/** product empty content */
+const ProductEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Produk tidak ditemukan</strong></p>
+          <p>Kami tidak bisa menemukan barang yang anda inginkan</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {
