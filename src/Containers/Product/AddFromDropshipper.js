@@ -519,27 +519,6 @@ class ProductAddFromDropshipper extends React.Component {
               </span>
             </p>
           </div>
-          <ul>
-            {/* {
-              searchProduct.isFound
-              ? searchProduct.products.map((product, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => {
-                      Router.push(
-                          url.format({
-                            pathname: '/product',
-                            query: {q: product.name}
-                          }),
-                          `/p?q=${product.name}`
-                      )
-                    }} >{ product.name }</li>
-                )
-              })
-              : ''
-            } */}
-          </ul>
         </section>
         <section className='section is-paddingless'>
           <div className='categories-option'>
