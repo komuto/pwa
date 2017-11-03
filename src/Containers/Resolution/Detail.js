@@ -9,6 +9,7 @@ import MyImage from '../../Components/MyImage'
 import * as userAction from '../../actions/user'
 // services
 import { isFetching, validateResponse, validateResponseAlter } from '../../Services/Status'
+import RegexNormal from '../../Lib/RegexNormal'
 
 const TAB_INFORMATION = 'TAB_INFORMATION'
 const TAB_DISCUSTION_SOLUTION = 'TAB_DISCUSTION_SOLUTION'
@@ -87,7 +88,7 @@ class ResolutionDetail extends React.Component {
   }
 
   handleInput (e) {
-    const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const value = RegexNormal(e.target.value)
     this.setState({ message: value })
   }
 

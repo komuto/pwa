@@ -18,6 +18,7 @@ import MyImage from '../../Components/MyImage'
 import { Navbar } from '../Navbar'
 /** including actions */
 import * as messageActions from '../../actions/message'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class MessageDetail extends Component {
   constructor (props) {
@@ -212,7 +213,7 @@ class MessageDetail extends Component {
 
   handleInputAnswer (e) {
     e.preventDefault()
-    const answer = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const answer = RegexNormal(e.target.value)
     this.setState({ replyMessage: { ...this.state.replyMessage, answer } })
   }
 }

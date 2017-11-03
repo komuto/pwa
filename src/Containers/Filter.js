@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import Content from '../Components/Content'
 import _ from 'lodash'
+import RegexNormal from '../Lib/RegexNormal'
 
 export class Filter extends Component {
   constructor (props) {
@@ -179,14 +180,14 @@ export class Filter extends Component {
   }
 
   onChangePriceMinimum (e) {
-    let value = e.target.value.replace(/[^0-9 ]/g, '')
+    let value = RegexNormal(e.target.value)
     let { tabs } = this.state
     tabs.map((tab) => { if (tab.id === 'harga') tab.priceMinimum = value })
     this.setState({ tabs })
   }
 
   onChangePriceMaximun (e) {
-    let value = e.target.value.replace(/[^0-9 ]/g, '')
+    let value = e.target.value(e.target.value)
     let { tabs } = this.state
     tabs.map((tab) => { if (tab.id === 'harga') tab.priceMaximum = value })
     this.setState({ tabs })

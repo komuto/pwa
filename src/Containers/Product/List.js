@@ -18,6 +18,7 @@ import * as storeActions from '../../actions/stores'
 import RupiahFormat from '../../Lib/RupiahFormat'
 /** including themes */
 import Images from '../../Themes/Images'
+import RegexNormal from '../../Lib/RegexNormal'
 
 const TAB_SHOW_IN_PAGE = 'TAB_SHOW_IN_PAGE'
 const TAB_HIDDEN_IN_PAGE = 'TAB_HIDDEN_IN_PAGE'
@@ -122,7 +123,7 @@ class ProductList extends Component {
   searchOnChange (event) {
     const { search, tabs, storeProducts } = this.state
     search.status = true
-    search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    search.value = RegexNormal(event.target.value)
 
     if (tabs === TAB_SHOW_IN_PAGE) {
       if (search.value !== '') {

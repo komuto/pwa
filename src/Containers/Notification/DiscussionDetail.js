@@ -21,6 +21,7 @@ import { Navbar } from '../Navbar'
 import * as productActions from '../../actions/product'
 /** including libs */
 import UrlParam from '../../Lib/UrlParam'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class DiscussionDetail extends Component {
   constructor (props) {
@@ -46,7 +47,6 @@ class DiscussionDetail extends Component {
 
   render () {
     const { comments, notification } = this.state
-    console.log('comments: ', comments)
     const { isFound } = this.props
     let params = {
       navbar: {
@@ -140,7 +140,7 @@ class DiscussionDetail extends Component {
 
   handleInputAnswer (e) {
     e.preventDefault()
-    const answer = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const answer = RegexNormal(e.target.value)
     this.setState({ newComment: { ...this.state.newComment, answer } })
   }
 }

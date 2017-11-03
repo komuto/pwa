@@ -10,6 +10,7 @@ import MyImage from '../../Components/MyImage'
 import * as productActions from '../../actions/product'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class New extends Component {
   constructor (props) {
@@ -79,7 +80,7 @@ class New extends Component {
   }
 
   questionOnChange (e) {
-    let value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    let value = RegexNormal(e.target.value)
     this.setState({ question: { ...this.state.question, error: false, value } })
   }
 

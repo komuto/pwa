@@ -19,6 +19,7 @@ import Notification from '../../Components/Notification'
 import * as productActions from '../../actions/product'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class Detail extends Component {
   constructor (props) {
@@ -75,7 +76,7 @@ class Detail extends Component {
 
   commentOnChange (e) {
     e.preventDefault()
-    const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const value = RegexNormal(e.target.value)
     this.setState({ comment: { ...this.state.comment, value } })
   }
 

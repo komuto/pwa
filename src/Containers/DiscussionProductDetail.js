@@ -43,7 +43,7 @@ class DiscussionProductDetail extends React.Component {
   }
 
   handleInput (e) {
-    const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const value = e.target.value(e.target.value)
     this.setState({ question: value })
   }
 

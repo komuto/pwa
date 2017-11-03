@@ -11,6 +11,7 @@ import MyImage from '../../Components/MyImage'
 import * as transactionAction from '../../actions/transaction'
 // services
 import { isFetching, isFound, isError, validateResponse, validateResponseAlter } from '../../Services/Status'
+import RegexNormal from '../../Lib/RegexNormal'
 
 const TAB_DETAIL = 'TAB_DETAIL'
 const TAB_DISCUSSION = 'TAB_DISCUSSION'
@@ -57,7 +58,7 @@ class ComplainItemDetail extends React.Component {
   }
 
   handleInput (e) {
-    const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const value = RegexNormal(e.target.value)
     this.setState({ message: value })
   }
 

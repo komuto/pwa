@@ -13,6 +13,7 @@ import Notification from '../../Components/Notification'
 import * as messageAction from '../../actions/message'
 // services
 import { isFetching, validateResponse } from '../../Services/Status'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class MessageDetail extends React.Component {
   constructor (props) {
@@ -35,7 +36,7 @@ class MessageDetail extends React.Component {
   }
 
   handleInput (e) {
-    const value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const value = RegexNormal(e.target.value)
     this.setState({ message: value })
   }
 

@@ -13,6 +13,7 @@ import * as productActions from '../actions/product'
 import RupiahFormat from '../Lib/RupiahFormat'
 // themes
 import Images from '../Themes/Images'
+import RegexNormal from '../Lib/RegexNormal'
 
 class Report extends Component {
   constructor (props) {
@@ -52,7 +53,7 @@ class Report extends Component {
   }
 
   descriptionOnChange (e) {
-    let value = e.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    let value = RegexNormal(e.target.value)
     this.setState({ report: { ...this.state.report, description: {error: false, value, errorMessage: ''} } })
   }
 

@@ -17,6 +17,7 @@ import { Navbar } from './Navbar'
 import * as userActions from '../actions/user'
 import * as productActions from '../actions/product'
 import Images from '../Themes/Images'
+import RegexNormal from '../Lib/RegexNormal'
 
 class Wishlist extends Component {
   constructor (props) {
@@ -72,7 +73,7 @@ class Wishlist extends Component {
 
   searchOnChange (event) {
     let { products, search } = this.state
-    search.value = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    search.value = RegexNormal(event.target.value)
     search.status = false
     search.results = []
 

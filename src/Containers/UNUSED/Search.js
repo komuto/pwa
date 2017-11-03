@@ -10,6 +10,7 @@ import * as homeActions from '../actions/home'
 import Notification from '../Components/Notification'
 // utils
 import { Status } from '../Services/Status'
+import RegexNormal from '../../Lib/RegexNormal'
 
 class Search extends Component {
   constructor (props) {
@@ -27,7 +28,7 @@ class Search extends Component {
   }
 
   onChange (event) {
-    const searchValue = event.target.value.replace(/[^a-zA-Z0-9 ]/g, '')
+    const searchValue = RegexNormal(event.target.value)
 
     if (searchValue !== '') {
       // _.debounce(() => {
