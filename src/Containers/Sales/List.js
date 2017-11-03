@@ -14,8 +14,8 @@ import MyImage from '../../Components/MyImage'
 import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
 import * as transactionAction from '../../actions/transaction'
-// services
-import { isFetching, validateResponse, isFound, isError } from '../../Services/Status'
+/** including themes */
+import Images from '../../Themes/Images'
 
 const TAB_MY_ITEM = 'TAB_MY_ITEM'
 const TAB_DROPSHIP_ITEM = 'TAB_DROPSHIP_ITEM'
@@ -25,7 +25,12 @@ class SalesList extends React.Component {
     super(props)
     this.state = {
       sales: props.sales || null,
+      sales2: props.sales2 || null,
       tabs: TAB_MY_ITEM,
+      isEmpty: {
+        sales: false,
+        dropshipSales: false
+      },
       pagination: {
         page: 1,
         limit: 10
@@ -40,12 +45,8 @@ class SalesList extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.hasMore = true
-    this.fetching = false
-    this.fetchingFirst = false
-    this.hasMore2 = true
-    this.fetching2 = false
-    this.fetchingFirst2 = false
+    this.hasMore = { sales: false, dropshipSales: false }
+    this.fetching = { fetchingFirst: false, fetchingFirst2: false, sales: false, dropshipSales: false }
   }
 
   switchTab (e) {
@@ -55,33 +56,43 @@ class SalesList extends React.Component {
 
   async loadMore () {
     let { pagination } = this.state
-    if (!this.fetching) {
+    if (!this.fetching.sales) {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
-      this.fetching = true
+      this.fetching = { ...this.fetching, sales: true }
       await this.props.getSales(pagination)
     }
   }
 
   async loadMoreDropshipSales () {
     let { pagination2 } = this.state
-    if (!this.fetching2) {
+    if (!this.fetching.dropshipSales) {
       const newState = { pagination2 }
       pagination2['page'] = pagination2.page + 1
       this.setState(newState)
-      this.fetching2 = true
+      this.fetching = { ...this.fetching, dropshipSales: true }
       await this.props.getSales(pagination2)
     }
   }
 
+  /** Status Transaksi Invoice
+  export const InvoiceTransactionStatus = {
+    REJECTED: 0,
+    WAITING: 1,
+    PROCEED: 2,
+    SENDING: 3,
+    RECEIVED: 4,
+    PROBLEM: 5,
+    COMPLAINT_DONE: 6,
+  } **/
   transactionType (type) {
     let className
     let status
     switch (type) {
       case 0:
         className = 'item-status has-trouble'
-        status = 'Barang ditolak Reseller'
+        status = 'Barang ditolak Seller'
         break
       case 1:
         className = 'item-status delivered'
@@ -89,11 +100,11 @@ class SalesList extends React.Component {
         break
       case 2:
         className = 'item-status delivered'
-        status = 'Barang sudah dikirim'
+        status = 'Pesanan telah diterima dan sedang diproses'
         break
       case 3:
         className = 'item-status delivered'
-        status = 'Menunggu Konfirmasi Pembeli'
+        status = 'Barang sudah dikirim'
         break
       case 4:
         className = 'item-status accepted'
@@ -115,76 +126,72 @@ class SalesList extends React.Component {
   componentDidMount () {
     const { pagination, pagination2 } = this.state
     NProgress.start()
-    this.fetchingFirst = true
-    this.fetchingFirst2 = true
+    this.fetching = { ...this.fetching, fetchingFirst: true, fetchingFirst2: true }
     this.props.getSales(pagination)
     this.props.getSales2({ page: pagination2.page, limit: pagination2.limit, is_dropship: true })
   }
 
   componentWillReceiveProps (nextProps) {
     const { sales, sales2 } = nextProps
-    if (!isFetching(sales) && this.fetchingFirst) {
+    const { isFetching, isFound, isError, notifError } = this.props
+
+    if (!isFetching(sales) && this.fetching.fetchingFirst) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, fetchingFirst: false }
       if (isFound(sales)) {
-        NProgress.done()
-        this.fetchingFirst = false
-        this.setState({ sales })
+        this.hasMore = { ...this.hasMore, sales: sales.sales.length > 9 }
+        let isEmpty = sales.sales.length < 1
+        this.setState({ sales, isEmpty: { ...this.state.isEmpty, sales: isEmpty } })
       }
       if (isError(sales)) {
-        this.fetchingFirst = false
-        this.setState({ notification: validateResponse(sales, sales.message) })
+        this.setState({ notification: notifError(sales.message) })
       }
     }
-    if (!isFetching(sales) && this.fetching) {
-      let stateNewSales = this.state.sales
+
+    if (!isFetching(sales) && this.fetching.sales) {
+      this.fetching = { ...this.fetching, sales: false }
       if (isFound(sales)) {
-        if (sales.sales.length > 0) {
-          this.fetching = false
-          stateNewSales.sales = stateNewSales.sales.concat(sales.sales)
-          this.setState({ sales: stateNewSales })
-        } else {
-          this.hasMore = false
-          this.fetching = false
-        }
+        let stateSales = this.state.sales
+        this.hasMore = { ...this.hasMore, sales: sales.sales.length > 9 }
+        stateSales.sales = stateSales.sales.concat(sales.sales)
+        this.setState({ sales: stateSales })
       }
       if (isError(sales)) {
-        this.setState({ notification: validateResponse(sales, sales.message) })
-        this.hasMore = false
-        this.fetching = false
+        this.setState({ notification: notifError(sales.message) })
+        this.hasMore = { ...this.hasMore, sales: false }
       }
     }
-    if (!isFetching(sales2) && this.fetchingFirst2) {
+
+    if (!isFetching(sales2) && this.fetching.fetchingFirst2) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, fetchingFirst2: false }
       if (isFound(sales2)) {
-        NProgress.done()
-        this.fetchingFirst2 = false
-        this.setState({ sales2 })
+        this.hasMore = { ...this.hasMore, dropshipSales: sales2.sales.length > 9 }
+        let isEmpty = sales2.sales.length < 1
+        this.setState({ sales2, isEmpty: { ...this.state.isEmpty, dropshipSales: isEmpty } })
       }
       if (isError(sales2)) {
-        this.fetchingFirst2 = false
-        this.setState({ notification: validateResponse(sales2, sales2.message) })
+        this.setState({ notification: notifError(sales2.message) })
       }
     }
-    if (!isFetching(sales2) && this.fetching2) {
-      let stateNewSales2 = this.state.sales2
+
+    if (!isFetching(sales2) && this.fetching.dropshipSales) {
+      this.fetching = { ...this.fetching, dropshipSales: false }
       if (isFound(sales2)) {
-        if (sales2.sales.length > 0) {
-          this.fetching2 = false
-          stateNewSales2.sales = stateNewSales2.sales.concat(sales2.sales)
-          this.setState({ sales2: stateNewSales2 })
-        } else {
-          this.hasMore2 = false
-          this.fetching2 = false
-        }
+        let stateSales = this.state.sales2
+        this.hasMore = { ...this.hasMore, dropshipSales: sales2.sales.length > 9 }
+        stateSales.sales = stateSales.sales.concat(sales2.sales)
+        this.setState({ sales2: stateSales })
       }
       if (isError(sales2)) {
-        this.setState({ notification: validateResponse(sales2, sales2.message) })
-        this.hasMore2 = false
-        this.fetching2 = false
+        this.setState({ notification: notifError(sales2.message) })
+        this.hasMore = { ...this.hasMore, dropshipSales: false }
       }
     }
   }
 
   render () {
-    const { notification, tabs, sales, sales2 } = this.state
+    const { notification, tabs, sales, sales2, isEmpty } = this.state
     if (!sales.isFound) return null
     return (
       <div>
@@ -205,14 +212,16 @@ class SalesList extends React.Component {
                 tabs === TAB_MY_ITEM
                 ? <MyItemsSales
                   sales={sales}
-                  hasMore={this.hasMore}
+                  hasMore={this.hasMore.sales}
                   loadMore={() => this.loadMore()}
-                  transactionType={(type) => this.transactionType(type)} />
+                  transactionType={(type) => this.transactionType(type)}
+                  isEmpty={isEmpty.sales} />
                 : <ItemsDropshipperSales
                   sales2={sales2}
-                  hasMore2={this.hasMore2}
+                  hasMore2={this.hasMore.dropshipSales}
                   loadMoreDropshipSales={() => this.loadMoreDropshipSales()}
-                  transactionType={(type) => this.transactionType(type)} />
+                  transactionType={(type) => this.transactionType(type)}
+                  isEmpty={isEmpty.dropshipSales} />
               }
             </ul>
           </div>
@@ -223,13 +232,13 @@ class SalesList extends React.Component {
 }
 
 const MyItemsSales = (props) => {
-  const { sales } = props
+  const { sales, isEmpty } = props
   if (sales === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        <InfiniteScroll
+        isEmpty ? <OrdersEmpty /> : <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(props.loadMore.bind(this), 500)}
           hasMore={props.hasMore}
@@ -320,13 +329,13 @@ const MyItemsSales = (props) => {
 }
 
 const ItemsDropshipperSales = (props) => {
-  const { sales2 } = props
+  const { sales2, isEmpty } = props
   if (sales2 === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        <InfiniteScroll
+        isEmpty ? <OrdersEmpty /> : <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(props.loadMoreDropshipSales.bind(this), 500)}
           hasMore={props.hasMore2}
@@ -413,6 +422,21 @@ const ItemsDropshipperSales = (props) => {
         </InfiniteScroll>
       }
     </div>
+  )
+}
+
+/** orders empty content */
+const OrdersEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Pesanan tidak ditemukan</strong></p>
+          <p>Tidak ada data</p>
+        </div>
+      </div>
+    </section>
   )
 }
 

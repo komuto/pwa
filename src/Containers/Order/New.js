@@ -7,20 +7,22 @@ import moment from 'moment'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
+import Notification from '../../Components/Notification'
 import Loading from '../../Components/Loading'
 import MyImage from '../../Components/MyImage'
 // actions
 import * as transactionAction from '../../actions/transaction'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
-// services
-import { isFetching, validateResponse } from '../../Services/Status'
+/** including themes */
+import Images from '../../Themes/Images'
 
 class OrdersNew extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       newOrders: props.newOrders,
+      isEmpty: false,
       pagination: {
         page: 1,
         limit: 10
@@ -31,9 +33,8 @@ class OrdersNew extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.hasMore = true
-    this.fetching = false
-    this.fetchingFirst = false
+    this.hasMore = false
+    this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
   detailOrder (id, type) {
@@ -46,49 +47,66 @@ class OrdersNew extends React.Component {
 
   componentDidMount () {
     NProgress.start()
-    this.fetchingFirst = true
+    this.fetching = { ...this.fetching, fetchingFirst: true }
     this.props.getNewOrders(this.state.pagination)
   }
 
   async loadMore () {
     let { pagination } = this.state
-    if (!this.fetching) {
+    if (!this.fetching.fetchingMore) {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
-      this.fetching = true
+      this.fetching = { ...this.fetching, fetchingMore: true }
       await this.props.getNewOrders(pagination)
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { newOrders } = nextProps
-    if (!isFetching(newOrders) && this.fetchingFirst) {
+    const { isFetching, isFound, isError, notifError } = this.props
+
+    if (!isFetching(newOrders) && this.fetching.fetchingFirst) {
       NProgress.done()
-      this.fetchingFirst = false
-      this.setState({ newOrders, notification: validateResponse(newOrders, 'Data review tidak ditemukan!') })
+      this.fetching = { ...this.fetching, fetchingFirst: false }
+      if (isFound(newOrders)) {
+        this.hasMore = newOrders.orders.length > 9
+        let isEmpty = newOrders.orders.length < 1
+        this.setState({ newOrders, isEmpty })
+      }
+      if (isError(newOrders)) {
+        this.setState({ notification: notifError(newOrders.message) })
+      }
     }
-    if (!isFetching(newOrders) && this.fetching) {
-      let stateNewOrders = this.state.newOrders
-      if (newOrders.orders.length > 0) {
-        this.fetching = false
+
+    if (!isFetching(newOrders) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(newOrders)) {
+        let stateNewOrders = this.state.newOrders
+        this.hasMore = newOrders.orders.length > 9
         stateNewOrders.orders = stateNewOrders.orders.concat(newOrders.orders)
-        this.setState({ newOrders: stateNewOrders, notification: validateResponse(newOrders, newOrders.message) })
-      } else {
+        this.setState({ newOrders: stateNewOrders })
+      }
+      if (isError(newOrders)) {
+        this.setState({ notification: notifError(newOrders.message) })
         this.hasMore = false
-        this.fetching = false
       }
     }
   }
 
   render () {
-    const { newOrders } = this.state
-    if (!newOrders.isFound) return null
+    const { newOrders, notification, isEmpty } = this.state
     moment.locale('id')
     return (
       <div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         {
-          <InfiniteScroll
+          isEmpty ? <OrdersEmpty /> : <InfiniteScroll
             pageStart={0}
             loadMore={_.debounce(this.loadMore.bind(this), 500)}
             hasMore={this.hasMore}
@@ -176,6 +194,21 @@ class OrdersNew extends React.Component {
       </div>
     )
   }
+}
+
+/** orders empty content */
+const OrdersEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Pesanan tidak ditemukan</strong></p>
+          <p>Tidak ada data</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {

@@ -73,6 +73,16 @@ class SalesDetail extends React.Component {
     }
   }
 
+  /** Status Transaksi Invoice
+  export const InvoiceTransactionStatus = {
+    REJECTED: 0,
+    WAITING: 1,
+    PROCEED: 2,
+    SENDING: 3,
+    RECEIVED: 4,
+    PROBLEM: 5,
+    COMPLAINT_DONE: 6,
+  } **/
   transactionType (type) {
     let className
     let status
@@ -83,15 +93,15 @@ class SalesDetail extends React.Component {
         break
       case 1:
         className = 'item-status md right delivered'
-        status = 'Menunggu konfirmasi Seller'
+        status = 'Menunggu konfirmasi Pembeli'
         break
       case 2:
         className = 'item-status md right delivered'
-        status = 'Barang sudah dikirim'
+        status = 'Pesanan telah diterima dan sedang diproses'
         break
       case 3:
         className = 'item-status md right delivered'
-        status = 'Menunggu Konfirmasi Pembeli'
+        status = 'Barang sudah dikirim '
         break
       case 4:
         className = 'item-status md right accepted'
@@ -113,6 +123,19 @@ class SalesDetail extends React.Component {
     )
   }
 
+  /** status resi
+  export const ShippingSenderStatus = {
+    DEFAULT: 1,
+    ACCEPT: 2,
+    DECLINE: 3,
+    SENT: 4,
+  }
+  export const ShippingReceiverStatus = {
+    DEFAULT: 1,
+    ACCEPT: 2,
+    DECLINE: 3,
+  }
+  **/
   statusResi (type) {
     let status
     switch (type) {
@@ -134,11 +157,26 @@ class SalesDetail extends React.Component {
     return status
   }
 
+  /** Status Transaksi Invoice
+  export const InvoiceTransactionStatus = {
+    REJECTED: 0,
+    WAITING: 1,
+    PROCEED: 2,
+    SENDING: 3,
+    RECEIVED: 4,
+    PROBLEM: 5,
+    COMPLAINT_DONE: 6,
+  } **/
   renderNotice (type) {
     let imageIcon
     let className
     let messageNotice
     switch (type) {
+      case 0:
+        imageIcon = Images.paymentExpired
+        className = 'box notif-payment-expiry'
+        messageNotice = 'Pesanan ditolak Seller'
+        break
       case 3:
         imageIcon = Images.IconInfoBlue
         className = 'box notif-payment-waiting'
@@ -222,7 +260,7 @@ class SalesDetail extends React.Component {
 
   componentDidMount () {
     const { id } = this.state
-    if (id !== '') {
+    if (id) {
       NProgress.start()
       this.props.getSaleDetail({ id })
     }
@@ -260,7 +298,6 @@ class SalesDetail extends React.Component {
   render () {
     const { notification, tabs, saleDetail, receiptNumber, validation, showModal } = this.state
     console.log('saleDetail: ', saleDetail)
-    if (!saleDetail.isFound) return null
     return (
       <div>
         <div className='nav-tabs'>
@@ -273,7 +310,7 @@ class SalesDetail extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { this.renderContentTabs(tabs) }
+        { saleDetail.isFound && this.renderContentTabs(tabs) }
         <div className='sort-option' style={{ display: showModal && 'block' }}>
           <div className='notif-report add-voucher'>
             <div className='header-notif'>
@@ -591,7 +628,7 @@ const OrderDetail = (props) => {
         </div>
         <ul className='list-trans-product'>
           { saleDetail.sale.items.map((item, i) => {
-            subTotal += (item.product.price * item.qty)
+            subTotal += item.total_price
             return (
               <li key={i}>
                 <div className='box'>
@@ -604,7 +641,7 @@ const OrderDetail = (props) => {
                     <div className='media-content'>
                       <div className='content'>
                         <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
+                        <strong>Harga : Rp { RupiahFormat(item.product.price) } / item</strong>
                         <strong>Jumlah : {item.qty}</strong>
                         <span>{item.note !== '' && `'${item.note}'`}</span>
                       </div>
@@ -662,7 +699,7 @@ const OrderDetail = (props) => {
                     <div className='column'>
                       <strong>Info Alamat Penjual</strong>
                       <span className='address'>
-                        {saleDetail.sale.seller.name} ({saleDetail.sale.reseller.store.name})<br />
+                        {saleDetail.sale.seller.name} {saleDetail.sale.reseller ? `(${saleDetail.sale.reseller.store.name})` : ''} <br />
                         {saleDetail.sale.seller.address.address}<br />
                         {saleDetail.sale.seller.address.village.name}, {saleDetail.sale.seller.address.subdistrict.name}, {saleDetail.sale.seller.address.district.name}<br />
                         {saleDetail.sale.seller.address.province.name}, {saleDetail.sale.seller.address.postal_code}<br />
@@ -848,7 +885,7 @@ const OrderDetailDropship = (props) => {
         </div>
         <ul className='list-trans-product'>
           { saleDetail.sale.items.map((item, i) => {
-            subTotal += (item.product.price * item.qty)
+            subTotal += item.total_price
             return (
               <li key={i}>
                 <div className='box'>
@@ -861,7 +898,7 @@ const OrderDetailDropship = (props) => {
                     <div className='media-content'>
                       <div className='content'>
                         <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
+                        <strong>Harga : Rp { RupiahFormat(item.product.price) } / item</strong>
                         <strong>Jumlah : {item.qty}</strong>
                         <span>{item.note !== '' && `'${item.note}'`}</span>
                       </div>
@@ -908,7 +945,7 @@ const OrderDetailDropship = (props) => {
                   <div className='column'>
                     <strong>Info Alamat Penjual</strong>
                     <span className='address'>
-                      {saleDetail.sale.seller.name} {`(${saleDetail.sale.reseller.store.name})`}<br />
+                      {saleDetail.sale.seller.name} {saleDetail.sale.reseller ? `(${saleDetail.sale.reseller.store.name})` : ''} <br />
                       {saleDetail.sale.seller.address.address}<br />
                       {saleDetail.sale.seller.address.village.name}, {saleDetail.sale.seller.address.subdistrict.name}, {saleDetail.sale.seller.address.district.name}<br />
                       {saleDetail.sale.seller.address.province.name}, {saleDetail.sale.seller.address.postal_code}<br />
