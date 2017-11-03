@@ -10,8 +10,7 @@ import MyImage from '../../Components/MyImage'
 // actions
 import * as actionTypes from '../../actions/catalog'
 import * as productActions from '../../actions/product'
-// services
-import { validateResponse, isFetching, Status } from '../../Services/Status'
+import * as storesActions from '../../actions/stores'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 // themes
@@ -21,13 +20,8 @@ class CatalogAddProduct extends React.Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
+      storeProductDetail: props.storeProductDetail || null,
       listCatalog: props.listCatalog,
-      submitting: {
-        submitProduct: false,
-        submitCatalog: false,
-        submitChangeCatalog: false
-      },
       validation: false,
       modalAddCatalog: false,
       selectedCatalog: null,
@@ -38,6 +32,8 @@ class CatalogAddProduct extends React.Component {
         message: 'Error, default message.'
       }
     }
+    this.submiting = { addDropshipProducts: false, createCatalog: false, changeCatalog: false }
+    this.fetching = { fetchingFirst: false, listCatalog: false }
   }
 
   handleInput (e) {
@@ -65,11 +61,11 @@ class CatalogAddProduct extends React.Component {
   postCatalog (e) {
     e.preventDefault()
     const { createCatalog } = this.props
-    const { catalog, submitting } = this.state
+    const { catalog } = this.state
     let isValid = catalog.length > 0
     if (isValid) {
+      this.submiting = { ...this.submiting, createCatalog: true }
       createCatalog({ name: catalog })
-      this.setState({ submitting: { ...submitting, submitCatalog: true } })
     } else {
       this.setState({ validation: true })
     }
@@ -78,10 +74,10 @@ class CatalogAddProduct extends React.Component {
   createProduct (e) {
     e.preventDefault()
     const { query, addDropshipProducts } = this.props
-    const { selectedCatalog, submitting } = this.state
+    const { selectedCatalog, submiting } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submitting: { ...submitting, submitProduct: true } })
+      this.setState({ submiting: { ...submiting, addDropshipProducts: true } })
       addDropshipProducts({ id: query.id, catalog_id: selectedCatalog })
     } else {
       this.setState({ validation: true })
@@ -91,10 +87,10 @@ class CatalogAddProduct extends React.Component {
   changeCatalogProduct (e) {
     e.preventDefault()
     const { query, changeCatalogProducts } = this.props
-    const { selectedCatalog, submitting } = this.state
+    const { selectedCatalog } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submitting: { ...submitting, submitChangeCatalog: true } })
+      this.submiting = { ...this.submiting, changeCatalog: true }
       changeCatalogProducts({ catalog_id: selectedCatalog, product_ids: [query.id.split('.')[0]] })
     } else {
       this.setState({ validation: true })
@@ -102,136 +98,101 @@ class CatalogAddProduct extends React.Component {
   }
 
   async componentDidMount () {
-    const { id, productDetail, listCatalog } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
+    const { id, listCatalog } = this.state
+    if (id) {
       NProgress.start()
-      await this.props.getProduct({ id })
+      this.fetching = { ...this.fetching, fetchingFirst: true }
+      this.props.getStoreProductDetail({ id })
     }
     if (!listCatalog.isFound) {
+      this.fetching = { ...this.fetching, listCatalog: true }
       this.props.getListCatalog()
     }
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { submitting, notification } = this.state
-    const { statusCreateCatalog, listCatalog, productDetail, statusAddDropshipProducts, alterProducts } = nextProps
-    const nextId = nextProps.query.id
+    const { statusCreateCatalog, listCatalog, storeProductDetail, statusAddDropshipProducts, alterProducts } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-    if (!productDetail.isLoading) {
+    if (!isFetching(storeProductDetail) && this.fetching.fetchingFirst) {
       NProgress.done()
-      switch (productDetail.status) {
-        case Status.SUCCESS :
-          (productDetail.isFound)
-          ? this.setState({ productDetail })
-          : this.setState({ notification: {status: true, message: 'Data produk tidak ditemukan'} })
+      this.fetching = { ...this.fetching, fetchingFirst: false }
+      if (isFound(storeProductDetail)) {
+        this.setState({ storeProductDetail })
+      }
+      if (isError(storeProductDetail)) {
+        this.setState({ notification: notifError(storeProductDetail.message) })
+      }
+    }
 
-          if (String(productDetail.detail.product.id) !== String(nextId)) {
-            NProgress.start()
-            await this.props.getProduct({ id: nextId })
-          }
+    if (!isFetching(listCatalog) && this.fetching.listCatalog) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, listCatalog: false }
+      if (isFound(listCatalog)) {
+        this.setState({ listCatalog })
+      }
+      if (isError(listCatalog)) {
+        this.setState({ notification: notifError(listCatalog.message) })
+      }
+    }
 
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ notification: {status: true, message: productDetail.message} })
-          break
-        default:
-          break
+    if (!isFetching(statusCreateCatalog) && this.submiting.createCatalog) {
+      this.setState({ modalAddCatalog: false })
+      this.submiting = { ...this.submiting, createCatalog: false }
+      if (isFound(statusCreateCatalog)) {
+        this.setState({ notification: notifSuccess(statusCreateCatalog.message) })
+        this.fetching = { ...this.fetching, listCatalog: true }
+        this.props.getListCatalog()
+      }
+      if (isError(statusCreateCatalog)) {
+        this.setState({ notification: notifError(statusCreateCatalog.message) })
       }
     }
-    if (!isFetching(listCatalog)) {
-      this.setState({ listCatalog, notification: validateResponse(listCatalog, 'Daftar katalog tidak ditemukan') })
-    }
-    if (!statusCreateCatalog.isLoading && submitting.submitCatalog) {
-      switch (statusCreateCatalog.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting, modalAddCatalog: false }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menambahkan katalog'
-          newNotification.notification['type'] = 'is-success'
-          newNotification.submitting['submitCatalog'] = false
-          this.setState(newNotification)
-          this.props.getListCatalog()
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting, modalAddCatalog: false }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menambahkan katalog'
-          newNotif.notification['type'] = 'is-danger'
-          newNotif.submitting['submitCatalog'] = false
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+
+    if (!isFetching(statusAddDropshipProducts) && this.submiting.addDropshipProducts) {
+      this.setState({ modalAddCatalog: false })
+      this.submiting = { ...this.submiting, addDropshipProducts: false }
+      if (isFound(statusAddDropshipProducts)) {
+        Router.push('/product-add-success')
       }
-      this.setState({ notification })
-    }
-    if (!statusAddDropshipProducts.isLoading && submitting.submitProduct) {
-      switch (statusAddDropshipProducts.status) {
-        case Status.SUCCESS: {
-          this.setState({ submitting: { ...submitting, submitProduct: false } })
-          Router.push('/product-add-success')
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          this.setState({ notification: {status: true, message: statusAddDropshipProducts.message, type: 'is-danger'}, submitting: { ...submitting, submitCatalog: false } })
-          break
-        }
-        default:
-          break
+      if (isError(statusAddDropshipProducts)) {
+        this.setState({ notification: notifError(statusAddDropshipProducts.message) })
       }
-      this.setState({ notification })
     }
-    if (!alterProducts.isLoading && submitting.submitChangeCatalog) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil memindahkan Barang'
-          newNotification.notification['type'] = 'is-success'
-          newNotification.submitting['submitChangeCatalog'] = false
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal memindahkan Barang'
-          newNotif.notification['type'] = 'is-danger'
-          newNotif.submitting['submitChangeCatalog'] = false
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+
+    if (!isFetching(alterProducts) && this.submiting.changeCatalog) {
+      this.submiting = { ...this.submiting, changeCatalog: false }
+      if (isFound(alterProducts)) {
+        this.setState({ notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
       }
-      this.setState({ notification })
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
   renderProductDetail () {
-    const { productDetail } = this.state
-    if (productDetail.isFound) {
+    const { storeProductDetail } = this.state
+    if (storeProductDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left'>
                 <figure className='image user-pict'>
-                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
+                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
               <div className='media-content'>
                 <div className='content'>
                   <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
+                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
                     <br />
-                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission * 100}%</span>
+                    Rp { RupiahFormat(storeProductDetail.storeProductDetail.product.price)} <span>- Komisi {this.props.query.commission * 100}%</span>
                   </p>
                 </div>
               </div>
@@ -273,23 +234,23 @@ class CatalogAddProduct extends React.Component {
   }
 
   handleButton () {
-    const { submitting } = this.state
     const { query } = this.props
     if (query.type === 'detailDropship') {
       return (
-        <a className={`button is-primary is-large is-fullwidth ${submitting.submitChangeCatalog && 'is-loading'}`}
+        <a className={`button is-primary is-large is-fullwidth ${this.submiting.changeCatalog && 'is-loading'}`}
           onClick={(e) => this.changeCatalogProduct(e)} >Simpan Perubahan</a>
       )
     } else {
       return (
-        <a className={`button is-primary is-large is-fullwidth ${submitting.submitProduct && 'is-loading'}`}
+        <a className={`button is-primary is-large is-fullwidth ${this.submiting.addDropshipProducts && 'is-loading'}`}
           onClick={(e) => this.createProduct(e)} >Lanjutkan</a>
       )
     }
   }
 
   render () {
-    const { catalog, modalAddCatalog, validation, notification, submitting } = this.state
+    console.log('state', this.state)
+    const { catalog, modalAddCatalog, validation, notification } = this.state
     return (
       <div>
         <Notification
@@ -353,7 +314,7 @@ class CatalogAddProduct extends React.Component {
               </p>
               {validation && this.renderValidation('catalog', 'Mohon isi nama katalog')}
             </div>
-            <button className={`button is-primary is-large is-fullwidth ${submitting.submitCatalog && 'is-loading'}`}
+            <button className={`button is-primary is-large is-fullwidth ${this.submiting.createCatalog && 'is-loading'}`}
               onClick={(e) => this.postCatalog(e)}
               >Buat Katalog Baru
             </button>
@@ -368,7 +329,7 @@ const mapStateToProps = (state) => {
   return {
     listCatalog: state.getListCatalog,
     statusCreateCatalog: state.createCatalog,
-    productDetail: state.productDetail,
+    storeProductDetail: state.storeProductDetail,
     alterProducts: state.alterProducts,
     statusAddDropshipProducts: state.addDropshipProducts
   }
@@ -379,7 +340,7 @@ const mapDispatchToProps = dispatch => ({
   createCatalog: (params) => dispatch(actionTypes.createCatalog(params)),
   addDropshipProducts: (params) => dispatch(productActions.addDropshipProducts(params)),
   changeCatalogProducts: (params) => dispatch(productActions.changeCatalogProducts(params)),
-  getProduct: (params) => dispatch(productActions.getProduct(params))
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatalogAddProduct)

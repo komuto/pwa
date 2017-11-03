@@ -3,31 +3,41 @@ import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+import InfiniteScroll from 'react-infinite-scroller'
+import Router from 'next/router'
 // components
 import Notification from '../../Components/Notification'
 import SelectProduct from '../../Components/SelectProduct'
+import MyImage from '../../Components/MyImage'
+import Loading from '../../Components/Loading'
 // actions
 import * as storeActions from '../../actions/stores'
 import * as productActions from '../../actions/product'
-// services
-import { validateResponse, isFetching, Status } from '../../Services/Status'
+/** including themes */
+import Images from '../../Themes/Images'
 
 class ProductChangeDropship extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      submitting: false,
       id: props.query.id || null,
       storeProductsByCatalog: props.storeProductsByCatalog || null,
       selectedProducts: [],
       selectAllProduct: false,
-      modalListCatalog: false,
+      isEmpty: false,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.hasMore = false
+    this.submiting = false
+    this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
   handleNotification (e) {
@@ -36,11 +46,8 @@ class ProductChangeDropship extends React.Component {
     if (selectedProducts.length === 0) {
       this.setState({ notification: { type: 'is-danger', status: true, message: 'Mohon pilih barang yang akan dijadikan dropship' } })
     } else {
-      this.setState({ submitting: true }, () => {
-        if (this.state.submitting) {
-          this.props.updateDropshipStatus({ product_ids: this.state.selectedProducts })
-        }
-      })
+      this.submiting = true
+      this.props.updateDropshipStatus({ product_ids: this.state.selectedProducts })
     }
   }
 
@@ -80,47 +87,78 @@ class ProductChangeDropship extends React.Component {
     }
   }
 
+  async loadMore () {
+    let { id, pagination } = this.state
+    if (!this.fetching.fetchingMore) {
+      const newState = { pagination }
+      pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = { ...this.fetching, fetchingMore: true }
+      await this.props.getStoreProductsByCatalog({ id, page: this.state.pagination.page, hidden: false })
+    }
+  }
+
   componentDidMount () {
     const { id } = this.state
-    NProgress.start()
-    this.props.getStoreProductsByCatalog({ id, hidden: false })
+    if (id) {
+      NProgress.start()
+      this.fetching = { ...this.fetching, fetchingFirst: true }
+      this.props.getStoreProductsByCatalog({ id, hidden: false })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
     const { storeProductsByCatalog, alterProducts } = nextProps
-    const { notification, submitting } = this.state
-    if (!isFetching(storeProductsByCatalog)) {
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+
+    if (!isFetching(storeProductsByCatalog) && this.fetching.fetchingFirst) {
       NProgress.done()
-      this.setState({ storeProductsByCatalog, notification: validateResponse(storeProductsByCatalog, 'Data katalog tidak ditemukan!') })
-    }
-    if (alterProducts.isFound && submitting) {
-      switch (alterProducts.status) {
-        case Status.SUCCESS: {
-          const newNotification = { notification, submitting: false, selectAllProduct: false, selectedProducts: [] }
-          newNotification.notification['status'] = true
-          newNotification.notification['message'] = 'Berhasil menjadikan Barang sebagai dropship'
-          newNotification.notification['type'] = 'is-success'
-          this.setState(newNotification)
-          break
-        }
-        case Status.OFFLINE :
-        case Status.FAILED : {
-          const newNotif = { notification, submitting: false, selectAllProduct: false, selectedProducts: [] }
-          newNotif.notification['status'] = true
-          newNotif.notification['message'] = 'Gagal menjadikan Barang sebagai dropship'
-          newNotif.notification['type'] = 'is-danger'
-          this.setState(newNotif)
-          break
-        }
-        default:
-          break
+      this.fetching = { ...this.fetching, fetchingFirst: false }
+      if (isFound(storeProductsByCatalog)) {
+        this.hasMore = storeProductsByCatalog.products.length > 9
+        let isEmpty = storeProductsByCatalog.products.length < 1
+        this.setState({ storeProductsByCatalog, isEmpty })
       }
-      this.setState({ notification })
+      if (isError(storeProductsByCatalog)) {
+        this.setState({ notification: notifError(storeProductsByCatalog.message) })
+      }
+    }
+
+    if (!isFetching(storeProductsByCatalog) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(storeProductsByCatalog)) {
+        let stateStoreProductsByCatalog = this.state.storeProductsByCatalog
+        this.hasMore = storeProductsByCatalog.products.length > 9
+        stateStoreProductsByCatalog.products = stateStoreProductsByCatalog.products.concat(storeProductsByCatalog.products)
+        this.setState({ storeProductsByCatalog: stateStoreProductsByCatalog })
+      }
+      if (isError(storeProductsByCatalog)) {
+        this.setState({ notification: notifError(storeProductsByCatalog.message) })
+        this.hasMore = false
+      }
+    }
+
+    if (!isFetching(alterProducts) && this.submiting) {
+      this.submiting = false
+      if (isFound(alterProducts)) {
+        let newData = storeProductsByCatalog.products.filter(data => this.state.selectedProducts.indexOf(data.id) < 0)
+        let newListProduct = {
+          ...storeProductsByCatalog, products: newData
+        }
+        this.setState({ storeProductsByCatalog: newListProduct, notification: notifSuccess(alterProducts.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 1000)
+      }
+      if (isError(alterProducts)) {
+        this.setState({ notification: notifError(alterProducts.message) })
+      }
     }
   }
 
   render () {
-    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, submitting } = this.state
+    const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, isEmpty } = this.state
     const { products } = storeProductsByCatalog
     return (
       <div>
@@ -130,7 +168,7 @@ class ProductChangeDropship extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { storeProductsByCatalog.products.length !== 0 ? <div>
+        { isEmpty ? <ProductEmpty /> : <div>
           <section className='section is-paddingless'>
             <div className='note'>
               Hanya barang milik Anda sendiri yang bisa dijadikan sebagai dropshipping
@@ -145,34 +183,56 @@ class ProductChangeDropship extends React.Component {
                 </label>
               </div>
               {
-                storeProductsByCatalog.isFound && products.map((product) => {
-                  let isSelected = selectedProducts.filter((id) => {
-                    return id === product.id
-                  }).length > 0
-                  return (
-                    <SelectProduct
-                      key={product.id}
-                      isSelected={isSelected}
-                      product={product}
-                      handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
-                    />
-                  )
-                })
+                <InfiniteScroll
+                  pageStart={0}
+                  loadMore={_.debounce(this.loadMore.bind(this), 500)}
+                  hasMore={this.hasMore}
+                  loader={<Loading size={30} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+                  {
+                    products.map((product) => {
+                      let isSelected = selectedProducts.filter((id) => {
+                        return id === product.id
+                      }).length > 0
+                      return (
+                        <SelectProduct
+                          key={product.id}
+                          isSelected={isSelected}
+                          product={product}
+                          handleSelectedProducts={(e, id) => this.handleSelectedProducts(e, id)}
+                        />
+                      )
+                    })
+                  }
+                </InfiniteScroll>
               }
             </div>
           </section>
 
           <div className='level nav-bottom nav-button purchase is-mobile'>
-            <a className={`button is-primary is-m-lg is-fullwidth btn-add-cart js-option ${submitting && 'is-loading'}`}
+            <a className={`button is-primary is-m-lg is-fullwidth btn-add-cart js-option ${this.submiting && 'is-loading'}`}
               onClick={(e) => this.handleNotification(e)}> Jadikan Dropshipping untuk barang terpilih
             </a>
           </div>
         </div>
-        : <p style={{textAlign: 'center', paddingTop: '20px'}}>Tidak ada barang di katalog ini</p>
         }
       </div>
     )
   }
+}
+
+/** product empty content */
+const ProductEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Produk tidak ditemukan</strong></p>
+          <p>Tidak ada barang di katalog ini</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {

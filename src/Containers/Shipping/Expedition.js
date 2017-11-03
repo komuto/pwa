@@ -5,6 +5,7 @@ import _ from 'lodash'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
+import Wizard from '../../Components/Wizard'
 import Notification from '../../Components/Notification'
 // actions
 import * as actionExpeditionTypes from '../../actions/expedition'
@@ -28,7 +29,7 @@ class ShippingExpedition extends React.Component {
         updateStore: false
       }
     }
-    this.fetchingFirst = false
+    this.fetching = { expeditions: false, manageExpeditions: false }
   }
 
   handleNotification (e) {
@@ -86,9 +87,9 @@ class ShippingExpedition extends React.Component {
 
   submitExpedition (e) {
     e.preventDefault()
-    const { expeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
+    const { manageExpeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
     const { postExpedition, updateExpedition, query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    const isSetting = query.type === 'settingStore'
     const tempExpeditionServices = {
       selectedExpeditions: selectedExpeditions,
       selectedServices: selectedServices
@@ -97,7 +98,7 @@ class ShippingExpedition extends React.Component {
       if (isSetting) {
         this.setState({ submiting: { ...submiting, updateStore: true } })
         const dataServices = []
-        expeditions.expeditions.map(expedition => {
+        manageExpeditions.manageExpeditions.map(expedition => {
           return expedition.services.map(service => {
             return dataServices.push(service.id)
           })
@@ -139,13 +140,10 @@ class ShippingExpedition extends React.Component {
   componentDidMount () {
     const { expeditions, manageExpeditions, selectedServices, selectedExpeditions } = this.state
     const { getExpedition, query, manageStoreExpeditions, isFound } = this.props
-    if (!isFound(expeditions)) {
-      getExpedition()
-      NProgress.start()
-    }
-    if (this.props.hasOwnProperty('query') && query.type === 'settingStore') {
+
+    if (query.type === 'settingStore') {
       if (!manageExpeditions.isFound) {
-        this.fetchingFirst = true
+        this.fetching = { ...this.fetching, manageExpeditions: true }
         manageStoreExpeditions()
         NProgress.start()
       } else {
@@ -166,6 +164,12 @@ class ShippingExpedition extends React.Component {
         newService.selectedExpeditions = expeditionId
         this.setState(newService)
       }
+    } else {
+      if (!isFound(expeditions)) {
+        this.fetching = { ...this.fetching, expeditions: true }
+        getExpedition()
+        NProgress.start()
+      }
     }
   }
 
@@ -173,10 +177,11 @@ class ShippingExpedition extends React.Component {
     const { selectedServices, selectedExpeditions, submiting } = this.state
     const { processCreateStore, expeditions, manageExpeditions, statusUpdateExpedition } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    if (!isFetching(expeditions)) {
+    if (!isFetching(expeditions) && this.fetching.expeditions) {
+      this.fetching = { ...this.fetching, expeditions: false }
+      NProgress.done()
       if (isFound(expeditions)) {
-        this.setState({ expeditions: expeditions })
-        NProgress.done()
+        this.setState({ expeditions })
       }
       if (isError(expeditions)) {
         this.setState({ notification: notifError(expeditions.message) })
@@ -187,8 +192,8 @@ class ShippingExpedition extends React.Component {
       Router.push('/owner-information')
     }
 
-    if (!isFetching(manageExpeditions) && this.fetchingFirst) {
-      this.fetchingFirst = false
+    if (!isFetching(manageExpeditions) && this.fetching.manageExpeditions) {
+      this.fetching = { ...this.fetching, manageExpeditions: false }
       NProgress.done()
       if (isFound(manageExpeditions)) {
         let serviceId = []
@@ -203,7 +208,7 @@ class ShippingExpedition extends React.Component {
             }
           })
         })
-        const newService = { selectedServices, selectedExpeditions }
+        const newService = { manageExpeditions, selectedServices, selectedExpeditions }
         newService.selectedServices = serviceId
         newService.selectedExpeditions = expeditionId
         this.setState(newService)
@@ -225,7 +230,14 @@ class ShippingExpedition extends React.Component {
   }
 
   render () {
-    const { expeditions, selectedServices, selectedExpeditions, notification } = this.state
+    const { expeditions, manageExpeditions, selectedServices, selectedExpeditions, notification } = this.state
+    const isSetting = this.props.query.type === 'settingStore'
+    let listExpedition
+    if (isSetting) {
+      listExpedition = manageExpeditions.manageExpeditions
+    } else {
+      listExpedition = expeditions.expeditions
+    }
     return (
       <div>
         <Notification
@@ -235,19 +247,12 @@ class ShippingExpedition extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <section className='section is-paddingless has-shadow'>
-          <div className='seller-bar'>
-            <div className='seller-step active2'>
-              <div className='step1'><span>1</span></div>
-              <div className='step2'><span>2</span></div>
-              <div className='step3'><span>3</span></div>
-              <div className='step4'><span>4</span></div>
-            </div>
-          </div>
+          { !isSetting && <Wizard total={4} active={2} /> }
           <div className='note'>
             Pilihlah ekspedisi pengiriman yang digunakan oleh toko Anda untuk mengirim barang
           </div>
         </section>
-        { expeditions.expeditions.map((expedition, index) => {
+        { listExpedition.map((expedition, index) => {
           let isSelectedExpedition = selectedExpeditions.filter((id) => {
             return id === expedition.id
           }).length > 0
@@ -280,7 +285,7 @@ class ShippingExpedition extends React.Component {
                         className='checkbox'
                         key={service.id}
                         onClick={(e) => this.handleSelectedExpeditions(e, service.id, expedition.id, getServicesId)}>
-                        <span className={`sort-text ${isSelected && 'active'}`}>{service.full_name}</span>
+                        <span className={`sort-text ${isSelected && 'active'}`}>{isSetting ? service.name : service.full_name}</span>
                         <span className={`input-wrapper ${isSelected && 'checked'}`} >
                           <input type='checkbox' />
                         </span>
