@@ -32,7 +32,7 @@ export function errorHandling (actionType, err) {
     case 'CONNECTION_ERROR':
     case 'NETWORK_ERROR':
       const errorOffline = {
-        message: 'Device offline!',
+        message: 'Device offline',
         code: 'EOFFLINE',
         isOnline: false,
         isLoading: false
