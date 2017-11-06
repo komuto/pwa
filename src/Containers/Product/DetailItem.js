@@ -60,10 +60,10 @@ class ProductDetailItem extends Component {
                 <h3>Kualitas Produk</h3>
                 <MyRating
                   readonly
-                  initialRate={rating.accuracy}
+                  initialRate={Math.round(rating.quality)}
                   start={0}
                   stop={5} />
-                <span className='value-rate sm' style={{ marginLeft: 10 }}>{ rating.quality }</span>
+                <span className='value-rate sm' style={{ marginLeft: 10 }}>{ Math.round(rating.quality) }</span>
               </div>
             </div>
             <div className='column is-half'>
@@ -71,10 +71,10 @@ class ProductDetailItem extends Component {
                 <h3>Akurasi Produk</h3>
                 <MyRating
                   readonly
-                  initialRate={rating.accuracy}
+                  initialRate={Math.round(rating.accuracy)}
                   start={0}
                   stop={5} />
-                <span className='value-rate sm' style={{ marginLeft: 10 }}>{ rating.accuracy }</span>
+                <span className='value-rate sm' style={{ marginLeft: 10 }}>{ Math.round(rating.accuracy) }</span>
               </div>
             </div>
           </div>
