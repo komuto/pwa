@@ -347,7 +347,7 @@ class OrderDetail extends React.Component {
               </div>
             </div>
           </section>
-          <div className='level btn-wrapp'>
+          <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
             <div className='columns is-mobile'>
               <div className='column is-half'>
                 <a className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.modalReject()}>Tolak</a>
