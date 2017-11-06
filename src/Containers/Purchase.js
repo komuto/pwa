@@ -145,6 +145,14 @@ class Purchase extends Component {
   async expeditionSelected (e, selected) {
     e.preventDefault()
     await this.props.setCourierExpedition(selected)
+    let isServiceAvailable = this.state.expeditionsPackage.data.filter((data) => {
+      return data.expedition_id === selected.id
+    }).length > 0
+
+    if (!isServiceAvailable) {
+      this.refs.notificator.success('', 'service not found', 4000)
+    }
+
     this.setState({
       expeditions: { ...this.state.expeditions, show: false, selected },
       expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
@@ -298,7 +306,6 @@ class Purchase extends Component {
 
   render () {
     const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
-
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
 
