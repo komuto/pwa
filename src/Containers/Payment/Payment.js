@@ -4,7 +4,7 @@
  * PT Skyshi Digital Indonesa
  */
 
- /** including depedencies */
+/** including depedencies */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
@@ -150,13 +150,13 @@ class Payment extends Component {
 
     // handling state get snapToken
     if (!isFetching(snapToken) && this.submitting.snapToken) {
+      this.submitting = {...this.submitting, snapToken: false}
       if (isError(snapToken)) {
         this.setState({ notification: notifError(snapToken.message) })
       }
       if (isFound(snapToken)) {
         // this.loadMidtransPayment(snapToken.token)
         Midtrans({...snapToken})
-        this.submitting = {...this.submitting, snapToken: false}
         this.setState({ snapToken })
       }
     }
@@ -177,7 +177,8 @@ class Payment extends Component {
       NProgress.done()
       this.submitting = { ...this.submitting, cart: false }
       if (isError(cart)) {
-        this.setState({ notification: notifError(cart.message) })
+        Router.push('/transaction')
+        // this.setState({ notification: notifError(cart.message) })
       }
       if (isFound(cart)) {
         this.setState({ cart })
@@ -265,11 +266,11 @@ const Paymentcontent = (props) => {
         <div className='box-rounded'>
           <div className='total-detail'>
             <ul className='list-inline col2'>
-              <li>
+              <li style={{ minWidth: '0px' }}>
                 <span>Total Pembayaran</span>
                 <span className='price'>Rp { RupiahFormat(totalPayment - pricePromo) }</span>
               </li>
-              <li className='has-text-right'>
+              <li className='has-text-right' style={{ minWidth: '0px' }}>
                 <a onClick={() => paymentType === 'bucket' ? Router.push('/shopping-cart') : Router.push(`/transaction-detail?id=${idT}`)} className='button is-primary is-outlined full-rounded'>Detail</a>
               </li>
             </ul>

@@ -201,7 +201,8 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                       <div className='box grid'>
                         <div className='media'>
                           <div className='media-left'>
-                            <figure className='image' style={{ width: 212 }}>
+                            {/* <figure className='image' style={{ width: 212 }}> */}
+                            <figure className='image'>
                               <a><MyImage src={product.image} alt='Image' /></a>
                             </figure>
                           </div>

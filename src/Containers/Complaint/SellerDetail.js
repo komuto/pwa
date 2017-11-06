@@ -308,7 +308,6 @@ class ComplainItemDetail extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { notification, tabs, sellerComplainedOrderDetail, message, showModal, validation, showModalShipping, receiptNumber } = this.state
     if (!sellerComplainedOrderDetail.isFound) return null
     return (
@@ -596,9 +595,10 @@ const ListDiscustionComplainOrders = (props) => {
   const { sellerComplainedOrderDetail } = props
   if (sellerComplainedOrderDetail === undefined) return null
   moment.locale('id')
+  let isEmpty = sellerComplainedOrderDetail.orderDetail.discussions.length === 0
   return (
     <div>
-      <section className='section is-paddingless bg-white'>
+      <section className={`section is-paddingless ${isEmpty ? 'bg-grey' : 'bg-white'}`}>
         <div className='discuss'>
           <ul className='notif-detail conversation bordered'>
             { sellerComplainedOrderDetail.orderDetail.discussions.map((res, i) => {
@@ -628,7 +628,7 @@ const ListDiscustionComplainOrders = (props) => {
             }
           </ul>
         </div>
-        { sellerComplainedOrderDetail.orderDetail.discussions.length === 0 && <EmptyDiscussion /> }
+        { isEmpty && <EmptyDiscussion /> }
       </section>
       <div className='add-comment'>
         <div className='field'>

@@ -288,7 +288,8 @@ const Cart = (props) => {
               <section className='section is-paddingless has-shadow' key={item.id}>
                 <div className='detail-product'>
                   <div className='purchase'>
-                    <figure className='img-item' style={{ width: 50 }}>
+                    {/* <figure className='img-item' style={{ width: 50 }}> */}
+                    <figure className='img-item'>
                       <MyImage src={item.product.image} alt={item.product.store.name} />
                     </figure>
                     <h3>{item.product.name}</h3>

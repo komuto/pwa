@@ -348,7 +348,8 @@ class TransactionDetailBankTransfer extends Component {
                                   <div className='box'>
                                     <div className='media'>
                                       <div className='media-left'>
-                                        <figure className='image' style={{ width: 50 }}>
+                                        {/* <figure className='image' style={{ width: 50 }}> */}
+                                        <figure className='image'>
                                           <a><MyImage src={item.product.image} alt='Image' /></a>
                                         </figure>
                                       </div>

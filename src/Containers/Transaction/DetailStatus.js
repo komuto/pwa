@@ -341,7 +341,7 @@ const TabsDataContent = (props) => {
                 <li>
                   <div className='columns custom is-mobile'>
                     <div className='column is-half'><strong>Total</strong></div>
-                    <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(subTotal + invoice.shipping.delivery_cost + insuranceFee) }</strong></div>
+                    <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(invoice.total_price) }</strong></div>
                   </div>
                 </li>
               </ul>

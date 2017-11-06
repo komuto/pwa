@@ -361,7 +361,8 @@ class Purchase extends Component {
           <ReactNotify ref='notificator' />
           <div className='detail-product'>
             <div className='purchase'>
-              <figure className='img-item' style={{ width: 30 }}>
+              {/* <figure className='img-item' style={{ width: 30 }}> */}
+              <figure className='img-item'>
                 <MyImage src={images[0].file} alt={store.name} />
               </figure>
               <h3>{ product.name }</h3>

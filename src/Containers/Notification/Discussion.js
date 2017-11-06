@@ -148,7 +148,8 @@ const List = ({ message }) => (
     <div className='box is-paddingless'>
       <article className='media'>
         <div className='media-left top is-bordered'>
-          <figure className='image' style={{ width: 40 }}>
+          {/* <figure className='image' style={{ width: 40 }}> */}
+          <figure className='image'>
             <MyImage src={message.product.image} alt={message.product.name} />
           </figure>
         </div>

@@ -296,7 +296,8 @@ class TransactionConfirmation extends Component {
     this.state.images.map((image) => {
       images.append('images', image)
     })
-    images.append('type', 'product')
+    images.append('type', 'dispute')
+    console.log('images: ', images)
 
     // define params
     this.params = {
@@ -421,7 +422,7 @@ class TransactionConfirmation extends Component {
       if (addReviews.status === Status.SUCCESS) {
         Router.push(
           '/transaction-confirmation-review',
-          '/transaction/confirmation/review'
+          '/transaction-confirmation/review'
         )
       } else {
         this.setState({ notification: validateResponse(addReviews, 'Gagal melakukan review') })

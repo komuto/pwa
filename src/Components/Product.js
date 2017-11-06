@@ -81,7 +81,8 @@ class Product extends Component {
         <div className={`box ${viewActive} effect-display`} >
           <div className='media'>
             <div className='media-left'>
-              <figure className='image' style={{width: '150px'}}>
+              {/* <figure className='image' style={{width: '150px'}}> */}
+              <figure className='image'>
                 <MyImage src={product.image} alt={product.name} />
                 { pin }
               </figure>

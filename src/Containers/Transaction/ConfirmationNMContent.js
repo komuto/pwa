@@ -14,8 +14,6 @@ const styles = {
 
 const NotMatchingContent = (props) => {
   const { invoice, problems, solution, images, note, field, error, submiting } = props
-  console.log('invoice: ', invoice)
-  console.log('NotMatchingContent: ')
   return (
     <Content>
       <section className='section is-paddingless has-shadow'>

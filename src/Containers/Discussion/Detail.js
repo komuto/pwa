@@ -172,7 +172,8 @@ const DiscussionDetailContent = ({ productDetail, comments, comment, submitting,
             <div className='box is-paddingless'>
               <article className='media'>
                 <div className='media-left'>
-                  <figure className='image product-pict' style={{ width: 40 }}>
+                  {/* <figure className='image product-pict' style={{ width: 40 }}> */}
+                  <figure className='image product-pict'>
                     <MyImage src={images[0].file} alt={product.name} />
                   </figure>
                 </div>
