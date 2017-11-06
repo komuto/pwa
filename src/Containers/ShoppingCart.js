@@ -261,103 +261,110 @@ const Cart = (props) => {
   let data = cart.data
   let totalPayment = 0
   let promoCode = '-'
-  let pricePromo = 0
   let errorStyle = {
     color: 'red',
     borderBottomColor: 'red'
   }
 
-  data.cart.items.map((item) => {
-    totalPayment += item.total_price
-  })
+  // data.cart.items.map((item) => {
+  //   totalPayment += item.total_price
+  // })
 
-  totalPayment += data.cart.unique_code
+  // totalPayment += data.cart.unique_code
 
   if (data.cart.promo) {
-    pricePromo = Promo({ ...data.cart, totalPayment })
     promoCode = data.cart.promo.promo_code
   }
 
   return (
     <Content>
       {
-          // field items by default not found
-          data.cart.items.map((item) => {
-            let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
-            return (
-              <section className='section is-paddingless has-shadow' key={item.id}>
-                <div className='detail-product'>
-                  <div className='purchase'>
-                    {/* <figure className='img-item' style={{ width: 50 }}> */}
-                    <figure className='img-item'>
-                      <MyImage src={item.product.image} alt={item.product.store.name} />
-                    </figure>
-                    <h3>{item.product.name}</h3>
-                    <span className='price'>{item.product.store.name}</span>
-                  </div>
-                  {
-                    deleteItem.submitting && deleteItem.productClick === item.id
+        // field items by default not found
+        data.cart.items.map((item) => {
+          let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
+          // calc delivery cost
+          let deliveryCost = item.shipping.delivery_cost
+          // calc insurance
+          let insuranceFee = 0
+          if (item.shipping.is_insurance) {
+            insuranceFee = item.shipping.insurance_fee
+          }
+          let subTotal = item.total_price + deliveryCost + insuranceFee
+          totalPayment += subTotal
+          return (
+            <section className='section is-paddingless has-shadow' key={item.id}>
+              <div className='detail-product'>
+                <div className='purchase'>
+                  {/* <figure className='img-item' style={{ width: 50 }}> */}
+                  <figure className='img-item'>
+                    <MyImage src={item.product.image} alt={item.product.store.name} />
+                  </figure>
+                  <h3>{item.product.name}</h3>
+                  <span className='price'>{item.product.store.name}</span>
+                </div>
+                {
+                  deleteItem.submitting && deleteItem.productClick === item.id
                     ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' />
                     : <a onClick={() => props.deleteProductPress(item)} className='remove-item'>{localize.delete}</a>
-                  }
-                </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>{localize.price_piece}</strong>
-                        </div>
+                }
+              </div>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half'>
+                      <div className='rating-content is-left'>
+                        <strong>{localize.price_piece}</strong>
                       </div>
-                      <div className='column is-half'>
-                        <div className='rating-content item-qty has-text-right'>
-                          <span>Rp {RupiahFormat(item.product.price)}</span>
-                        </div>
+                    </div>
+                    <div className='column is-half'>
+                      <div className='rating-content item-qty has-text-right'>
+                        <span>Rp {RupiahFormat(item.product.price)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half is-paddingless'>
-                        <div className='rating-content is-left'>
-                          <strong>{localize.amount}</strong>
-                        </div>
+              </div>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half is-paddingless'>
+                      <div className='rating-content is-left'>
+                        <strong>{localize.amount}</strong>
                       </div>
-                      <div className='column is-half is-paddingless'>
-                        <div className='rating-content item-qty'>
-                          <a onClick={() => !isSubmitting && props.minPress(item)}><span className='icon-qty-min' /></a>
-                          <span className='qty'>{ isSubmitting ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' /> : item.qty }</span>
-                          <a onClick={() => !isSubmitting && props.plusPress(item)}><span className='icon-qty-plus' /></a>
-                        </div>
+                    </div>
+                    <div className='column is-half is-paddingless'>
+                      <div className='rating-content item-qty'>
+                        <a onClick={() => !isSubmitting && props.minPress(item)}><span className='icon-qty-min' /></a>
+                        <span className='qty'>{ isSubmitting ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' /> : item.qty }</span>
+                        <a onClick={() => !isSubmitting && props.plusPress(item)}><span className='icon-qty-plus' /></a>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className='see-all' onClick={() => Router.push('/shipping-detail?id=' + item.id)}>
-                  <span className='link'>{localize.delivery} <span className='icon-arrow-right' /></span>
-                </div>
-                <div className='info-purchase'>
-                  <div className='detail-rate is-purchase'>
-                    <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-                      <div className='column is-half'>
-                        <div className='rating-content is-left'>
-                          <strong>{localize.sub_total}</strong>
-                        </div>
+              </div>
+              <div className='see-all' onClick={() => Router.push('/shipping-detail?id=' + item.id)}>
+                <span className='link'>{localize.delivery} <span className='icon-arrow-right' /></span>
+              </div>
+              <div className='info-purchase'>
+                <div className='detail-rate is-purchase'>
+                  <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                    <div className='column is-half'>
+                      <div className='rating-content is-left'>
+                        <strong>{localize.sub_total}</strong>
                       </div>
-                      <div className='column is-half'>
-                        <div className='rating-content item-qty has-text-right'>
-                          <span> { isSubmitting ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' /> : `Rp ${RupiahFormat(item.total_price)}` } </span>
-                        </div>
+                    </div>
+                    <div className='column is-half'>
+                      <div className='rating-content item-qty has-text-right'>
+                        <span> { isSubmitting ? <Loading size={14} type='ovals' color='#ef5656' className='remove-item' /> : `Rp ${RupiahFormat(subTotal)}` } </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </section>
-            )
-          })
-        }
+              </div>
+            </section>
+          )
+        })
+      }
       <section className='section is-paddingless has-shadow bg-white'>
         <div className='info-purchase'>
           <div className='detail-rate is-purchase'>
@@ -381,7 +388,7 @@ const Cart = (props) => {
                     <div className='column is-half'>
                       <span>{ promoCode }</span>
                       <br />
-                      <span className='voucher-credit'>- Rp { RupiahFormat(pricePromo) }</span></div>
+                      <span className='voucher-credit'>- Rp { RupiahFormat(Promo({ ...data.cart, totalPayment })) }</span></div>
                     <div className='column is-half has-text-right'><a onClick={() => props.voucherCancel()} className='cancel'> { cancelPromo.submitting ? <Loading size={14} type='ovals' color='#ef5656' className='is-fullwidth' /> : 'Batal' } </a></div>
                   </div>
                 </li>
@@ -396,7 +403,11 @@ const Cart = (props) => {
             <div className='columns total-pay is-mobile is-multiline no-margin-bottom'>
               <div className='column is-half is-paddingless'>
                 <p>{localize.total_payment}</p>
-                <p className='price-pay'>Rp { RupiahFormat(totalPayment - pricePromo) }</p>
+                {
+                  promoCode !== '-'
+                    ? <p className='price-pay'>Rp { RupiahFormat(totalPayment - Promo({ ...data.cart, totalPayment })) }</p>
+                    : <p className='price-pay'>Rp { RupiahFormat(totalPayment) }</p>
+                }
               </div>
               <div className='column is-half is-paddingless has-text-right'>
                 <button onClick={() => !submitting && props.payNow()} className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}>Bayar Sekarang</button>
