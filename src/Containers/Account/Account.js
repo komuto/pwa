@@ -188,7 +188,7 @@ class Account extends Component {
               ? <div className='notif-verify'>
                 <div className='box is-paddingless'>
                   <article className='media'>
-                    <div className='media-left'>
+                    <div className='media-left top'>
                       <figure className='image'>
                         <span className='icon-verify' />
                       </figure>

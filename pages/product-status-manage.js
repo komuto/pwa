@@ -8,7 +8,7 @@ import ProductStatusManage from '../src/Containers/Product/StatusManage'
 
 const Index = (props) => {
   const params = {
-    style: 'main main seller bg-grey',
+    style: 'main seller bg-grey',
     header: {
       title: 'Opsi Status'
     },

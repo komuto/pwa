@@ -276,10 +276,10 @@ export class Filter extends Component {
           </section>
           <footer className='modal-card-foot'>
             <div className='columns is-mobile'>
-              <div className='column'>
+              <div className='column is-half'>
                 <a className='button is-large is-fullwidth is-outlined' onClick={() => this.filterReset()}>Reset Filter</a>
               </div>
-              <div className='column'>
+              <div className='column is-half'>
                 <a className='button is-primary is-large is-fullwidth' onClick={() => this.filterRealization()}>Terapkan Filter</a>
               </div>
             </div>
