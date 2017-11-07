@@ -5995,7 +5995,8 @@ strong {
               flex-grow: 0;
       -ms-flex-negative: 0;
           flex-shrink: 0;
-      margin-right: 0; }
+      margin-right: 0;
+      width: inherit; }
     .box.grid .media .media-content {
       -ms-flex-preferred-size: auto;
           flex-basis: auto;
