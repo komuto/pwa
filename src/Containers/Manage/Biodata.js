@@ -324,6 +324,7 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
     let timeValue = formBiodata.date_of_birth ? new Date(formBiodata.date_of_birth) : time
     return (
@@ -398,7 +399,7 @@ class ManageBiodata extends React.Component {
               <div className='field'>
                 <p className='control detail-address' onClick={(e) => this.handleModalPOB(e)}>
                   <span className='location-label modal-button'>
-                    { searchDistrict.selected !== '' ? searchDistrict.selected : 'Tempat Lahir Anda' }
+                    { searchDistrict.selected ? searchDistrict.selected : 'Tempat Lahir Anda' }
                   </span>
                 </p>
                 {this.renderValidation('place_of_birth', 'Mohon isi tempat lahir anda')}

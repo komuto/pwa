@@ -88,7 +88,7 @@ class VerifyNoTelp extends React.Component {
           <h3>Nomor Telepon Telah Terverifikasi</h3>
           <p>Nomor Telepon telah terverifikasi kini Anda bisa melanjutkan proses aktivasi toko Anda</p>
           <Link href='information-store'>
-            <button className='button is-primary is-large is-fullwidth'>Ke Daftar Transaksi</button>
+            <button className='button is-primary is-large is-fullwidth'>Lanjutkan Proses Aktivasi Toko</button>
           </Link>
         </div>
       </div>

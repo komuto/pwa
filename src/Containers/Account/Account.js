@@ -21,7 +21,6 @@ class Account extends Component {
     this.state = {
       profile: props.profile,
       verify: false,
-      submitting: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -30,7 +29,8 @@ class Account extends Component {
 
     this.submitting = {
       alterUser: false,
-      profile: false
+      profile: false,
+      sendOTPPhone: false
     }
   }
 
@@ -40,7 +40,7 @@ class Account extends Component {
 
   sendOTPPhone (e) {
     e.preventDefault()
-    this.setState({ submitting: true })
+    this.submitting = { ...this.submitting, sendOTPPhone: true }
     this.props.sendOTPToPhone()
   }
 
@@ -76,11 +76,17 @@ class Account extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { profile, alterUser } = nextProps
+    const { profile, sendOTPPhone, alterUser } = nextProps
     const { isFetching, isError, isFound, notifError, notifSuccess } = this.props
-    const { submitting } = this.state
-    if (nextProps.sendOTPPhone.isFound && submitting) {
-      Router.push('/verify-no-telp')
+
+    if (!isFetching(sendOTPPhone) && this.submitting.sendOTPPhone) {
+      this.submitting = { ...this.submitting, sendOTPPhone: false }
+      if (isFound(sendOTPPhone)) {
+        Router.push('/verify-no-telp')
+      }
+      if (isError(sendOTPPhone)) {
+        this.setState({ notification: notifError(sendOTPPhone.message) })
+      }
     }
 
     if (!isFetching(profile) && this.submitting.profile) {
@@ -106,7 +112,7 @@ class Account extends Component {
   }
 
   renderModalVerify () {
-    const { verify, submitting } = this.state
+    const { verify } = this.state
     return (
       <div className='sort-option' style={{display: verify && 'block'}}>
         <div className='notif-report'>
@@ -115,7 +121,7 @@ class Account extends Component {
           <p>Verifikasi Nomor Telepon Anda terlebih dahulu untuk melanjutkan proses membuka toko</p>
           <button
             onClick={(e) => this.sendOTPPhone(e)}
-            className={`button is-primary is-large is-fullwidth ${submitting && 'is-loading'}`}>
+            className={`button is-primary is-large is-fullwidth ${this.submitting.sendOTPPhone && 'is-loading'}`}>
             Verifikasi Sekarang
           </button>
           <strong
