@@ -7290,7 +7290,8 @@ strong.total {
             border-radius: 700px; }
         .profile-wrapp ul li .box .media-left .product-pict img, .discuss ul li .box .media-left .product-pict img {
           width: 100%;
-          border-radius: 700px; }
+          border-radius: 700px;
+          max-width: 40px; }
         .profile-wrapp ul li .box .content, .discuss ul li .box .content {
           padding: 2px 0 0 0;
           margin-right: 60px;
