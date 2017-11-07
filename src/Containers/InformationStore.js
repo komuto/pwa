@@ -132,7 +132,7 @@ class InformationStore extends React.Component {
 
   handleButton () {
     const { query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    const isSetting = query.type === 'settingStore'
     return (
       <button
         className={`button is-primary is-large is-fullwidth ${(this.state.submiting.upload || this.state.submiting.updateStore) ? 'is-loading' : ''}`}
