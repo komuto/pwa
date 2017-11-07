@@ -19,7 +19,7 @@ import Content from '../Components/Content'
 import Section, { SectionTitle } from '../Components/Section'
 import Notification from '../Components/Notification'
 import Product from '../Components/Product'
-import ProductContainers from '../Components/ProductContainers'
+// import ProductContainers from '../Components/ProductContainers'
 import MyImage from '../Components/MyImage'
 import Header from './Header'
 /** including actions */
@@ -266,19 +266,15 @@ const ProductContent = ({ localize, products, wishlistPress }) => (
     <SectionTitle title={localize.product_new} />
     <Content className='columns is-mobile is-multiline custom'>
       {
-        <ProductContainers>
-          {
-            products.products.map((myProduct) => {
-              return (
-                <Product
-                  key={myProduct.product.id}
-                  {...myProduct}
-                  viewActive='grid'
-                  wishlistPress={(id) => wishlistPress(id)} />
-              )
-            })
-          }
-        </ProductContainers>
+        products.products.map((myProduct) => {
+          return (
+            <Product
+              key={myProduct.product.id}
+              {...myProduct}
+              viewActive='grid'
+              wishlistPress={(id) => wishlistPress(id)} />
+          )
+        })
       }
       <Content className='column is-paddingless'>
         <Content className='see-all'>
