@@ -382,7 +382,7 @@ class ProductAddStepThree extends Component {
             <div className='field'>
               <label className='label' style={weightError}>Berat Produk</label>
               <p className='control is-expanded discount'>
-                <span className='disc' style={weightError}>Kg</span>
+                <span className='disc' style={weightError}>gram</span>
                 <input onChange={(e) => this.formHandling(e)} value={form.weight !== undefined && form.weight} placeholder='0' name='weight' className='input' type='number' style={weightError} />
               </p>
             </div>
