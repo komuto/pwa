@@ -6329,18 +6329,23 @@ strong {
       margin-right: 10px; }
 
 .package .radio {
-  padding-right: 75px;
+  padding-right: 62px;
   position: relative;
-  text-align: right; }
+  text-align: left; }
   .package .radio span {
-    margin-left: 28px; }
+    text-align: left;
+    margin-left: 0;
+    margin-right: 28px; }
     .package .radio span.service-name {
-      position: absolute;
-      top: 50%;
-      left: 20px;
+      display: block;
+      position: relative;
+      top: 0;
+      left: 0;
       margin-left: 0;
-      -webkit-transform: translateY(-50%);
-      transform: translateY(-50%); }
+      margin-bottom: 5px;
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+      text-align: left; }
 
 .kurir .radio img {
   max-width: 40px;
@@ -6688,15 +6693,18 @@ strong.total {
     background-color: rgba(86, 170, 239, 0.15);
     color: #56aaef; }
 
+.caption {
+  padding: 15px 20px;
+  font-size: 13px;
+  line-height: 1.69;
+  letter-spacing: 0.2px;
+  background-color: #ffffff; }
+
 .middle-content {
   position: relative; }
   .middle-content > .content {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%); }
+    position: relative;
+    width: 100%; }
   .middle-content .mid {
     position: absolute;
     top: 50%;
@@ -7437,7 +7445,11 @@ strong.total {
   .discuss ul li .time-discuss.relativeMobile {
     right: 0;
     top: 6px;
-    position: relative; } }
+    position: relative; }
+  .profile-wrapp .box .media .media-left {
+    width: inherit; }
+  .slick-slide .box .media .media-left {
+    width: inherit; } }
 
 .wishlist .search-form {
   margin-bottom: 20px; }
@@ -7727,7 +7739,8 @@ strong.total {
         .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox {
           padding: 29.1px 10px; }
           .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .label, .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .sort-text {
-            font-size: 11px; } }
+            font-size: 11px;
+            padding-right: 50px; } }
 
 .filter-price {
   position: relative; }
