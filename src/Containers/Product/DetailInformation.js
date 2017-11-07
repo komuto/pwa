@@ -16,6 +16,7 @@ class ProductDetailInformation extends Component {
 
   render () {
     const { product, category } = this.props
+    console.log('product: ', product)
     const { openDescription } = this.state
     return (
       <Section className='class="section is-paddingless has-shadow'>
@@ -36,7 +37,7 @@ class ProductDetailInformation extends Component {
               <div className='column is-half'>
                 <div className='rating-content is-left'>
                   <h3>Kondisi</h3>
-                  <span> { product.type ? 'Baru' : 'Bekas' } </span>
+                  <span> { product.condition === 1 ? 'Baru' : 'Bekas' } </span>
                 </div>
               </div>
             </div>
