@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
 // components
-import NProgress from 'nprogress'
 
 class StoreSetting extends Component {
   constructor (props) {
@@ -13,14 +12,11 @@ class StoreSetting extends Component {
 
   toManageBiodata (e) {
     e.preventDefault()
-    this.setState({ loadingBiodata: true })
-    NProgress.start()
     Router.push('/manage-biodata')
   }
 
   toInformationStore (e) {
     e.preventDefault()
-    NProgress.start()
     Router.push(`/information-store?type=settingStore`)
   }
 

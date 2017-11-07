@@ -97,9 +97,8 @@ class AddAddress extends React.Component {
   setIsPrimary (e) {
     e.preventDefault()
     const { formAddress } = this.state
-    let negasi = !formAddress.is_primary
     const newState = { formAddress }
-    newState.formAddress['is_primary'] = negasi
+    newState.formAddress['is_primary'] = !formAddress.is_primary
     this.setState(newState)
   }
 

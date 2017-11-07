@@ -35,7 +35,7 @@ class ProductManage extends React.Component {
         weight: isFound ? storeProductDetail.product.weight : '',
         condition: isFound ? storeProductDetail.product.condition : '',
         isInsurance: isFound ? storeProductDetail.product.is_insurance : '',
-        catalog: isFound ? storeProductDetail.catalog.name : '',
+        catalog: isFound ? storeProductDetail.catalog ? storeProductDetail.catalog.name : 'Tanpa Katalog' : '',
         wholesaler: isFound ? storeProductDetail.wholesaler : '',
         expeditionServices: isFound ? storeProductDetail.expedition_services : ''
       },
@@ -125,7 +125,7 @@ class ProductManage extends React.Component {
           weight: dataStoreProduct.product.weight,
           condition: dataStoreProduct.product.condition,
           isInsurance: dataStoreProduct.product.is_insurance,
-          catalog: dataStoreProduct.catalog.name,
+          catalog: dataStoreProduct.catalog ? dataStoreProduct.catalog.name : 'Tanpa Katalog',
           wholesaler: dataStoreProduct.wholesaler,
           expeditionServices: dataStoreProduct.expedition_services
         }

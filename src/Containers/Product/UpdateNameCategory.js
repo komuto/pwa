@@ -17,12 +17,10 @@ class ProductUpdateNameCategory extends Component {
     const isFound = props.storeProductDetail.isFound
     const { storeProductDetail } = props.storeProductDetail
     let name = isFound ? storeProductDetail.product.name : ''
-    let categoryOne = isFound ? storeProductDetail.category.parents[0].id : ''
-    let categoryTwo = isFound ? storeProductDetail.category.parents[1].id : ''
-    let categoryThree = isFound ? storeProductDetail.category.parents[2].id : ''
     let categoryId = isFound ? storeProductDetail.category.id : ''
     let brandId = isFound ? storeProductDetail.brand ? storeProductDetail.brand.id : '' : ''
     let description = isFound ? storeProductDetail.product.description : ''
+    // state
     this.state = {
       id: props.query.id || null,
       storeProductDetail: props.storeProductDetail || null,
@@ -33,9 +31,9 @@ class ProductUpdateNameCategory extends Component {
       subCategory3: props.subCategory3 || null,
       form: {
         name,
-        categoryOne,
-        categoryTwo,
-        categoryThree,
+        categoryOne: '',
+        categoryTwo: '',
+        categoryThree: '',
         category_id: categoryId,
         brand_id: brandId,
         description
@@ -61,16 +59,16 @@ class ProductUpdateNameCategory extends Component {
       this.setState({ error })
       return
     }
+    // fetch category level 1
+    if (e.target.name === 'category_id') {
+      this.props.getSubCategory({ id: e.target.value })
+    }
     // fetch category level 2
     if (e.target.name === 'categoryOne') {
-      this.props.getSubCategory({ id: e.target.value })
+      this.props.getSubCategory2({ id: e.target.value })
     }
     // fetch category level 3
     if (e.target.name === 'categoryTwo') {
-      this.props.getSubCategory2({ id: e.target.value })
-    }
-    // fetch category level 4
-    if (e.target.name === 'categoryThree') {
       this.props.getSubCategory3({ id: e.target.value })
     }
     this.setState({ form, error })
@@ -148,7 +146,7 @@ class ProductUpdateNameCategory extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { storeProductDetail, form } = this.state
-    const { category, alterProducts, subCategory, subCategory2, subCategory3, brands } = nextProps
+    const { alterProducts, category, subCategory, subCategory2, subCategory3, brands } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
     if (!isFetching(category)) {
@@ -187,6 +185,17 @@ class ProductUpdateNameCategory extends Component {
         this.setState({ notification: notifError(subCategory3.message) })
       }
     }
+    // if (isFetching(subCategory)) {
+    //   const resetState = { subCategory2, subCategory3 }
+    //   resetState.subCategory2.categories['sub_categories'] = []
+    //   resetState.subCategory3.categories['sub_categories'] = []
+    //   this.setState(resetState)
+    // }
+    // if (isFetching(nextProps.subCategory2)) {
+    //   const resetState = { subCategory3 }
+    //   resetState.subCategory3.categories['sub_categories'] = []
+    //   this.setState(resetState)
+    // }
     if (!isFetching(brands)) {
       NProgress.done()
       if (isFound(brands)) {
@@ -202,21 +211,33 @@ class ProductUpdateNameCategory extends Component {
       NProgress.done()
       if (isFound(nextProps.storeProductDetail)) {
         const nextStoreProductDetail = nextProps.storeProductDetail.storeProductDetail
-        const isCatgoryEmpty = nextStoreProductDetail.category.parents.length === 0
+        const categoryParentsId = []
+        if (nextStoreProductDetail.category) {
+          nextStoreProductDetail.category.parents.map((data, i) => {
+            categoryParentsId[i] = data.id
+          })
+          if (nextStoreProductDetail.category.parents.length === 2) {
+            categoryParentsId.push(nextStoreProductDetail.category.id)
+          }
+        }
         const newState = { storeProductDetail, form }
         newState.form['name'] = nextStoreProductDetail.product.name
-        newState.form['categoryOne'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[0].id
-        newState.form['categoryTwo'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[1].id
-        newState.form['categoryThree'] = isCatgoryEmpty ? 0 : nextStoreProductDetail.category.parents[2].id
-        newState.form['category_id'] = nextStoreProductDetail.category.id
+        newState.form['categoryOne'] = categoryParentsId[1]
+        newState.form['categoryTwo'] = categoryParentsId[2]
+        newState.form['categoryThree'] = nextStoreProductDetail.category.id
+        newState.form['category_id'] = categoryParentsId[0]
         newState.form['brand_id'] = !nextStoreProductDetail.brand ? '' : nextStoreProductDetail.brand.id
         newState.form['description'] = nextStoreProductDetail.product.description
         newState.storeProductDetail = nextProps.storeProductDetail
         this.setState(newState)
-        if (!isCatgoryEmpty) {
-          this.props.getSubCategory({ id: nextStoreProductDetail.category.parents[0].id })
-          this.props.getSubCategory2({ id: nextStoreProductDetail.category.parents[1].id })
-          this.props.getSubCategory3({ id: nextStoreProductDetail.category.parents[2].id })
+        if (categoryParentsId[0]) {
+          this.props.getSubCategory({ id: categoryParentsId[0] })
+        }
+        if (categoryParentsId[1]) {
+          this.props.getSubCategory2({ id: categoryParentsId[1] })
+        }
+        if (categoryParentsId[2]) {
+          this.props.getSubCategory3({ id: categoryParentsId[2] })
         }
       }
       if (isError(nextProps.storeProductDetail)) {
@@ -275,7 +296,7 @@ class ProductUpdateNameCategory extends Component {
       color: '#ef5656'
     }
     let { includeBrand } = this.state
-    let isBrandChecked = (includeBrand) || (form.brand_id !== undefined)
+    let isBrandChecked = (includeBrand) || (!!form.brand_id)
 
     return (
       <div>
@@ -302,30 +323,30 @@ class ProductUpdateNameCategory extends Component {
                 </p>
               </div>
               <div className='field'>
-                <label style={error === 'categoryOne' ? styleError : {}}>Kategori</label>
+                <label style={error === 'category_id' ? styleError : {}}>Kategori</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
-                      <option value='default'> Pilih</option>
+                    <select onChange={(e) => this.formHandling(e)} value={form.category_id} name='category_id' style={error === 'category_id' ? styleError : {}}>
+                      <option style={{display: 'none'}} disabled> Pilih</option>
                       {
-                          category.isFound &&
-                          category.categories.map((category) => {
-                            return <option key={category.id} value={category.id}> {category.name} </option>
-                          })
-                        }
+                        category.isFound &&
+                        category.categories.map((category) => {
+                          return <option key={category.id} value={category.id}> {category.name} </option>
+                        })
+                      }
                     </select>
                   </span>
                 </p>
               </div>
               <div className='field'>
-                <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 1</label>
+                <label style={error === 'categoryOne' ? styleError : {}}>Sub-Kategori 1</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
-                      <option value='default'> Pilih</option>
+                    <select onChange={(e) => this.formHandling(e)} value={form.categoryOne} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
+                      <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         subCategory.isFound &&
-                        form.categoryOne !== undefined &&
+                        form.categoryOne &&
                         subCategory.categories.sub_categories.map((sc) => {
                           return <option key={sc.id} value={sc.id}> {sc.name} </option>
                         })
@@ -335,14 +356,13 @@ class ProductUpdateNameCategory extends Component {
                 </p>
               </div>
               <div className='field'>
-                <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2</label>
+                <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 2</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
-                      <option value='default'> Pilih</option>
+                    <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
+                      <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         subCategory2.isFound &&
-                        form.categoryTwo !== undefined &&
                         subCategory2.categories.sub_categories.map((sc) => {
                           return <option key={sc.id} value={sc.id}>{ sc.name }</option>
                         })
@@ -352,14 +372,13 @@ class ProductUpdateNameCategory extends Component {
                 </p>
               </div>
               <div className='field'>
-                <label style={error === 'category_id' ? styleError : {}}>Sub-Kategori 3</label>
+                <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 3</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.category_id !== undefined ? form.category_id : 'default'} name='category_id' style={error === 'category_id' ? styleError : {}}>
-                      <option value='default'> Pilih</option>
+                    <select onChange={(e) => this.formHandling(e)} value={form.categoryThree} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
+                      <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         subCategory3.isFound &&
-                        form.categoryThree !== undefined &&
                         subCategory3.categories.sub_categories.map((sc) => {
                           return <option key={sc.id} value={sc.id}>{ sc.name }</option>
                         })
@@ -382,8 +401,8 @@ class ProductUpdateNameCategory extends Component {
                 <label>Brand</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.brand_id !== undefined ? form.brand_id : 'default'} name='brand_id'>
-                      <option value='default'> Pilih</option>
+                    <select onChange={(e) => this.formHandling(e)} value={form.brand_id ? form.brand_id : 'default'} name='brand_id'>
+                      <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         brands.isFound &&
                         brands.brands.map((brand) => {
@@ -397,7 +416,7 @@ class ProductUpdateNameCategory extends Component {
               <div className='field'>
                 <label>Deskripsi Produk</label>
                 <p className='control'>
-                  <textarea onChange={(e) => this.formHandling(e)} value={form.description !== undefined ? form.description : ''} name='description' className='textarea' rows='2' />
+                  <textarea onChange={(e) => this.formHandling(e)} value={form.description ? form.description : ''} name='description' className='textarea' rows='2' />
                 </p>
               </div>
               <div className='field'>
