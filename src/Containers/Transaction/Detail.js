@@ -77,7 +77,6 @@ class TransactionDetail extends Component {
 
   render () {
     let { transaction, notification } = this.state
-
     return (
       <Content>
         <Notification
@@ -114,6 +113,8 @@ const TransactionDetailContent = (props) => {
     pricePromo = Promo({ ...bucket, totalPayment })
   }
 
+  let isExpired = days === 0 && hours === 0 && minutes === 0 && paymentStatus === 3
+
   return (
     <Content>
       <section className='section is-paddingless has-shadow'>
@@ -127,10 +128,10 @@ const TransactionDetailContent = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{ PAYMENT_STATUS[paymentStatus] }</strong>
+                  <strong>{ isExpired ? 'Kadaluarsa' : PAYMENT_STATUS[paymentStatus] }</strong>
                   <br />
                   {
-                    paymentStatus === 3 &&
+                    (!isExpired && paymentStatus === 3) &&
                       <span>
                         {days} hari  :
                         {hours} jam  :
@@ -293,7 +294,7 @@ const TransactionDetailContent = (props) => {
           })
         }
       {
-          paymentStatus === 3 &&
+          (!isExpired && paymentStatus === 3) &&
           <section className='section is-paddingless'>
             <div className='payment-detail action' style={{ backgroundColor: '#f4f5f6' }}>
               <ul>

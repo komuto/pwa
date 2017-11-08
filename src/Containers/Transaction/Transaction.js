@@ -103,6 +103,7 @@ const TransactionContent = (props) => {
                 transWaitPayment.map((tnw, index) => {
                   let { bucket, products, summary_transaction } = tnw
                   let { days, hours, minutes } = summary_transaction.time_left
+                  let isExpired = days === 0 && hours === 0 && minutes === 0
                   return (
                     <li key={index}>
                       <div className='columns is-mobile is-multiline no-margin-bottom'>
@@ -114,6 +115,7 @@ const TransactionContent = (props) => {
                                   <a>
                                     <MyImage src={products[0] && products[0].image} alt={products.name} />
                                   </a>
+                                  <p>{ products.name }</p>
                                 </figure>
                               </div>
                               <div className='media-content is-right-content'>
@@ -122,11 +124,14 @@ const TransactionContent = (props) => {
                                   <div className='right-top'>
                                     <div className='price-items'>
                                       <strong>Rp { RupiahFormat(summary_transaction.total_price) }</strong>
+                                      {
+                                        isExpired && <p>{ PAYMENT_STATUS[5] }</p>
+                                      }
                                     </div>
                                     <span className='icon-arrow-right' />
                                   </div>
                                   <div className='detail'>
-                                    <p>Sports Stations Shop { summary_transaction.status }</p>
+                                    <p> { products[0].name }</p>
                                   </div>
                                 </div>
                               </div>
@@ -134,21 +139,24 @@ const TransactionContent = (props) => {
                           </div>
                         </div>
                       </div>
-                      <div className='box notif-payment'>
-                        <article className='media'>
-                          <div className='media-content'>
-                            <div className='content'>
-                              <p>
-                                <strong>Menunggu Pembayaran</strong>
-                                <br />
-                                {days} hari  :
-                                {hours} jam  :
-                                {minutes} menit
-                              </p>
+                      {
+                        !isExpired &&
+                        <div className='box notif-payment'>
+                          <article className='media'>
+                            <div className='media-content'>
+                              <div className='content'>
+                                <p>
+                                  <strong>Menunggu Pembayaran</strong>
+                                  <br />
+                                  {days} hari  :
+                                  {hours} jam  :
+                                  {minutes} menit
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </article>
-                      </div>
+                          </article>
+                        </div>
+                      }
                     </li>
                   )
                 })
