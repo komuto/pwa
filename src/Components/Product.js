@@ -4,6 +4,7 @@ import Router from 'next/router'
 import url from 'url'
 // lib
 import RupiahFormat from '../Lib/RupiahFormat'
+import ReadAbleText from '../Lib/ReadAbleText'
 import UrlParam from '../Lib/UrlParam'
 // component
 import MyImage from '../Components/MyImage'
@@ -89,9 +90,9 @@ class Product extends Component {
             </div>
             <div className='media-content'>
               <div className='content'>
-                <h4>{product.name}</h4>
+                <h4>{ ReadAbleText(product.name)}</h4>
                 <div className='detail'>
-                  <p>{store.name} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
+                  <p>{ ReadAbleText(store.name)} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                   { commission ? <span className='commission'>Komisi { commission } %</span> : <span className='wish'>
