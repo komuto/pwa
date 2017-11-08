@@ -6,6 +6,7 @@ import MyRating from '../../Components/MyRating'
 import ProductDetailSlider from './DetailSlider'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+import ReadAbleText from '../../Lib/ReadAbleText'
 
 class ProductDetailItem extends Component {
   wishlistPress (id) {
@@ -13,7 +14,9 @@ class ProductDetailItem extends Component {
   }
 
   render () {
-    const { product, rating, commission, images } = this.props
+    const { product, rating, wholesaler, commission, images } = this.props
+    console.log('wholesaler: ', wholesaler)
+    console.log('product: ', product)
     let comission = commission && <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
     let isDiscount = product.is_discount
     let priceBeforeDiscount = 0
@@ -24,35 +27,76 @@ class ProductDetailItem extends Component {
     }
     let isWholeSaler = product.is_wholesaler
     let isNormalPrice = !isDiscount && !isWholeSaler
+    let isWholeSalerDiscount = isWholeSaler && isDiscount
     return (
       <Section className='has-shadow' style={{ backgroundColor: '#fff' }}>
         {
           this.props.images.length > 0 && <ProductDetailSlider images={images} />
         }
-        <div className='detail-product'>
-          {
-            (isDiscount || isNormalPrice) && <h3>{ product.name }</h3>
-          }
-          {
-            isDiscount &&
+        {
+          (isDiscount && !isWholeSaler) &&
+          <div className='detail-product'>
+            <h3>{ product.name }</h3>
             <div className='detail-discount'>
               <div className='pin disc'><span>{product.discount}%</span></div>
               <div className='discount'>Rp {RupiahFormat(priceBeforeDiscount)}</div>
               <span className='price'>Rp {RupiahFormat(priceAfterDiscount)}</span>{comission}
             </div>
-          }
-          {
-            isWholeSaler &&
+            <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
+          </div>
+        }
+
+        {
+          (!isDiscount && isWholeSaler) &&
+          <div className='detail-product'>
+            <h3>{ product.name }</h3>
             <div className='detail-discount wholesaler'>
               <div className='pin'><span>Grosir</span></div>
               <h3>{ product.name }</h3>
             </div>
-          }
-          {
-            isNormalPrice && <div><span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}</div>
-          }
-          <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
-        </div>
+            <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
+          </div>
+        }
+        {
+          isNormalPrice &&
+          <div className='detail-product'>
+            <h3>{ product.name }</h3>
+            <div><span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}</div>
+            <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
+          </div>
+        }
+        {
+          isWholeSalerDiscount &&
+          <div className='detail-product'>
+            <h3>{ ReadAbleText(product.name) }</h3>
+            <div className='detail-discount wholesaler'>
+              <div className='pin'><span>Grosir</span></div>
+              <div className='pin disc'><span>{product.discount}%</span></div>
+              <div className='discount'>Rp {RupiahFormat(priceBeforeDiscount)}</div>
+              <span className='price'>Rp {RupiahFormat(priceAfterDiscount)}</span>{comission}
+            </div>
+            <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
+          </div>
+        }
+        {
+          wholesaler &&
+          <div className='detail-result white estimation'>
+            <ul>
+              {
+                wholesaler.map((wholesale, index) => {
+                  return (
+                    <li key={index}>
+                      <div className='columns custom is-mobile'>
+                        <div className='column is-half'><strong> {wholesale.min} - {wholesale.max} Barang</strong></div>
+                        <div className='column is-half has-text-right'><span>Rp { RupiahFormat(wholesale.price) } / barang</span></div>
+                      </div>
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          </div>
+        }
         <div className='detail-rate'>
           <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
             <div className='column is-half'>

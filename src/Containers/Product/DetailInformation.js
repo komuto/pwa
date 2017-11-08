@@ -16,7 +16,6 @@ class ProductDetailInformation extends Component {
 
   render () {
     const { product, category } = this.props
-    console.log('product: ', product)
     const { openDescription } = this.state
     return (
       <Section className='class="section is-paddingless has-shadow'>
