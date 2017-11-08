@@ -346,9 +346,7 @@ class ManageBiodata extends React.Component {
               {
                 (typeof formBiodata.photo !== 'object') &&
                   <div className='photo-content has-text-centered margin-top' style={{ marginTop: 0 }}>
-                    <div className='photo'>
-                      <img src={typeof formBiodata.photo === 'object' ? formBiodata.photo.preview : formBiodata.photo} alt='komuto' />
-                    </div>
+                    <div className='photo' style={{ backgroundImage: `url(${formBiodata.photo === 'object' ? formBiodata.photo.preview : formBiodata.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
                   </div>
               }
               <p className='has-text-centered'>
