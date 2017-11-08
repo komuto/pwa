@@ -26,8 +26,9 @@ import Header from './Header'
 import * as homeActions from '../actions/home'
 import * as productActions from '../actions/product'
 import * as cartActions from '../actions/cart'
+import * as otherActions from '../actions/other'
 /** including themes */
-import Images from '../Themes/Images'
+// import Images from '../Themes/Images'
 
 import Menu from '../Config/Menu'
 import Tabbar from '../Containers/Tabbar'
@@ -49,13 +50,17 @@ class Home extends Component {
       countCart: props.countCart || null,
       category: props.category || null,
       notification: props.notification,
-      isLogin: null
+      banners: props.banners,
+      isLogin: null,
+      width: 0,
+      height: 0
     }
     this.submitting = {
       products: false,
       category: false,
       addWishlist: false,
-      countCart: false
+      countCart: false,
+      banners: false
     }
     this.wishlistId = null
     this.params = {sort: 'newest', page: 1, limit: 6}
@@ -77,6 +82,13 @@ class Home extends Component {
     }
   }
 
+  handleResize () {
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+  }
+
   componentDidMount () {
     this.scrollToTop()
     NProgress.start()
@@ -87,13 +99,39 @@ class Home extends Component {
       this.submitting = { ...this.submitting, countCart: true }
       this.props.getCountCart()
     }
+
+    const { banners } = this.state
+    if (!banners.isFound) {
+      this.submitting = { ...this.submitting, banners: true }
+      this.props.getBanner()
+    }
+
+    // bind window resize listeners
+    this._handleResize = this.handleResize.bind(this)
+    this._handleResize()
+    window.addEventListener('resize', this._handleResize)
+  }
+
+  componentWillUnmount () {
+    // clean up listeners
+    window.removeEventListener('resize', this._handleResize)
   }
 
   componentWillReceiveProps (nextProps) {
     // console.log('nextProps: ', nextProps);
-    let { products, addWishlist, category, countCart } = nextProps
+    let { products, addWishlist, category, countCart, banners } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
-    // console.log(products)
+    /** handling state get banners */
+    if (!isFetching(banners) && this.submitting.banners) {
+      this.submitting = { ...this.submitting, banners: false }
+      if (isError(banners)) {
+        this.setState({ notification: notifError(banners.message) })
+      }
+      if (isFound(banners)) {
+        this.setState({ banners })
+      }
+    }
+
     /** handling state set wishlist */
     if (!isFetching(addWishlist) && this.submitting.addWishlist) {
       this.submitting = { ...this.submitting, addToWishlist: false }
@@ -196,7 +234,7 @@ class Home extends Component {
               activeClose
               onClose={() => this.setState({notification: {status: false, message: ''}})}
               message={notification.message} />
-            <SliderContent {...this.props} />
+            <SliderContent {...this.props} {...this.state} />
             <CategoryContent {...this.props} {...this.state} />
             <ProductContent {...this.props} {...this.state} wishlistPress={(id) => this.wishlistPress(id)} />
             { (params.tabbar) && <Tabbar {...this.props} {...params} /> }
@@ -208,17 +246,28 @@ class Home extends Component {
 }
 
 /** define slider content */
-const SliderContent = ({sliders}) => (
-  <Section>
-    <Content className='slide-banner'>
-      <Slider {...sliders}>
-        <img src={Images.banner} alt='banner' style={{width: '100%'}} />
-        <img src={Images.banner} alt='banner' style={{width: '100%'}} />
-        <img src={Images.banner} alt='banner' style={{width: '100%'}} />
-      </Slider>
-    </Content>
-  </Section>
-)
+const SliderContent = ({ sliders, banners, height, width }) => {
+  if (!banners.isFound) {
+    return null
+  }
+  const hasBanner = banners.data.length > 0
+  const listImages = banners.data.map((banner, index) => (
+    <div key={index} style={{ width, height: height / 3, backgroundImage: `url(${banner.image})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+    // <img key={index} src={banner.image} alt={banner.label} style={{ width, height: height / 3 }} />
+  ))
+  return (
+    <Section>
+      <Content className='slide-banner'>
+        {
+          hasBanner &&
+          <Slider {...sliders}>
+            { listImages }
+          </Slider>
+        }
+      </Content>
+    </Section>
+  )
+}
 
 /** define category content */
 const CategoryContent = ({ localize, category }) => (
@@ -313,14 +362,16 @@ const mapStateToProps = (state) => ({
   category: state.category,
   addWishlist: state.addWishlist,
   countCart: state.countCart,
-  marketplace: state.marketplace
+  marketplace: state.marketplace,
+  banners: state.getBanner
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getProducts: (params) => dispatch(homeActions.products(params)),
   getCategoryList: () => dispatch(homeActions.categoryList()),
   addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
-  getCountCart: (params) => dispatch(cartActions.countCart())
+  getCountCart: (params) => dispatch(cartActions.countCart()),
+  getBanner: (params) => dispatch(otherActions.getBanner())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
