@@ -245,7 +245,7 @@ const ListDiscussion = ({ sttNewDisscussion, product, discussion, createDate }) 
     }}>
     <div className={`box is-paddingless ${sttNewDisscussion && 'effect-display'}`}>
       <article className={`media`}>
-        <div className='media-left'>
+        <div className='media-left top'>
           <figure className='image user-pict'>
             <MyImage src={discussion.user.photo} alt={discussion.user.name} />
           </figure>
@@ -254,9 +254,7 @@ const ListDiscussion = ({ sttNewDisscussion, product, discussion, createDate }) 
           <div className='content'>
             <p className='user-name'>
               <strong>{discussion.user.name} </strong>
-              <br />
               <span className='date-discuss'>{ createDate }</span>
-              <br />
               { discussion.question}
             </p>
           </div>

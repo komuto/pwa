@@ -23,7 +23,7 @@ export default function reduxWrapper (ReduxComponent) {
         store.dispatch(END)
 
         await rootTask.done.then(() => {
-
+          return null
         })
 
         return {query, token, isServer}

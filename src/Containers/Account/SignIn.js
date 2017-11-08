@@ -179,7 +179,7 @@ class SignIn extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <Section className='content'>
-          <Containers>
+          <Containers className='form'>
             <Input
               {...input.email}
               onChange={this.onChange}
@@ -194,7 +194,6 @@ class SignIn extends Component {
               text={localize.signin}
               isLoading={this.submitting.user}
               onClick={() => this.submit()} />
-            <br />
             <div className='has-text-centered'>
               <a onClick={() => Router.push('/password?type=reset', '/password/reset')}>{localize.lost_password}</a>
             </div>

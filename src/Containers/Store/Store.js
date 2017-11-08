@@ -574,7 +574,7 @@ const BoxSeller = (props) => {
       </div>
       <div className='columns is-mobile'>
         <div className='column'>
-          <a className='button is-medium is-fullwidth is-outlined' onClick={() => Router.push(`/message?id=${myStore.id}`)}>
+          <a className='button is-medium is-fullwidth is-outlined' onClick={() => Router.push(`/messages?id=${myStore.id}`)}>
             <span className='icon-comment black' />
             Kirim Pesan
           </a>

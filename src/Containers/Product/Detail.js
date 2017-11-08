@@ -171,7 +171,6 @@ class ProductDetail extends Component {
 
   render () {
     const { productDetail, notification, submiting, submitingDiscussion } = this.state
-    // console.log('productDetail: ', productDetail)
     const { isFound, query } = this.props
 
     const productDetailReady = productDetail && isFound(productDetail)
@@ -218,6 +217,7 @@ class ProductDetail extends Component {
                 {...this.props}
                 images={detail.images}
                 product={detail.product}
+                wholesaler={detail.wholesaler}
                 rating={detail.rating}
                 notification={(message) => this.notification(message)}
                 wishlistPress={(id) => this.wishlistPress(id, 'product')}

@@ -36,7 +36,7 @@ class ProductDetailInformation extends Component {
               <div className='column is-half'>
                 <div className='rating-content is-left'>
                   <h3>Kondisi</h3>
-                  <span> { product.type ? 'Baru' : 'Bekas' } </span>
+                  <span> { product.condition === 1 ? 'Baru' : 'Bekas' } </span>
                 </div>
               </div>
             </div>
