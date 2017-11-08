@@ -324,7 +324,6 @@ class ManageBiodata extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { formBiodata, searchDistrict, notification, submiting, uploading, isOpen, time } = this.state
     let timeValue = formBiodata.date_of_birth ? new Date(formBiodata.date_of_birth) : time
     return (
