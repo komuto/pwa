@@ -15,8 +15,6 @@ class ProductDetailItem extends Component {
 
   render () {
     const { product, rating, wholesaler, commission, images } = this.props
-    console.log('wholesaler: ', wholesaler)
-    console.log('product: ', product)
     let comission = commission && <span> - <span style={{color: '#47bf7e'}}>{`Komisi ${commission}  %`}</span></span>
     let isDiscount = product.is_discount
     let priceBeforeDiscount = 0
@@ -36,7 +34,7 @@ class ProductDetailItem extends Component {
         {
           (isDiscount && !isWholeSaler) &&
           <div className='detail-product'>
-            <h3>{ product.name }</h3>
+            <h3>{ ReadAbleText(product.name) }</h3>
             <div className='detail-discount'>
               <div className='pin disc'><span>{product.discount}%</span></div>
               <div className='discount'>Rp {RupiahFormat(priceBeforeDiscount)}</div>
@@ -49,7 +47,7 @@ class ProductDetailItem extends Component {
         {
           (!isDiscount && isWholeSaler) &&
           <div className='detail-product'>
-            <h3>{ product.name }</h3>
+            <h3>{ ReadAbleText(product.name) }</h3>
             <div className='detail-discount wholesaler'>
               <div className='pin'><span>Grosir</span></div>
               <h3>{ product.name }</h3>
@@ -60,7 +58,7 @@ class ProductDetailItem extends Component {
         {
           isNormalPrice &&
           <div className='detail-product'>
-            <h3>{ product.name }</h3>
+            <h3>{ ReadAbleText(product.name) }</h3>
             <div><span className='price'>Rp { RupiahFormat(product.price) }</span>{comission}</div>
             <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
           </div>
@@ -79,7 +77,7 @@ class ProductDetailItem extends Component {
           </div>
         }
         {
-          wholesaler &&
+          wholesaler.length > 0 &&
           <div className='detail-result white estimation'>
             <ul>
               {

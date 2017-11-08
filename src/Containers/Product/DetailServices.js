@@ -116,9 +116,10 @@ class ProductDetailServices extends Component {
 
   // load any data
   async componentDidMount () {
-    const { provinces } = this.state.provinces.data
-    // fetch provinces
-    provinces.length < 1 && await this.props.getProvince()
+    const { data } = this.state.provinces
+    if (!data.isFound) {
+      await this.props.getProvince()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
