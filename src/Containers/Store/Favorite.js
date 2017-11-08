@@ -31,7 +31,6 @@ class StoreFavorite extends Component {
       listFavoriteStore: {
         data: props.listFavoriteStore || null,
         hasMore: false,
-        isEmpty: false,
         loadMore: () => this.favoriteLoadMore(),
         delete: (id) => this.favoriteDelete(id),
         search: (p) => this.favoriteSearch(p),
@@ -54,6 +53,10 @@ class StoreFavorite extends Component {
   render () {
     const { listFavoriteStore, notification } = this.state
     const { isFound } = this.props
+    let isEmpty = 'default'
+    if (isFound(listFavoriteStore.data)) {
+      isEmpty = listFavoriteStore.data.stores.length < 1
+    }
     return (
       <Content>
         <Notification
@@ -62,7 +65,8 @@ class StoreFavorite extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { isFound(listFavoriteStore.data) && <StoreFavoriteContent {...this.state} submitting={this.submitting} /> }
+        { (isEmpty !== 'default' && !isEmpty) && <StoreFavoriteContent {...this.state} submitting={this.submitting} /> }
+        { (isEmpty !== 'default' && isEmpty) && <EmptySearch />}
       </Content>
     )
   }
@@ -86,18 +90,17 @@ class StoreFavorite extends Component {
         this.setState({ notification: notifError(listFavoriteStore.message) })
       }
       if (isFound(listFavoriteStore)) {
-        let isEmpty = listFavoriteStore.stores.length < 1
         let hasMore = listFavoriteStore.stores.length > 4
         if (this.submitting.listFavoriteStoreSearch) {
           this.submitting = { ...this.submitting, listFavoriteStoreSearch: false }
 
-          this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore, isEmpty } })
+          this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore } })
         } else {
           let tam = listFavoriteStore.stores.concat(this.state.listFavoriteStore.data.stores)
 
           listFavoriteStore.stores = tam
 
-          this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore, isEmpty } })
+          this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore } })
         }
       }
     }
@@ -122,7 +125,7 @@ class StoreFavorite extends Component {
       }
     }
   }
-   /** load more favorite store */
+  /** load more favorite store */
   favoriteLoadMore () {
     let { listFavoriteStore } = this.state
     if (!this.submitting.listFavoriteStore) {
@@ -133,14 +136,14 @@ class StoreFavorite extends Component {
     }
   }
 
-   /** delete favorite store */
+  /** delete favorite store */
   favoriteDelete (id) {
     this.submitting = { ...this.submitting, favorite: true }
     this.deleteStoreId = id
     this.props.favoriteStore({ id })
   }
 
-   /** search favorite store */
+  /** search favorite store */
   favoriteSearch ({ value }) {
     var searchText = inputValidations.inputNormal(value)
     if (this.timeout) clearTimeout(this.timeout)
@@ -155,7 +158,7 @@ class StoreFavorite extends Component {
       this.setState({ listFavoriteStore })
     }, 1000)
   }
- }
+}
 
 const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
   let settings = {
@@ -272,6 +275,19 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
     </Content>
   )
 }
+
+/** define empty content */
+const EmptySearch = () => (
+  <section className='content'>
+    <div className='container is-fluid'>
+      <div className='desc has-text-centered'>
+        <MyImage src={Images.notFound} alt='notFound' />
+        <p><strong>Toko Favorit Anda Kosong</strong></p>
+        <p>Anda belum menambahkan toko apapun ke dalam daftar toko favorit</p>
+      </div>
+    </div>
+  </section>
+)
 
 const mapStateToProps = (state) => ({
   listFavoriteStore: state.listFavoriteStore,
