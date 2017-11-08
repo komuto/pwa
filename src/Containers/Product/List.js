@@ -19,6 +19,7 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 /** including themes */
 import Images from '../../Themes/Images'
 import RegexNormal from '../../Lib/RegexNormal'
+import ReadAbleText from '../../Lib/ReadAbleText'
 
 const TAB_SHOW_IN_PAGE = 'TAB_SHOW_IN_PAGE'
 const TAB_HIDDEN_IN_PAGE = 'TAB_HIDDEN_IN_PAGE'
@@ -359,7 +360,7 @@ const ContentShow = (props) => {
                   <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
                     <div className='column is-half'>
                       <div className='rating-content is-left'>
-                        <strong>{sp.catalog.name} ({sp.products.length})</strong>
+                        <strong>{ ReadAbleText(sp.catalog.name)} ({sp.catalog.count_product})</strong>
                       </div>
                     </div>
                     <div className='column is-half' onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
