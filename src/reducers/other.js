@@ -18,3 +18,9 @@ export const getMarketPlace = createReducer(buildInitState({ data: {} }))
   type: actions.GET_MARKETPLACE,
   resultName: 'data'
 }).run()
+
+export const getBanner = createReducer(buildInitState({ data: {} }))
+.addReducer({
+  type: actions.GET_BANNER,
+  resultName: 'data'
+}).run()

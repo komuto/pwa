@@ -16,3 +16,8 @@ export const getMarketPlace = () => {
   const axios = publicApiKomuto()
   return axios.get('marketplace')
 }
+
+export const getBanner = () => {
+  const axios = publicApiKomuto()
+  return axios.get('banners')
+}

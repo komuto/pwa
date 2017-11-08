@@ -189,7 +189,8 @@ const message = {
 const other = {
   commission: otherReducers.getCommission,
   saleCount: otherReducers.getSaleCount,
-  marketplace: otherReducers.getMarketPlace
+  marketplace: otherReducers.getMarketPlace,
+  getBanner: otherReducers.getBanner
 }
 
 const payment = {
