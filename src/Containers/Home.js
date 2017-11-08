@@ -194,7 +194,7 @@ class Home extends Component {
   }
 
   render () {
-    const { textPath, notification, countCart } = this.state
+    const { textPath, notification, countCart, banners } = this.state
     const { localize, isFound } = this.props
     let params = {
       style: 'home bg-grey',
@@ -234,7 +234,9 @@ class Home extends Component {
               activeClose
               onClose={() => this.setState({notification: {status: false, message: ''}})}
               message={notification.message} />
-            <SliderContent {...this.props} {...this.state} />
+            {
+              banners.isFound && <SliderContent {...this.props} {...this.state} />
+            }
             <CategoryContent {...this.props} {...this.state} />
             <ProductContent {...this.props} {...this.state} wishlistPress={(id) => this.wishlistPress(id)} />
             { (params.tabbar) && <Tabbar {...this.props} {...params} /> }
@@ -247,13 +249,9 @@ class Home extends Component {
 
 /** define slider content */
 const SliderContent = ({ sliders, banners, height, width }) => {
-  if (!banners.isFound) {
-    return null
-  }
   const hasBanner = banners.data.length > 0
   const listImages = banners.data.map((banner, index) => (
     <div key={index} style={{ width, height: height / 3, backgroundImage: `url(${banner.image})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
-    // <img key={index} src={banner.image} alt={banner.label} style={{ width, height: height / 3 }} />
   ))
   return (
     <Section>
@@ -348,9 +346,9 @@ const ProductContent = ({ localize, products, wishlistPress }) => (
 /** define defaultProps  */
 Home.defaultProps = {
   sliders: {
+    infinite: true,
     autoplay: true,
     dots: false,
-    infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1
