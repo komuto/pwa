@@ -6908,6 +6908,8 @@ strong.total {
   .main-discuss .box.list .media .media-left {
     width: inherit; }
   .main-discuss .box .media .media-left {
+    width: inherit; }
+  .product-discuss .box .media .media-left {
     width: inherit; } }
 
 @media screen and (max-width: 320px) {
@@ -6915,7 +6917,7 @@ strong.total {
     font-size: 12px; }
   .button.btn-fave {
     padding-left: 5px;
-    padding-right: 5px;
+    padding-right: 10px;
     font-size: 12px; }
     .button.btn-fave > span {
       margin-right: 0; }
@@ -7396,7 +7398,8 @@ strong.total {
   .notif-verify .box {
     background-color: transparent; }
     .notif-verify .box .media .media-left {
-      margin-right: 20px; }
+      margin-right: 20px;
+      width: inherit; }
     .notif-verify .box .media .media-content p {
       font-size: 12px;
       line-height: 1.5;
