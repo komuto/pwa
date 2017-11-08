@@ -47,10 +47,9 @@ class ProductDetailItem extends Component {
         {
           (!isDiscount && isWholeSaler) &&
           <div className='detail-product'>
-            <h3>{ ReadAbleText(product.name) }</h3>
             <div className='detail-discount wholesaler'>
               <div className='pin'><span>Grosir</span></div>
-              <h3>{ product.name }</h3>
+              <h3>{ ReadAbleText(product.name) }</h3>
             </div>
             <span className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={() => this.wishlistPress(product.id)} />
           </div>
