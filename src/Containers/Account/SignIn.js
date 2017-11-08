@@ -188,7 +188,8 @@ class SignIn extends Component {
               {...input.password}
               onChange={this.onChange}
               hasIconsRight />
-            <TermConditions />
+            <TermConditions
+              name={this.props.marketplace.data.name} />
             <ButtonFullWidth
               text={localize.signin}
               isLoading={this.submitting.user}
@@ -210,7 +211,8 @@ class SignIn extends Component {
 
 const mapStateToProps = (state) => ({
   user: state.user,
-  profile: state.profile
+  profile: state.profile,
+  marketplace: state.marketplace
 })
 
 const mapDispatchToProps = (dispatch) => ({

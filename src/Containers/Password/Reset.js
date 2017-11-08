@@ -112,7 +112,7 @@ class PasswordReset extends Component {
       <section className='content'>
         <div className='container is-fluid'>
           <div className='desc has-text-centered'>
-            <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di Komuto</p>
+            <p>Silahkan menuliskan alamat email yang Anda gunakan untuk mendaftar di {this.props.marketplace.data.name}</p>
           </div>
           <Notification
             type={notification.type}
@@ -136,7 +136,8 @@ class PasswordReset extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  forgetPassword: state.forgetPassword
+  forgetPassword: state.forgetPassword,
+  marketplace: state.marketplace
 })
 
 const mapDispatchToProps = (dispatch) => ({

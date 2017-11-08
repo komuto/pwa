@@ -333,7 +333,8 @@ class SignUp extends Component {
                     onChange={this.handleGenderChange} />
                 </p>
               </div>
-              <TermConditions />
+              <TermConditions
+                name={this.props.marketplace.data.name} />
               <ButtonFullWidth
                 isLoading={this.submitting.register}
                 text='Register'
@@ -352,7 +353,8 @@ class SignUp extends Component {
 const mapStateToProps = (state) => ({
   register: state.register,
   user: state.user,
-  profile: state.profile
+  profile: state.profile,
+  marketplace: state.marketplace
 })
 
 const mapDispatchToProps = (dispatch) => ({
