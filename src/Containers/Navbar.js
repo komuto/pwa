@@ -62,7 +62,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { deleteButton, messageType, navbar, productDetail, productImages, moreButton, messageButton, productId, share } = this.props
+    const { deleteButton, messageType, navbar, productDetail, moreButton, messageButton, productId, share } = this.props
     const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage, countCart } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
@@ -87,12 +87,12 @@ export class Navbar extends PureComponent {
                 <article className='media'>
                   <div className='media-left is-bordered'>
                     <figure className='image product-pict'>
-                      <MyImage src={productImages[0].file} alt='pict' style={{ width: '40px', height: '40px' }} />
+                      <MyImage src={productDetail.image} alt='pict' style={{ width: '40px', height: '40px' }} />
                     </figure>
                   </div>
                   <div className='media-content'>
                     <div className='content'>
-                      <p className='products-name' style={{paddingRight: '10'}}>
+                      <p className='products-name' style={{paddingRight: '10px'}}>
                         <strong>{productDetail.name}</strong>
                         <br />
                         <strong>Rp { RupiahFormat(productDetail.price) }</strong>

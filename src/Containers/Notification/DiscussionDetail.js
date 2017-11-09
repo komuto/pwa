@@ -46,6 +46,7 @@ class DiscussionDetail extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { comments, notification } = this.state
     const { isFound } = this.props
     let params = {
@@ -213,7 +214,7 @@ const List = ({ message }) => (
               { message.content }
             </p>
           </div>
-          <span className='time-discuss'>{ moment.unix(message.created_at).format('Do MMMM YY - hh:mm') }</span>
+          <span className='time-discuss'>{ moment.unix(message.created_at).format('hh:mm') }</span>
         </div>
       </article>
     </div>
