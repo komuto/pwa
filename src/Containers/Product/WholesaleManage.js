@@ -177,8 +177,8 @@ class ProductWholesaleManage extends Component {
   }
 
   async componentDidMount () {
-    const { storeProductDetail, id } = this.state
-    if (!storeProductDetail.isFound || (storeProductDetail.isFound && String(storeProductDetail.storeProductDetail.product.id) !== String(id))) {
+    const { id } = this.state
+    if (id) {
       NProgress.start()
       const productId = id.split('.')[0]
       this.convertToForm = true

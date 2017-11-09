@@ -98,18 +98,12 @@ class ProductCatalogManage extends React.Component {
   async componentWillReceiveProps (nextProps) {
     const { statusCreateCatalog, listCatalog, storeProductDetail, alterProducts } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    const nextId = nextProps.query.id
 
     if (!isFetching(storeProductDetail) && this.fetchingFirst.storeProductDetail) {
       NProgress.done()
       this.fetchingFirst = { ...this.fetchingFirst, storeProductDetail: false }
       if (isFound(storeProductDetail)) {
         this.setState({ storeProductDetail: storeProductDetail, selectCatalog: storeProductDetail.storeProductDetail.product.catalog_id })
-        if (String(storeProductDetail.storeProductDetail.product.id) !== String(nextId)) {
-          NProgress.start()
-          this.fetchingFirst = true
-          await this.props.getStoreProductDetail({ id: nextId })
-        }
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
