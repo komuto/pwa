@@ -12,6 +12,7 @@ import Section from '../../Components/Section'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 import MyRating from '../../Components/MyRating'
+import Message from '../../Components/Message'
 // containers
 import { Navbar } from '../Navbar'
 // actions
@@ -41,17 +42,62 @@ class Store extends Component {
         paddingBottom: 0,
         transition: 'height 1s'
       },
-      notification: {
-        status: false,
-        message: 'Error, default message.'
-      }
+      modalMessage: {
+        store: null,
+        title: {
+          value: '',
+          onChange: (e) => this.messageHandleChange(e.target)
+        },
+        description: {
+          value: '',
+          onChange: (e) => this.messageHandleChange(e.target)
+        },
+        submit: () => this.messageSubmit(),
+        show: false,
+        showPress: () => this.modalMessagePress()
+      },
+      notification: props.notification
     }
 
     this.submitting = {
       store: false,
       addWishlist: false,
-      favorite: false
+      favorite: false,
+      message: false
     }
+  }
+
+  modalMessagePress () {
+    this.setState({ modalMessage: { ...this.state.modalMessage, show: !this.state.modalMessage.show } })
+  }
+
+  messageSubmit () {
+    const { store, modalMessage } = this.state
+    let id = store.store.id
+    let subject = modalMessage.title.value
+    let content = modalMessage.description.value
+    if (!id || !subject || !content) {
+      return
+    }
+
+    if (subject === '' || content === '') {
+      return
+    }
+
+    const params = {
+      id,
+      subject,
+      content
+    }
+
+    this.submitting = { ...this.submitting, message: true }
+    this.props.setSendMessageStore(params)
+  }
+
+  messageHandleChange ({ name, value }) {
+    const { modalMessage } = this.state
+    modalMessage[name].value = value
+    this.setState({ modalMessage })
   }
 
   async componentDidMount () {
@@ -73,7 +119,7 @@ class Store extends Component {
 
   favouritePress () {
     const { id } = this.state
-    this.submitting = { ...this.submitting, favorite: false }
+    this.submitting = { ...this.submitting, favorite: true }
     this.props.favoriteStore({ id })
   }
 
@@ -105,9 +151,26 @@ class Store extends Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { addWishlist, favorite } = nextProps
-    const { isFetching, isFound, isError, notifError } = this.props
+    const { addWishlist, favorite, sendMessageStore } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     let { store } = nextProps
+
+    /** handling state message store */
+    if (!isFetching(sendMessageStore) && this.submitting.message) {
+      this.submitting = { ...this.submitting, message: false }
+      if (isError(sendMessageStore)) {
+        this.setState({
+          notification: notifError(sendMessageStore.message),
+          modalMessage: { ...this.state.modalMessage, show: false }
+        })
+      }
+      if (isFound(sendMessageStore)) {
+        this.setState({
+          notification: notifSuccess(sendMessageStore.message),
+          modalMessage: { ...this.state.modalMessage, show: false }
+        })
+      }
+    }
 
     /** handling state store */
     if (!isFetching(store) && this.submitting.store) {
@@ -220,38 +283,38 @@ class Store extends Component {
       <Content>
         <Navbar {...params} />
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-            store.isFound &&
-              <Content>
-                <Section className='section is-paddingless'>
-                  <BoxSeller boxSeller={boxSeller} myStore={myStore} favouritePress={() => this.favouritePress()} />
-                  <Tabs {...tabs} tabSelected={(selected) => this.tabSelected(selected)} />
-                </Section>
-                {
-                  tabs.selected === 'Produk' &&
-                  <ContentProduk
-                    settings={settings}
-                    myStore={myStore}
-                    showListCatalog={showListCatalog}
-                    itemCatalog={(product, index) => this.itemCatalog(product, index)}
-                    showListCatalogPress={() => this.showListCatalogPress()} />
-                }
-                {
-                  tabs.selected === 'Profile' &&
-                  <ContentProfile {...myStore} />
-                }
-                {
-                  tabs.selected === 'Penilaian' &&
-                  <ContentPenilaian {...myStore} />
-                }
-              </Content>
-          }
-
+          store.isFound &&
+            <Content>
+              <Section className='section is-paddingless'>
+                <BoxSeller modalMessage={this.state.modalMessage} boxSeller={boxSeller} myStore={myStore} submitting={this.submitting} favouritePress={() => this.favouritePress()} />
+                <Tabs {...tabs} tabSelected={(selected) => this.tabSelected(selected)} />
+              </Section>
+              {
+                tabs.selected === 'Produk' &&
+                <ContentProduk
+                  settings={settings}
+                  myStore={myStore}
+                  showListCatalog={showListCatalog}
+                  itemCatalog={(product, index) => this.itemCatalog(product, index)}
+                  showListCatalogPress={() => this.showListCatalogPress()} />
+              }
+              {
+                tabs.selected === 'Profile' &&
+                <ContentProfile {...myStore} />
+              }
+              {
+                tabs.selected === 'Penilaian' &&
+                <ContentPenilaian {...myStore} />
+              }
+              <Message {...this.state.modalMessage} store={myStore} submitting={this.submitting} />
+            </Content>
+        }
       </Content>
     )
   }
@@ -496,7 +559,6 @@ const ContentProduk = (props) => {
     <Content>
       {
         myStore.catalogs.map((catalog, index) => {
-          console.log('catalog: ', catalog)
           let listCatalog = catalog.products.map((product, index) => { return props.itemCatalog(product, index) })
           return (
             <Element name={String(catalog.id)} className={`section is-paddingless`} key={index}>
@@ -548,7 +610,7 @@ const ContentProduk = (props) => {
 }
 
 const BoxSeller = (props) => {
-  const { myStore, boxSeller } = props
+  const { myStore, boxSeller, submitting, modalMessage } = props
   return (
     <div className='box seller' style={boxSeller}>
       <div className='media'>
@@ -574,14 +636,16 @@ const BoxSeller = (props) => {
       </div>
       <div className='columns is-mobile'>
         <div className='column'>
-          <a className='button is-medium is-fullwidth is-outlined' onClick={() => Router.push(`/messages?id=${myStore.id}`)}>
+          <a className='button is-medium is-fullwidth is-outlined' onClick={() => modalMessage.showPress()}>
             <span className='icon-comment black' />
             Kirim Pesan
           </a>
         </div>
         <div className='column'>
-          <a onClick={() => props.favouritePress()} className={`button is-medium is-fullwidth ${myStore.is_favorite ? 'is-primary' : 'is-outlined'}`}>
-            <span className={`${myStore.is_favorite ? 'icon-close white' : 'icon-plus'}`} />
+          <a onClick={() => !submitting.favorite && props.favouritePress()} className={`button is-medium is-fullwidth ${submitting.favorite && 'is-loading'} ${myStore.is_favorite ? 'is-primary' : 'is-outlined'}`}>
+            {
+              !submitting.favorite && <span className={`${myStore.is_favorite ? 'icon-close white' : 'icon-plus'}`} />
+            }
             Favorit
           </a>
         </div>
@@ -613,13 +677,15 @@ const Tabs = (props) => {
 const mapStateToProps = (state) => ({
   store: state.stores,
   addWishlist: state.addWishlist,
-  favorite: state.favorite
+  favorite: state.favorite,
+  sendMessageStore: state.sendMessageStore
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getStores: (params) => dispatch(storeActions.getStores(params)),
   addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
-  favoriteStore: (params) => dispatch(userActions.favoriteStore(params))
+  favoriteStore: (params) => dispatch(userActions.favoriteStore(params)),
+  setSendMessageStore: (params) => dispatch(storeActions.sendMessageStore(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Store)
