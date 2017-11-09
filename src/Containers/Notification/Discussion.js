@@ -147,9 +147,8 @@ const List = ({ message }) => (
   <li onClick={() => Router.push(`/notification-discussion-detail?id=${message.id}`)}>
     <div className='box is-paddingless'>
       <article className='media'>
-        <div className='media-left top is-bordered'>
-          {/* <figure className='image' style={{ width: 40 }}> */}
-          <figure className='image'>
+        <div className='media-left top sm'>
+          <figure className='image user-pict'>
             <MyImage src={message.product.image} alt={message.product.name} />
           </figure>
         </div>

@@ -13,7 +13,7 @@ class ManageAccount extends Component {
     super(props)
     this.state = {
       profileUser: props.profileUser || null,
-      isPhoneVerified: null,
+      isPhoneVerified: true,
       loadingBiodata: false,
       notification: {
         type: 'is-success',
@@ -160,10 +160,10 @@ class ManageAccount extends Component {
                         <div className='content'>
                           <p>
                             <strong>Nomor Handphone</strong><br />
-                            {<span>{(!isPhoneVerified) ? 'Belum terverifikasi' : ''}</span>}
+                            {<span>{(!isPhoneVerified) && 'Belum terverifikasi'}</span>}
                           </p>
                           <div className='val-right'>
-                            {(!isPhoneVerified) ? <span className='notif-akun'>1</span> : ''}
+                            {(!isPhoneVerified) && <span className='notif-akun'>1</span>}
                           </div>
                         </div>
                       </div>

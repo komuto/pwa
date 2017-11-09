@@ -7,6 +7,7 @@ import NProgress from 'nprogress'
 import InfiniteScroll from 'react-infinite-scroller'
 import _ from 'lodash'
 import url from 'url'
+import { animateScroll } from 'react-scroll'
 // components
 import UrlParam from '../Lib/UrlParam'
 import MyImage from '../Components/MyImage'
@@ -14,17 +15,16 @@ import Loading from '../Components/Loading'
 import { Navbar } from './Navbar'
 import Notification from '../Components/Notification'
 // actions
-import * as productAction from '../actions/product'
+import * as productActions from '../actions/product'
 
 class DiscussionProductDetail extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       id: props.query.id || null,
-      productDetail: props.productDetail || null,
-      discussions: props.discussions || null,
-      fetching: false,
-      question: '',
+      comments: props.comments || null,
+      content: '',
+      isEmpty: true,
       pagination: {
         page: 1,
         limit: 10
@@ -36,104 +36,95 @@ class DiscussionProductDetail extends React.Component {
       }
     }
     this.sendQuestion = false
-    this.fetchingProduct = false
     this.hasMore = false
-    this.fetching = false
-    this.fetchingFirst = false
+    this.fetching = { fetchingMore: false, fetchingFirst: false, fetchingProduct: false }
+  }
+
+  scrollToBottom () {
+    animateScroll.scrollToBottom()
   }
 
   handleInput (e) {
-    const value = e.target.value(e.target.value)
-    this.setState({ question: value })
+    this.setState({ content: e.target.value })
   }
 
   async submitDiscussion (e) {
-    const { id, question } = this.state
+    const { id, content } = this.state
     if (e.key === 'Enter') {
-      if (question !== '') {
+      if (content) {
         this.sendQuestion = true
-        await this.props.addDiscussion({ id: id, question: question })
-        this.setState({ question: '' })
+        await this.props.addNewComment({ id, content })
+        this.setState({ content: '' })
       }
     }
   }
 
   async componentDidMount () {
-    const { id, productDetail } = this.state
-    if (!productDetail.isFound || (productDetail.isFound && String(productDetail.detail.product.id) !== String(id))) {
-      NProgress.start()
-      this.fetchingProduct = true
-      await this.props.getProduct({ id })
-    }
-    this.fetchingFirst = true
-    await this.props.getDiscussion({ id, ...this.state.pagination })
+    const { id } = this.state
+    this.fetching = { ...this.fetching, fetchingFirst: true }
+    await this.props.getComment({ id })
   }
 
   async loadMore () {
     let { id, pagination } = this.state
-    if (!this.fetching) {
-      const newState = { pagination }
-      pagination['page'] = pagination.page + 1
-      this.setState(newState)
-      this.fetching = true
-      await this.props.getDiscussion({ id, ...this.state.pagination })
+    if (!this.fetching.fetchingMore) {
+      if (pagination.page > 1) {
+        const newState = { pagination }
+        pagination['page'] = pagination.page - 1
+        this.setState(newState)
+        this.fetching = { ...this.fetching, fetchingMore: true }
+        await this.props.getComment({ id, ...this.state.pagination })
+      }
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, discussions } = nextProps
-    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    const nextDiscuss = nextProps.newDiscussion
-    let stateDiscussions = this.state.discussions
+    const { newComment, comments } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!isFetching(productDetail) && this.fetchingProduct) {
+    if (!isFetching(comments) && this.fetching.fetchingFirst) {
       NProgress.done()
-      this.fetchingProduct = false
-      if (isFound(productDetail)) {
-        this.setState({ productDetail })
+      this.fetching = { ...this.fetching, fetchingFirst: false }
+      if (isFound(comments)) {
+        let pagination = comments.meta
+        let isEmpty = comments.comments.comments.length < 1
+        this.setState({ comments, isEmpty, pagination })
+        this.hasMore = comments.meta.page > 1
       }
-      if (isError(productDetail)) {
-        this.setState({ notification: notifError(productDetail.message) })
+      if (isError(comments)) {
+        this.setState({ notification: notifError(comments.message) })
       }
     }
-    if (!isFetching(discussions) && this.fetchingFirst) {
-      NProgress.done()
-      this.fetchingFirst = false
-      if (isFound(discussions)) {
-        this.setState({ discussions })
-        this.hasMore = discussions.discussions.length > 9
+    if (!isFetching(comments) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
+      if (isFound(comments)) {
+        let stateComments = this.state.comments
+        this.hasMore = comments.meta.page > 1
+        stateComments.comments.comments = comments.comments.comments.concat(stateComments.comments.comments)
+        this.setState({ comments: stateComments })
       }
-      if (isError(discussions)) {
-        this.setState({ notification: notifError(discussions.message) })
-      }
-    }
-    if (!isFetching(discussions) && this.fetching) {
-      this.fetching = false
-      if (isFound(discussions)) {
-        this.hasMore = discussions.discussions.length > 9
-        stateDiscussions.discussions = stateDiscussions.discussions.concat(discussions.discussions)
-        this.setState({ discussions: stateDiscussions })
-      }
-      if (isError(discussions)) {
-        this.setState({ notification: notifError(discussions.message) })
+      if (isError(comments)) {
+        this.setState({ notification: notifError(comments.message) })
         this.hasMore = false
       }
     }
-    if (!isFetching(nextDiscuss) && this.sendQuestion) {
+    if (!isFetching(newComment) && this.sendQuestion) {
       this.sendQuestion = false
-      if (isFound(nextDiscuss)) {
-        stateDiscussions.discussions.unshift(nextDiscuss.discussion)
-        this.setState({ discussions: stateDiscussions, notification: notifSuccess(nextDiscuss.message) })
+      if (isFound(newComment)) {
+        let stateComments = this.state.comments
+        stateComments.comments.comments = stateComments.comments.comments.concat(newComment.comment)
+        this.setState({ comments: stateComments, content: '' })
+        this.scrollToBottom()
       }
-      if (isError(nextDiscuss)) {
-        this.setState({ notification: notifError(nextDiscuss.message) })
+      if (isError(newComment)) {
+        this.setState({ notification: notifError(newComment.message) })
       }
     }
   }
 
   render () {
-    const { productDetail, discussions, notification, question } = this.state
-    const { product, images } = productDetail.detail
+    const { comments, notification, content, isEmpty } = this.state
+    const { product } = comments.comments
     const params = {
       navbar: {
         searchBoox: false,
@@ -141,8 +132,7 @@ class DiscussionProductDetail extends React.Component {
         callBack: () => Router.push('/discussion-product'),
         textPath: ''
       },
-      productDetail: product,
-      productImages: images
+      productDetail: product
     }
     return (
       <div>
@@ -170,33 +160,31 @@ class DiscussionProductDetail extends React.Component {
           <div className='discuss'>
             <ul className='notif-detail conversation bordered'>
               {
-                discussions.discussions.length < 1
+                isEmpty
                 ? null
                 : <InfiniteScroll
                   pageStart={0}
-                  loadMore={_.debounce(this.loadMore.bind(this), 500)}
+                  loadMore={_.debounce(this.loadMore.bind(this), 1000)}
                   hasMore={this.hasMore}
                   loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
                   {
-                      discussions.discussions.map((discussion, index) => {
-                        let createDate = moment.unix(discussion.created_at).format('h:mm')
-                        let sttNewDisscussion = this.isAddNewDiscussion && index === 0
+                      comments.comments.comments.map((comment, index) => {
+                        let createDate = moment.unix(comment.created_at).format('h:mm')
                         return (
                           <li
-                            className={` ${sttNewDisscussion && ''}`}
-                            key={discussion.id}>
-                            <div className={`box is-paddingless ${sttNewDisscussion && 'effect-slide-down'}`}>
+                            key={index}>
+                            <div className='box is-paddingless'>
                               <article className='media'>
                                 <div className='media-left top'>
                                   <figure className='image user-pict'>
-                                    <MyImage src={discussion.user.photo} alt='pict' />
+                                    <MyImage src={comment.user.photo} alt='pict' />
                                   </figure>
                                 </div>
                                 <div className='media-content'>
                                   <div className='content'>
                                     <p className='user-name'>
-                                      <strong>{discussion.user.name}</strong>
-                                      { discussion.question}
+                                      <strong>{comment.user.name}</strong>
+                                      { comment.content}
                                     </p>
                                   </div>
                                   <span className='time-discuss'>{ createDate }</span>
@@ -216,9 +204,9 @@ class DiscussionProductDetail extends React.Component {
           <div className='field'>
             <p className='control'>
               <textarea
-                name='question'
+                name='content'
                 onChange={(e) => this.handleInput(e)}
-                value={question}
+                value={content}
                 onKeyPress={(e) => this.submitDiscussion(e)}
                 className='textarea' placeholder='Tulis pertanyaan Anda disini' />
             </p>
@@ -231,16 +219,14 @@ class DiscussionProductDetail extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    productDetail: state.productDetail,
-    discussions: state.discussions,
-    newDiscussion: state.newDiscussion
+    comments: state.comments,
+    newComment: state.newComment
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProduct: (params) => dispatch(productAction.getProduct(params)),
-  getDiscussion: (params) => dispatch(productAction.getDiscussion(params)),
-  addDiscussion: (params) => dispatch(productAction.newDiscussion(params))
+  getComment: (params) => dispatch(productActions.getComment(params)),
+  addNewComment: (params) => dispatch(productActions.newComment(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DiscussionProductDetail)

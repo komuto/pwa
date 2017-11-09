@@ -19,6 +19,7 @@ class DiscussionProduct extends React.Component {
     super(props)
     this.state = {
       userDiscussion: props.userDiscussion || null,
+      isEmpty: false,
       pagination: {
         page: 1,
         limit: 10
@@ -30,8 +31,7 @@ class DiscussionProduct extends React.Component {
       }
     }
     this.hasMore = false
-    this.fetching = false
-    this.fetchingFirst = false
+    this.fetching = { fetchingMore: false, fetchingFirst: false }
   }
 
   async loadMore () {
@@ -40,7 +40,7 @@ class DiscussionProduct extends React.Component {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
-      this.fetching = true
+      this.fetching = { ...this.fetching, fetchingMore: true }
       await this.props.getDiscussion(this.state.pagination)
     }
   }
@@ -50,30 +50,29 @@ class DiscussionProduct extends React.Component {
   }
 
   componentDidMount () {
-    if (!this.props.isFound(this.state.userDiscussion)) {
-      NProgress.start()
-      this.fetchingFirst = true
-      this.props.getDiscussion({ page: 1, limit: 10 })
-    }
+    NProgress.start()
+    this.fetching = { ...this.fetching, fetchingFirst: true }
+    this.props.getDiscussion({ page: 1, limit: 10 })
   }
 
   componentWillReceiveProps (nextProps) {
     const { userDiscussion } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(userDiscussion) && this.fetchingFirst) {
+    if (!isFetching(userDiscussion) && this.fetching.fetchingFirst) {
       NProgress.done()
-      this.fetchingFirst = false
+      this.fetching = { ...this.fetching, fetchingFirst: false }
       if (isFound(userDiscussion)) {
-        this.setState({ userDiscussion })
+        let isEmpty = userDiscussion.discussions.length < 1
         this.hasMore = userDiscussion.discussions.length > 9
+        this.setState({ userDiscussion, isEmpty })
       }
       if (isError(userDiscussion)) {
         this.setState({ notification: notifError(userDiscussion.message) })
       }
     }
 
-    if (!isFetching(userDiscussion) && this.fetching) {
-      this.fetching = false
+    if (!isFetching(userDiscussion) && this.fetching.fetchingMore) {
+      this.fetching = { ...this.fetching, fetchingMore: false }
       let newUserDiscussion = this.state.userDiscussion
       if (isFound(userDiscussion)) {
         this.hasMore = userDiscussion.discussions.length > 9
@@ -88,7 +87,7 @@ class DiscussionProduct extends React.Component {
   }
 
   render () {
-    const { notification, userDiscussion } = this.state
+    const { notification, userDiscussion, isEmpty } = this.state
     if (!userDiscussion.isFound) return null
     moment.locale('id')
     return (
@@ -103,8 +102,8 @@ class DiscussionProduct extends React.Component {
           <div className='discuss'>
             <ul className='notif-detail conversation bordered'>
               {
-                userDiscussion.discussions.length > 0
-                ? <InfiniteScroll
+                isEmpty ? <EmptyDiscussion />
+                : <InfiniteScroll
                   pageStart={0}
                   loadMore={_.debounce(this.loadMore.bind(this), 500)}
                   hasMore={this.hasMore}
@@ -112,7 +111,7 @@ class DiscussionProduct extends React.Component {
                   {
                     userDiscussion.discussions.map((discussion, i) => {
                       return (
-                        <li key={i} onClick={(id) => this.detailDiscussion(discussion.product.id)}>
+                        <li key={i} onClick={(id) => this.detailDiscussion(discussion.id)}>
                           <div className='box is-paddingless'>
                             <article className='media'>
                               <div className='media-left top sm'>
@@ -136,7 +135,6 @@ class DiscussionProduct extends React.Component {
                     })
                   }
                 </InfiniteScroll>
-                : <EmptyDiscussion />
                 }
 
             </ul>
