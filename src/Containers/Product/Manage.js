@@ -315,7 +315,7 @@ class ProductManage extends React.Component {
             </div>
             <div className='columns left-style no-border is-mobile'>
               <div className='column is-half'><strong>Berat</strong></div>
-              <div className='column is-half has-text-right'><span>{data.weight} Kg</span></div>
+              <div className='column is-half has-text-right'><span>{data.weight} gram</span></div>
             </div>
             <div className='columns left-style is-mobile'>
               <div className='column is-half'><strong>Jenis Produk</strong></div>
