@@ -21,6 +21,8 @@ import Images from '../../Themes/Images'
 import * as userActions from '../../actions/user'
 /** including lib */
 import RupiahFormat from '../../Lib/RupiahFormat'
+import ReadAbleText from '../../Lib/ReadAbleText'
+import UrlParam from '../../Lib/UrlParam'
 /** validations */
 import * as inputValidations from '../../Validations/Input'
 
@@ -29,7 +31,7 @@ class StoreFavorite extends Component {
     super(props)
     this.state = {
       listFavoriteStore: {
-        data: props.listFavoriteStore || null,
+        data: null,
         hasMore: false,
         loadMore: () => this.favoriteLoadMore(),
         delete: (id) => this.favoriteDelete(id),
@@ -54,7 +56,7 @@ class StoreFavorite extends Component {
     const { listFavoriteStore, notification } = this.state
     const { isFound } = this.props
     let isEmpty = 'default'
-    if (isFound(listFavoriteStore.data)) {
+    if (listFavoriteStore.data && isFound(listFavoriteStore.data)) {
       isEmpty = listFavoriteStore.data.stores.length < 1
     }
     return (
@@ -65,8 +67,19 @@ class StoreFavorite extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { (isEmpty !== 'default' && !isEmpty) && <StoreFavoriteContent {...this.state} submitting={this.submitting} /> }
-        { (isEmpty !== 'default' && isEmpty) && <EmptySearch />}
+        <section className='section is-paddingless'>
+          <div className='field search-form paddingless'>
+            <p className='control has-icons-left'>
+              <span className={`${this.submitting.listFavoriteStoreSearch && 'button self is-loading right'}`} />
+              <input onChange={(e) => listFavoriteStore.search(e.target)} className='input is-medium' type='text' placeholder='Cari toko Anda di sini' />
+              <span className='icon is-left'>
+                <span className='icon-search' />
+              </span>
+            </p>
+          </div>
+        </section>
+        { (listFavoriteStore.data && isEmpty !== 'default' && !isEmpty) && <StoreFavoriteContent {...this.state} submitting={this.submitting} /> }
+        { (listFavoriteStore.data && isEmpty !== 'default' && isEmpty) && <EmptySearch />}
       </Content>
     )
   }
@@ -96,10 +109,10 @@ class StoreFavorite extends Component {
 
           this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore } })
         } else {
-          let tam = listFavoriteStore.stores.concat(this.state.listFavoriteStore.data.stores)
-
-          listFavoriteStore.stores = tam
-
+          if (this.state.listFavoriteStore.data) {
+            let tam = listFavoriteStore.stores.concat(this.state.listFavoriteStore.data.stores)
+            listFavoriteStore.stores = tam
+          }
           this.setState({ listFavoriteStore: { ...this.state.listFavoriteStore, data: listFavoriteStore, hasMore } })
         }
       }
@@ -161,6 +174,7 @@ class StoreFavorite extends Component {
 }
 
 const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
+  console.log('listFavoriteStore: ', listFavoriteStore)
   let settings = {
     className: 'slider variable-width',
     dots: false,
@@ -172,17 +186,6 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
   }
   return (
     <Content>
-      <section className='section is-paddingless'>
-        <div className='field search-form paddingless'>
-          <p className='control has-icons-left'>
-            <span className={`${submitting.listFavoriteStoreSearch && 'button self is-loading right'}`} />
-            <input onChange={(e) => listFavoriteStore.search(e.target)} className='input is-medium' type='text' placeholder='Cari toko Anda di sini' />
-            <span className='icon is-left'>
-              <span className='icon-search' />
-            </span>
-          </p>
-        </div>
-      </section>
       <InfiniteScroll
         pageStart={0}
         loadMore={_.debounce(listFavoriteStore.loadMore, 500)}
@@ -193,13 +196,13 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
             listFavoriteStore.data.stores.map((data, index) => {
               let list = data.products.map((product, index) => {
                 let price = product.price
-                let priceAterDiscount = 0
+                let priceAfterDiscount = price
                 let isDiscount = product.is_discount
                 if (isDiscount) {
-                  priceAterDiscount = price - ((price * product.discount) / 100)
+                  priceAfterDiscount = price - ((price * product.discount) / 100)
                 }
                 return (
-                  <div key={index} className='item'>
+                  <div key={index} className='item effect-display' onClick={() => Router.push(`/product-detail?id=${product.id}`, `/detail/${UrlParam(data.store.name)}/${product.slug}-${product.id}`)}>
                     <div className='column'>
                       <div className='box grid'>
                         <div className='media'>
@@ -211,10 +214,10 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                           </div>
                           <div className='media-content'>
                             <div className='content'>
-                              <h4>{product.name}</h4>
+                              <h4>{ ReadAbleText(product.name)}</h4>
                               <div className='detail'>
                                 { isDiscount && <div className='discount'>Rp {RupiahFormat(price)}</div> }
-                                <span className='price'>Rp {RupiahFormat(priceAterDiscount)} </span>
+                                <span className='price'>Rp {RupiahFormat(priceAfterDiscount)} </span>
                               </div>
                             </div>
                           </div>
@@ -233,8 +236,8 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                         <figure className='img-item is-bordered ms'>
                           <MyImage src={data.store.logo} alt={data.store.name} />
                         </figure>
-                        <h3>{data.store.name} <span className='icon-verified' /></h3>
-                        <span className='price'>{data.store.province.name}</span>
+                        <h3>{ ReadAbleText(data.store.name) } <span className='icon-verified' /></h3>
+                        <span className='price'>{ ReadAbleText(data.store.province.name) }</span>
                       </div>
                       <a onClick={() => listFavoriteStore.delete(data.store.id)} className='remove-item'><span className='icon-trash' /></a>
                     </div>
@@ -245,12 +248,12 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                         data.products.length > 0 &&
                         <Slider {...settings}>
                           { list }
-                          <div onClick={() => Router.push(`/store?id=${data.store.id}&tab=Produk`)} className='item' style={{ width: '262px' }}>
+                          <div onClick={() => Router.push(`/store?id=${data.store.id}&tab=Produk`)} className='item'>
                             <div className='column' style={{ height: '317px' }}>
                               <div className='box grid'>
                                 <div className='media'>
-                                  <div className='media-left' style={{ marginTop: '150px' }}>
-                                    <figure className='image' style={{ width: 40, display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
+                                  <div className='media-left'>
+                                    <figure className='image'>
                                       <MyImage src={Images.listProduct} alt='listProduct' />
                                     </figure>
                                   </div>

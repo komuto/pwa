@@ -38,7 +38,7 @@ class ProductDetailSuggestions extends Component {
                     query: {id: product.id}
                   }),
                   `/detail/${UrlParam(store.name)}/${product.slug}?id=${product.id}`
-                )}>
+                ).then(() => window.scrollTo(0, 0))}>
                 <div className='column'>
                   <div className='box list'>
                     <div className='media'>

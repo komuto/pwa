@@ -250,8 +250,9 @@ class Home extends Component {
 /** define slider content */
 const SliderContent = ({ sliders, banners, height, width }) => {
   const hasBanner = banners.data.length > 0
+  // window.location.replace(banner.link)
   const listImages = banners.data.map((banner, index) => (
-    <div key={index} style={{ width, height: height / 3, backgroundImage: `url(${banner.image})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+    <div onClick={() => Router.push(`/product-detail?id=${banner.product_id}`)} key={index} style={{ width, height: height / 3, backgroundImage: `url(${banner.image})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
   ))
   return (
     <Section>
