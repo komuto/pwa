@@ -22,6 +22,7 @@ import * as userActions from '../../actions/user'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 import UrlParam from '../../Lib/UrlParam'
+import ReadAbleText from '../../Lib/ReadAbleText'
 
 class Store extends Component {
   constructor (props) {
@@ -241,7 +242,7 @@ class Store extends Component {
               </div>
               <div className='media-content'>
                 <div className='content'>
-                  <h4>{ product.name }</h4>
+                  <h4>{ ReadAbleText(product.name) }</h4>
                   <div className='detail'>
                     { priceBeforeDiscount }
                     <span className='price'>Rp { RupiahFormat(priceAfterDiscount) } </span>
@@ -267,7 +268,7 @@ class Store extends Component {
         searchBoox: false,
         path: '/',
         // callBack: () => Router.push(`/product-detail?id=${idProduct}`),
-        textPath: store.isFound && myStore.name
+        textPath: store.isFound && ReadAbleText(myStore.name)
       }
     }
     let settings = {
@@ -564,7 +565,7 @@ const ContentProduk = (props) => {
             <Element name={String(catalog.id)} className={`section is-paddingless`} key={index}>
               <div className='columns is-mobile view-all'>
                 <div className='column'>
-                  <p>{ catalog.name }</p><p /></div>
+                  <p>{ ReadAbleText(catalog.name) }</p><p /></div>
                 <div className='column has-text-right'>
                   <span onClick={() =>
                     Router.push(
@@ -595,7 +596,7 @@ const ContentProduk = (props) => {
             {
               myStore.catalogs.map((catalog, index) => {
                 return <li key={index}>
-                  <Link activeClass='active' className={String(catalog.id)} to={String(catalog.id)} spy smooth duration={500}>{ catalog.name }</Link>
+                  <Link activeClass='active' className={String(catalog.id)} to={String(catalog.id)} spy smooth duration={500}>{ ReadAbleText(catalog.name) }</Link>
                 </li>
               })
             }
@@ -623,9 +624,9 @@ const BoxSeller = (props) => {
         </div>
         <div className='media-content'>
           <div className='content'>
-            <h4>{ myStore.name }</h4>
+            <h4>{ ReadAbleText(myStore.name) }</h4>
             <div className='detail'>
-              <p className='address'>{ myStore.district.name }</p>
+              <p className='address'>{ ReadAbleText(myStore.district.name) }</p>
               <p>
                 <span className={`icon-verified md ${!myStore.is_verified ? 'unverified' : ''}`} />
                 { myStore.is_verified ? 'Terverifikasi' : 'Belum Terverifikasi' }
