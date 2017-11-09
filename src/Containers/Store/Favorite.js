@@ -236,7 +236,7 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                         <figure className='img-item is-bordered ms'>
                           <MyImage src={data.store.logo} alt={data.store.name} />
                         </figure>
-                        <h3>{ ReadAbleText(data.store.name) } <span className='icon-verified' /></h3>
+                        <h3 onClick={() => Router.push(`/store?id=${data.store.id}&tab=Produk`)}>{ ReadAbleText(data.store.name) } <span className='icon-verified' /></h3>
                         <span className='price'>{ ReadAbleText(data.store.province.name) }</span>
                       </div>
                       <a onClick={() => listFavoriteStore.delete(data.store.id)} className='remove-item'><span className='icon-trash' /></a>
