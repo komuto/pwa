@@ -163,7 +163,7 @@ const ModalMessage = (props) => {
           <p className='modal-card-title'>Kirim Pesan</p>
           <button onClick={() => onClose()} className='delete icon-close white' />
         </header>
-        <section className='modal-card-body is-paddingless'>
+        <section className='modal-card-body is-paddingless' style={{ marginBottom: 0 }}>
           <div className='profile-wrapp border-bottom'>
             <ul>
               <li>
