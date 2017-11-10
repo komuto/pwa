@@ -5,6 +5,7 @@ import Dropzone from 'react-dropzone'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
+import { Navbar } from './Navbar'
 import Notification from '../Components/Notification'
 import {Images} from '../Themes'
 import MyImage from '../Components/MyImage'
@@ -238,8 +239,17 @@ class InformationStore extends React.Component {
     } else {
       logoImages = Images.iconCamera
     }
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        callBack: () => isSetting ? Router.back() : Router.push('/profile'),
+        textPath: 'Informasi Toko'
+      }
+    }
     return (
       <div>
+        <Navbar {...params} />
         <Notification
           type={notification.type}
           isShow={notification.status}
