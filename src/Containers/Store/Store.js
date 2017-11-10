@@ -282,7 +282,6 @@ class Store extends Component {
 
   render () {
     const { store, tabs, boxSeller, showListCatalog, notification } = this.state
-    console.log('store: ', store)
     const myStore = store.store
     const params = {
       navbar: {
