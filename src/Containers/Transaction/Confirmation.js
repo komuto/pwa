@@ -13,7 +13,6 @@ import * as storesActions from '../../actions/stores'
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 // services
-import { Status, validateResponse, isFetching } from '../../Services/Status'
 import { INVOICE_TRANSACTION_CLASS, INVOICE_TRANSACTION_MESSAGE } from './Detail'
 // containers
 import MatchingContent from './ConfirmationMContent'
@@ -100,7 +99,8 @@ class TransactionConfirmation extends Component {
     this.submiting = {
       upload: false,
       complaint: false,
-      review: false
+      review: false,
+      buyerInvoiceDetail: false
     }
 
     moment.locale('id')
@@ -371,61 +371,68 @@ class TransactionConfirmation extends Component {
   componentDidMount () {
     const { id, invoiceId } = this.state
     NProgress.start()
+    this.submiting = { ...this.submiting, buyerInvoiceDetail: true }
     this.props.getBuyerInvoiceDetail({ id, invoiceId })
   }
 
   componentWillReceiveProps (nextProps) {
     const { buyerInvoiceDetail, upload, addComplaint, addReviews } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
     let { id, invoiceId } = this.state
 
-    if (!isFetching(buyerInvoiceDetail)) {
-      NProgress.done()
-      this.setState({ buyerInvoiceDetail, notification: validateResponse(buyerInvoiceDetail, 'Data transaksi dengan invoice tersebut tidak ditemukan') })
-    }
+    console.log('upload: ', upload)
 
-    if (this.submiting.upload && !upload.isLoading) {
-      this.props.setAddComplaint({
-        id,
-        invoiceId,
-        ...this.params,
-        ...upload.payload
-      })
-      this.submiting = {
-        ...this.submiting,
-        upload: false,
-        complaint: true
+    if (!isFetching(buyerInvoiceDetail) && this.submiting.buyerInvoiceDetail) {
+      NProgress.done()
+      this.submiting = { ...this.submiting, buyerInvoiceDetail: false }
+      if (isError(buyerInvoiceDetail)) {
+        this.setAddReviews({ notification: notifError(buyerInvoiceDetail.message) })
+      }
+      if (isFound(buyerInvoiceDetail)) {
+        this.setState({ buyerInvoiceDetail })
       }
     }
 
-    if (this.submiting.complaint && !isFetching(addComplaint)) {
-      NProgress.done()
-      this.submiting = {
-        ...this.submiting,
-        complaint: false
+    if (!isFetching(upload) && this.submiting.upload) {
+      this.submiting = { ...this.submiting, upload: false, complaint: true }
+      if (isError(upload)) {
+        this.setState({ notification: notifError(upload) })
       }
-      if (addComplaint.status === Status.SUCCESS) {
+      if (isFound(upload)) {
+        this.props.setAddComplaint({
+          id,
+          invoiceId,
+          ...this.params,
+          ...upload.payload
+        })
+      }
+    }
+
+    if (!isFetching(addComplaint) && this.submiting.complaint) {
+      NProgress.done()
+      this.submiting = { ...this.submiting, complaint: false }
+      if (isError(addComplaint)) {
+        this.setState({ notification: notifError(addComplaint) })
+      }
+      if (isFound(addComplaint)) {
         Router.push(
           '/transaction-confirmation-complaint',
           '/transaction-confirmation/complaint'
         )
-      } else {
-        this.setState({ addComplaint, notification: validateResponse(addComplaint, 'Gagal melakukan komplain') })
       }
     }
 
-    if (this.submiting.review && !isFetching(addReviews)) {
+    if (!isFetching(addReviews) && this.submiting.review) {
       NProgress.done()
-      this.submiting = {
-        ...this.submiting,
-        review: false
+      this.submiting = { ...this.submiting, review: false }
+      if (isError(addReviews)) {
+        this.setState({ notification: notifError(addReviews.message) })
       }
-      if (addReviews.status === Status.SUCCESS) {
+      if (isFound(addReviews)) {
         Router.push(
           '/transaction-confirmation-review',
           '/transaction-confirmation/review'
         )
-      } else {
-        this.setState({ notification: validateResponse(addReviews, 'Gagal melakukan review') })
       }
     }
   }
@@ -438,7 +445,7 @@ class TransactionConfirmation extends Component {
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
