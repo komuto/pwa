@@ -11,11 +11,6 @@ const Index = (props) => {
     style: 'main seller bg-grey',
     header: {
       title: 'Detail Barang Dropshipper'
-    },
-    navbar: {
-      searchBoox: false,
-      path: '/',
-      textPath: 'Detail Barang Dropshipper'
     }
   }
   return (

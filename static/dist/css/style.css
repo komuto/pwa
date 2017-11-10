@@ -5908,6 +5908,11 @@ strong {
         width: 100%;
         max-width: 150px;
         margin: 0 auto; }
+        .box .media .media-left .image.img-catalog {
+          width: 40px;
+          height: 40px;
+          max-width: inherit;
+          overflow: hidden; }
         .box .media .media-left .image img {
           max-width: 100%; }
         .box .media .media-left .image.list-detail {
@@ -7618,6 +7623,8 @@ strong.total {
             transform: translateY(-50%); }
           .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox.is-other {
             padding: 20px 20px 3px 20px; }
+          .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select select {
+            font-size: 12px; }
 
 .modal-filter.categories .modal-card .modal-card-body {
   margin-left: 0;
@@ -8512,6 +8519,14 @@ strong.total {
 
 .detail .detail-purchase .detail-result.detail-price {
   border-top: none; }
+
+.detail .rating-content .box .media .media-left .image {
+  overflow: hidden; }
+
+.detail .rating-content .box .media .media-content {
+  margin-right: 15px; }
+  .detail .rating-content .box .media .media-content .content h4 > span {
+    top: -4px; }
 
 .total-pay .price-pay {
   font-size: 18px;
@@ -9601,6 +9616,22 @@ strong.total {
   background-color: #fff2d7;
   border-radius: 3px;
   margin-top: 15px; }
+
+.box .media .media-left .image.xs {
+  width: 30px;
+  height: 30px; }
+
+.box .media .media-left .image.sm {
+  width: 35px;
+  height: 35px; }
+
+.box .media .media-left .image.lg {
+  width: 60px;
+  height: 60px; }
+
+.box .media .media-left .image.lgx {
+  width: 72px;
+  height: 72px; }
 
 .box .media .media-left .image.list-transaction {
   width: 45px;

@@ -1,5 +1,4 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
@@ -12,12 +11,6 @@ const Index = (props) => {
     style: 'main seller bg-grey',
     header: {
       title: 'Tempatkan di Katalog'
-    },
-    navbar: {
-      searchBoox: false,
-      path: '/',
-      callBack: () => Router.push('/dropship'),
-      textPath: 'Tempatkan di Katalog'
     }
   }
   return (

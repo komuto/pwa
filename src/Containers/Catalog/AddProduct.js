@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 // components
 import Router from 'next/router'
+import { Navbar } from '../Navbar'
 import Notification from '../../Components/Notification'
 import Wizard from '../../Components/Wizard'
 import MyImage from '../../Components/MyImage'
@@ -20,11 +21,13 @@ class CatalogAddProduct extends React.Component {
     super(props)
     this.state = {
       id: props.query.id || null,
+      productDetail: props.productDetail || null,
       storeProductDetail: props.storeProductDetail || null,
-      listCatalog: props.listCatalog,
+      listCatalog: props.listCatalog || null,
       validation: false,
       modalAddCatalog: false,
       selectedCatalog: null,
+      confirmDelete: false,
       catalog: '',
       notification: {
         status: false,
@@ -32,8 +35,8 @@ class CatalogAddProduct extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.submiting = { addDropshipProducts: false, createCatalog: false, changeCatalog: false }
-    this.fetching = { fetchingFirst: false, listCatalog: false }
+    this.submiting = { addDropshipProducts: false, createCatalog: false, changeCatalog: false, deleteDropship: false }
+    this.fetching = { productDetail: false, storeProductDetail: false, listCatalog: false }
   }
 
   handleInput (e) {
@@ -74,10 +77,10 @@ class CatalogAddProduct extends React.Component {
   createProduct (e) {
     e.preventDefault()
     const { query, addDropshipProducts } = this.props
-    const { selectedCatalog, submiting } = this.state
+    const { selectedCatalog } = this.state
     let isValid = selectedCatalog !== null
     if (isValid) {
-      this.setState({ submiting: { ...submiting, addDropshipProducts: true } })
+      this.submiting = { ...this.submiting, addDropshipProducts: true }
       addDropshipProducts({ id: query.id, catalog_id: selectedCatalog })
     } else {
       this.setState({ validation: true })
@@ -99,10 +102,16 @@ class CatalogAddProduct extends React.Component {
 
   async componentDidMount () {
     const { id, listCatalog } = this.state
+    const isDetailDropship = this.props.query.type === 'detailDropship'
     if (id) {
       NProgress.start()
-      this.fetching = { ...this.fetching, fetchingFirst: true }
-      this.props.getStoreProductDetail({ id })
+      if (isDetailDropship) {
+        this.fetching = { ...this.fetching, storeProductDetail: true }
+        this.props.getStoreProductDetail({ id })
+      } else {
+        this.fetching = { ...this.fetching, productDetail: true }
+        this.props.getProduct({ id })
+      }
     }
     if (!listCatalog.isFound) {
       this.fetching = { ...this.fetching, listCatalog: true }
@@ -111,12 +120,23 @@ class CatalogAddProduct extends React.Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { statusCreateCatalog, listCatalog, storeProductDetail, statusAddDropshipProducts, alterProducts } = nextProps
+    const { statusCreateCatalog, listCatalog, productDetail, storeProductDetail, statusAddDropshipProducts, alterProducts } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-    if (!isFetching(storeProductDetail) && this.fetching.fetchingFirst) {
+    if (!isFetching(productDetail) && this.fetching.productDetail) {
       NProgress.done()
-      this.fetching = { ...this.fetching, fetchingFirst: false }
+      this.fetching = { ...this.fetching, productDetail: false }
+      if (isFound(productDetail)) {
+        this.setState({ productDetail })
+      }
+      if (isError(productDetail)) {
+        this.setState({ notification: notifError(productDetail.message) })
+      }
+    }
+
+    if (!isFetching(storeProductDetail) && this.fetching.storeProductDetail) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, storeProductDetail: false }
       if (isFound(storeProductDetail)) {
         this.setState({ storeProductDetail })
       }
@@ -160,14 +180,15 @@ class CatalogAddProduct extends React.Component {
       }
     }
 
-    if (!isFetching(alterProducts) && this.submiting.changeCatalog) {
-      this.submiting = { ...this.submiting, changeCatalog: false }
+    if (!isFetching(alterProducts) && (this.submiting.changeCatalog || this.submiting.deleteDropship)) {
+      this.submiting = { ...this.submiting, changeCatalog: false, deleteDropship: false }
+      this.setState({ confirmDelete: false })
       if (isFound(alterProducts)) {
         this.setState({ notification: notifSuccess(alterProducts.message) })
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           Router.back()
-        }, 1000)
+        }, 3000)
       }
       if (isError(alterProducts)) {
         this.setState({ notification: notifError(alterProducts.message) })
@@ -176,14 +197,37 @@ class CatalogAddProduct extends React.Component {
   }
 
   renderProductDetail () {
-    const { storeProductDetail } = this.state
-    if (storeProductDetail.isFound) {
+    const { productDetail, storeProductDetail } = this.state
+    if (productDetail.isFound) {
       return (
         <li>
           <div className='box is-paddingless'>
             <article className='media'>
               <div className='media-left'>
-                <figure className='image user-pict'>
+                <figure className='image product-pict img-catalog'>
+                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
+                </figure>
+              </div>
+              <div className='media-content'>
+                <div className='content'>
+                  <p className='products-name'>
+                    <strong>{productDetail.detail.product.name}</strong>
+                    <br />
+                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission }%</span>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </li>
+      )
+    } else if (storeProductDetail.isFound) {
+      return (
+        <li>
+          <div className='box is-paddingless'>
+            <article className='media'>
+              <div className='media-left'>
+                <figure className='image user-pict img-catalog'>
                   <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
                 </figure>
               </div>
@@ -248,11 +292,31 @@ class CatalogAddProduct extends React.Component {
     }
   }
 
+  deleteDropship () {
+    this.setState({ confirmDelete: !this.state.confirmDelete })
+  }
+
+  deleteProductDropship () {
+    this.submiting = { ...this.submiting, deleteDropship: true }
+    this.props.deleteDropship({ product_ids: [this.state.id] })
+  }
+
   render () {
-    console.log('state', this.state)
-    const { catalog, modalAddCatalog, validation, notification } = this.state
+    const { catalog, modalAddCatalog, validation, notification, confirmDelete } = this.state
+    const isDetailDropship = this.props.query.type === 'detailDropship'
+    const params = {
+      navbar: {
+        searchBoox: false,
+        path: '/',
+        callBack: () => isDetailDropship ? Router.back() : Router.push('/dropship'),
+        textPath: isDetailDropship ? 'Detail Barang Dropshipper' : 'Tempatkan di Katalog'
+      },
+      deleteButton: isDetailDropship,
+      deleteDropship: () => this.deleteDropship()
+    }
     return (
       <div>
+        <Navbar {...params} />
         <Notification
           type={notification.type}
           isShow={notification.status}
@@ -320,6 +384,16 @@ class CatalogAddProduct extends React.Component {
             </button>
           </div>
         </div>
+
+        <div className='sort-option' style={{display: confirmDelete && 'block'}}>
+          <div className='notif-report'>
+            <h3>Anda yakin akan menghapus Barang ini?</h3>
+            <button
+              className={`button is-primary is-large is-fullwidth ${this.submiting.deleteDropship && 'is-loading'}`}
+              onClick={(e) => this.deleteProductDropship(e)}>Ya, Hapus Barang</button>
+            <a className='cancel' onClick={(e) => this.setState({ confirmDelete: false })}>Batal</a>
+          </div>
+        </div>
       </div>
     )
   }
@@ -330,6 +404,7 @@ const mapStateToProps = (state) => {
     listCatalog: state.getListCatalog,
     statusCreateCatalog: state.createCatalog,
     storeProductDetail: state.storeProductDetail,
+    productDetail: state.productDetail,
     alterProducts: state.alterProducts,
     statusAddDropshipProducts: state.addDropshipProducts
   }
@@ -340,7 +415,9 @@ const mapDispatchToProps = dispatch => ({
   createCatalog: (params) => dispatch(actionTypes.createCatalog(params)),
   addDropshipProducts: (params) => dispatch(productActions.addDropshipProducts(params)),
   changeCatalogProducts: (params) => dispatch(productActions.changeCatalogProducts(params)),
-  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params))
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
+  getProduct: (params) => dispatch(productActions.getProduct(params)),
+  deleteDropship: (params) => dispatch(productActions.deleteDropship(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatalogAddProduct)
