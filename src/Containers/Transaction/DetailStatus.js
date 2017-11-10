@@ -10,6 +10,7 @@ import * as storeActions from '../../actions/stores'
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
+import ResponsiveImage from '../../Components/ResponsiveImage'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 // services
@@ -171,7 +172,7 @@ const ModalMessage = (props) => {
                   <article className='media'>
                     <div className='media-left'>
                       <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src={invoice.store.logo} alt={invoice.store.name} />
+                        <ResponsiveImage image={invoice.store.logo} borderRadius={50} />
                       </figure>
                     </div>
                     <div className='media-content'>
@@ -392,7 +393,7 @@ const TabsStatusContent = (props) => {
                     <div className='media'>
                       <div className='media-left is-full-bordered'>
                         <figure className='image list-transaction sm'>
-                          <a><MyImage src={invoice.store.logo} alt={invoice.store.name} /></a>
+                          <ResponsiveImage image={invoice.store.logo} borderRadius={50} />
                         </figure>
                       </div>
                       <div className='media-content middle is-right-content'>
