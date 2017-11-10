@@ -129,7 +129,7 @@ const Index = (props) => {
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout><NotificationPage {...params} /></DefaultLayout>
     }
 
     /** status withdraw balance unfinish */
@@ -141,7 +141,7 @@ const Index = (props) => {
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout><NotificationPage {...params} /></DefaultLayout>
     }
 
     /** status withdraw balance error */
@@ -153,7 +153,7 @@ const Index = (props) => {
         path: '/balance-withdraw-status',
         text: 'Lihat balance status'
       }
-      return <NotificationPage {...params} />
+      return <DefaultLayout><NotificationPage {...params} /></DefaultLayout>
     }
 
     if (status === 'history') {
