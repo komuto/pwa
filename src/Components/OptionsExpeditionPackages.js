@@ -11,7 +11,7 @@ const OptionsExpeditionPackages = (props) => {
         <p><strong>Pilih Paket Pengiriman dari {props.expeditions.selected.name} </strong></p>
         <form action='#' className='form'>
           <div className='field'>
-            <div className='control popup-option package' style={{ height: '500px', overflow: 'scroll' }}>
+            <div className='control popup-option package' style={{ height: '400px', overflow: 'scroll' }}>
               {
                 epFilterByExpeditions.map((data) => {
                   return (
