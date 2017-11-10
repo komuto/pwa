@@ -143,6 +143,7 @@ class InputShipmentNumber extends React.Component {
 
 const ShipmentReceiptNumber = (props) => {
   const { processingOrderDetail, receiptNumber, validation } = props
+  console.log('props', processingOrderDetail)
   if (processingOrderDetail === undefined) return null
   moment.locale('id')
   return (

@@ -266,7 +266,7 @@ class OrderDetailDropshiper extends React.Component {
             </div>
           </section>
           <div className='level btn-wrapp'>
-            <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=reseller`)}>Kirim Pesan ke Seller</a>
+            <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=seller`)}>Kirim Pesan ke Seller</a>
           </div>
         </div>
         }
