@@ -360,23 +360,23 @@ const TabsStatusContent = (props) => {
   return (
     <Content>
       {
-          // barang sudah dikirim
-          invoiceStatus === 3 &&
-          <div className='box notif-payment-waiting'>
-            <article className='media'>
-              <div className='media-left top'>
-                <i className='icon-info-blue' />
-              </div>
-              <div className='media-content'>
-                <div className='content'>
-                  <p>
-                    <strong>Barang sudah dikirim oleh Seller. Jika dalam waktu 14 hari Anda tidak mengkonfirmasi menerima barang. Maka otomatis uang Anda akan diteruskan ke Seller.</strong>
-                  </p>
-                </div>
-              </div>
-            </article>
+        // barang sudah dikirim
+        invoiceStatus === 3 &&
+        <div className='box notif-payment-waiting'>
+          <article className='media'>
+            <div className='media-left top'>
+              <i className='icon-info-blue' />
             </div>
-        }
+            <div className='media-content'>
+              <div className='content'>
+                <p>
+                  <strong>Barang sudah dikirim oleh Seller. Jika dalam waktu 14 hari Anda tidak mengkonfirmasi menerima barang. Maka otomatis uang Anda akan diteruskan ke Seller.</strong>
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      }
       <section className='section is-paddingless has-shadow'>
         <div className='container is-fluid'>
           <div className='title'>

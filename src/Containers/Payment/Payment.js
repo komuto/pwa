@@ -246,9 +246,17 @@ const Paymentcontent = (props) => {
   if (isBucketPayment()) {
     cart.cart.items.map((item) => {
       totalPayment += item.total_price
-    })
+      // calc delivery cost
+      let deliveryCost = item.shipping.delivery_cost
+      // calc insurance
+      let insuranceFee = 0
+      if (item.shipping.is_insurance) {
+        insuranceFee = item.shipping.insurance_fee
+      }
 
-    totalPayment += cart.cart.unique_code
+      totalPayment += deliveryCost
+      totalPayment += insuranceFee
+    })
 
     if (cart.cart.promo) {
       pricePromo = Promo({ ...cart.cart, totalPayment })
