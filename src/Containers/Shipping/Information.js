@@ -64,7 +64,7 @@ class ShippingInformation extends Component {
         status: false,
         message: 'Error, default message.'
       },
-      submiting: false,
+      submitting: false,
       error: null
     }
     this.submitting = {
@@ -73,7 +73,8 @@ class ShippingInformation extends Component {
       provinces: false,
       districts: false,
       subDistricts: false,
-      villages: false
+      villages: false,
+      listAddress: false
     }
   }
 
@@ -239,7 +240,7 @@ class ShippingInformation extends Component {
       'is_primary': true
     })
 
-    this.setState({ submiting: true })
+    this.setState({ submitting: true })
   }
 
   componentDidMount () {
@@ -252,7 +253,7 @@ class ShippingInformation extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { productDetail, provinces, districts, subDistricts, villages, addAddress } = nextProps
+    const { productDetail, provinces, districts, subDistricts, villages, addAddress, listAddress } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
 
     if (!isFetching(provinces) && this.submitting.provinces) {
@@ -316,10 +317,18 @@ class ShippingInformation extends Component {
         this.setState({ notification: notifError(addAddress.message) })
       }
       if (isFound(addAddress)) {
-        // if (addAddress.address.id !== addressSelected.id) {
-        //  this.props.addressSelected({...addAddress.address, status: true})
-        // }
         NProgress.start()
+        this.submitting = { ...this.submitting, listAddress: true }
+        this.props.getListAddress()
+      }
+    }
+
+    if (!isFetching(listAddress) && this.submitting.listAddress) {
+      this.submitting = { ...this.submitting, listAddress: false }
+      if (isError(listAddress)) {
+        this.setState({ notification: notifError(listAddress.message) })
+      }
+      if (isFound(listAddress)) {
         Router.push(`/purchase?id=${this.state.id}`)
       }
     }
@@ -417,7 +426,7 @@ class ShippingInformation extends Component {
         </Section>
         <Section className='section is-paddingless'>
           <div className='edit-data-delivery'>
-            <a onClick={(e) => !this.submitting.addAddress && this.onSubmit(e)} className={`button is-primary is-large is-fullwidth ${this.submitting.addAddress && 'is-loading'}`}>Simpan Perubahan</a>
+            <a onClick={(e) => (!this.submitting.addAddress || !this.submitting.listAddress) && this.onSubmit(e)} className={`button is-primary is-large is-fullwidth ${(this.submitting.addAddress || this.submitting.listAddress) && 'is-loading'}`}>Simpan Perubahan</a>
           </div>
         </Section>
         <OptionsProvince
@@ -448,7 +457,8 @@ const mapStateToProps = (state) => ({
   productDetail: state.productDetail,
   shippingInformation: state.shippingInformation,
   addAddress: state.addAddress,
-  addressSelected: state.addressSelected
+  addressSelected: state.addressSelected,
+  listAddress: state.listAddress
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -459,7 +469,8 @@ const mapDispatchToProps = (dispatch) => ({
   getVillage: (params) => dispatch(locationActions.getVillage(params)),
   addressSelected: (params) => dispatch(purchaseActions.addressSelected(params)),
   getProduct: (params) => dispatch(productActions.getProduct(params)),
-  getProvince: () => dispatch(locationActions.getProvince())
+  getProvince: () => dispatch(locationActions.getProvince()),
+  getListAddress: () => dispatch(addressActions.getListAddress())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShippingInformation)

@@ -233,6 +233,7 @@ class Purchase extends Component {
   }
 
   async componentDidMount () {
+    console.log('componentDidMount: ')
     const { id } = this.state
     this.scrollToTop()
     NProgress.start()
@@ -439,7 +440,7 @@ class Purchase extends Component {
                   </span>
                 </div>
               </div>
-              <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
+              <p className='error-msg'>Mohon isi informasi data pengiriman terlebih dahulu</p>
             </section>
             : <section className='section is-paddingless has-shadow'>
               <div className='info-purchase'>
@@ -503,7 +504,7 @@ class Purchase extends Component {
                 }
               </span>
             </div>
-            <p className='error-msg'>Mohon Pilih Kurir Pengiriman terlebih dahulu</p>
+            <p className='error-msg'>Mohon pilih kurir pengiriman terlebih dahulu</p>
           </a>
 
           <a className={`column is-paddingless expeditionPackageButton ${error === 'expeditionsPackage' && 'is-error'}`} onClick={(e) => !this.submiting.estimatedCharges && this.onClickExpeditionPackage(e)}>
@@ -518,7 +519,7 @@ class Purchase extends Component {
 
               </span>
             </div>
-            <p className='error-msg'>Mohon Pilih Paket Pengiriman terlebih dahulu</p>
+            <p className='error-msg'>Mohon pilih paket pengiriman terlebih dahulu</p>
           </a>
           <a className={`column is-paddingless insuranceButton ${error === 'insurance' && 'is-error'}`} onClick={(e) => this.onClickInsurance(e)}>
             <div className='see-all insuranceButton'>
@@ -527,7 +528,7 @@ class Purchase extends Component {
                 <span className='icon-arrow-down insuranceButton' />
               </span>
             </div>
-            <p className='error-msg'>Mohon Pilih Asuransi terlebih dahulu</p>
+            <p className='error-msg'>Mohon pilih asuransi terlebih dahulu</p>
           </a>
         </Section>
         <Section>

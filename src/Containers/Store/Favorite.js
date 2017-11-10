@@ -174,7 +174,6 @@ class StoreFavorite extends Component {
 }
 
 const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
-  console.log('listFavoriteStore: ', listFavoriteStore)
   let settings = {
     className: 'slider variable-width',
     dots: false,
@@ -201,20 +200,31 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                 if (isDiscount) {
                   priceAfterDiscount = price - ((price * product.discount) / 100)
                 }
+
+              // set pin
+                let pin = null
+                if (product.is_discount) pin = <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
+                if (product.is_wholesaler) pin = <div className='pin'><span>Grossir</span></div>
+                if (product.is_discount && product.is_wholesaler) {
+                  pin = <div>
+                    <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
+                    <div className='pin' style={{ marginLeft: '50px' }}><span>Grossir</span></div>
+                  </div>
+                }
                 return (
                   <div key={index} className='item effect-display' onClick={() => Router.push(`/product-detail?id=${product.id}`, `/detail/${UrlParam(data.store.name)}/${product.slug}-${product.id}`)}>
                     <div className='column'>
                       <div className='box grid'>
                         <div className='media'>
                           <div className='media-left'>
-                            {/* <figure className='image' style={{ width: 212 }}> */}
                             <figure className='image'>
                               <a><MyImage src={product.image} alt='Image' /></a>
+                              { pin }
                             </figure>
                           </div>
                           <div className='media-content'>
                             <div className='content'>
-                              <h4>{ ReadAbleText(product.name)}</h4>
+                              <h4> { ReadAbleText(product.name)}</h4>
                               <div className='detail'>
                                 { isDiscount && <div className='discount'>Rp {RupiahFormat(price)}</div> }
                                 <span className='price'>Rp {RupiahFormat(priceAfterDiscount)} </span>
