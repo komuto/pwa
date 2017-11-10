@@ -604,7 +604,7 @@ const TabsStatusContent = (props) => {
             </section>
             <section className='section is-paddingless'>
               <div className='container is-fluid'>
-                <a className='button is-primary is-outlined is-large is-fullwidth'>Ke Detail Komplain</a>
+                <a onClick={() => Router.push(`/complaint?type=buyer&id=${invoice.dispute.id}`, `/complaint/buyer/${invoice.dispute.id}`)} className='button is-primary is-outlined is-large is-fullwidth'>Ke Detail Komplain</a>
               </div>
             </section>
             </div>
