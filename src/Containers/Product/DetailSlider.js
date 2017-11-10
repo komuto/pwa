@@ -12,7 +12,7 @@ class ProductDetailSlider extends Component {
       dots: false,
       infinite: false,
       centerMode: false,
-      slidesToShow: 1,
+      slidesToShow: 4,
       slidesToScroll: 1,
       variableWidth: true
     }
