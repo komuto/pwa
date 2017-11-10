@@ -13,6 +13,7 @@ import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 import MyRating from '../../Components/MyRating'
 import Message from '../../Components/Message'
+import ResponsiveImage from '../../Components/ResponsiveImage'
 // containers
 import { Navbar } from '../Navbar'
 // actions
@@ -151,9 +152,22 @@ class Store extends Component {
     }
   }
 
+  showNotification (message, error = false) {
+    const { notifError, notifSuccess } = this.props
+    const notification = error ? notifError(message) : notifSuccess(message)
+    this.setState(
+      { notification },
+      () => {
+        setTimeout(() => {
+          this.setState({ notification: { ...this.state.notification, status: false } })
+        }, 3000)
+      }
+    )
+  }
+
   async componentWillReceiveProps (nextProps) {
     const { addWishlist, favorite, sendMessageStore } = nextProps
-    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const { isFetching, isFound, isError, notifError } = this.props
     let { store } = nextProps
 
     /** handling state message store */
@@ -166,8 +180,8 @@ class Store extends Component {
         })
       }
       if (isFound(sendMessageStore)) {
+        this.showNotification(sendMessageStore.message)
         this.setState({
-          notification: notifSuccess(sendMessageStore.message),
           modalMessage: { ...this.state.modalMessage, show: false }
         })
       }
@@ -214,6 +228,12 @@ class Store extends Component {
     let pin = null
     if (product.is_discount) pin = <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
     if (product.is_wholesaler) pin = <div className='pin'><span>Grossir</span></div>
+    if (product.is_discount && product.is_wholesaler) {
+      pin = <div>
+        <div className='pin disc'><span>{ `${product.discount}%` }</span></div>
+        <div className='pin' style={{ marginLeft: '50px' }}><span>Grossir</span></div>
+      </div>
+    }
     // set real price
     const priceBeforeDiscount = (product.discount > 0) ? <div className='discount'> Rp { RupiahFormat(product.price) } </div> : ''
     // set price - dicsount
@@ -617,9 +637,7 @@ const BoxSeller = (props) => {
       <div className='media'>
         <div className='media-left'>
           <figure className='image'>
-            <a>
-              <MyImage src='../../images/thumb.jpg' alt='thumbs' />
-            </a>
+            <ResponsiveImage image={myStore.logo} borderRadius={50} />
           </figure>
         </div>
         <div className='media-content'>

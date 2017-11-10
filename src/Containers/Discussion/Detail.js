@@ -171,7 +171,7 @@ const DiscussionDetailContent = ({ productDetail, comments, comment, submitting,
           <li>
             <div className='box is-paddingless'>
               <article className='media'>
-                <div className='media-left'>
+                <div className='media-left top'>
                   {/* <figure className='image product-pict' style={{ width: 40 }}> */}
                   <figure className='image product-pict'>
                     <MyImage src={images[0].file} alt={product.name} />
@@ -181,7 +181,6 @@ const DiscussionDetailContent = ({ productDetail, comments, comment, submitting,
                   <div className='content'>
                     <p className='products-name'>
                       <strong>{ product.name }</strong>
-                      <br />
                       Rp { RupiahFormat(product.price) }
                     </p>
                   </div>
@@ -199,7 +198,7 @@ const DiscussionDetailContent = ({ productDetail, comments, comment, submitting,
                 <li key={index}>
                   <div className='box is-paddingless'>
                     <article className='media'>
-                      <div className='media-left'>
+                      <div className='media-left top'>
                         <figure className='image user-pict'>
                           <MyImage src={comment.user.photo} />
                         </figure>
@@ -208,7 +207,6 @@ const DiscussionDetailContent = ({ productDetail, comments, comment, submitting,
                         <div className='content'>
                           <p className='user-name'>
                             <strong>{ comment.user.name}</strong>
-                            <br />
                             { comment.content }
                           </p>
                         </div>
