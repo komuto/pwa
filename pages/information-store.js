@@ -1,5 +1,4 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
