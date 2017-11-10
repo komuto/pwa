@@ -251,7 +251,7 @@ class ProductUpdateNameCategory extends Component {
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           Router.back()
-        }, 1000)
+        }, 3000)
       }
       if (isError(alterProducts)) {
         this.setState({ notification: notifError(alterProducts.message) })

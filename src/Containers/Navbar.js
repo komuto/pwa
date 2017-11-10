@@ -143,7 +143,7 @@ export class Navbar extends PureComponent {
           }
           {
             deleteButton &&
-            <div className='button-search js-option'>
+            <div className='button-search js-option' onClick={() => this.props.deleteDropship()}>
               <span className='icon-trash white' />
             </div>
           }

@@ -157,7 +157,7 @@ class ProductList extends Component {
           search.results = []
         }
         this.setState({ search, isEmpty: false })
-      }, 1000)
+      }, 3000)
     }
     this.setState({ search })
   }
