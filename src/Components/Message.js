@@ -1,4 +1,5 @@
-import MyImage from './MyImage'
+import ResponsiveImage from './ResponsiveImage'
+import ReadAbleText from '../Lib/ReadAbleText'
 
 export default ({ store, title, description, submit, show, submitting, showPress }) => {
   return (
@@ -16,16 +17,16 @@ export default ({ store, title, description, submit, show, submitting, showPress
                 <div className='box is-paddingless'>
                   <article className='media'>
                     <div className='media-left'>
-                      <figure className='image product-pict' style={{ width: 40 }}>
-                        <MyImage src={store.logo} alt={store.name} />
+                      <figure className='image product-pict' style={{ width: 40, height: 40 }}>
+                        <ResponsiveImage image={store.logo} borderRadius={50} />
                       </figure>
                     </div>
                     <div className='media-content'>
                       <div className='content'>
                         <p className='products-name'>
-                          <strong>{ store.name }</strong>
+                          <strong>{ ReadAbleText(store.name) }</strong>
                           <br />
-                          <span>Jakarta Selatan, DKI Jakarta</span>
+                          <span>{ ReadAbleText(store.origin) }</span>
                         </p>
                       </div>
                     </div>
