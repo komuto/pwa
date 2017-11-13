@@ -3,7 +3,7 @@ import FacebookLogin from 'react-facebook-login'
 
 export const LoginFacebook = (props) => {
   return <FacebookLogin
-    appId='829312977224065'
+    appId={props.appId}
     fields='name,email,picture'
     textButton={props.text}
     disableMobileRedirect

@@ -342,6 +342,7 @@ class SignUp extends Component {
               <HrText
                 text='atau' />
               <LoginFacebook
+                appId={this.props.marketplace.data.fb_app_id}
                 responseFacebook={(response) => this.responseFacebook(response)} />
             </form>
           </Containers>
