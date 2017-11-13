@@ -199,6 +199,7 @@ class SignIn extends Component {
             </div>
             <HrText text={localize.or} />
             <LoginFacebook
+              appId={this.props.marketplace.data.fb_app_id}
               text={localize.login_facebook}
               responseFacebook={(response) => this.responseFacebook(response)} />
           </Containers>
