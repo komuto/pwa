@@ -122,28 +122,40 @@ class ProductList extends Component {
   }
 
   searchOnChange (event) {
-    const { search, tabs, storeProducts } = this.state
+    const { search, tabs } = this.state
     search.status = true
     search.value = RegexNormal(event.target.value)
 
     if (tabs === TAB_SHOW_IN_PAGE) {
-      if (search.value !== '') {
-        search.status = true
-        search.results = []
-        storeProducts.storeProducts.map((sp) => {
-          let tamProducts = sp.products.filter((x) => {
-            let regex = new RegExp(search.value, 'gi')
-            return regex.test(x.name)
-          })
-          if (tamProducts.length > 0) {
-            sp.products = tamProducts
-            search.results.push(sp)
-          }
-        })
-      } else {
-        search.status = false
-        search.results = []
-      }
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        if (search.value) {
+          this.fetching = { ...this.fetching, searchItem: true }
+          NProgress.start()
+          this.props.getStoreProductsByCatalogSearch({ q: search.value })
+        } else {
+          search.status = false
+          search.results = []
+        }
+        this.setState({ search, isEmpty: false })
+      }, 3000)
+      // if (search.value !== '') {
+      //   search.status = true
+      //   search.results = []
+      //   storeProducts.storeProducts.map((sp) => {
+      //     let tamProducts = sp.products.filter((x) => {
+      //       let regex = new RegExp(search.value, 'gi')
+      //       return regex.test(x.name)
+      //     })
+      //     if (tamProducts.length > 0) {
+      //       sp.products = tamProducts
+      //       search.results.push(sp)
+      //     }
+      //   })
+      // } else {
+      //   search.status = false
+      //   search.results = []
+      // }
     }
     if (tabs === TAB_HIDDEN_IN_PAGE) {
       if (this.timeout) clearTimeout(this.timeout)
@@ -227,6 +239,7 @@ class ProductList extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
@@ -242,11 +255,11 @@ class ProductList extends Component {
     let catalogProducts = []
     let hiddenProducts = []
     if (tabs === TAB_SHOW_IN_PAGE) {
-      if (search.status) {
-        catalogProducts = search.results
-      } else {
-        catalogProducts = storeProducts.isFound ? storeProducts.storeProducts : []
-      }
+      // if (search.status) {
+      //   catalogProducts = search.results
+      // } else {
+      // }
+      catalogProducts = storeProducts.isFound ? storeProducts.storeProducts : []
     }
     if (tabs === TAB_HIDDEN_IN_PAGE) {
       if (search.status) {
@@ -281,7 +294,7 @@ class ProductList extends Component {
         </section>
         {
           tabs === TAB_SHOW_IN_PAGE
-          ? <ContentShow
+          ? isEmpty ? <ProductEmpty /> : <ContentShow
             catalogProducts={catalogProducts}
             showListCatalog={showListCatalog}
             showListCatalogPress={() => this.showListCatalogPress()}
@@ -291,7 +304,8 @@ class ProductList extends Component {
             productMoveCatalogOther={(e, id) => this.productMoveCatalogOther(e, id)}
             productChangeDropship={(e, id) => this.productChangeDropship(e, id)}
             dropdownSelected={dropdownSelected}
-            productDetail={(e, product) => this.productDetail(e, product)} />
+            productDetail={(e, product) => this.productDetail(e, product)}
+            search={search} />
           : isEmpty ? <ProductEmpty /> : <ContentHidden
             hiddenProducts={hiddenProducts}
             catalogProducts={catalogProducts}
@@ -351,7 +365,7 @@ const ContentShow = (props) => {
   return (
     <div>
       {
-        props.catalogProducts.map((sp, index) => {
+        props.search.status ? <SearchContent search={props.search} /> : props.catalogProducts.map((sp, index) => {
           return (
             <Element name={String(sp.catalog.id)} className={`section is-paddingless detail`} key={index} style={{ marginBottom: 20 }}>
               <div className='info-purchase'>
@@ -432,6 +446,50 @@ const ContentShow = (props) => {
           <span className='icon-close white' />
         </a>
       </div>
+    </div>
+  )
+}
+
+/** search product */
+const SearchContent = (props) => {
+  if (props.search === undefined) return null
+  return (
+    <div>
+      {
+        // <InfiniteScroll
+        //   pageStart={0}
+        //   loadMore={_.debounce(props.loadMore.bind(this), 500)}
+        //   hasMore={props.hasMore}
+        //   loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+        //   {
+            props.search.results.map((p, i) => {
+              let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+              return (
+                <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
+                  <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
+                    <div className='remove rightTop'>
+                      { p.is_discount && <span className='icon-discount-sign' /> }
+                      { p.is_wholesaler && <span className='icon-grosir-sign' /> }
+                    </div>
+                    <div className='purchase'>
+                      <figure className='img-item xx'>
+                        <MyImage src={p.image} alt='image' />
+                      </figure>
+                      <div className='content-product'>
+                        <h3>{ p.name }</h3>
+                        { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
+                        { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                        <p>Jumlah Stok : { p.stock }</p>
+                        <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                      </div>
+                    </div>
+                  </div>
+                </Element>
+              )
+            })
+        //   }
+        // </InfiniteScroll>
+      }
     </div>
   )
 }
