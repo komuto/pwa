@@ -76,6 +76,7 @@ class Purchase extends Component {
         show: false,
         selected: null
       },
+      wholesalerSelected: null,
       notification: props.notification,
       noted: props.noted.noted,
       error: null,
@@ -96,10 +97,23 @@ class Purchase extends Component {
     animateScroll.scrollTo(0, {duration: 0})
   }
 
+  wholesalesPrice (amountProduct) {
+    const { productDetail } = this.state
+    productDetail.detail.wholesaler.forEach(wholesale => {
+      if (amountProduct >= wholesale.min && amountProduct <= wholesale.max) {
+        this.setState({ wholesalerSelected: wholesale })
+        return true
+      } else {
+        return false
+      }
+    })
+  }
+
   // min button press
   async plussPress () {
     let { amountProduct } = this.state
     amountProduct += 1
+    this.wholesalesPrice(amountProduct)
     await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
@@ -108,6 +122,7 @@ class Purchase extends Component {
   async minPress () {
     let { amountProduct } = this.state
     amountProduct -= 1
+    this.wholesalesPrice(amountProduct)
     await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
@@ -150,7 +165,7 @@ class Purchase extends Component {
     }).length > 0
 
     if (!isServiceAvailable) {
-      this.refs.notificator.success('', 'service not found', 4000)
+      this.refs.notificator.success('', 'service not found', 2000)
     }
 
     this.setState({
@@ -263,7 +278,7 @@ class Purchase extends Component {
     if (!isFetching(estimatedCharges) && this.submiting.estimatedCharges) {
       this.submiting = { ...this.submiting, estimatedCharges: false }
       if (isError(estimatedCharges)) {
-        this.refs.notificator.success('', estimatedCharges.message, 4000)
+        this.refs.notificator.success('', estimatedCharges.message, 2000)
       }
       if (isFound(estimatedCharges)) {
         this.setState({
@@ -305,7 +320,8 @@ class Purchase extends Component {
   }
 
   render () {
-    const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
+    const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, wholesalerSelected, notification } = this.state
+    console.log('productDetail: ', productDetail);
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
 
@@ -330,6 +346,7 @@ class Purchase extends Component {
     let deliveryPrice = 0
     let subTotalPrice = 0
     let totalPrice = 0
+    let isWholesalerSelected = (wholesalerSelected !== null)
 
     // real price
     if (product) {
@@ -339,6 +356,11 @@ class Purchase extends Component {
     // price after discount
     if (product.is_discount) {
       price = price - (price * (product.discount / 100))
+    }
+
+    // price when wholesaler
+    if (isWholesalerSelected) {
+      price = wholesalerSelected.price
     }
 
     // delevery price
