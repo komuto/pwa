@@ -144,10 +144,15 @@ class AddressInfo extends React.Component {
     let addressRequired = name === 'address' && address.length > 0
     let postalCodeRequired = name === 'postal_code' && postalCode.length > 0
     let result = provinceIdRequired || districtIdRequired || subDistrictIdRequired || villageIdRequired || addressRequired || postalCodeRequired
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '.2px',
+      color: '#ef5656',
+      paddingTop: '8px',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )
@@ -500,8 +505,8 @@ class AddressInfo extends React.Component {
                   className='input'
                   value={formAddress.address}
                   onChange={(e) => this.handleAddress(e)} />
-                <br />{this.renderValidation('address', 'Mohon isi alamat lengkap anda')}
               </p>
+              {this.renderValidation('address', 'Mohon isi alamat lengkap anda')}
             </div>
             <div className='field'>
               <label className='label'>Provinsi</label>
@@ -523,8 +528,8 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('province_id', 'Mohon isi provinsi anda')}
               </p>
+              {this.renderValidation('province_id', 'Mohon isi provinsi anda')}
             </div>
             <div className='field'>
               <label className='label'>Kota / Kabupaten</label>
@@ -546,8 +551,8 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('district_id', 'Mohon isi kota / kabupaten anda')}
               </p>
+              {this.renderValidation('district_id', 'Mohon isi kota / kabupaten anda')}
             </div>
             <div className='field'>
               <label className='label'>Kecamatan</label>
@@ -569,8 +574,8 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('sub_district_id', 'Mohon isi kecamatan anda')}
               </p>
+              {this.renderValidation('sub_district_id', 'Mohon isi kecamatan anda')}
             </div>
             <div className='field'>
               <label className='label'>Kelurahan</label>
@@ -592,8 +597,8 @@ class AddressInfo extends React.Component {
                     })}
                   </select>
                 </span>
-                <br />{this.renderValidation('village_id', 'Mohon isi kelurahan anda')}
               </p>
+              {this.renderValidation('village_id', 'Mohon isi kelurahan anda')}
             </div>
             <div className='field'>
               <label>Kode Pos</label>
@@ -604,8 +609,8 @@ class AddressInfo extends React.Component {
                   className='input'
                   value={formAddress.postal_code}
                   onChange={(e) => this.handleAddress(e)} />
-                <br />{this.renderValidation('postal_code', 'Mohon isi kode pos anda')}
               </p>
+              {this.renderValidation('postal_code', 'Mohon isi kode pos anda')}
             </div>
             <div className='field'>
               <p className='control'>

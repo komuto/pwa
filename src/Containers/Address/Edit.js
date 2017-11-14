@@ -127,10 +127,14 @@ class EditAddress extends React.Component {
     let addressRequired = name === 'address' && address.length > 0
     let postalCodeRequired = name === 'postal_code' && postalCode.toString().length > 0
     let result = provinceIdRequired || districtIdRequired || subDistrictIdRequired || villageIdRequired || addressRequired || postalCodeRequired || nameRequired || phoneNumberRequired || aliasAddressRequired
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '.2px',
+      color: '#ef5656',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )

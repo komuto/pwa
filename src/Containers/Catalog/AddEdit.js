@@ -38,11 +38,15 @@ class AddEditCatalog extends Component {
   renderValidation (name, textFailed) {
     const { catalog, validation } = this.state
     let result = name === 'catalog' && catalog.length > 0
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '0.2px',
+      color: '#ef5656',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
-        {!result && textFailed}
+      <span style={errorMsg}>
+        {result ? '' : textFailed}
       </span>
     )
   }

@@ -77,9 +77,7 @@ class EditRekening extends React.Component {
     let bbonRequired = type === 'bank_branch_office_name' && bankBranchOfficeName.length > 0
     let result = codeRequired || holderNameRequired || hanRequired || bbonRequired
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={{display: validation ? 'block' : 'none'}}>
         {result ? '' : textFailed}
       </span>
     )

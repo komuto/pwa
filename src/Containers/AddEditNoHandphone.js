@@ -36,11 +36,15 @@ class NomorHandphone extends Component {
     const { phoneNumber, validation } = this.state
     const regex = /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/g
     let result = name === 'phoneNumber' && regex.test(phoneNumber)
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '0.2px',
+      color: '#ef5656',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
-        {!result && textFailed}
+      <span style={errorMsg}>
+        {result ? '' : textFailed}
       </span>
     )
   }

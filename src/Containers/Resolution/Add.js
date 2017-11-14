@@ -112,9 +112,7 @@ class ResolutionAdd extends React.Component {
     let imagesValid = name === 'images' && images.length > 0
     let result = priorityValid || topicValid || titleValid || messageValid || imagesValid
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={{display: validation ? 'block' : 'none'}}>
         {result ? '' : textFailed}
       </span>
     )

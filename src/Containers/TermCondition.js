@@ -43,10 +43,14 @@ class TermCondition extends React.Component {
   renderValidation (name, textFailed) {
     const { term, validation } = this.state
     let result = name === 'term' && term.length > 0
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '0.2px',
+      color: '#ef5656',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )
@@ -89,7 +93,8 @@ class TermCondition extends React.Component {
       this.fetchingFirst = false
       NProgress.done()
       if (isFound(profile)) {
-        this.setState({ profile, term: profile.user.store.term_condition })
+        let term = profile.user.store.term_condition ? profile.user.store.term_condition : ''
+        this.setState({ profile, term })
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
@@ -124,6 +129,7 @@ class TermCondition extends React.Component {
                       value={term}
                       onChange={(e) => this.handleInput(e)} />
                   </p>
+                  {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
                   <p className='ex'><strong>Contoh:</strong> <br />
                   - Toko Hanya melakukan pengiriman di hari kamis <br />
                   - Pesanan diatas jam 10 pagi akan diproses besok

@@ -46,10 +46,15 @@ class OwnerInformation extends React.Component {
     let idNumberRequired = name === 'id_number' && idNumber.length > 0
     let motherNameRequired = name === 'mother_name' && motherName.length > 0
     let result = idNumberRequired || motherNameRequired
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '.2px',
+      color: '#ef5656',
+      paddingTop: '8px',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )
@@ -140,7 +145,7 @@ class OwnerInformation extends React.Component {
                     placeholder='No Identitas (KTP/SIM/Paspor)'
                     value={formInfo.id_number}
                     onChange={(e) => this.handleInput(e)} />
-                  <br />{this.renderValidation('id_number', 'Mohon isi no identitas')}
+                  {this.renderValidation('id_number', 'Mohon isi no identitas')}
                 </p>
               </div>
               <div className='field'>
@@ -153,7 +158,7 @@ class OwnerInformation extends React.Component {
                     value={formInfo.mother_name}
                     onChange={(e) => this.handleInput(e)}
                     />
-                  <br />{this.renderValidation('mother_name', 'Mohon isi nama ibu kandung')}
+                  {this.renderValidation('mother_name', 'Mohon isi nama ibu kandung')}
                 </p>
               </div>
               <div className='field'>

@@ -123,10 +123,15 @@ class ManageBiodata extends React.Component {
     let pobRequired = type === 'place_of_birth' && placeOfBirth !== null
     let dobRequired = type === 'date_of_birth' && dateOfBirth !== null
     let result = photoRequired || nameRequired || genderRequired || pobRequired || dobRequired
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '0.2px',
+      color: '#ef5656',
+      paddingTop: '8px',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )

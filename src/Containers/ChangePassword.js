@@ -46,9 +46,7 @@ class ChangePassword extends React.Component {
     let passwordConfirmCheckingValid = type === 'passwordConfirmChecking' && pwd === pwd2
     let result = emailValid || isEmailValid || oldPwdValid || pwdValid || pwdConfirmValid || pwdStrgCnfrmValid || pwdStrgValid || passwordConfirmCheckingValid
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={{display: validation ? 'block' : 'none'}}>
         {result ? '' : textFailed}
       </span>
     )

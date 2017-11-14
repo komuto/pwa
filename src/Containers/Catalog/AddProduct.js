@@ -52,11 +52,15 @@ class CatalogAddProduct extends React.Component {
     let catalogValid = name === 'catalog' && catalog.length > 0
     let selectedCatalogValid = name === 'selectCatalog' && selectedCatalog !== null
     let result = catalogValid || selectedCatalogValid
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '0.2px',
+      color: '#ef5656',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
-        {!result && textFailed}
+      <span style={errorMsg}>
+        {result ? '' : textFailed}
       </span>
     )
   }
