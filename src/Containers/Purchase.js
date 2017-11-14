@@ -321,7 +321,6 @@ class Purchase extends Component {
 
   render () {
     const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, wholesalerSelected, notification } = this.state
-    console.log('productDetail: ', productDetail);
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
 
