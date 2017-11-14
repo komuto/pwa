@@ -96,8 +96,8 @@ class ChangePassword extends React.Component {
     if (!isFetching(statusChangePassword)) {
       this.setState({ submitting: false })
       const href = `/manage-account?isSuccess`
-      const as = 'manage-account'
-      Router.push(href, as, { shallow: true })
+      const as = '/manage/account'
+      Router.push(href, as)
     }
   }
 

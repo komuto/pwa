@@ -40,7 +40,7 @@ class InputShipmentNumber extends React.Component {
 
   componentDidMount () {
     const { id } = this.state
-    if (id !== '') {
+    if (id) {
       NProgress.start()
       this.props.getProcessingOrderDetail({ id })
     }

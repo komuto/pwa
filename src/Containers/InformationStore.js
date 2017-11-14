@@ -27,7 +27,7 @@ class InformationStore extends React.Component {
       formInfo: {
         ...props.formInfo.store
       },
-      overSlogan: 25,
+      slogan: 25,
       validation: false,
       submiting: {
         upload: false,
@@ -56,12 +56,14 @@ class InformationStore extends React.Component {
 
   handleInput (e) {
     const { name, value } = e.target
-    let { formInfo, overSlogan } = this.state
+    let { formInfo, slogan } = this.state
     const newState = { formInfo }
-    const newStateSlogan = { overSlogan }
-    if (name === 'slogan' && value.length < 26 && value.length > 9) {
-      newStateSlogan.overSlogan = 25 - value.length
-      newState.formInfo[name] = value
+    const newStateSlogan = { slogan }
+    if (name === 'slogan') {
+      if (value.length < 26) {
+        newStateSlogan.slogan = 25 - value.length
+        newState.formInfo[name] = value
+      }
     } else {
       newState.formInfo[name] = value
     }
@@ -77,13 +79,18 @@ class InformationStore extends React.Component {
     let description = formInfo.description
     let logoRequired = name === 'image' && logo
     let nameRequired = name === 'name' && nameStore.length > 0
-    let sloganLength = name === 'slogan' && slogan.length > 9 && slogan.length < 26
+    let sloganLength = name === 'slogan' && slogan.length >= 10 && slogan.length <= 25
     let descRequired = name === 'description' && description.length > 0
     let result = logoRequired || nameRequired || sloganLength || descRequired
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '.2px',
+      color: '#ef5656',
+      paddingTop: '8px',
+      display: validation ? 'block' : 'none'
+    }
     return (
-      <span style={{color: result ? '#23d160' : '#ef5656',
-        display: validation ? 'block' : 'none',
-        letterSpacing: '0.2px'}} >
+      <span className='error-msg' style={errorMsg}>
         {result ? '' : textFailed}
       </span>
     )
@@ -99,7 +106,7 @@ class InformationStore extends React.Component {
     let description = formInfo.description
     let logoRequired = logo.preview !== '' || formInfo.logo !== ''
     let nameRequired = nameStore.length > 0
-    let sloganLength = slogan.length > 10 && slogan.length < 26
+    let sloganLength = slogan.length >= 10 && slogan.length <= 25
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
@@ -144,7 +151,7 @@ class InformationStore extends React.Component {
   }
 
   componentDidMount () {
-    const { profile, formInfo } = this.state
+    const { profile, formInfo, slogan } = this.state
     const { query, getProfile } = this.props
     // if (isLogin) {
     if (query.type === 'settingStore') {
@@ -154,7 +161,7 @@ class InformationStore extends React.Component {
         getProfile()
       } else {
         this.fetchingFirst = false
-        const newState = { formInfo, overSlogan: 0 }
+        const newState = { formInfo, slogan }
         const splitLogo = profile.user.store.logo.split('/')
         const logo = splitLogo.pop() || splitLogo.pop()
         newState.formInfo['name'] = profile.user.store.name
@@ -162,6 +169,7 @@ class InformationStore extends React.Component {
         newState.formInfo['description'] = profile.user.store.description
         newState.formInfo['logo'] = logo
         newState.formInfo['path'] = splitLogo.join('/')
+        newState.slogan = slogan - profile.user.store.slogan.length
         this.setState(newState)
         NProgress.done()
       }
@@ -172,14 +180,14 @@ class InformationStore extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { formInfo, submiting } = this.state
+    const { formInfo, submiting, slogan } = this.state
     const { query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const { profile, updateStore, upload } = nextProps
     if (!isFetching(profile) && this.fetchingFirst) {
       this.fetchingFirst = false
       NProgress.done()
       if (isFound(profile)) {
-        const newState = { formInfo, overSlogan: 0 }
+        const newState = { formInfo, slogan, profile }
         const splitLogo = profile.user.store.logo.split('/')
         const logo = splitLogo.pop() || splitLogo.pop()
         newState.formInfo['name'] = profile.user.store.name
@@ -187,8 +195,8 @@ class InformationStore extends React.Component {
         newState.formInfo['description'] = profile.user.store.description
         newState.formInfo['logo'] = logo
         newState.formInfo['path'] = splitLogo.join('/')
+        newState.slogan = slogan - profile.user.store.slogan.length
         this.setState(newState)
-        this.setState({ profile })
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
@@ -230,9 +238,9 @@ class InformationStore extends React.Component {
   }
 
   render () {
-    const { files, formInfo, overSlogan, notification } = this.state
+    const { files, formInfo, slogan, notification } = this.state
     const isSetting = this.props.query.type === 'settingStore'
-    let logoOnRedux = formInfo.path + formInfo.logo
+    let logoOnRedux = formInfo.path + '/' + formInfo.logo
     let logoImages
     if (formInfo.path) {
       logoImages = logoOnRedux
@@ -302,7 +310,7 @@ class InformationStore extends React.Component {
                   value={formInfo.slogan}
                   onChange={(e) => this.handleInput(e)} />
                 <span className='reg'>
-                  {overSlogan} sisa karakter
+                  {slogan} sisa karakter
                 </span>
                 <br />{this.renderValidation('slogan', 'Isi slogan 10-25 karakter')}
               </p>
@@ -317,7 +325,7 @@ class InformationStore extends React.Component {
                   rows='1'
                   value={formInfo.description}
                   onChange={(e) => this.handleInput(e)} />
-                <br />{this.renderValidation('description', 'Mohon isi deskripsi toko')}
+                {this.renderValidation('description', 'Mohon isi deskripsi toko')}
               </p>
             </div>
             <div className='field'>

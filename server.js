@@ -81,6 +81,8 @@ app.prepare().then(_ => {
   // store verification
   defineASURL('/store/verification', '/store-verification')
   defineASURL('/store/manage', '/manage-store')
+  // manage account
+  defineASURL('/manage/account', '/manage-account')
 
   server.get('*', (req, res) => {
     global.hostNameServer = req.headers.host

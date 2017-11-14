@@ -16,7 +16,7 @@ const Index = (props) => {
     navbar: {
       searchBoox: false,
       path: '/',
-      callBack: () => Router.push('/manage-account'),
+      callBack: () => Router.push('/manage-account', '/manage/account'),
       textPath: 'Data Rekening'
     }
   }

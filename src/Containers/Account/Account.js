@@ -60,7 +60,7 @@ class Account extends Component {
 
   manageAccount (e) {
     e.preventDefault()
-    Router.push('/manage-account')
+    Router.push('/manage-account', '/manage/account')
   }
 
   async componentDidMount () {

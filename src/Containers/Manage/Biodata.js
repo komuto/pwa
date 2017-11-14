@@ -269,8 +269,8 @@ class ManageBiodata extends React.Component {
     if (!isFetching(statusUpdateProfile) && submiting) {
       this.setState({ submiting: false })
       const href = `/manage-account?isSuccess`
-      const as = 'manage-account'
-      Router.push(href, as, { shallow: true })
+      const as = '/manage/account'
+      Router.push(href, as)
     }
   }
 
