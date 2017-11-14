@@ -138,7 +138,6 @@ class ProductManage extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { data, notification } = this.state
     if (!this.props.storeProductDetail.isFound) return null
     const toProductList = () => {

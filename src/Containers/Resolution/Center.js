@@ -308,12 +308,14 @@ const ListResolvedResolution = (props) => {
 
 const EmptyResolution = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesResolusi} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Pusat Resolusi Kosong</strong></p>
-        <p>Anda belum memiliki hal untuk didiskusikan penyelesaian masalahnya</p>
+    <div className='content bg-grey'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <img src={Images.emptyStatesResolusi} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Pusat Resolusi Kosong</strong></p>
+          <p>Anda belum memiliki hal untuk didiskusikan penyelesaian masalahnya</p>
+        </div>
       </div>
     </div>
   )

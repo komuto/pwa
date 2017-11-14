@@ -233,7 +233,6 @@ class Purchase extends Component {
   }
 
   async componentDidMount () {
-    console.log('componentDidMount: ')
     const { id } = this.state
     this.scrollToTop()
     NProgress.start()

@@ -297,8 +297,6 @@ class TransactionConfirmation extends Component {
       images.append('images', image)
     })
     images.append('type', 'dispute')
-    console.log('images: ', images)
-
     // define params
     this.params = {
       products,
@@ -379,8 +377,6 @@ class TransactionConfirmation extends Component {
     const { buyerInvoiceDetail, upload, addComplaint, addReviews } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
     let { id, invoiceId } = this.state
-
-    console.log('upload: ', upload)
 
     if (!isFetching(buyerInvoiceDetail) && this.submiting.buyerInvoiceDetail) {
       NProgress.done()

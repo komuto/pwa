@@ -118,7 +118,6 @@ class Home extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    // console.log('nextProps: ', nextProps);
     let { products, addWishlist, category, countCart, banners } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
     /** handling state get banners */

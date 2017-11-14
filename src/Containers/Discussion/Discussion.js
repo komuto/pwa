@@ -27,7 +27,6 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 
 class Discussion extends Component {
   constructor (props) {
-    console.log('constructor: ')
     super(props)
     this.state = {
       id: props.query.id || null,
@@ -49,7 +48,6 @@ class Discussion extends Component {
   }
 
   componentDidMount () {
-    console.log('componentDidMount: ')
     const { id } = this.state
     NProgress.start()
     this.submitting = { ...this.submitting, discussions: true }
@@ -115,7 +113,6 @@ class Discussion extends Component {
 
     /** handling state new discussion */
     if (!isFetching(newDiscussion)) {
-      console.log('newDiscussion: ', newDiscussion)
       if (isError(newDiscussion)) {
         this.setState({ notification: notifError(newDiscussion.message) })
       }

@@ -297,7 +297,6 @@ class SalesDetail extends React.Component {
 
   render () {
     const { notification, tabs, saleDetail, receiptNumber, validation, showModal } = this.state
-    console.log('saleDetail: ', saleDetail)
     return (
       <div>
         <div className='nav-tabs'>

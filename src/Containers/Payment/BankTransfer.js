@@ -80,10 +80,7 @@ class PayWithBankTransfer extends Component {
   }
 
   render () {
-    const { cart, submiting, checkout } = this.state
-    console.log(cart)
-    console.log(checkout)
-
+    const { cart, submiting } = this.state
     if (!cart.isFound) return null
 
     let isPromo = cart.cart.promo

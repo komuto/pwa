@@ -36,8 +36,6 @@ class WithdrawStatus extends Component {
   render () {
     const { withdrawStatus, notification } = this.state
     const { isFound } = this.props
-
-    console.log(withdrawStatus)
     return (
       <Content>
         <Notification

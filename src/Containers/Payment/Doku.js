@@ -35,7 +35,6 @@ class PaymentDoku extends Component {
       await this.props.getCart()
     }
     if (!invoice.isFound) {
-      console.log('Load Invoice')
       NProgress.start()
       await this.props.getDokuInvoice()
     }
