@@ -9,6 +9,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 import Loading from '../../Components/Loading'
 import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as userAction from '../../actions/user'
@@ -308,12 +309,14 @@ const ListResolvedResolution = (props) => {
 
 const EmptyResolution = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <img src={Images.emptyStatesResolusi} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Pusat Resolusi Kosong</strong></p>
-        <p>Anda belum memiliki hal untuk didiskusikan penyelesaian masalahnya</p>
+    <div className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesResolusi} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Pusat Resolusi Kosong</strong></p>
+          <p>Anda belum memiliki hal untuk didiskusikan penyelesaian masalahnya</p>
+        </div>
       </div>
     </div>
   )
