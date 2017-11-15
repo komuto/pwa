@@ -99,14 +99,17 @@ class Purchase extends Component {
 
   wholesalesPrice (amountProduct) {
     const { productDetail } = this.state
+    let wholesalerSelected = null
     productDetail.detail.wholesaler.forEach(wholesale => {
       if (amountProduct >= wholesale.min && amountProduct <= wholesale.max) {
-        this.setState({ wholesalerSelected: wholesale })
+        wholesalerSelected = wholesale
         return true
       } else {
         return false
       }
     })
+
+    this.setState({ wholesalerSelected })
   }
 
   // min button press
@@ -364,7 +367,7 @@ class Purchase extends Component {
 
     // delevery price
     if (expeditionsPackage.selected.cost) {
-      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000)) * amountProduct
+      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000))
     }
 
     // insurance price
