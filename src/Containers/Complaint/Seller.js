@@ -149,7 +149,6 @@ class ComplainItems extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { notification, tabs, sellerComplainedOrders, sellerComplainedOrders2 } = this.state
     return (
       <div>

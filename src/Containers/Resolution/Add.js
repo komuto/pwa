@@ -61,7 +61,6 @@ class ResolutionAdd extends React.Component {
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]
-      console.log(f)
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)

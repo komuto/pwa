@@ -65,7 +65,6 @@ class ProductAddStepOne extends Component {
       status: false,
       message: 'Error, default message.'
     }
-    // console.log(files)
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
       let f = files[i]

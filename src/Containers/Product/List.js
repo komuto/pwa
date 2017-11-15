@@ -239,7 +239,6 @@ class ProductList extends Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
@@ -267,7 +266,6 @@ class ProductList extends Component {
       } else {
         hiddenProducts = hiddenStoreProducts.isFound ? hiddenStoreProducts.products : []
       }
-      console.log('hidden', search.status)
     }
     return (
       <Content>

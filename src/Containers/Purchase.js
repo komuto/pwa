@@ -76,6 +76,7 @@ class Purchase extends Component {
         show: false,
         selected: null
       },
+      wholesalerSelected: null,
       notification: props.notification,
       noted: props.noted.noted,
       error: null,
@@ -96,10 +97,26 @@ class Purchase extends Component {
     animateScroll.scrollTo(0, {duration: 0})
   }
 
+  wholesalesPrice (amountProduct) {
+    const { productDetail } = this.state
+    let wholesalerSelected = null
+    productDetail.detail.wholesaler.forEach(wholesale => {
+      if (amountProduct >= wholesale.min && amountProduct <= wholesale.max) {
+        wholesalerSelected = wholesale
+        return true
+      } else {
+        return false
+      }
+    })
+
+    this.setState({ wholesalerSelected })
+  }
+
   // min button press
   async plussPress () {
     let { amountProduct } = this.state
     amountProduct += 1
+    this.wholesalesPrice(amountProduct)
     await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
@@ -108,6 +125,7 @@ class Purchase extends Component {
   async minPress () {
     let { amountProduct } = this.state
     amountProduct -= 1
+    this.wholesalesPrice(amountProduct)
     await this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
   }
@@ -150,7 +168,7 @@ class Purchase extends Component {
     }).length > 0
 
     if (!isServiceAvailable) {
-      this.refs.notificator.success('', 'service not found', 4000)
+      this.refs.notificator.success('', 'service not found', 2000)
     }
 
     this.setState({
@@ -233,7 +251,6 @@ class Purchase extends Component {
   }
 
   async componentDidMount () {
-    console.log('componentDidMount: ')
     const { id } = this.state
     this.scrollToTop()
     NProgress.start()
@@ -264,7 +281,7 @@ class Purchase extends Component {
     if (!isFetching(estimatedCharges) && this.submiting.estimatedCharges) {
       this.submiting = { ...this.submiting, estimatedCharges: false }
       if (isError(estimatedCharges)) {
-        this.refs.notificator.success('', estimatedCharges.message, 4000)
+        this.refs.notificator.success('', estimatedCharges.message, 2000)
       }
       if (isFound(estimatedCharges)) {
         this.setState({
@@ -306,7 +323,7 @@ class Purchase extends Component {
   }
 
   render () {
-    const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, notification } = this.state
+    const { id, productDetail, address, cartNotification, expeditions, expeditionsPackage, insurance, amountProduct, noted, error, submiting, wholesalerSelected, notification } = this.state
     if (!productDetail.isFound) return null
     const { product, images, store } = productDetail.detail
 
@@ -331,6 +348,7 @@ class Purchase extends Component {
     let deliveryPrice = 0
     let subTotalPrice = 0
     let totalPrice = 0
+    let isWholesalerSelected = (wholesalerSelected !== null)
 
     // real price
     if (product) {
@@ -342,9 +360,14 @@ class Purchase extends Component {
       price = price - (price * (product.discount / 100))
     }
 
+    // price when wholesaler
+    if (isWholesalerSelected) {
+      price = wholesalerSelected.price
+    }
+
     // delevery price
     if (expeditionsPackage.selected.cost) {
-      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000)) * amountProduct
+      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000))
     }
 
     // insurance price

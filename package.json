@@ -38,6 +38,7 @@
     "next-redux-wrapper": "^1.0.0",
     "nprogress": "^0.2.0",
     "prop-types": "^15.5.10",
+    "raven": "^2.2.1",
     "react": "^15.5.3",
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^15.5.3",

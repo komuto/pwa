@@ -272,8 +272,6 @@ class ShippingDetail extends Component {
           }
           this.props.estimatedShipping(params)
         }
-
-        console.log('INI >>>> ', item)
         this.setState({ item, expeditions: { ...this.state.expeditions, data: item.item.product.expeditions, selected: item.item.shipping.expedition_service.expedition } })
       }
     }
@@ -297,10 +295,6 @@ class ShippingDetail extends Component {
       })
       estimatedCost = filterEstimatedCost.length > 0 ? filterEstimatedCost[0].cost : 0
     }
-
-    // console.log('item', item)
-    // console.log('expeditionsPackage', expeditionsPackage)
-    // console.log('expeditions', expeditions)
 
     let price = product.price
     // let weight = product.weight

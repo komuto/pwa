@@ -46,7 +46,6 @@ class DiscussionDetail extends Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { comments, notification } = this.state
     const { isFound } = this.props
     let params = {

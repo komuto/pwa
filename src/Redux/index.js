@@ -22,7 +22,6 @@ export default (initialState:any) => {
       banner: bannerRedux(Immutable(initialState.banner))
     })
   }
-  // console.log('rootReducer', rootReducer)
 
   return CreateStore(rootReducer, rootSaga)
 }

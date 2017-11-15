@@ -92,8 +92,6 @@ class TransactionDetailBankTransfer extends Component {
     const { transaction, komutoAccounts, showDetailTransaction, showNotifTransaction } = this.state
     const { bucket, invoices, summary_invoice } = transaction.transaction
 
-    console.log(komutoAccounts)
-
     const params = {
       navbar: {
         searchBoox: false,
@@ -107,8 +105,6 @@ class TransactionDetailBankTransfer extends Component {
     let promoCode = ''
     let promoNominal = 0
     let totalPrice = 0
-
-    console.log(transaction)
 
     if (transaction.isFound) {
       isPromo = bucket.promo

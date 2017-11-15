@@ -157,7 +157,6 @@ class Detail extends Component {
         this.setState({ notification: notifError(buyerComplainedOrderDetail.message) })
       }
       if (isFound(buyerComplainedOrderDetail)) {
-        console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
         this.setState({
           buyerComplainedOrderDetail,
           comment: {

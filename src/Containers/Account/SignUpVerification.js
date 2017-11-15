@@ -10,7 +10,6 @@ import Notification from '../../Components/Notification'
 
 class SignUpVerification extends Component {
   constructor (props) {
-    console.log('props: ', props)
     super(props)
     this.state = {
       token: props.query.token,
@@ -40,7 +39,6 @@ class SignUpVerification extends Component {
         this.setState({ notification: notifError(verification.message) })
       }
       if (isFound(verification)) {
-        console.log('verification: ', verification)
         Router.push('/profile')
       }
     }
