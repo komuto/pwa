@@ -68,7 +68,8 @@ class ProductDetail extends Component {
         this.setState({ notification: notifError(productDetail.message) })
       }
       if (isFound(productDetail)) {
-        this.setState({ productDetail })
+        const id = nextProps.query.id
+        this.setState({ productDetail, id })
         if (String(productDetail.detail.product.id) !== String(nextId)) {
           NProgress.start()
           this.props.getProduct({ id: nextId })
