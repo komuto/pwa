@@ -278,7 +278,7 @@ const CategoryContent = ({ localize, category }) => (
             if (index > 5) return null
             return (
               <div
-                className={`column is-one-third effect-display`}
+                className={`column is-one-third image-categories effect-display`}
                 key={index}
                 onClick={() => {
                   Router.push(
