@@ -164,7 +164,6 @@ class ProductDeleteInCatalog extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { storeProductsByCatalog, selectedProducts, selectAllProduct, notification, confirmDelete, isEmpty } = this.state
     const { products } = storeProductsByCatalog
     return (

@@ -358,9 +358,6 @@ class MyProduct extends Component {
     let products = []
 
     // if (q) this.setState({ q })
-
-    // console.log('componentWillReceiveProps()')
-
     /** handling state list productBySearch  */
     if (!isFetching(productBySearch) && this.submitting.productBySearch) {
       NProgress.done()

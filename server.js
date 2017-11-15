@@ -83,12 +83,10 @@ app.prepare().then(_ => {
   defineASURL('/store/manage', '/manage-store')
   // manage account
   defineASURL('/manage/account', '/manage-account')
+  defineASURL('/resolution/center', '/resolution-center')
 
   server.get('*', (req, res) => {
     global.hostNameServer = req.headers.host
-
-    // console.log('global.hostNameServer: ', global.hostNameServer)
-
     return handle(req, res)
   })
 

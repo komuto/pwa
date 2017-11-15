@@ -125,7 +125,6 @@ class ResolutionDetail extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { notification, tabs, resolutionDetail, message } = this.state
     return (
       <div>

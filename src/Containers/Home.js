@@ -118,7 +118,6 @@ class Home extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    // console.log('nextProps: ', nextProps);
     let { products, addWishlist, category, countCart, banners } = nextProps
     let { isFetching, isError, isFound, notifError } = this.props
     /** handling state get banners */
@@ -279,7 +278,7 @@ const CategoryContent = ({ localize, category }) => (
             if (index > 5) return null
             return (
               <div
-                className={`column is-one-third effect-display`}
+                className={`column is-one-third image-categories effect-display`}
                 key={index}
                 onClick={() => {
                   Router.push(

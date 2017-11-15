@@ -56,9 +56,6 @@ class ManageStore extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { profile, unreadDisputesStore } = nextProps
-
-    console.log('unreadDisputesStore: ', unreadDisputesStore)
-
     const { isFetching, isError, isFound, notifError } = this.props
 
     if (!isFetching(unreadDisputesStore) && this.submitting.unreadDisputesStore) {
@@ -113,7 +110,6 @@ class ManageStore extends Component {
       if (isFound(unreadDisputesStore)) {
         const { disputes } = unreadDisputesStore
         countDispute = disputes.disputes
-        console.log('countDispute: ', countDispute)
       }
     }
 
@@ -266,7 +262,7 @@ class ManageStore extends Component {
                   </div>
                   <span className='icon-arrow-right' />
                 </li>
-                <li>
+                <li onClick={() => Router.push('/resolution-center', '/resolution/center')}>
                   <div className='box is-paddingless'>
                     <article className='media'>
                       <div className='media-left'>

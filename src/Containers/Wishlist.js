@@ -125,7 +125,6 @@ class Wishlist extends Component {
 
     /** handling state get products */
     if (!isFetching(products) && this.submitting.products) {
-      console.log('products: ', products)
       NProgress.done()
       this.submitting = { ...this.submitting, products: false }
       if (isError(products)) {
@@ -140,7 +139,6 @@ class Wishlist extends Component {
 
   render () {
     let { search, products, notification, viewActive, emptyWishlist } = this.state
-    console.log('emptyWishlist: ', emptyWishlist)
     let params = {
       navbar: {
         searchBoox: false,

@@ -395,7 +395,6 @@ class BuyerConfirmation extends Component {
         this.setState({ notification: notifError(buyerComplainedOrderDetail.message) })
       }
       if (isFound(buyerComplainedOrderDetail)) {
-        console.log('buyerComplainedOrderDetail: ', buyerComplainedOrderDetail)
         /** adding dispute_products, fine_products to object invoice.items */
         let tamProductReview = []
 

@@ -228,12 +228,12 @@ class ProductAddStepThree extends Component {
   onSumbit () {
     let { form, tempCreateProduct } = this.state
 
-    if (form.price === undefined || form.price === '' || Number(form.price) < 0) {
-      this.setState({ error: 'name' })
+    if (form.price === undefined || form.price === '' || Number(form.price) < 1) {
+      this.setState({ error: 'price' })
       return
     }
 
-    if (form.weight === undefined || form.weight === '' || Number(form.weight) < 0) {
+    if (form.weight === undefined || form.weight === '' || Number(form.weight) < 1) {
       this.setState({ error: 'weight' })
       return
     }
@@ -318,7 +318,7 @@ class ProductAddStepThree extends Component {
     let priceAfterDiscount = price - (price * (discount / 100))
     let commision = priceAfterDiscount * (10 / 100)
 
-    let nameError = error === 'name' ? styleError : {}
+    let priceError = error === 'price' ? styleError : {}
     let discountError = error === 'discount' ? styleError : {}
     let weightError = error === 'weight' ? styleError : {}
     let stockError = error === 'stock' ? styleError : {}
@@ -337,10 +337,10 @@ class ProductAddStepThree extends Component {
             <div className='field is-horizontal'>
               <div className='field-body columns is-mobile'>
                 <div className='field column'>
-                  <label className='label' style={nameError}>Harga Produk</label>
+                  <label className='label' style={priceError}>Harga Produk</label>
                   <p className='control is-expanded price'>
-                    <span className='currency' style={nameError}>Rp</span>
-                    <input onChange={(e) => this.formHandling(e)} value={form.price !== undefined && form.price} placeholder='0' name='price' className='input' type='number' style={nameError} />
+                    <span className='currency' style={priceError}>Rp</span>
+                    <input onChange={(e) => this.formHandling(e)} value={form.price !== undefined && form.price} placeholder='0' name='price' className='input' type='number' style={priceError} />
                   </p>
                 </div>
                 <div className='field column is-one-quarter'>

@@ -230,7 +230,6 @@ class Withdraw extends Component {
     let { bankAccountId, amount } = this.props.withdraw
     let { withdraw } = this.state
     let { form } = withdraw
-    console.log('submitWithdraw ()', withdraw)
     if (form[amount] === undefined) {
       form.error.push(amount)
     } else {

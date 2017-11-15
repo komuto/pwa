@@ -84,7 +84,6 @@ class Discussion extends Component {
         this.setState({ notification: notifError(sellerReview.message) })
       }
       if (isFound(sellerReview)) {
-        console.log(sellerReview)
         let isEmpty = sellerReview.sellerReview.length < 1
         let hasMore = sellerReview.sellerReview.length > 9
         let tam = sellerReview.sellerReview.concat(this.state.sellerReview.data.sellerReview)

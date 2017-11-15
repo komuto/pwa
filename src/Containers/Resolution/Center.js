@@ -309,7 +309,7 @@ const ListResolvedResolution = (props) => {
 
 const EmptyResolution = () => {
   return (
-    <div className='content'>
+    <div className='content bg-grey'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
           <MyImage src={Images.emptyStatesResolusi} alt='komuto' />
