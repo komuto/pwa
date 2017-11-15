@@ -147,14 +147,16 @@ class DiscussionProduct extends React.Component {
 
 const EmptyDiscussion = () => {
   return (
-    <div className='container is-fluid'>
-      <div className='desc has-text-centered'>
-        <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
-        <br /><br />
-        <p><strong className='bold'>Diskusi Produk Anda Kosong</strong></p>
-        <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk produk apapun</p>
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Diskusi Produk Anda Kosong</strong></p>
+          <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk produk apapun</p>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 

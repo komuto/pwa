@@ -200,9 +200,9 @@ const OrdersEmpty = () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='notFound' />
-          <p><strong>Data tidak ditemukan</strong></p>
-          <p>Tidak ada data</p>
+          <MyImage src={Images.emptyConfirmation} alt='notFound' />
+          <p><strong>Konfirmasi pengiriman pesanan kosong</strong></p>
+          <p>Anda belum memiliki konfirmasi pengiriman pesanan saat ini</p>
         </div>
       </div>
     </section>

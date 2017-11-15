@@ -335,7 +335,7 @@ const ItemsDropshipperSales = (props) => {
   return (
     <div>
       {
-        isEmpty ? <OrdersEmpty /> : <InfiniteScroll
+        isEmpty ? <SalesDropshipEmpty /> : <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(props.loadMoreDropshipSales.bind(this), 500)}
           hasMore={props.hasMore2}
@@ -431,9 +431,24 @@ const OrdersEmpty = () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='notFound' />
-          <p><strong>Pesanan tidak ditemukan</strong></p>
-          <p>Tidak ada data</p>
+          <MyImage src={Images.emptySelling} alt='notFound' />
+          <p><strong>Penjualan kosong</strong></p>
+          <p>Anda belum memiliki penjualan saat ini</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** sales dropship empty content */
+const SalesDropshipEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyDropshipping} alt='notFound' />
+          <p><strong>Penjualan dropship kosong</strong></p>
+          <p>Anda belum memiliki penjualan dropship saat ini</p>
         </div>
       </div>
     </section>
