@@ -13,6 +13,7 @@ import Router from 'next/router'
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
+// import Images from '../../Themes/Images'
 // import InfiniteScroll from 'react-infinite-scroller'
 import { Navbar, Navtab } from '../Navbar'
 /** including actions */
@@ -246,6 +247,21 @@ export const ItemStore = ({ order }) => (
 )
 
 const TabsName = ['Menunggu', 'Terselesaikan']
+
+// const EmptyComplain = () => {
+//   return (
+//     <div className='content'>
+//       <div className='container is-fluid'>
+//         <div className='desc has-text-centered'>
+//           <MyImage src={Images.emptyComplaint} alt='komuto' />
+//           <br /><br />
+//           <p><strong className='bold'>Komplain Barang Kosong</strong></p>
+//           <p>Anda belum memiliki komplain barang untuk diselesaikan masalahnya</p>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
 
 const mapStateToProps = (state) => ({
   buyerComplainedOrders: state.buyerComplainedOrders,

@@ -201,9 +201,9 @@ const OrdersEmpty = () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={Images.notFound} alt='notFound' />
-          <p><strong>Pesanan tidak ditemukan</strong></p>
-          <p>Tidak ada data</p>
+          <MyImage src={Images.emptyStateNewOrder} alt='notFound' />
+          <p><strong>Pesanan baru kosong</strong></p>
+          <p>Anda belum memiliki pesanan baru saat ini</p>
         </div>
       </div>
     </section>

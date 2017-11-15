@@ -33,7 +33,12 @@ const images = {
   IconInfoBlue: `${AppConfig.baseURL}static/images/icon-info-blue.svg`,
   IconInfoYellow: `${AppConfig.baseURL}static/images/icon-info-yellow.svg`,
   wishlistEmpty: `${AppConfig.baseURL}static/images/wishlist-empty.svg`,
-  cart: `${AppConfig.baseURL}static/images/cart.svg`
+  cart: `${AppConfig.baseURL}static/images/cart.svg`,
+  emptySelling: `${AppConfig.baseURL}static/images/empty-selling.svg`,
+  emptyComplaint: `${AppConfig.baseURL}static/images/empty-complaint.svg`,
+  emptyConfirmation: `${AppConfig.baseURL}static/images/empty-confirmation.svg`,
+  emptyStateNewOrder: `${AppConfig.baseURL}static/images/empty-state-new-order.svg`,
+  emptyDropshipping: `${AppConfig.baseURL}static/images/empty-dropshipping.svg`
 }
 
 export default images
