@@ -9,13 +9,13 @@ import _ from 'lodash'
 import url from 'url'
 import { animateScroll } from 'react-scroll'
 // components
-import UrlParam from '../Lib/UrlParam'
-import MyImage from '../Components/MyImage'
-import Loading from '../Components/Loading'
-import { Navbar } from './Navbar'
-import Notification from '../Components/Notification'
+import UrlParam from '../../Lib/UrlParam'
+import MyImage from '../../Components/MyImage'
+import Loading from '../../Components/Loading'
+import { Navbar } from './../Navbar'
+import Notification from '../../Components/Notification'
 // actions
-import * as productActions from '../actions/product'
+import * as productActions from '../../actions/product'
 
 class DiscussionProductDetail extends React.Component {
   constructor (props) {

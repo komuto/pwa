@@ -43,7 +43,9 @@ export default function reduxWrapper (ReduxComponent) {
         mustLogin: false,
         error: null
       }
-      Raven.config(`https://${AppConfig.raven.secretKey}@sentry.io/${AppConfig.raven.id}`).install()
+      Raven.config(`https://${AppConfig.raven.secretKey}@sentry.io/${AppConfig.raven.id}`, {
+        environment: 'production'
+      }).install()
     }
 
     async componentDidMount () {

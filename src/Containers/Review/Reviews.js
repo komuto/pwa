@@ -4,16 +4,16 @@ import NProgress from 'nprogress'
 import _ from 'lodash'
 import InfiniteScroll from 'react-infinite-scroller'
 // components
-import Section from '../Components/Section'
-import Notification from '../Components/Notification'
-import MyImage from '../Components/MyImage'
-import ReviewItem from '../Components/ReviewItem'
-import Loading from '../Components/Loading'
+import Section from '../../Components/Section'
+import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
+import ReviewItem from '../../Components/ReviewItem'
+import Loading from '../../Components/Loading'
 // actions
-import * as reviewActions from '../actions/review'
-import * as productActions from '../actions/product'
+import * as reviewActions from '../../actions/review'
+import * as productActions from '../../actions/product'
 // lib
-import RupiahFormat from '../Lib/RupiahFormat'
+import RupiahFormat from '../../Lib/RupiahFormat'
 
 class Reviews extends Component {
   constructor (props) {
