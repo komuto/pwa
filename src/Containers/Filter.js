@@ -187,7 +187,7 @@ export class Filter extends Component {
   }
 
   onChangePriceMaximun (e) {
-    let value = e.target.value(e.target.value)
+    let value = RegexNormal(e.target.value)
     let { tabs } = this.state
     tabs.map((tab) => { if (tab.id === 'harga') tab.priceMaximum = value })
     this.setState({ tabs })
