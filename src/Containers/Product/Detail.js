@@ -192,7 +192,7 @@ class ProductDetail extends Component {
       navbar: {
         searchBoox: false,
         path: '/',
-        callBack: () => Router.push('/product', '/p'),
+        callBack: () => query.type !== 'dropship' ? Router.push('/product', '/p') : Router.push('/dropship?sort=newest'),
         textPath: 'Produk Detail'
       },
       moreButton: true,
@@ -239,10 +239,12 @@ class ProductDetail extends Component {
                 store={detail.store}
                 location={detail.location}
                 favoritePress={() => this.favoritePress()} />
-              <ProductDetailSuggestions
-                products={detail.other_products}
-                store={detail.store}
-                wishlistPress={(id) => this.wishlistPress(id, 'product_sugesstion')} />
+              {
+                query.type !== 'dropship' && <ProductDetailSuggestions
+                  products={detail.other_products}
+                  store={detail.store}
+                  wishlistPress={(id) => this.wishlistPress(id, 'product_sugesstion')} />
+              }
               <ProductDetailNavBottom
                 {...detail.product}
                 purchaseNow={() => this.purchaseNow()}
