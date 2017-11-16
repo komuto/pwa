@@ -27,7 +27,7 @@ class StoreSetting extends Component {
 
   toCatalogList (e) {
     e.preventDefault()
-    Router.push(`/catalog-list?type=settingStore`)
+    Router.push(`/catalog-list`)
   }
 
   toAddressData (e) {

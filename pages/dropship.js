@@ -1,5 +1,4 @@
 // @flow
-import Router from 'next/router'
 // layout
 import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
@@ -12,12 +11,6 @@ const Index = (props) => {
     style: 'main',
     header: {
       title: 'Pilih Barang dari Dropshipper'
-    },
-    navbar: {
-      searchBoox: false,
-      path: '/',
-      callBack: () => Router.push('/product-list'),
-      textPath: 'Pilih Barang dari Dropshipper'
     }
   }
   return (

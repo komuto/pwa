@@ -1,9 +1,9 @@
 /** including dependencies */
 import React from 'react'
 import { connect } from 'react-redux'
-import Link from 'next/link'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+import Router from 'next/router'
 import InfiniteScroll from 'react-infinite-scroller'
 import { animateScroll } from 'react-scroll'
 /** including components */
@@ -86,6 +86,7 @@ class ProductAddFromDropshipper extends React.Component {
       districts: false,
       brands: false,
       addWishlist: false,
+      sortStatus: false,
       searchItem: false
     }
   }
@@ -145,69 +146,110 @@ class ProductAddFromDropshipper extends React.Component {
     }
   }
 
-  /** handling load more products */
+   /** handling load more products */
   handleLoadMore () {
     let { pagination } = this.state
     if (!this.submitting.dropshipProducts) {
       pagination.page += 1
       this.params = { ...this.params, ...pagination }
       this.submitting = { ...this.submitting, dropshipProducts: true }
+      let params = this.generateParamsUrl()
+      Router.replace(`/dropship?${params}`)
       this.props.getDropshipProducts(this.params)
       this.setState({ pagination })
     }
   }
 
+  generateParamsUrl () {
+    let params = ''
+    let { page, limit, sort, q, condition, services, other, brands, ids, idc } = this.params
+    let categoryId = this.params.catalog_id // not camel case
+
+    if (sort) params += `sort=${sort}&`
+    if (categoryId) params += `id=${categoryId}&`
+    if (page) params += `page=${page}&`
+    if (limit) params += `limit=${limit}&`
+    if (q) params += `q=${q}&`
+    if (condition) params += `condition=${condition}&`
+    if (services) params += `services=${services}&`
+    if (other) params += `other=${other}&`
+    if (brands) params += `brands=${brands}&`
+    if (idc) params += `idc=${idc}&`
+    if (ids) params += `ids=${ids}&`
+
+    return params
+  }
+
   /** sort product price cheapest  */
   sortProductByCheapest () {
-    return _.orderBy(this.state.dropshipProducts.products, ['product.price'], ['asc'])
+    this.params.sort = 'cheapest'
+    this.submitting = { ...this.submitting, dropshipProducts: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/dropship?${params}`)
+    this.props.getDropshipProducts(this.params)
   }
 
   /** sort product price expensive  */
   sortProductByExpensive () {
-    return _.orderBy(this.state.dropshipProducts.products, ['product.price'], ['desc'])
+    this.params.sort = 'expensive'
+    this.submitting = { ...this.submitting, dropshipProducts: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/dropship?${params}`)
+    this.props.getDropshipProducts(this.params)
   }
 
   /** sort product newest  */
   sortProductByNewest () {
-    return _.orderBy(this.state.dropshipProducts.products, ['product.created_at'], ['desc'])
+    this.params.sort = 'newest'
+    this.submitting = { ...this.submitting, dropshipProducts: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/dropship?${params}`)
+    this.props.getDropshipProducts(this.params)
   }
 
-  /** sort product newest  */
+  /** sort product selling  */
   sortProductBySelling () {
-    return _.orderBy(this.state.dropshipProducts.products, ['product.count_sold'], ['desc'])
+    this.params.sort = 'selling'
+    this.submitting = { ...this.submitting, dropshipProducts: true, sortStatus: true }
+    let params = this.generateParamsUrl()
+    Router.replace(`/dropship?${params}`)
+    this.props.getDropshipProducts(this.params)
   }
 
   /** handling sort changed */
   sortSelected (selectedSort) {
-    let { dropshipProducts } = this.state
+    this.scrollToTop()
+    NProgress.start()
+    this.params.page = 1
+    this.params.limit = 10
 
     if (selectedSort === 'termurah') {
-      dropshipProducts.products = this.sortProductByCheapest()
+      this.sortProductByCheapest()
     }
 
     if (selectedSort === 'termahal') {
-      dropshipProducts.products = this.sortProductByExpensive()
+      this.sortProductByExpensive()
     }
 
     if (selectedSort === 'terbaru') {
-      dropshipProducts.products = this.sortProductByNewest()
+      this.sortProductByNewest()
     }
 
     if (selectedSort === 'terlaris') {
-      dropshipProducts.products = this.sortProductBySelling()
+      this.sortProductBySelling()
     }
 
-    this.setState({ selectedSort, sortActive: false, dropshipProducts })
+    this.setState({ selectedSort, sortActive: false, pagination: { page: 1, limit: 10 } })
   }
 
   componentDidMount () {
-    const { id, page, limit, sort, q, condition, services, other, brands, ids, idc } = this.state.query
     this.scrollToTop()
+    const { id, page, limit, sort, q, condition, services, other, brands, ids, idc } = this.state.query
     if (id) this.params.category_id = id
     if (page) this.params.page = page
     if (limit) this.params.limit = limit
     if (sort) this.params.sort = sort
-    if (q) this.params.query = q
+    if (q) this.params.q = q
     if (condition) this.params.condition = condition
     if (services) this.params.services = services
     if (other) this.params.other = other
@@ -312,9 +354,11 @@ class ProductAddFromDropshipper extends React.Component {
     // fetch product by params
     this.filterRealizationStatus = true
     this.submitting = { ...this.submitting, dropshipProducts: true }
-    delete this.params.page
-    delete this.params.limit
-
+    this.params.page = 1
+    this.params.limit = 10
+    delete this.params.sort
+    let params = this.generateParamsUrl()
+    Router.replace(`/dropship?${params}`)
     this.props.getDropshipProducts(this.params)
 
     /** close filter */
@@ -322,12 +366,9 @@ class ProductAddFromDropshipper extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { dropshipProducts, subCategory, expeditionServices, provinces, brands, districts, addWishlist } = nextProps
+    const { dropshipProducts, subCategory, expeditionServices, provinces, brands, districts, addWishlist, query } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-    const { q } = nextProps.query
     let products = []
-
-    if (q) this.setState({ q })
 
     // handling search dropship
     if (!isFetching(dropshipProducts) && this.submitting.searchItem) {
@@ -361,19 +402,39 @@ class ProductAddFromDropshipper extends React.Component {
         let hasMore = dropshipProducts.products.length > 9
         let isEmpty = dropshipProducts.products.length < 1
         if (this.filterRealizationStatus) {
+          // when user filter
           this.filterRealizationStatus = false
           this.setState({
             dropshipProducts,
             hasMore,
-            isEmpty
+            isEmpty,
+            query: { ...this.state.query, ...query }
+          })
+        } else if (this.submitting.sortStatus) {
+          // when user sort
+          this.submitting = { ...this.submitting, sortStatus: false }
+          this.setState({
+            dropshipProducts,
+            query: { ...this.state.query, ...query },
+            hasMore
           })
         } else {
-          products = this.state.dropshipProducts.products.concat(dropshipProducts.products)
-          this.setState({
-            dropshipProducts: { ...dropshipProducts, products },
-            hasMore,
-            isEmpty
-          })
+          if (this.state.dropshipProducts) {
+            // when user scroll
+            products = this.state.dropshipProducts.products.concat(dropshipProducts.products)
+            this.setState({
+              dropshipProducts: { ...dropshipProducts, products },
+              hasMore,
+              isEmpty
+            })
+          } else {
+            // default state
+            this.setState({
+              dropshipProducts,
+              hasMore,
+              isEmpty
+            })
+          }
         }
       }
     }
@@ -521,11 +582,9 @@ class ProductAddFromDropshipper extends React.Component {
           </div>
         </section>
         <section className='section is-paddingless'>
-          <div className='categories-option'>
-            <Link href='/categories1?type=dropship'>
-              <a className='choose-option modal-button' data-target='#modal-categories'>
-                <span>Kategori : Semua Kategori</span><span className='icon-arrow-down' /></a>
-            </Link>
+          <div className='categories-option' onClick={() => Router.push('/categories1?type=dropship')}>
+            <a className='choose-option modal-button'>
+              <span>Kategori : Semua Kategori</span><span className='icon-arrow-down' /></a>
           </div>
         </section>
 

@@ -40,7 +40,11 @@ class ProductList extends Component {
         page: 1,
         limit: 10
       },
-      isEmpty: false,
+      isEmpty: {
+        storeProducts: false,
+        hiddenProducts: false,
+        searchProducts: false
+      },
       tabs: TAB_SHOW_IN_PAGE,
       showListCatalog: false,
       dropdownSelected: '',
@@ -51,7 +55,7 @@ class ProductList extends Component {
       }
     }
     this.hasMore = false
-    this.fetching = { fetchingMore: false, fetchingFirst: false, searchItem: false }
+    this.fetching = { fetchingMore: false, fetchStoreProducts: false, fetchHiddenProducts: false, searchItem: false }
   }
 
   handleDropdown (e, id) {
@@ -103,7 +107,7 @@ class ProductList extends Component {
     window.scrollTo(0, 0)
     NProgress.start()
     this.props.getStoreProducts({hidden: false})
-    this.fetching = { ...this.fetching, fetchingFirst: true }
+    this.fetching = { ...this.fetching, fetchHiddenProducts: true, fetchStoreProducts: true }
     this.props.getHiddenStoreProducts()
     Events.scrollEvent.register('end', (to, element) => {
       this.setState({ showListCatalog: !this.state.showListCatalog })
@@ -122,7 +126,7 @@ class ProductList extends Component {
   }
 
   searchOnChange (event) {
-    const { search, tabs } = this.state
+    const { search, tabs, isEmpty } = this.state
     search.status = true
     search.value = RegexNormal(event.target.value)
 
@@ -137,7 +141,7 @@ class ProductList extends Component {
           search.status = false
           search.results = []
         }
-        this.setState({ search, isEmpty: false })
+        this.setState({ search, isEmpty: { ...isEmpty, searchProducts: false } })
       }, 3000)
       // if (search.value !== '') {
       //   search.status = true
@@ -168,7 +172,7 @@ class ProductList extends Component {
           search.status = false
           search.results = []
         }
-        this.setState({ search, isEmpty: false })
+        this.setState({ search, isEmpty: { ...isEmpty, searchProducts: false } })
       }, 3000)
     }
     this.setState({ search })
@@ -178,23 +182,25 @@ class ProductList extends Component {
     const { storeProducts, hiddenStoreProducts, storeCatalogProductsSearch } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!isFetching(storeProducts)) {
+    if (!isFetching(storeProducts) && this.fetching.fetchStoreProducts) {
       NProgress.done()
+      this.fetching = { ...this.fetching, fetchStoreProducts: false }
       if (isFound(storeProducts)) {
-        this.setState({ storeProducts })
+        let isEmpty = storeProducts.storeProducts.length < 1
+        this.setState({ storeProducts, isEmpty: { ...this.state.isEmpty, storeProducts: isEmpty } })
       }
       if (isError(storeProducts)) {
         this.setState({ notification: notifError(storeProducts.message) })
       }
     }
 
-    if (!isFetching(hiddenStoreProducts) && this.fetching.fetchingFirst) {
+    if (!isFetching(hiddenStoreProducts) && this.fetching.fetchHiddenProducts) {
       NProgress.done()
-      this.fetching = { ...this.fetching, fetchingFirst: false }
+      this.fetching = { ...this.fetching, fetchHiddenProducts: false }
       if (isFound(hiddenStoreProducts)) {
         this.hasMore = hiddenStoreProducts.products.length > 9
         let isEmpty = hiddenStoreProducts.products.length < 1
-        this.setState({ hiddenStoreProducts, isEmpty })
+        this.setState({ hiddenStoreProducts, isEmpty: { ...this.state.isEmpty, hiddenProducts: isEmpty } })
       }
       if (isError(hiddenStoreProducts)) {
         this.setState({ notification: notifError(hiddenStoreProducts.message) })
@@ -223,11 +229,12 @@ class ProductList extends Component {
         let uniqData = storeCatalogProductsSearch.products.filter((data, index, self) =>
           self.findIndex((p) => { return p.id === data.id }) === index
         )
-        let { search } = this.state
-        let isEmpty = storeCatalogProductsSearch.products.length < 1
+        let { search, isEmpty } = this.state
+        let isEmptySearch = storeCatalogProductsSearch.products.length < 1
         let searchStatus = storeCatalogProductsSearch.products.length > 0
         let newState = { storeCatalogProductsSearch, isEmpty, search }
         newState.storeCatalogProductsSearch['products'] = uniqData
+        newState.isEmpty['searchProducts'] = isEmptySearch
         newState.search['status'] = searchStatus
         newState.search['results'] = storeCatalogProductsSearch.products
         this.setState(newState)
@@ -292,7 +299,7 @@ class ProductList extends Component {
         </section>
         {
           tabs === TAB_SHOW_IN_PAGE
-          ? isEmpty ? <ProductEmpty /> : <ContentShow
+          ? (isEmpty.storeProducts || isEmpty.searchProducts) ? <ProductEmpty /> : <ContentShow
             catalogProducts={catalogProducts}
             showListCatalog={showListCatalog}
             showListCatalogPress={() => this.showListCatalogPress()}
@@ -304,13 +311,14 @@ class ProductList extends Component {
             dropdownSelected={dropdownSelected}
             productDetail={(e, product) => this.productDetail(e, product)}
             search={search} />
-          : isEmpty ? <ProductEmpty /> : <ContentHidden
+          : (isEmpty.hiddenProducts || isEmpty.searchProducts) ? <ProductEmpty /> : <ContentHidden
             hiddenProducts={hiddenProducts}
             catalogProducts={catalogProducts}
             productDetail={(e, product) => this.productDetail(e, product)}
             loadMore={() => this.loadMore()}
             hasMore={this.hasMore} />
         }
+        <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
       </Content>
     )
   }
@@ -426,7 +434,6 @@ const ContentShow = (props) => {
       <a className='catalog-button js-option' onClick={() => props.showListCatalogPress()}>
         <span className='icon-catalog' /> Daftar Katalog
       </a>
-      <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
 
       <div className='sort-option' style={{ display: props.showListCatalog && 'block' }}>
         <div className='sort-list catalog-list' style={{ overflowY: 'inherit' }}>

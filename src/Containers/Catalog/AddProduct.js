@@ -8,6 +8,7 @@ import { Navbar } from '../Navbar'
 import Notification from '../../Components/Notification'
 import Wizard from '../../Components/Wizard'
 import MyImage from '../../Components/MyImage'
+import Images from '../../Themes/Images'
 // actions
 import * as actionTypes from '../../actions/catalog'
 import * as productActions from '../../actions/product'
@@ -29,6 +30,7 @@ class CatalogAddProduct extends React.Component {
       selectedCatalog: null,
       confirmDelete: false,
       catalog: '',
+      isEmpty: false,
       notification: {
         status: false,
         color: 'is-success',
@@ -153,7 +155,8 @@ class CatalogAddProduct extends React.Component {
       NProgress.done()
       this.fetching = { ...this.fetching, listCatalog: false }
       if (isFound(listCatalog)) {
-        this.setState({ listCatalog })
+        let isEmpty = listCatalog.catalogs.length < 1
+        this.setState({ listCatalog, isEmpty })
       }
       if (isError(listCatalog)) {
         this.setState({ notification: notifError(listCatalog.message) })
@@ -250,7 +253,7 @@ class CatalogAddProduct extends React.Component {
       )
     } else {
       return (
-        <div style={{textAlign: 'center', paddingTop: '20px'}}>Product Tidak ada</div>
+        <ProductEmpty />
       )
     }
   }
@@ -261,8 +264,8 @@ class CatalogAddProduct extends React.Component {
   }
 
   renderListCatalog () {
-    const { listCatalog, selectedCatalog } = this.state
-    if (listCatalog.isFound && listCatalog.catalogs.length > 0) {
+    const { listCatalog, selectedCatalog, isEmpty } = this.state
+    if (!isEmpty) {
       return listCatalog.catalogs.map((catalog, i) => {
         return (
           <label
@@ -277,7 +280,7 @@ class CatalogAddProduct extends React.Component {
         )
       })
     } else {
-      return (<p style={{textAlign: 'center', paddingTop: '20px'}}>Katalog Kosong</p>)
+      return <CatalogEmpty />
     }
   }
 
@@ -401,6 +404,36 @@ class CatalogAddProduct extends React.Component {
       </div>
     )
   }
+}
+
+/** orders empty content */
+const CatalogEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyKatalog} alt='notFound' />
+          <p><strong>Katalog kosong</strong></p>
+          <p>Silahkan tambah katalog baru</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** product empty content */
+const ProductEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.notFound} alt='notFound' />
+          <p><strong>Produk tidak ditemukan</strong></p>
+          <p>Kami tidak bisa menemukan barang yang anda inginkan</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {
