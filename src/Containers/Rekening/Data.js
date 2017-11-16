@@ -5,6 +5,8 @@ import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
+import Images from '../../Themes/Images'
 // actions
 import * as actionUserTypes from '../../actions/user'
 import * as actionTypes from '../../actions/bank'
@@ -18,6 +20,7 @@ class DataRekening extends React.Component {
       confirmDelete: '',
       deleteBankAccountTemp: '',
       submiting: false,
+      isEmpty: false,
       notification: {
         type: 'is-success',
         status: false,
@@ -49,7 +52,7 @@ class DataRekening extends React.Component {
 
   modalConfirmDelete (e) {
     e.preventDefault()
-    this.setState({ submiting: false })
+    this.setState({ submiting: true })
     this.props.sendOTPBank()
   }
 
@@ -94,9 +97,10 @@ class DataRekening extends React.Component {
     const { listBankAccounts, statusSendOTPBank } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
     if (!isFetching(listBankAccounts)) {
+      NProgress.done()
       if (isFound(listBankAccounts)) {
-        this.setState({ listBankAccounts })
-        NProgress.done()
+        let isEmpty = listBankAccounts.listBankAccounts.length < 1
+        this.setState({ listBankAccounts, isEmpty })
       }
       if (isError(listBankAccounts)) {
         this.setState({ notification: notifError(listBankAccounts.message) })
@@ -119,7 +123,7 @@ class DataRekening extends React.Component {
   }
 
   render () {
-    const { listBankAccounts, notification, dropdownSelected, confirmDelete, submiting } = this.state
+    const { isEmpty, listBankAccounts, notification, dropdownSelected, confirmDelete, submiting } = this.state
     return (
       <div>
         <Notification
@@ -128,7 +132,7 @@ class DataRekening extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { (listBankAccounts.listBankAccounts.length !== 0 && Array.isArray(listBankAccounts.listBankAccounts)) ? listBankAccounts.listBankAccounts.map(bank => {
+        { isEmpty ? <RekeningEmpty /> : listBankAccounts.listBankAccounts.map(bank => {
           return (
             <section className='section is-paddingless bg-white has-shadow' key={bank.id}>
               <div className='data-wrapper'>
@@ -170,7 +174,7 @@ class DataRekening extends React.Component {
               </div>
             </section>
           )
-        }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>Silahkan tambah rekening baru</p>}
+        }) }
         <a
           className='sticky-button'
           onClick={(e) => this.toAddRekening(e)}>
@@ -188,6 +192,21 @@ class DataRekening extends React.Component {
       </div>
     )
   }
+}
+
+/** orders empty content */
+const RekeningEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyKatalog} alt='notFound' />
+          <p><strong>Rekening anda kosong</strong></p>
+          <p>Silahkan tambahkan rekening Anda</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {

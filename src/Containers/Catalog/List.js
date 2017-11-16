@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
+import Images from '../../Themes/Images'
 // actions
 import * as actionTypes from '../../actions/catalog'
 
@@ -17,6 +19,7 @@ class CatalogList extends React.Component {
       confirmDelete: false,
       deleteCatalogTemp: '',
       failedDelete: false,
+      isEmpty: false,
       notification: {
         type: 'is-success',
         status: false,
@@ -83,7 +86,8 @@ class CatalogList extends React.Component {
     const { query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(listCatalog)) {
       if (isFound(listCatalog)) {
-        this.setState({ listCatalog })
+        let isEmpty = listCatalog.catalogs.length < 1
+        this.setState({ listCatalog, isEmpty })
         NProgress.done()
       }
       if (isError(listCatalog)) {
@@ -123,7 +127,7 @@ class CatalogList extends React.Component {
   }
 
   render () {
-    const { listCatalog, dropdownSelected, confirmDelete, deleteCatalogTemp, notification, failedDelete, submitting } = this.state
+    const { isEmpty, listCatalog, dropdownSelected, confirmDelete, deleteCatalogTemp, notification, failedDelete, submitting } = this.state
     return (
       <div>
         <Notification
@@ -132,7 +136,7 @@ class CatalogList extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { listCatalog.catalogs.length !== 0 ? listCatalog.catalogs.map(val => {
+        { isEmpty ? <CatalogEmpty /> : listCatalog.catalogs.map(val => {
           return (
             <section className='section is-paddingless bg-white' key={val.id}>
               <div className='data-wrapper'>
@@ -154,7 +158,7 @@ class CatalogList extends React.Component {
               </div>
             </section>
           )
-        }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>Silahkan tambah katalog baru</p>}
+        }) }
         <a className='sticky-button' onClick={(e) => this.toAddCatalog(e)}>
           <span className='txt'>+</span>
         </a>
@@ -181,6 +185,21 @@ class CatalogList extends React.Component {
       </div>
     )
   }
+}
+
+/** orders empty content */
+const CatalogEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyKatalog} alt='notFound' />
+          <p><strong>Katalog kosong</strong></p>
+          <p>Silahkan tambah katalog baru</p>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 const mapStateToProps = (state) => {
