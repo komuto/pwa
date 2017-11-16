@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import dataSaga from '../saga/saga'
 import { sagaMiddleware, store } from '../store'
 import withRedux from 'next-redux-wrapper'
+import Raven from 'raven-js'
 import * as otherActions from '../actions/other'
 import GET_TOKEN from '../Services/GetToken'
 import Content from '../Components/Content'
@@ -39,8 +40,10 @@ export default function reduxWrapper (ReduxComponent) {
       }
       this.state = {
         token: props.token,
-        mustLogin: false
+        mustLogin: false,
+        error: null
       }
+      Raven.config(`https://${AppConfig.raven.secretKey}@sentry.io/${AppConfig.raven.id}`).install()
     }
 
     async componentDidMount () {
@@ -48,6 +51,11 @@ export default function reduxWrapper (ReduxComponent) {
         let token = await GET_TOKEN.getToken()
         this.setState({ token })
       }
+    }
+
+    componentDidCatch (error, errorInfo) {
+      // this.setState({ error })
+      Raven.captureException(error, { extra: errorInfo })
     }
 
     render () {
@@ -72,6 +80,7 @@ export default function reduxWrapper (ReduxComponent) {
             localize={localize}
             isLogin={!!token}
             token={token}
+            error={this.state.error}
             alertLogin={() => this.setState({ mustLogin: true })} />
         </Content>
       )

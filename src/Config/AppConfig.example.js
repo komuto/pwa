@@ -19,19 +19,24 @@ const apiKomuto = isLocalhost ? `https://api.komuto.skyshi.com/` : `https://api.
 
 const midTrans = {
   production: {
-    BASE_URL: 'https://app.midtrans.com/snap/snap.js',
+    BASE_URL: '',
     ACCESS_KEY: {
-      CLIENT_KEY: 'VT-client-Y6pK1V-G7F4a1YgU',
-      SERVER_KEY: 'VT-server-eSA2HQ1rSJOqGnIn4ow9wW6j'
+      CLIENT_KEY: '',
+      SERVER_KEY: ''
     }
   },
   stagging: {
-    BASE_URL: 'https://app.sandbox.midtrans.com/snap/snap.js',
+    BASE_URL: '',
     ACCESS_KEY: {
-      CLIENT_KEY: 'VT-client-hH6v_I1Ycb8ph8O_',
-      SERVER_KEY: 'VT-server-_wU53Pb9SBY_D3ARkrYr_5bD'
+      CLIENT_KEY: '',
+      SERVER_KEY: ''
     }
   }
+}
+
+const raven = {
+  secretKey: '',
+  id: ''
 }
 
 const AppConfig = {
@@ -40,7 +45,8 @@ const AppConfig = {
   serviceUrl,
   apiKomuto,
   languages,
-  midTrans: midTrans.stagging
+  midTrans: midTrans.stagging,
+  raven
 }
 
 export default AppConfig
