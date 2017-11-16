@@ -7,12 +7,12 @@ import NProgress from 'nprogress'
 import InfiniteScroll from 'react-infinite-scroller'
 import _ from 'lodash'
 // components
-import Loading from '../Components/Loading'
-import Images from '../Themes/Images'
-import MyImage from '../Components/MyImage'
-import Notification from '../Components/Notification'
+import Loading from '../../Components/Loading'
+import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
+import Notification from '../../Components/Notification'
 // actions
-import * as userAction from '../actions/user'
+import * as userAction from '../../actions/user'
 
 class DiscussionProduct extends React.Component {
   constructor (props) {

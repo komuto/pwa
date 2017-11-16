@@ -284,12 +284,30 @@ const Cart = (props) => {
           let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
           // calc delivery cost
           let deliveryCost = item.shipping.delivery_cost
+          let price = item.total_price
+          let qty = item.qty
+          let wholesalerSelected = null
           // calc insurance
           let insuranceFee = 0
           if (item.shipping.is_insurance) {
             insuranceFee = item.shipping.insurance_fee
           }
-          let subTotal = item.total_price + deliveryCost + insuranceFee
+
+          // check wholesaler or not
+          item.product.wholesale.forEach(wholesale => {
+            if (qty >= wholesale.min && qty <= wholesale.max) {
+              wholesalerSelected = wholesale
+              return true
+            } else {
+              return false
+            }
+          })
+
+          if (wholesalerSelected) {
+            price = wholesalerSelected.price
+          }
+
+          let subTotal = price + deliveryCost + insuranceFee
           totalPayment += subTotal
           return (
             <section className='section is-paddingless has-shadow' key={item.id}>
@@ -318,7 +336,7 @@ const Cart = (props) => {
                     </div>
                     <div className='column is-half'>
                       <div className='rating-content item-qty has-text-right'>
-                        <span>Rp {RupiahFormat(item.product.price)}</span>
+                        <span>Rp {RupiahFormat(price)}</span>
                       </div>
                     </div>
                   </div>
