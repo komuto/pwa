@@ -22,7 +22,7 @@ class InformationStore extends React.Component {
     this.state = {
       profile: props.profile,
       files: {
-        preview: props.formInfo.store.logo
+        preview: ''
       },
       formInfo: {
         ...props.formInfo.store
@@ -171,7 +171,6 @@ class InformationStore extends React.Component {
         newState.formInfo['path'] = splitLogo.join('/')
         newState.slogan = slogan - profile.user.store.slogan.length
         this.setState(newState)
-        NProgress.done()
       }
     }
     // } else {
@@ -205,7 +204,7 @@ class InformationStore extends React.Component {
     if (!isFetching(upload) && submiting.upload) {
       if (isFound(upload)) {
         this.setState({ submiting: { ...submiting, upload: false } })
-        const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+        const isSetting = query.type === 'settingStore'
         const logo = upload.payload.images[0].name
         const path = upload.payload.path
         const newState = { formInfo }
