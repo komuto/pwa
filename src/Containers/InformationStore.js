@@ -27,7 +27,7 @@ class InformationStore extends React.Component {
       formInfo: {
         ...props.formInfo.store
       },
-      slogan: 25,
+      slogan: 25 - props.formInfo.store.slogan.length,
       validation: false,
       submiting: {
         upload: false,
@@ -160,7 +160,6 @@ class InformationStore extends React.Component {
         this.fetchingFirst = true
         getProfile()
       } else {
-        this.fetchingFirst = false
         const newState = { formInfo, slogan }
         const splitLogo = profile.user.store.logo.split('/')
         const logo = splitLogo.pop() || splitLogo.pop()
@@ -237,6 +236,7 @@ class InformationStore extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { files, formInfo, slogan, notification } = this.state
     const isSetting = this.props.query.type === 'settingStore'
     let logoOnRedux = formInfo.path + '/' + formInfo.logo
