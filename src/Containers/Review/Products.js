@@ -3,15 +3,15 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
 // components
-import MyRating from '../Components/MyRating'
-import Content from '../Components/Content'
-import Images from '../Themes/Images'
-import Notification from '../Components/Notification'
+import MyRating from '../../Components/MyRating'
+import Content from '../../Components/Content'
+import Images from '../../Themes/Images'
+import Notification from '../../Components/Notification'
 import InfiniteScroll from 'react-infinite-scroller'
-import Loading from '../Components/Loading'
-import MyImage from '../Components/MyImage'
+import Loading from '../../Components/Loading'
+import MyImage from '../../Components/MyImage'
 // actions
-import * as reviewActions from '../actions/review'
+import * as reviewActions from '../../actions/review'
 
 class ReviewProducts extends Component {
   constructor (props) {
