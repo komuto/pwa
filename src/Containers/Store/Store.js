@@ -102,16 +102,16 @@ class Store extends Component {
     this.setState({ modalMessage })
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     const { id, store } = this.state
     if (!store.isFound) {
       NProgress.start()
       this.submitting = { ...this.submitting, store: true }
-      await this.props.getStores({ id })
+      this.props.getStores({ id })
     } else if (store.isFound && store.store.id !== id) {
       NProgress.start()
       this.submitting = { ...this.submitting, store: true }
-      await this.props.getStores({ id })
+      this.props.getStores({ id })
     }
 
     Events.scrollEvent.register('end', (to, element) => {
@@ -582,10 +582,10 @@ const ContentProduk = (props) => {
         myStore.catalogs.map((catalog, index) => {
           let listCatalog = catalog.products.map((product, index) => { return props.itemCatalog(product, index) })
           return (
-            <Element name={String(catalog.id)} className={`section is-paddingless`} key={index}>
+            <Element name={`ID${catalog.id}`} className={`section is-paddingless`} key={index}>
               <div className='columns is-mobile view-all'>
                 <div className='column'>
-                  <p>{ ReadAbleText(catalog.name) }</p><p /></div>
+                  <p>{ ReadAbleText(catalog.name) } {String(catalog.id)}</p><p /></div>
                 <div className='column has-text-right'>
                   <span onClick={() =>
                     Router.push(
@@ -616,7 +616,7 @@ const ContentProduk = (props) => {
             {
               myStore.catalogs.map((catalog, index) => {
                 return <li key={index}>
-                  <Link activeClass='active' className={String(catalog.id)} to={String(catalog.id)} spy smooth duration={500}>{ ReadAbleText(catalog.name) }</Link>
+                  <Link to={`ID${catalog.id}`} className={String(catalog.id)} spy smooth duration={500}>{ ReadAbleText(catalog.name) }</Link>
                 </li>
               })
             }
