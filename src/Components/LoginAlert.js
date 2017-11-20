@@ -11,7 +11,7 @@ export default (props) => {
   return (
     <Modal show={show} title={localize.signin} closePress={() => props.close()}>
       <div style={{ textAlign: 'center' }}>
-        <MyImage src={Images.phoneAccount} alt='phoneAccount' />
+        <div style={{ maxWidth: '50%', margin: '0 auto' }}><MyImage src={Images.phoneAccount} alt='phoneAccount' /></div>
         <p>{localize.signin_warning}</p>
         {/* <div className='columns is-mobile'>
         </div> */}

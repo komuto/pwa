@@ -21,6 +21,7 @@ import { HrText } from '../../Components/Hr'
 import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
 import localforage from 'localforage'
+import { animateScroll } from 'react-scroll'
 /** including components */
 import * as constraints from '../../Validations/Auth'
 /** including actions */
@@ -60,6 +61,10 @@ class SignIn extends Component {
       profile: false
     }
     this.onChange = this.onChange.bind(this)
+  }
+
+  scrollToBottom () {
+    animateScroll.scrollToBottom()
   }
 
   onChange (event) {
@@ -134,6 +139,7 @@ class SignIn extends Component {
   }
 
   async componentDidMount () {
+    this.scrollToBottom()
     let { fcmToken } = this.state
     fcmToken = await localforage.getItem('FCM_TOKEN')
     this.setState({ fcmToken })

@@ -5,6 +5,7 @@ import * as EmailValidator from 'email-validator'
 import NProgress from 'nprogress'
 import localforage from 'localforage'
 import Router from 'next/router'
+import { animateScroll } from 'react-scroll'
 // components
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -84,6 +85,10 @@ class SignUp extends Component {
     }
     this.onChange = this.onChange.bind(this)
     this.handleGenderChange = this.handleGenderChange.bind(this)
+  }
+
+  scrollToBottom () {
+    animateScroll.scrollToBottom()
   }
 
   validation (name, value) {
@@ -234,6 +239,7 @@ class SignUp extends Component {
   }
 
   async componentDidMount () {
+    this.scrollToBottom()
     let { fcmToken } = this.state
     fcmToken = await localforage.getItem('FCM_TOKEN')
     this.setState({ fcmToken })
