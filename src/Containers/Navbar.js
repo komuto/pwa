@@ -62,7 +62,7 @@ export class Navbar extends PureComponent {
   }
 
   render () {
-    const { deleteButton, messageType, navbar, productDetail, moreButton, messageButton, productId, share } = this.props
+    const { deleteButton, messageType, navbar, navtab, productDetail, moreButton, messageButton, productId, share } = this.props
     const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage, countCart } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
@@ -166,6 +166,9 @@ export class Navbar extends PureComponent {
                 </ul>
               }
             </div>
+          }
+          {
+            navtab && <Navtab {...navtab} />
           }
         </nav>
         <MoreOptions
