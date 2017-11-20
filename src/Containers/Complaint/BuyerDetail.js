@@ -19,7 +19,7 @@ import Section from '../../Components/Section'
 import Notification, { NotificationBox } from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 import Card, { WrapperMedia, WrapperMediaColoumn, WrapperInfo } from '../../Components/Card'
-import { Navbar, Navtab } from '../Navbar'
+import { Navbar } from '../Navbar'
 /** including actions */
 import * as transactionActions from '../../actions/transaction'
 /** including custom lib */
@@ -36,7 +36,7 @@ class Detail extends Component {
       comment: {
         data: [],
         onChange: (e) => this.onChangeComment(e),
-        onEnter: (e) => this.onEnterComment(e),
+        onSubmit: (e) => this.onSubmitComment(e),
         value: '',
         submitting: false
       },
@@ -82,7 +82,6 @@ class Detail extends Component {
     return (
       <Content>
         <Navbar {...params} />
-        <Navtab {...params.navtab} />
         <Notification
           type={notification.type}
           isShow={notification.status}
@@ -111,24 +110,22 @@ class Detail extends Component {
     })
   }
 
-  onEnterComment (e) {
-    if (e.key === 'Enter') {
-      /** check login status */
-      if (this.props.isLogin) {
-        let { id } = this.state
-        let { value, submitting } = this.state.comment
-        if (value !== '' && !submitting) {
-          this.props.createComplaintDiscussionBuyer({ id, content: value })
-          this.setState({
-            comment: {
-              ...this.state.comment,
-              submitting: true
-            }
-          })
-        }
-      } else {
-        this.props.alertLogin()
+  onSubmitComment () {
+    if (this.props.isLogin) {
+      let { id } = this.state
+      let { value, submitting } = this.state.comment
+      if (value !== '' && !submitting) {
+        this.props.createComplaintDiscussionBuyer({ id, content: value })
+        this.setState({
+          comment: {
+            ...this.state.comment,
+            value: '',
+            submitting: true
+          }
+        })
       }
+    } else {
+      this.props.alertLogin()
     }
   }
 
