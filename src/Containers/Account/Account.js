@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
+import { animateScroll } from 'react-scroll'
 // components
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -31,6 +32,10 @@ class Account extends Component {
       profile: false,
       sendOTPPhone: false
     }
+  }
+
+  scrollToBottom () {
+    animateScroll.scrollToBottom()
   }
 
   handleVerify () {
@@ -64,6 +69,7 @@ class Account extends Component {
   }
 
   async componentDidMount () {
+    this.scrollToBottom()
     this.submitting = { ...this.submitting, profile: true }
     await this.props.getProfile()
   }
@@ -149,7 +155,7 @@ class Account extends Component {
                     <figure className='image user-pict'>
                       {
                         store
-                          ? <div style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'red', padding: 20, backgroundImage: `url(${profile.user.store.logo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+                          ? <div style={{ width: 40, height: 40, borderRadius: 20, padding: 20, backgroundImage: `url(${profile.user.store.logo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
                           : <span className='icon-toko' />
                       }
 
