@@ -90,6 +90,10 @@ class DataRekening extends React.Component {
           this.setState({ notification: notifError(bankAccount.message) })
         }
       }
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        this.setState({ notification: { ...this.state.notification, status: false } })
+      }, 3000)
     }
   }
 

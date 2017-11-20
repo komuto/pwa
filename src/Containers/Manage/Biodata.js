@@ -224,7 +224,7 @@ class ManageBiodata extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { districts, upload, statusUpdateProfile, profile } = nextProps
     const { formBiodata, submiting, uploading, searchDistrict } = this.state
-    const { isFetching, isFound, isError, notifError } = this.props
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(profile) && this.convertToForm) {
       this.convertToForm = false
       NProgress.done()
@@ -273,9 +273,18 @@ class ManageBiodata extends React.Component {
     }
     if (!isFetching(statusUpdateProfile) && submiting) {
       this.setState({ submiting: false })
-      const href = `/manage-account?isSuccess`
-      const as = '/manage/account'
-      Router.push(href, as)
+      if (isFound(statusUpdateProfile)) {
+        this.setState({ notification: notifSuccess(statusUpdateProfile.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          const href = `/manage-account?isSuccess`
+          const as = '/manage/account'
+          Router.push(href, as)
+        }, 3000)
+      }
+      if (isError(statusUpdateProfile)) {
+        this.setState({ notification: notifError(statusUpdateProfile.message) })
+      }
     }
   }
 
