@@ -5509,6 +5509,8 @@ strong {
   padding-bottom: 46px;
   min-height: 100%;
   overflow: hidden; }
+  .main.disc {
+    padding-top: 105px; }
   .main.home {
     padding-top: 119px; }
   .main.seller-info {
@@ -7059,6 +7061,12 @@ strong.total {
 
 .home .level.header {
   height: auto; }
+
+.disc .level.header .nav-tabs {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: -41px; }
 
 .header-search .control {
   position: inherit; }
@@ -10256,6 +10264,9 @@ strong.total {
       right: 15px;
       background-color: transparent;
       border: none; }
+      .add-comment .control button:focus {
+        border: none;
+        outline: 0 none !important; }
   .add-comment .textarea {
     border-radius: 0;
     border: none;
