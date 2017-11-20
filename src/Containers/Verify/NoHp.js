@@ -99,7 +99,7 @@ class VerifyNoTelp extends React.Component {
       if (isFound(stateVerifyPhone)) {
         const href = `/nomor-handphone?isSuccess`
         const as = 'nomor-handphone'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
       if (isError(stateVerifyPhone)) {
         this.setState({ notification: notifError(stateVerifyPhone.message) })

@@ -45,6 +45,10 @@ class NomorHandphone extends React.Component {
       if (!isFetching(verifyPhone)) {
         if (isFound(verifyPhone)) {
           this.setState({ notification: notifSuccess(verifyPhone.message) })
+          if (this.timeout) clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.setState({ notification: { ...this.state.notification, status: false } })
+          }, 3000)
         }
         if (isError(verifyPhone)) {
           this.setState({ notification: notifError(verifyPhone.message) })

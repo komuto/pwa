@@ -91,12 +91,12 @@ class AddEditCatalog extends Component {
       if (isFound(statusCreateCatalog)) {
         const href = `/catalog-list?isSuccess`
         const as = 'catalog-list'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
       if (isError(statusCreateCatalog)) {
         const href = `/catalog-list?isSuccess`
         const as = 'catalog-list'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
     }
     if (!isFetching(statusUpdateCatalog) && submiting.update) {
@@ -104,12 +104,12 @@ class AddEditCatalog extends Component {
       if (isFound(statusUpdateCatalog)) {
         const href = `/catalog-list?isSuccess`
         const as = 'catalog-list'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
       if (isError(statusUpdateCatalog)) {
         const href = `/catalog-list?isSuccess`
         const as = 'catalog-list'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
     }
     if (!isFetching(statusGetCatalog) && fetchingFirst) {

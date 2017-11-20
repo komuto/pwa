@@ -59,7 +59,7 @@ class ManageAccount extends Component {
       this.setState({ submitSignOut: false })
       const href = `/profile?isSignOut`
       const as = 'profile'
-      Router.push(href, as, { shallow: true })
+      Router.push(href, as)
       NProgress.done()
     }
   }

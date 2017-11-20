@@ -288,7 +288,7 @@ class EditAddress extends React.Component {
       this.setState({ submiting: false })
       const href = `/manage-address?isSuccess`
       const as = 'manage-address'
-      Router.push(href, as, { shallow: true })
+      Router.push(href, as)
     }
   }
 

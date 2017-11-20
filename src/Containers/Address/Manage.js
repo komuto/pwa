@@ -93,6 +93,10 @@ class DataAddress extends React.Component {
       if (!isFetching(addAddress)) {
         if (isFound(addAddress)) {
           this.setState({ notification: notifSuccess(addAddress.message) })
+          if (this.timeout) clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.setState({ notification: { ...this.state.notification, status: false } })
+          }, 3000)
         }
         if (isError(addAddress)) {
           this.setState({ notification: notifError(addAddress.message) })
@@ -101,6 +105,10 @@ class DataAddress extends React.Component {
       if (!isFetching(updateAddress)) {
         if (isFound(updateAddress)) {
           this.setState({ notification: notifSuccess(updateAddress.message) })
+          if (this.timeout) clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.setState({ notification: { ...this.state.notification, status: false } })
+          }, 3000)
         }
         if (isError(updateAddress)) {
           this.setState({ notification: notifError(updateAddress.message) })

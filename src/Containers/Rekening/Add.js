@@ -121,7 +121,7 @@ class AddRekening extends React.Component {
       if (isFound(statusSendOTPBank)) {
         const href = `/verify-otp-bank?${this.state.queryCodeBank}`
         const as = 'verify-otp-bank'
-        Router.push(href, as, { shallow: true })
+        Router.push(href, as)
       }
       if (isError(statusSendOTPBank)) {
         this.setState({ notification: notifError(statusSendOTPBank.message) })
