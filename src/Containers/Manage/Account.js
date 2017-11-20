@@ -32,7 +32,7 @@ class ManageAccount extends Component {
   }
 
   componentDidMount () {
-    const { query, changePassword, statusUpdateProfile, isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const { query, changePassword, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     this.props.getProfile()
     if (query.hasOwnProperty('isSuccess')) {
       if (!isFetching(changePassword)) {
@@ -41,14 +41,6 @@ class ManageAccount extends Component {
         }
         if (isError(changePassword)) {
           this.setState({ notification: notifError(changePassword.message) })
-        }
-      }
-      if (!isFetching(statusUpdateProfile)) {
-        if (isFound(statusUpdateProfile)) {
-          this.setState({ notification: notifSuccess(statusUpdateProfile.message) })
-        }
-        if (isError(statusUpdateProfile)) {
-          this.setState({ notification: notifError(statusUpdateProfile.message) })
         }
       }
     }
@@ -289,8 +281,7 @@ const mapStateToProps = (state) => {
     profileUser: state.profile,
     changePassword: state.changePassword,
     user: state.user,
-    isLogin: state.isLogin,
-    statusUpdateProfile: state.updateProfile
+    isLogin: state.isLogin
   }
 }
 
