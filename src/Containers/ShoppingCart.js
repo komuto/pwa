@@ -294,14 +294,16 @@ const Cart = (props) => {
           }
 
           // check wholesaler or not
-          item.product.wholesale.forEach(wholesale => {
-            if (qty >= wholesale.min && qty <= wholesale.max) {
-              wholesalerSelected = wholesale
-              return true
-            } else {
-              return false
-            }
-          })
+          if (item.product.wholesale) {
+            item.product.wholesale.forEach(wholesale => {
+              if (qty >= wholesale.min && qty <= wholesale.max) {
+                wholesalerSelected = wholesale
+                return true
+              } else {
+                return false
+              }
+            })
+          }
 
           if (wholesalerSelected) {
             price = wholesalerSelected.price
