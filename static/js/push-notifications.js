@@ -92,3 +92,76 @@ messaging.setBackgroundMessageHandler((payload) => {
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// export const sellerNotification = {
+//   MESSAGE: {
+//     body: 'Anda memiliki pesan baru',
+//     type: 'SELLER_MESSAGE',
+//   },
+//   CREATE_DISCUSSION: {
+//     body: 'Anda memiliki diskusi baru',
+//     type: 'SELLER_CREATE_DISCUSSION',
+//   },
+//   COMMENT_DISCUSSION: {
+//     body: 'Anda memiliki komentar baru',
+//     type: 'SELLER_COMMENT_DISCUSSION',
+//   },
+//   REVIEW: {
+//     body: 'Anda memiliki review baru',
+//     type: 'SELLER_REVIEW',
+//   },
+//   TRANSACTION: {
+//     body: 'Anda memiliki pesanan baru',
+//     type: 'SELLER_TRANSACTION',
+//   },
+//   ORDER_RECEIVED: {
+//     body: 'Pesanan telah diterima oleh pembeli',
+//     type: 'SELLER_ORDER_RECEIVED',
+//   },
+//   ORDER_COMPLAINED_REFUND: {
+//     body: 'Pembeli mengajukan refund',
+//     type: 'SELLER_ORDER_COMPLAINED_REFUND',
+//   },
+//   ORDER_COMPLAINED_EXCHANGE: {
+//     body: 'Pembeli mengajukan tukar barang baru',
+//     type: 'SELLER_ORDER_COMPLAINED_EXCHANGE',
+//   },
+// };
+
+// export const buyerNotification = {
+//   MESSAGE: {
+//     body: 'Anda memiliki pesan baru',
+//     type: 'BUYER_MESSAGE',
+//   },
+//   COMMENT_DISCUSSION: {
+//     body: 'Penjual mengomentari diskusi Anda',
+//     type: 'BUYER_COMMENT_DISCUSSION',
+//   },
+//   ORDER_PROCEED: {
+//     body: 'Pesanan Anda sedang diproses',
+//     type: 'BUYER_ORDER_PROCEED',
+//   },
+//   ORDER_SENT: {
+//     body: 'Pesanan Anda telah dikirim',
+//     type: 'BUYER_ORDER_SENT',
+//   },
+//   ORDER_REJECTED: {
+//     body: 'Pesanan Anda ditolak oleh penjual',
+//     type: 'BUYER_ORDER_REJECTED',
+//   },
+// };
+
+// - SELLER_MESSAGE = message_id
+// - SELLER_CREATE_DISCUSSION = discussion_id, product_id
+// - SELLER_COMMENT_DISCUSSION = discussion_id, product_id
+// - SELLER_REVIEW = product_id
+// - SELLER_TRANSACTION = invoice_id
+// - SELLER_ORDER_RECEIVED = invoice_id
+// - SELLER_ORDER_COMPLAINED_REFUND = dispute_id
+// - SELLER_ORDER_COMPLAINED_EXCHANGE = dispute_id
+
+// - BUYER_MESSAGE = message_id
+// - BUYER_COMMENT_DISCUSSION = discussion_id, product_id
+// - BUYER_ORDER_PROCEED = bucket_id, invoice_id
+// - BUYER_ORDER_SENT = bucket_id, invoice_id
+// - BUYER_ORDER_REJECTED = bucket_id, invoice_id

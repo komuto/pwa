@@ -76,6 +76,7 @@ class MyProduct extends Component {
     })
     this.filterRealizationStatus = false
     this.wishlistId = null
+    this.wishlistReadyToCick = true
     this.params = {}
     this.element = []
 
@@ -88,6 +89,7 @@ class MyProduct extends Component {
       districts: false,
       brands: false,
       addWishlist: false,
+      resetAddToWishlist: false,
       sortStatus: false
     }
   }
@@ -122,9 +124,12 @@ class MyProduct extends Component {
   /** handling wishlist / love button press */
   wishlistPress (id) {
     if (this.props.isLogin) {
-      this.wishlistId = id
-      this.submitting = { ...this.submitting, addWishlist: true }
-      this.props.addToWishlist({ id })
+      if (this.wishlistReadyToCick) {
+        this.wishlistId = id
+        this.wishlistReadyToCick = false
+        this.submitting = { ...this.submitting, addWishlist: true }
+        this.props.addToWishlist({ id })
+      }
     } else {
       this.props.alertLogin()
     }
@@ -459,7 +464,6 @@ class MyProduct extends Component {
 
     /** handling state addWishlist, when user click love buntton */
     if (!isFetching(addWishlist) && this.submitting.addWishlist) {
-      this.submitting = { ...this.submitting, addWishlist: false }
       if (isError(addWishlist)) {
         this.setState({ notification: notifError(addWishlist.message) })
       }
@@ -468,16 +472,28 @@ class MyProduct extends Component {
         productBySearch.products.some((product) => {
           if (product.product.id === this.wishlistId) {
             product.product.is_liked = addWishlist.wishlist.is_liked
+            let minCountLiked = 0
             if (addWishlist.wishlist.is_liked) {
               product.product.count_like += 1
             } else {
-              product.product.count_like -= 1
+              if (product.product.count_like > minCountLiked) {
+                product.product.count_like -= 1
+              }
             }
             return true
           }
         })
         this.wishlistId = null
         this.setState({ productBySearch })
+        this.submitting = { ...this.submitting, addWishlist: false, resetAddToWishlist: true }
+      }
+    }
+
+    if (this.submitting.resetAddToWishlist) {
+      this.props.resetAddToWishlist()
+      if (!addWishlist.isFound) {
+        this.wishlistReadyToCick = true
+        this.submitting = { ...this.submitting, resetAddToWishlist: false }
       }
     }
   }
@@ -659,6 +675,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getDistrict: (params) => dispatch(locationActions.getDistrict(params)),
   addToWishlist: (params) => dispatch(productActions.addToWishlist(params)),
+  resetAddToWishlist: (params) => dispatch(productActions.resetAddToWishlist(params)),
   listProductBySearch: (params) => dispatch(productActions.listProductBySearch(params)),
   getSubCategory: (params) => dispatch(homeActions.subCategory(params)),
   getServices: () => dispatch(expeditionActions.getServices()),

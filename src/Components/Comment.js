@@ -1,6 +1,5 @@
 import Content from './Content'
 // import Section from './Section'
-import MyImage from './MyImage'
 import moment from 'moment'
 moment.locale('id')
 
@@ -19,10 +18,10 @@ export const List = ({ data, messagesEnd }) => {
       <div className='discuss'>
         <ul className='notif-detail'>
           {
-          data.map((data, index) => (
-            <Item key={index} data={data} />
-          ))
-        }
+            data.map((data, index) => (
+              <Item key={index} data={data} />
+            ))
+          }
           <div
             style={{ float: 'left', clear: 'both' }}
             ref={(el) => { messagesEnd = el }} />
@@ -39,7 +38,7 @@ export const Item = ({ data }) => (
       <article className='media'>
         <div className='media-left top is-full-bordered'>
           <figure className='image list-transaction xs'>
-            <MyImage src={data.user.photo} alt='pict' />
+            <div style={{ width: '100%', height: '100%', borderRadius: 20, backgroundImage: `url(${data.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
           </figure>
         </div>
         <div className='media-content'>
@@ -56,19 +55,23 @@ export const Item = ({ data }) => (
   </li>
 )
 /** add new discussion */
-export const New = ({ onChange, onEnter, value, submitting }) => (
-  <div className='add-comment' style={{ position: 'fixed' }}>
-    <div className='field'>
-      <p className='control'>
-        <span className={`${submitting && 'button self is-loading right'}`} />
-        <input
-          onChange={onChange}
-          value={value}
-          onKeyPress={onEnter}
-          className='textarea'
-          placeholder='Tulis Komentar'
-          readOnly={submitting} />
-      </p>
+export const New = ({ onSubmit, onChange, value, submitting }) => {
+  let isActive = false
+  if (value !== '') {
+    isActive = true
+  }
+
+  if (submitting) {
+    isActive = false
+  }
+  return (
+    <div className='add-comment'>
+      <div className='field'>
+        <p className='control'>
+          <textarea onChange={onChange} value={submitting ? 'Loading...' : value} className='textarea' placeholder={`${'Tulis pesan Anda disini'}`} readOnly={submitting} />
+          <button onClick={() => isActive && onSubmit()} className={`icon-btn-send-inactive ${(isActive) ? 'active' : ''}`} />
+        </p>
+      </div>
     </div>
-  </div>
-)
+  )
+}

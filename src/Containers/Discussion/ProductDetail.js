@@ -29,11 +29,7 @@ class DiscussionProductDetail extends React.Component {
         page: 1,
         limit: 10
       },
-      notification: {
-        type: 'is-success',
-        status: false,
-        message: 'Error, default message.'
-      }
+      notification: props.notification
     }
     this.sendQuestion = false
     this.hasMore = false

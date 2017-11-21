@@ -260,7 +260,7 @@ class AddressInfo extends React.Component {
     if (!isFound(expeditions)) {
       getExpedition()
     }
-    if (this.props.hasOwnProperty('query') && query.type === 'settingStore') {
+    if (query.type === 'settingStore') {
       if (!isFound(storeAddress)) {
         NProgress.start()
         this.setState({ fetchingFirst: true }, () => {

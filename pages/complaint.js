@@ -29,7 +29,7 @@ const Index = (props) => {
     /** detail page */
     if (id && !sub) {
       const params = {
-        style: 'main detail bg-grey',
+        style: 'main detail bg-grey disc',
         header: {
           title: 'Detail Komplain Barang'
         }
