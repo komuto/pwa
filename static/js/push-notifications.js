@@ -77,7 +77,7 @@ self.addEventListener('notificationclick', (event) => {
 
 messaging.setBackgroundMessageHandler((payload) => {
   let data = JSON.parse(payload.data.custom_notification);
-  let notificationTitle = `KOMUTO : ${data.title}`;
+  let notificationTitle = `${data.title}`;
   let notificationOptions = {
     body: data.body,
     icon: 'https://image.flaticon.com/icons/png/128/107/107822.png',
