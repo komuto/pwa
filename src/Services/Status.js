@@ -1,3 +1,6 @@
+import Router from 'next/router'
+import AppConfig from '../Config/AppConfig'
+
 export const Status = {
   DEFAULT: 0,
   SUCCESS: 200,
@@ -68,6 +71,7 @@ export const isError = ({ status, isFound }) => {
   } else if (status === Status.FAILED) {
     return true
   } else if (status === Status.UNAUTHORIZED) {
+    Router.push(`${AppConfig.baseURL}signin`)
     return true
   } else if (status === Status.BAD_GATEWAY) {
     return true
