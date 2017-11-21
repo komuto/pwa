@@ -20,12 +20,12 @@ class Level2 extends Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      subCategory: props.subCategory || [],
+      subCategory2: props.subCategory2 || [],
       type: props.query.type || null,
       notification: props.notification
     }
     this.submitting = {
-      subCategory: false
+      subCategory2: false
     }
   }
 
@@ -74,31 +74,31 @@ class Level2 extends Component {
   componentDidMount () {
     const { id } = this.state
     if (id) {
-      this.submitting = { ...this.submitting, subCategory: true }
+      this.submitting = { ...this.submitting, subCategory2: true }
       NProgress.start()
-      this.props.getSubCategory({ id })
+      this.props.getSubCategory2({ id })
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { subCategory } = nextProps
+    const { subCategory2 } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(subCategory) && this.submitting.subCategory) {
+    if (!isFetching(subCategory2) && this.submitting.subCategory2) {
       NProgress.done()
-      this.submitting = { ...this.submitting, subCategory: false }
-      if (isError(subCategory)) {
-        this.setState({ notification: notifError(subCategory.message) })
+      this.submitting = { ...this.submitting, subCategory2: false }
+      if (isError(subCategory2)) {
+        this.setState({ notification: notifError(subCategory2.message) })
       }
-      if (isFound(subCategory)) {
-        this.setState({ subCategory })
+      if (isFound(subCategory2)) {
+        this.setState({ subCategory2 })
       }
     }
   }
 
   render () {
     console.log('category2', this.state)
-    const { subCategory, notification } = this.state
-    const { categories } = subCategory
+    const { subCategory2, notification } = this.state
+    const { categories } = subCategory2
     const params = {
       navbar: {
         searchBoox: false,
@@ -143,11 +143,11 @@ class Level2 extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  subCategory: state.subCategory
+  subCategory2: state.subCategory2
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getSubCategory: (params) => dispatch(homeActions.subCategory(params))
+  getSubCategory2: (params) => dispatch(homeActions.subCategory2(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Level2)
