@@ -146,20 +146,21 @@ class ProductDeleteInCatalog extends React.Component {
 
     if (!isFetching(alterProducts) && this.submiting) {
       this.submiting = false
+      this.setState({ confirmDelete: false })
       if (isFound(alterProducts)) {
         let newData = storeProductsByCatalog.products.filter(data => this.state.selectedProducts.indexOf(data.id) < 0)
         let newListProduct = {
           ...storeProductsByCatalog, products: newData
         }
         this.setState({ storeProductsByCatalog: newListProduct, notification: notifSuccess(alterProducts.message) })
-        if (this.timeout) clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          Router.back()
-        }, 3000)
       }
       if (isError(alterProducts)) {
         this.setState({ notification: notifError(alterProducts.message) })
       }
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        Router.back()
+      }, 3000)
     }
   }
 

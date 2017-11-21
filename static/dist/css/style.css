@@ -6677,7 +6677,7 @@ strong.total {
   .menu-top .option-dropdown {
     display: none;
     position: absolute;
-    top: 10px;
+    top: 40px;
     right: 0;
     box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.15);
     min-width: 110px;
@@ -6695,8 +6695,6 @@ strong.total {
         white-space: nowrap; }
   .menu-top.open .option-dropdown {
     display: block; }
-  .menu-top.open .option-content {
-    visibility: hidden; }
 
 .tag {
   border-radius: 3px; }

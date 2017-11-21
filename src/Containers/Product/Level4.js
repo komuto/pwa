@@ -15,7 +15,7 @@ import { Navbar } from '../../Containers/Navbar'
 // actions
 import * as homeActions from '../../actions/home'
 
-class Level3 extends Component {
+class Level4 extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -95,7 +95,7 @@ class Level3 extends Component {
   }
 
   render () {
-    console.log('category3', this.state)
+    console.log('category4', this.state)
     const { subCategory, notification } = this.state
     const { categories } = subCategory
     const params = {
@@ -148,4 +148,4 @@ const mapDispatchToProps = (dispatch) => ({
   getSubCategory: (params) => dispatch(homeActions.subCategory(params))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Level3)
+export default connect(mapStateToProps, mapDispatchToProps)(Level4)

@@ -61,9 +61,11 @@ class ProductList extends Component {
   handleDropdown (e, id) {
     e.preventDefault()
     const { dropdownSelected } = this.state
-    const newState = { dropdownSelected }
-    newState.dropdownSelected = id
-    this.setState(newState)
+    if (id === dropdownSelected) {
+      this.setState({ dropdownSelected: '' })
+    } else {
+      this.setState({ dropdownSelected: id })
+    }
   }
 
   productHidden (e, id) {

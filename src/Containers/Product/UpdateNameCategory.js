@@ -148,7 +148,6 @@ class ProductUpdateNameCategory extends Component {
     const { storeProductDetail, form } = this.state
     const { alterProducts, category, subCategory, subCategory2, subCategory3, brands } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-
     if (!isFetching(category)) {
       NProgress.done()
       if (isFound(category)) {
@@ -346,7 +345,6 @@ class ProductUpdateNameCategory extends Component {
                       <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         subCategory.isFound &&
-                        form.categoryOne &&
                         subCategory.categories.sub_categories.map((sc) => {
                           return <option key={sc.id} value={sc.id}> {sc.name} </option>
                         })
