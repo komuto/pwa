@@ -72,6 +72,38 @@ if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined' && 's
    */
   messaging.onMessage(function (payload) {
     console.log('Message received. ', payload)
+    // let data = JSON.parse(payload.data.custom_notification);
+    // let notificationTitle = `${data.title}`;
+    // let notificationOptions = {
+    //   body: data.body,
+    //   icon: 'https://image.flaticon.com/icons/png/128/107/107822.png',
+    //   // options event
+    //   actions: [
+    //     {action: 'confirmAttendance', title: '👍 Confirm attendance'},
+    //     {action: 'cancel', title: '👎 Not coming'}
+    //   ],
+    //   // For additional data to be sent to event listeners, needs to be set in this data {}
+    //   data: {confirm: data.confirm, decline: data.decline, open: data.open}
+    // };
+    // return self.registration.showNotification(notificationTitle, notificationOptions);
+    const data = JSON.parse(payload.data.custom_notification)
+    const notificationTitle = `${data.title}`
+    const notificationOptions = {
+      body: data.body,
+      icon: 'https://image.flaticon.com/icons/png/128/107/107822.png'
+    }
+
+    if (!('Notification' in window)) {
+      console.log('This browser does not support system notifications')
+    } else if (Notification.permission === 'granted') {
+      // If it's okay let's create a notification
+      var notification = new Notification(notificationTitle, notificationOptions)
+      notification.onclick = function (event) {
+        event.preventDefault() // prevent the browser from focusing the Notification's tab
+        window.open(data.click_action, '_blank')
+        notification.close()
+      }
+    }
   })
 }
 
