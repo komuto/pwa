@@ -78,6 +78,10 @@ class DataAddress extends React.Component {
           ...listAddress, address: newData
         }
         this.setState({ listAddress: newListAddress, notification: notifSuccess(statusDeleteAddress.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.setState({ notification: { ...this.state.notification, status: false } })
+        }, 3000)
       }
       if (isError(statusDeleteAddress)) {
         this.setState({ notification: notifError(statusDeleteAddress.message) })

@@ -69,12 +69,7 @@ class AddAddress extends React.Component {
     // set location
     switch (name) {
       case 'province_id':
-        const newProvince = { provinces }
-        newProvince.provinces['selected'] = value
-        const newDistrict = { districts }
-        newDistrict.districts['selected'] = value
-        this.setState(newProvince)
-        this.setState(newDistrict)
+        this.setState({ provinces: { ...provinces, selected: value }, districts: { ...districts, selected: value } })
         getDistrict({ province_id: value })
         break
       case 'district_id':
@@ -167,10 +162,9 @@ class AddAddress extends React.Component {
     let aliasAddressRequired = aliasAddress.length > 0
     let isValid = provinceIdRequired && districtIdRequired && subDistrictIdRequired && villageIdRequired && addressRequired && postalCodeRequired && nameRequired && phoneNumberRequired && aliasAddressRequired
     if (isValid) {
-      const newSubmitting = { submiting }
+      const newSubmitting = { submiting, validation: false }
       newSubmitting.submiting = true
       this.setState(newSubmitting)
-      this.setState({ validation: false })
       this.proccessCreateAddress()
     } else {
       this.setState({ validation: true })
@@ -247,8 +241,8 @@ class AddAddress extends React.Component {
     if (!isFetching(nextProps.statusAddAddress) && submiting) {
       this.setState({ submiting: false })
       const href = `/manage-address?isSuccess`
-      const as = 'data-address'
-      Router.push(href, as, { shallow: true })
+      const as = 'manage-address'
+      Router.push(href, as)
     }
   }
 
