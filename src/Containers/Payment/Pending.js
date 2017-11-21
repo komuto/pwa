@@ -1,6 +1,7 @@
 import React from 'react'
 import Router from 'next/router'
 import MyImage from '../../Components/MyImage'
+import Images from '../../Themes/Images'
 // themes
 // import Images from '../Themes/Images'
 
@@ -9,9 +10,9 @@ export default () => {
     <section className='content'>
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
-          <MyImage src={null} alt='imageNull' />
-          <p><strong>Pembayaran gagal </strong></p>
-          <p>Maaf, pembayaran yang anda lakukan gagal</p>
+          <MyImage src={Images.transaksiDetail} alt='imageNull' />
+          <p><strong>Pembayaran sedang di proses </strong></p>
+          <p>Terimakasih telah menunggu, pembayaran sedang kami proses.</p>
         </div>
         <div className='columns is-mobile'>
           <div className='column'>
