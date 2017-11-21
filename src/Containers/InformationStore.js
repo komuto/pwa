@@ -201,8 +201,8 @@ class InformationStore extends React.Component {
       }
     }
     if (!isFetching(upload) && submiting.upload) {
+      this.setState({ submiting: { ...submiting, upload: false } })
       if (isFound(upload)) {
-        this.setState({ submiting: { ...submiting, upload: false } })
         const isSetting = query.type === 'settingStore'
         const logo = upload.payload.images[0].name
         const path = upload.payload.path

@@ -90,20 +90,20 @@ class ProductUpdateNameCategory extends Component {
       return
     }
 
-    if (form.categoryOne === undefined) {
-      this.setState({ error: 'categoryOne' })
-      return
-    }
+    // if (form.categoryOne === undefined) {
+    //   this.setState({ error: 'categoryOne' })
+    //   return
+    // }
 
-    if (form.categoryTwo === undefined) {
-      this.setState({ error: 'categoryTwo' })
-      return
-    }
+    // if (form.categoryTwo === undefined) {
+    //   this.setState({ error: 'categoryTwo' })
+    //   return
+    // }
 
-    if (form.categoryThree === undefined) {
-      this.setState({ error: 'categoryThree' })
-      return
-    }
+    // if (form.categoryThree === undefined) {
+    //   this.setState({ error: 'categoryThree' })
+    //   return
+    // }
 
     if (form.category_id === undefined) {
       this.setState({ error: 'category_id' })
@@ -116,13 +116,27 @@ class ProductUpdateNameCategory extends Component {
     }
     this.submiting = true
     const brandId = form.brand_id ? form.brand_id : 0
+    let categoryId
+    if (form.category_id) {
+      categoryId = form.category_id
+      if (form.categoryOne) {
+        categoryId = form.categoryOne
+        if (form.categoryTwo) {
+          categoryId = form.categoryTwo
+          if (form.categoryThree) {
+            categoryId = form.categoryThree
+          }
+        }
+      }
+    }
     const params = {
       id: this.state.id,
       name: form.name,
-      category_id: form.category_id,
+      category_id: categoryId,
       brand_id: brandId,
       description: form.description
     }
+    console.log('categoriId', params)
     this.props.updateProduct(params)
   }
 
@@ -289,6 +303,7 @@ class ProductUpdateNameCategory extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { form, category, subCategory, subCategory2, subCategory3, brands, error, notification } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',

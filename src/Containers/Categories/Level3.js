@@ -20,20 +20,20 @@ class Level3 extends Component {
     super(props)
     this.state = {
       id: props.query.id || null,
-      subCategory: props.subCategory || [],
+      subCategory3: props.subCategory3 || [],
       type: props.query.type || null,
       notification: props.notification
     }
     this.submitting = {
-      subCategory: false
+      subCategory3: false
     }
   }
   componentDidMount () {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      this.submitting = { ...this.submitting, subCategory: true }
-      this.props.getSubCategory({ id })
+      this.submitting = { ...this.submitting, subCategory3: true }
+      this.props.getSubCategory3({ id })
     }
   }
 
@@ -58,46 +58,46 @@ class Level3 extends Component {
     }
   }
 
-  handleSubCategoryRouter (categories, category) {
-    const { type } = this.state
-    if (type === 'dropship') {
-      Router.push(
-        url.format({
-          pathname: '/dropship',
-          query: {id: category.id}
-        }),
-        `/d/${categories.slug}/${category.slug}/${category.id}`
-      )
-    } else {
-      Router.push(
-        url.format({
-          pathname: '/categories4',
-          query: {id: category.id}
-        }),
-        `/c/${categories.slug}/${category.slug}/${category.id}`
-      )
-    }
-  }
+  // handleSubCategoryRouter (categories, category) {
+  //   const { type } = this.state
+  //   if (type === 'dropship') {
+  //     Router.push(
+  //       url.format({
+  //         pathname: '/dropship',
+  //         query: {id: category.id}
+  //       }),
+  //       `/d/${categories.slug}/${category.slug}/${category.id}`
+  //     )
+  //   } else {
+  //     Router.push(
+  //       url.format({
+  //         pathname: '/categories3',
+  //         query: {id: category.id}
+  //       }),
+  //       `/c/${categories.slug}/${category.slug}/${category.id}`
+  //     )
+  //   }
+  // }
 
   componentWillReceiveProps (nextProps) {
-    const { subCategory } = nextProps
+    const { subCategory3 } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(subCategory) && this.submitting.subCategory) {
-      this.submitting = { ...this.submitting, subCategory: false }
+    if (!isFetching(subCategory3) && this.submitting.subCategory3) {
+      this.submitting = { ...this.submitting, subCategory3: false }
       NProgress.done()
-      if (isError(subCategory)) {
-        this.setState({ notification: notifError(subCategory.message) })
+      if (isError(subCategory3)) {
+        this.setState({ notification: notifError(subCategory3.message) })
       }
-      if (isFound(subCategory)) {
-        this.setState({ subCategory })
+      if (isFound(subCategory3)) {
+        this.setState({ subCategory3 })
       }
     }
   }
 
   render () {
     console.log('category3', this.state)
-    const { subCategory, notification } = this.state
-    const { categories } = subCategory
+    const { subCategory3, notification } = this.state
+    const { categories } = subCategory3
     const params = {
       navbar: {
         searchBoox: false,
@@ -128,7 +128,7 @@ class Level3 extends Component {
                 return <List
                   icon={category.icon}
                   key={category.id}
-                  onClick={() => this.handleSubCategoryRouter(categories, category)}
+                  onClick={() => this.handleCategoryRouter(category)}
                   name={category.name} />
               })
               : null
@@ -141,11 +141,11 @@ class Level3 extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  subCategory: state.subCategory
+  subCategory3: state.subCategory3
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getSubCategory: (params) => dispatch(homeActions.subCategory(params))
+  getSubCategory3: (params) => dispatch(homeActions.subCategory3(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Level3)
