@@ -105,7 +105,8 @@
       "FileReader",
       "getForm",
       "snap",
-      "hostNameServer"
+      "hostNameServer",
+      "Notification"
     ]
   }
 }
