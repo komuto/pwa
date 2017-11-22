@@ -53,16 +53,17 @@ class Header extends Component {
 
   render () {
     const { title, marketplace } = this.state
+    const hostName = `https://${marketplace.data.mobile_domain}/`
     return (
       <Head>
         <title>{ title }</title>
-        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.min.css`} />
-        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.min.css`} />
-        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} />
-        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} />
-        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/style.min.css`} />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/effect.min.css`} />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/nprogress.min.css`} />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/react-infinite-calendar.min.css`} />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/notify.min.css`} />
         <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
-        <link rel='manifest' href={`https://${marketplace.data.mobile_domain}/manifest.json`} />
+        <link rel='manifest' href={`${hostName}manifest.json`} />
       </Head>
     )
   }
