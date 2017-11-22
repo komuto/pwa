@@ -29,10 +29,6 @@ class InformationStore extends React.Component {
       },
       slogan: 25 - props.formInfo.store.slogan.length,
       validation: false,
-      submiting: {
-        upload: false,
-        updateStore: false
-      },
       notification: {
         type: 'is-success',
         status: false,
@@ -40,6 +36,7 @@ class InformationStore extends React.Component {
       }
     }
     this.fetchingFirst = false
+    this.submiting = { upload: false, updateStore: false, createStore: false }
   }
 
   onDrop (files) {
@@ -59,12 +56,18 @@ class InformationStore extends React.Component {
     let { formInfo, slogan } = this.state
     const newState = { formInfo }
     const newStateSlogan = { slogan }
+    if (name === 'name') {
+      if (value.length <= 20) {
+        newState.formInfo[name] = value
+      }
+    }
     if (name === 'slogan') {
       if (value.length < 26) {
         newStateSlogan.slogan = 25 - value.length
         newState.formInfo[name] = value
       }
-    } else {
+    }
+    if (name === 'description') {
       newState.formInfo[name] = value
     }
     this.setState(newState)
@@ -78,7 +81,7 @@ class InformationStore extends React.Component {
     let slogan = formInfo.slogan
     let description = formInfo.description
     let logoRequired = name === 'image' && logo
-    let nameRequired = name === 'name' && nameStore.length > 0
+    let nameRequired = name === 'name' && nameStore.length >= 3 && nameStore.length <= 20
     let sloganLength = name === 'slogan' && slogan.length >= 10 && slogan.length <= 25
     let descRequired = name === 'description' && description.length > 0
     let result = logoRequired || nameRequired || sloganLength || descRequired
@@ -97,7 +100,7 @@ class InformationStore extends React.Component {
   }
 
   postInfoStore () {
-    const { formInfo, submiting, files } = this.state
+    const { formInfo, files } = this.state
     const { tempCreateStore, updateInformation, query } = this.props
     const isSetting = query.type === 'settingStore'
     let logo = files
@@ -105,20 +108,21 @@ class InformationStore extends React.Component {
     let slogan = formInfo.slogan
     let description = formInfo.description
     let logoRequired = logo.preview !== '' || formInfo.logo !== ''
-    let nameRequired = nameStore.length > 0
+    let nameRequired = nameStore.length >= 3 && nameStore.length <= 20
     let sloganLength = slogan.length >= 10 && slogan.length <= 25
     let descRequired = description.length > 0
     let isValid = logoRequired && nameRequired && sloganLength && descRequired
     if (isValid) {
       this.setState({ validation: false })
       if (files.preview !== '' && files.preview !== formInfo.logo) {
-        this.setState({ submiting: { ...submiting, upload: true } })
+        this.submiting = { ...this.submiting, upload: true }
         this.handleUploadImage()
       } else {
         if (isSetting) {
-          this.setState({ submiting: { ...submiting, updateStore: true } })
+          this.submiting = { ...this.submiting, updateStore: true }
           updateInformation(formInfo)
         } else {
+          this.submiting = { ...this.submiting, createStore: true }
           tempCreateStore({ store: formInfo })
           Router.push('/shipping-expedition')
         }
@@ -143,8 +147,8 @@ class InformationStore extends React.Component {
     const isSetting = query.type === 'settingStore'
     return (
       <button
-        className={`button is-primary is-large is-fullwidth ${(this.state.submiting.upload || this.state.submiting.updateStore) ? 'is-loading' : ''}`}
-        onClick={(e) => !this.state.submiting.upload && this.postInfoStore(e)} >
+        className={`button is-primary is-large is-fullwidth ${(this.submiting.upload || this.submiting.updateStore || this.submiting.createStore) && 'is-loading'}`}
+        onClick={(e) => this.postInfoStore(e)} >
         { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
       </button>
     )
@@ -178,7 +182,7 @@ class InformationStore extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { formInfo, submiting, slogan } = this.state
+    const { formInfo, slogan } = this.state
     const { query, isFetching, isFound, isError, notifError, notifSuccess } = this.props
     const { profile, updateStore, upload } = nextProps
     if (!isFetching(profile) && this.fetchingFirst) {
@@ -200,8 +204,8 @@ class InformationStore extends React.Component {
         this.setState({ notification: notifError(profile.message) })
       }
     }
-    if (!isFetching(upload) && submiting.upload) {
-      this.setState({ submiting: { ...submiting, upload: false } })
+    if (!isFetching(upload) && this.submiting.upload) {
+      this.submiting = { ...this.submiting, upload: false }
       if (isFound(upload)) {
         const isSetting = query.type === 'settingStore'
         const logo = upload.payload.images[0].name
@@ -211,22 +215,27 @@ class InformationStore extends React.Component {
         newState.formInfo['path'] = path
         this.setState(newState)
         if (isSetting) {
-          this.setState({ submiting: { upload: false, updateStore: true } })
+          this.submiting = { ...this.submiting, updateStore: true }
           this.props.updateInformation(formInfo)
         } else {
+          this.submiting = { ...this.submiting, createStore: true }
           this.props.tempCreateStore({ store: formInfo })
-          Router.push('/shipping-expedition')
         }
       }
       if (isError(upload)) {
-        this.setState({ notification: notifError(upload.message), upload: false })
+        this.setState({ notification: notifError(upload.message) })
       }
     }
 
-    if (!isFetching(updateStore) && submiting.updateStore) {
-      this.setState({ submiting: { upload: false, updateStore: false } })
+    if (nextProps.formInfo.store.name && this.submiting.createStore) {
+      this.submiting = { ...this.submiting, createStore: false }
+      Router.push('/shipping-expedition')
+    }
+
+    if (!isFetching(updateStore) && this.submiting.updateStore) {
+      this.submiting = { ...this.submiting, updateStore: false }
       if (isFound(updateStore)) {
-        this.props.getProfile()
+        // this.props.getProfile()
         this.setState({ notification: notifSuccess(updateStore.message) })
       }
       if (isError(updateStore)) {
@@ -236,7 +245,6 @@ class InformationStore extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { files, formInfo, slogan, notification } = this.state
     const isSetting = this.props.query.type === 'settingStore'
     let logoOnRedux = formInfo.path + '/' + formInfo.logo
@@ -295,7 +303,7 @@ class InformationStore extends React.Component {
                   onChange={(e) => this.handleInput(e)}
                   disabled={isSetting} />
                 <span>Nama toko tidak dapat diubah</span>
-                {this.renderValidation('name', 'Mohon isi nama toko')}
+                {this.renderValidation('name', 'Mohon isi nama toko 3-20 karakter')}
               </p>
             </div>
             <div className='field'>

@@ -91,7 +91,7 @@ class OwnerInformation extends React.Component {
 
     this.setState({ formInfo: formOwnerInfo.user })
 
-    if (formOwnerInfo.user.id_number !== '' && formOwnerInfo.user.mother_name !== '' && this.state.submitting) {
+    if (formOwnerInfo.user.id_number && formOwnerInfo.user.mother_name && this.state.submitting) {
       this.setState({ submitting: false })
       Router.push('/address-info')
     }
@@ -108,6 +108,7 @@ class OwnerInformation extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { formInfo, profile, submitting } = this.state
     const { isFound } = this.props
     return (
@@ -134,6 +135,12 @@ class OwnerInformation extends React.Component {
                 <label>Alamat Email</label>
                 <p className='control'>
                   <strong>{profile.user.user.email}</strong>
+                </p>
+              </div>
+              <div className='field'>
+                <label>No HandPhone</label>
+                <p className='control'>
+                  <strong>{profile.user.user.phone_number.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3')}</strong>
                 </p>
               </div>
               <div className='field'>

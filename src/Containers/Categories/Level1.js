@@ -95,7 +95,6 @@ class Level1 extends Component {
   }
 
   render () {
-    console.log('category1', this.state)
     const { allCategory, notification } = this.state
     let categoriesItems = allCategory.isFound && allCategory.allCategory.map((category) => {
       return (
