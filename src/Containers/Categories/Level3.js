@@ -95,7 +95,6 @@ class Level3 extends Component {
   }
 
   render () {
-    console.log('category3', this.state)
     const { subCategory3, notification } = this.state
     const { categories } = subCategory3
     const params = {
