@@ -9,6 +9,7 @@ class Header extends Component {
   constructor (props) {
     super(props)
     const { pageType, productDetail, marketplace } = props
+    console.log('marketplace: ', marketplace)
     let title = ''
     switch (pageType) {
       case 'product_detail':
@@ -23,7 +24,8 @@ class Header extends Component {
     }
 
     this.state = {
-      title
+      title,
+      marketplace
     }
   }
 
@@ -50,16 +52,17 @@ class Header extends Component {
   }
 
   render () {
-    const { title } = this.state
+    const { title, marketplace } = this.state
     return (
       <Head>
         <title>{ title }</title>
-        { <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.min.css`} /> }
-        { <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.min.css`} /> }
-        { <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} /> }
-        { <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} /> }
-        { <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} /> }
-        { <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} /> }
+        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/style.min.css`} />
+        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/effect.min.css`} />
+        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/nprogress.min.css`} />
+        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/react-infinite-calendar.min.css`} />
+        <link rel='stylesheet prefetch' href={`${AppConfig.baseURL}static/dist/css/notify.min.css`} />
+        <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
+        <link rel='manifest' href={`https://${marketplace.data.mobile_domain}/manifest.json`} />
       </Head>
     )
   }
