@@ -23,13 +23,10 @@ class ShippingExpedition extends React.Component {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
-      },
-      submiting: {
-        createStore: false,
-        updateStore: false
       }
     }
     this.fetching = { expeditions: false, manageExpeditions: false }
+    this.submiting = { createStore: false, updateStore: false }
   }
 
   handleNotification (e) {
@@ -87,7 +84,7 @@ class ShippingExpedition extends React.Component {
 
   submitExpedition (e) {
     e.preventDefault()
-    const { manageExpeditions, selectedServices, selectedExpeditions, notification, submiting } = this.state
+    const { manageExpeditions, selectedServices, selectedExpeditions, notification } = this.state
     const { postExpedition, updateExpedition, query } = this.props
     const isSetting = query.type === 'settingStore'
     const tempExpeditionServices = {
@@ -96,7 +93,6 @@ class ShippingExpedition extends React.Component {
     }
     if (selectedServices.length !== 0) {
       if (isSetting) {
-        this.setState({ submiting: { ...submiting, updateStore: true } })
         const dataServices = []
         manageExpeditions.manageExpeditions.map(expedition => {
           return expedition.services.map(service => {
@@ -111,9 +107,11 @@ class ShippingExpedition extends React.Component {
           let statusSelected = isSelected ? 1 : 2
           newExpedition.push({expedition_service_id: idService, status: statusSelected})
         })
+        this.submiting = { ...this.submiting, updateStore: true }
         updateExpedition({ data: newExpedition })
       } else {
-        this.setState({ submiting: { ...submiting, createStore: true } })
+        console.log('masuk')
+        this.submiting = { ...this.submiting, createStore: true }
         postExpedition({ expedition_services: tempExpeditionServices })
       }
     } else {
@@ -127,10 +125,10 @@ class ShippingExpedition extends React.Component {
 
   handleButton () {
     const { query } = this.props
-    const isSetting = this.props.hasOwnProperty('query') && query.type === 'settingStore'
+    const isSetting = query.type === 'settingStore'
     return (
       <button
-        className={`button is-primary is-large is-fullwidth ${this.submiting ? 'is-loading' : ''}`}
+        className={`button is-primary is-large is-fullwidth ${(this.submiting.createStore || this.submiting.updateStore) && 'is-loading'}`}
         onClick={(e) => this.submitExpedition(e)} >
         { isSetting ? 'Simpan Perubahan' : 'Lanjutkan'}
       </button>
@@ -174,7 +172,7 @@ class ShippingExpedition extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { selectedServices, selectedExpeditions, submiting } = this.state
+    const { selectedServices, selectedExpeditions } = this.state
     const { processCreateStore, expeditions, manageExpeditions, statusUpdateExpedition } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(expeditions) && this.fetching.expeditions) {
@@ -187,8 +185,8 @@ class ShippingExpedition extends React.Component {
         this.setState({ notification: notifError(expeditions.message) })
       }
     }
-    if (processCreateStore.expedition_services.selectedServices.length !== 0 && submiting.createStore) {
-      this.setState({ submiting: { updateStore: false, createStore: false } })
+    if (processCreateStore.expedition_services.selectedServices.length !== 0 && this.submiting.createStore) {
+      this.submiting = { updateStore: false, createStore: false }
       Router.push('/owner-information')
     }
 
@@ -217,8 +215,8 @@ class ShippingExpedition extends React.Component {
         this.setState({ notification: notifError(manageExpeditions.message) })
       }
     }
-    if (!isFetching(statusUpdateExpedition) && submiting.updateStore) {
-      this.setState({ submiting: { updateStore: false, createStore: false } })
+    if (!isFetching(statusUpdateExpedition) && this.submiting.updateStore) {
+      this.submiting = { updateStore: false, createStore: false }
       if (isFound(statusUpdateExpedition)) {
         this.props.manageStoreExpeditions()
         this.setState({ notification: notifSuccess(statusUpdateExpedition.message) })

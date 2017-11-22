@@ -20,26 +20,26 @@ moment.locale('id')
 class ManageBiodata extends React.Component {
   constructor (props) {
     super(props)
-    let name = props.profile.isFound ? props.profile.user.name : ''
-    let photo = props.profile.isFound ? props.profile.user.photo : ''
-    let gender = props.profile.isFound ? props.profile.user.gender : ''
-    let pob = props.profile.isFound ? props.profile.user.place_of_birth_id : ''
-    let dob = props.profile.isFound ? props.profile.user.date_of_birth : ''
-    let selected = props.profile.isFound ? props.profile.user.place_of_birth : ''
+    // let name = props.profile.isFound ? props.profile.user.name : ''
+    // let photo = props.profile.isFound ? props.profile.user.photo : ''
+    // let gender = props.profile.isFound ? props.profile.user.gender : ''
+    // let pob = props.profile.isFound ? props.profile.user.place_of_birth_id : ''
+    // let dob = props.profile.isFound ? props.profile.user.date_of_birth : ''
+    // let selected = props.profile.isFound ? props.profile.user.place_of_birth : ''
     this.state = {
       profile: props.profile,
       formBiodata: {
-        name,
-        photo,
-        gender,
-        place_of_birth: pob,
-        date_of_birth: dob
+        name: '',
+        photo: '',
+        gender: '',
+        place_of_birth: '',
+        date_of_birth: ''
       },
       searchDistrict: {
         name: '',
-        selected
+        selected: ''
       },
-      districts: props.districts,
+      districts: props.districts || null,
       modalPlaceOfBirth: false,
       submiting: false,
       uploading: false,
