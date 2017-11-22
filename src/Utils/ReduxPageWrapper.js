@@ -19,8 +19,8 @@ export default function reduxWrapper (ReduxComponent) {
       let token = await GET_TOKEN.getToken()
       if (isServer) {
         const rootTask = sagaMiddleware.run(dataSaga)
+        store.dispatch(otherActions.resetMarketPlace())
         store.dispatch(otherActions.getMarketPlace())
-
         store.dispatch(END)
 
         await rootTask.done.then(() => {

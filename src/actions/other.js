@@ -1,4 +1,4 @@
-import { buildAction, typeReq } from '../config'
+import { buildAction, typeReq, typeReset } from '../config'
 
 export const GET_COMMISSION = 'GET_COMMISSION'
 export const GET_SALE_COUNT = 'GET_SALE_COUNT'
@@ -17,5 +17,6 @@ export const getCommission = params => buildAction(typeReq(GET_COMMISSION), para
 export const getSaleCount = () => buildAction(typeReq(GET_SALE_COUNT))
 
 export const getMarketPlace = () => buildAction(typeReq(GET_MARKETPLACE))
+export const resetMarketPlace = () => buildAction(typeReset(GET_MARKETPLACE))
 
 export const getBanner = () => buildAction(typeReq(GET_BANNER))
