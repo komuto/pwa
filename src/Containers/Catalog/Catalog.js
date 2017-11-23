@@ -198,7 +198,7 @@ class Catalog extends Component {
                         <div className='content-product'>
                           <h3>{ p.name }</h3>
                           { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
-                          { (p.is_dropshipper) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
+                          { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
                           <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
                         </div>
