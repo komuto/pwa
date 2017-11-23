@@ -11,6 +11,7 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 // actions
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
+import * as otherActions from '../../actions/other'
 
 class ProductPriceSpecificationManage extends Component {
   constructor (props) {
@@ -24,6 +25,7 @@ class ProductPriceSpecificationManage extends Component {
     let weight = props.storeProductDetail.isFound ? storeProductDetail.product.weight : ''
     this.state = {
       storeProductDetail: props.storeProductDetail || null,
+      commission: props.commission || null,
       id: props.query.id || null,
       form: {
         discount,
@@ -40,7 +42,7 @@ class ProductPriceSpecificationManage extends Component {
         message: 'Error, default message.'
       }
     }
-    this.fetchingFirst = false
+    this.fetching = { storeProductDetail: false, commission: false }
     this.submiting = false
   }
 
@@ -51,6 +53,14 @@ class ProductPriceSpecificationManage extends Component {
     error = null
     if (name === 'discount' && value > 100) {
       error = 'discount'
+    }
+    if (name === 'price') {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        NProgress.start()
+        this.fetching = { ...this.fetching, commission: true }
+        this.props.getCommission({ price: value })
+      }, 3000)
     }
     this.setState({ form, error })
   }
@@ -89,7 +99,7 @@ class ProductPriceSpecificationManage extends Component {
     const { id } = this.state
     if (id) {
       NProgress.start()
-      this.fetchingFirst = true
+      this.fetching = { ...this.fetching, storeProductDetail: true }
       const productId = id.split('.')[0]
       await this.props.getStoreProductDetail({ id: productId })
     }
@@ -97,12 +107,12 @@ class ProductPriceSpecificationManage extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { form } = this.state
-    const { storeProductDetail, alterProducts } = nextProps
+    const { storeProductDetail, commission, alterProducts } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
 
-    if (!isFetching(storeProductDetail) && this.fetchingFirst) {
+    if (!isFetching(storeProductDetail) && this.fetching.storeProductDetail) {
       NProgress.done()
-      this.fetchingFirst = false
+      this.fetching = { ...this.fetching, storeProductDetail: false }
       if (isFound) {
         const dataStoreProduct = storeProductDetail.storeProductDetail
         const newState = { form, storeProductDetail: storeProductDetail }
@@ -113,9 +123,22 @@ class ProductPriceSpecificationManage extends Component {
         newState.form['stock'] = dataStoreProduct.product.stock
         newState.form['weight'] = dataStoreProduct.product.weight
         this.setState(newState)
+        NProgress.start()
+        this.fetching = { ...this.fetching, commission: true }
+        this.props.getCommission({ price: dataStoreProduct.product.price })
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
+      }
+    }
+    if (!isFetching(commission) && this.fetching.commission) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, commission: false }
+      if (isFound(commission)) {
+        this.setState({ commission })
+      }
+      if (isError(commission)) {
+        this.setState({ notification: notifError(commission.message) })
       }
     }
     if (!isFetching(alterProducts) && this.submiting) {
@@ -164,16 +187,16 @@ class ProductPriceSpecificationManage extends Component {
   }
 
   render () {
-    const { form, error, notification } = this.state
+    const { form, commission, error, notification } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
       color: '#ef5656'
     }
-
-    let price = form.price !== undefined ? form.price : 0
-    let discount = form.discount !== undefined ? form.discount : 0
+    let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
+    let price = form.price ? form.price : 0
+    let discount = form.discount ? form.discount : 0
     let priceAfterDiscount = price - (price * (discount / 100))
-    let commision = priceAfterDiscount * (10 / 100)
+    let commision = priceAfterDiscount * (commissionKomuto / 100)
 
     let nameError = error === 'name' ? styleError : {}
     let discountError = error === 'discount' ? styleError : {}
@@ -228,7 +251,7 @@ class ProductPriceSpecificationManage extends Component {
                 </li>
                 <li>
                   <div className='columns custom is-mobile'>
-                    <div className='column is-half'>Komisi  (10%  dari Rp { RupiahFormat(priceAfterDiscount)} )</div>
+                    <div className='column is-half'>Komisi  ({`${commissionKomuto}`}%  dari Rp { RupiahFormat(priceAfterDiscount)})</div>
                     <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision) }</strong></div>
                   </div>
                 </li>
@@ -298,12 +321,14 @@ class ProductPriceSpecificationManage extends Component {
 
 const mapStateToProps = (state) => ({
   storeProductDetail: state.storeProductDetail,
-  alterProducts: state.alterProducts
+  alterProducts: state.alterProducts,
+  commission: state.commission
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
-  updateProduct: (params) => dispatch(productActions.updateProduct(params))
+  updateProduct: (params) => dispatch(productActions.updateProduct(params)),
+  getCommission: (params) => dispatch(otherActions.getCommission(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductPriceSpecificationManage)

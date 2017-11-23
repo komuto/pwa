@@ -14,8 +14,7 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 import * as catalogActions from '../../actions/catalog'
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
-// services
-import { Status } from '../../Services/Status'
+import * as otherActions from '../../actions/other'
 
 class ProductAddStepThree extends Component {
   constructor (props) {
@@ -26,6 +25,7 @@ class ProductAddStepThree extends Component {
         data: props.createCatalog || null,
         submiting: false
       },
+      commission: props.commission || null,
       dropshipfaq: props.dropshipfaq || null,
       tempCreateProduct: props.tempCreateProduct || null,
       catalogs: {
@@ -58,6 +58,7 @@ class ProductAddStepThree extends Component {
       },
       collapse: {}
     }
+    this.fetching = { catalogs: false, dropshipfaq: false, commission: false }
     this.submiting = false
   }
 
@@ -73,6 +74,14 @@ class ProductAddStepThree extends Component {
     error = null
     if (name === 'discount' && value > 100) {
       error = 'discount'
+    }
+    if (name === 'price') {
+      if (this.timeout) clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        NProgress.start()
+        this.fetching = { ...this.fetching, commission: true }
+        this.props.getCommission({ price: value })
+      }, 3000)
     }
     this.setState({ form, error })
   }
@@ -263,23 +272,29 @@ class ProductAddStepThree extends Component {
     const { catalogs } = this.state
     if (!catalogs.isFound) {
       NProgress.start()
+      this.fetching = { ...this.fetching, catalogs: true, dropshipfaq: true }
       this.props.getCatalogs()
       this.props.getDropshipperFaq()
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { catalogs, createCatalog, tempCreateProduct, dropshipfaq } = nextProps
+    const { catalogs, createCatalog, tempCreateProduct, dropshipfaq, commission } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!catalogs.isLoading) {
+    if (!isFetching(catalogs) && this.fetching.catalogs) {
       NProgress.done()
-      if (catalogs.status === Status.SUCCESS) this.setState({ catalogs: { ...this.state.catalogs, data: catalogs } })
-      if (catalogs.status === Status.OFFLINE || catalogs.status === Status.FAILED) this.setState({ notification: {status: true, message: catalogs.message} })
+      this.fetching = { ...this.fetching, catalogs: false }
+      if (isFound(catalogs)) {
+        this.setState({ catalogs: { ...this.state.catalogs, data: catalogs } })
+      }
+      if (isError(catalogs)) {
+        this.setState({ notification: notifError(catalogs.message) })
+      }
     }
 
-    if (!createCatalog.isLoading) {
+    if (!isFetching(createCatalog) && this.state.createCatalog.submiting) {
       NProgress.done()
-      if (createCatalog.status === Status.SUCCESS) {
+      if (isFound(createCatalog)) {
         catalogs.catalogs.push(createCatalog.catalog)
         this.setState({
           createCatalog: { ...this.state.createCatalog, submiting: false },
@@ -288,10 +303,25 @@ class ProductAddStepThree extends Component {
         })
         this.props.resetCreateCatalog()
       }
-      if (catalogs.status === Status.OFFLINE || catalogs.status === Status.FAILED) this.setState({ notification: {status: true, message: catalogs.message} })
+      if (isError(createCatalog)) {
+        this.setState({ notification: notifError(createCatalog.message) })
+      }
     }
-    if (!isFetching(dropshipfaq)) {
+
+    if (!isFetching(commission) && this.fetching.commission) {
       NProgress.done()
+      this.fetching = { ...this.fetching, commission: false }
+      if (isFound(commission)) {
+        this.setState({ commission })
+      }
+      if (isError(commission)) {
+        this.setState({ notification: notifError(commission.message) })
+      }
+    }
+
+    if (!isFetching(dropshipfaq) && this.fetching.dropshipfaq) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, dropshipfaq: false }
       if (isFound(dropshipfaq)) {
         let collapse = {}
         dropshipfaq.faq.map((data, i) => {
@@ -307,16 +337,16 @@ class ProductAddStepThree extends Component {
   }
 
   render () {
-    const { form, catalogs, createCatalog, wholesalesError, aboutDropshiping, error, collapse, dropshipfaq } = this.state
+    const { form, commission, catalogs, createCatalog, wholesalesError, aboutDropshiping, error, collapse, dropshipfaq } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
       color: '#ef5656'
     }
-
-    let price = form.price !== undefined ? form.price : 0
-    let discount = form.discount !== undefined ? form.discount : 0
+    let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
+    let price = form.price ? form.price : 0
+    let discount = form.discount ? form.discount : 0
     let priceAfterDiscount = price - (price * (discount / 100))
-    let commision = priceAfterDiscount * (10 / 100)
+    let commision = priceAfterDiscount * (commissionKomuto / 100)
 
     let priceError = error === 'price' ? styleError : {}
     let discountError = error === 'discount' ? styleError : {}
@@ -340,14 +370,14 @@ class ProductAddStepThree extends Component {
                   <label className='label' style={priceError}>Harga Produk</label>
                   <p className='control is-expanded price'>
                     <span className='currency' style={priceError}>Rp</span>
-                    <input onChange={(e) => this.formHandling(e)} value={form.price !== undefined && form.price} placeholder='0' name='price' className='input' type='number' style={priceError} />
+                    <input onChange={(e) => this.formHandling(e)} value={form.price && form.price} placeholder='0' name='price' className='input' type='number' style={priceError} />
                   </p>
                 </div>
                 <div className='field column is-one-quarter'>
                   <label className='label' style={discountError}>Diskon</label>
                   <p className='control is-expanded discount'>
                     <span className='disc' style={discountError}>%</span>
-                    <input onChange={(e) => this.formHandling(e)} value={form.discount !== undefined && form.discount} placeholder='0' name='discount' className='input' type='number' style={discountError} />
+                    <input onChange={(e) => this.formHandling(e)} value={form.discount && form.discount} placeholder='0' name='discount' className='input' type='number' style={discountError} />
                   </p>
                 </div>
               </div>
@@ -365,7 +395,7 @@ class ProductAddStepThree extends Component {
                 </li>
                 <li>
                   <div className='columns custom is-mobile'>
-                    <div className='column is-half'>Komisi  (10%  dari Rp { RupiahFormat(priceAfterDiscount)} )</div>
+                    <div className='column is-half'>Komisi  ({`${commissionKomuto}`}% Rp { RupiahFormat(priceAfterDiscount)})</div>
                     <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision) }</strong></div>
                   </div>
                 </li>
@@ -383,13 +413,13 @@ class ProductAddStepThree extends Component {
               <label className='label' style={weightError}>Berat Produk</label>
               <p className='control is-expanded discount'>
                 <span className='disc' style={weightError}>gram</span>
-                <input onChange={(e) => this.formHandling(e)} value={form.weight !== undefined && form.weight} placeholder='0' name='weight' className='input' type='number' style={weightError} />
+                <input onChange={(e) => this.formHandling(e)} value={form.weight && form.weight} placeholder='0' name='weight' className='input' type='number' style={weightError} />
               </p>
             </div>
             <div className='field'>
               <label className='label' style={stockError}>Stock Produk</label>
               <p className='control is-expanded'>
-                <input onChange={(e) => this.formHandling(e)} value={form.stock !== undefined && form.stock} placeholder='0' name='stock' className='input' type='number' style={stockError} />
+                <input onChange={(e) => this.formHandling(e)} value={form.stock && form.stock} placeholder='0' name='stock' className='input' type='number' style={stockError} />
               </p>
             </div>
             <div className='field radio-horizontal'>
@@ -457,7 +487,7 @@ class ProductAddStepThree extends Component {
               <label style={catalogError}>Katalog</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.catalog_id !== undefined ? form.catalog_id : 'default'} name='catalog_id' style={catalogError}>
+                  <select onChange={(e) => this.formHandling(e)} value={form.catalog_id ? form.catalog_id : 'default'} name='catalog_id' style={catalogError}>
                     <option value='default' >Pilih</option>
                     {
                       catalogs.data.isFound &&
@@ -580,7 +610,8 @@ const mapStateToProps = (state) => ({
   catalogs: state.getListCatalog,
   createCatalog: state.createCatalog,
   tempCreateProduct: state.tempCreateProduct,
-  dropshipfaq: state.dropshipfaq
+  dropshipfaq: state.dropshipfaq,
+  commission: state.commission
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -588,7 +619,8 @@ const mapDispatchToProps = (dispatch) => ({
   addCatalog: (params) => dispatch(catalogActions.createCatalog(params)),
   resetCreateCatalog: (params) => dispatch(catalogActions.resetCreateCatalog()),
   setTempCreateProduct: (params) => dispatch(productActions.tempCreateProduct(params)),
-  getDropshipperFaq: () => dispatch(storesActions.getDropshipperFaq())
+  getDropshipperFaq: () => dispatch(storesActions.getDropshipperFaq()),
+  getCommission: (params) => dispatch(otherActions.getCommission(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductAddStepThree)

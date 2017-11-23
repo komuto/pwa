@@ -9,6 +9,7 @@ import { Navbar } from '../Navbar'
 import MyImage from '../../Components/MyImage'
 // actions
 import * as storesActions from '../../actions/stores'
+import * as otherActions from '../../actions/other'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
 
@@ -19,6 +20,7 @@ class ProductManage extends React.Component {
     const { storeProductDetail } = props.storeProductDetail
     this.state = {
       id: props.query.id || null,
+      commission: props.commission || null,
       data: {
         isDropship: isFound ? storeProductDetail.product.is_dropship : '',
         stock: isFound ? storeProductDetail.product.stock : '',
@@ -46,6 +48,7 @@ class ProductManage extends React.Component {
         message: 'Error, default message.'
       }
     }
+    this.fetching = { storeProductDetail: false, commission: false }
   }
 
   dropshippingOption (e) {
@@ -96,17 +99,19 @@ class ProductManage extends React.Component {
   componentDidMount () {
     const { id } = this.state
     if (id) {
+      NProgress.start()
       // const productId = id.split('.')[0]
+      this.fetching = { ...this.fetching, storeProductDetail: true }
       this.props.getStoreProductDetail({ id })
     }
-    NProgress.start()
   }
 
   componentWillReceiveProps (nextProps) {
-    const { storeProductDetail } = nextProps
+    const { storeProductDetail, commission } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(storeProductDetail)) {
+    if (!isFetching(storeProductDetail) && this.fetching.storeProductDetail) {
       NProgress.done()
+      this.fetching = { ...this.fetching, storeProductDetail: false }
       if (isFound) {
         const dataStoreProduct = storeProductDetail.storeProductDetail
         const data = {
@@ -130,16 +135,30 @@ class ProductManage extends React.Component {
           expeditionServices: dataStoreProduct.expedition_services
         }
         this.setState({ data })
+        NProgress.start()
+        this.fetching = { ...this.fetching, commission: true }
+        this.props.getCommission({ price: dataStoreProduct.product.price })
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
       }
     }
+    if (!isFetching(commission) && this.fetching.commission) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, commission: false }
+      if (isFound(commission)) {
+        this.setState({ commission })
+      }
+      if (isError(commission)) {
+        this.setState({ notification: notifError(commission.message) })
+      }
+    }
   }
 
   render () {
-    const { data, notification } = this.state
+    const { data, notification, commission } = this.state
     if (!this.props.storeProductDetail.isFound) return null
+    let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
     const toProductList = () => {
       Router.push('/product-list')
     }
@@ -148,11 +167,11 @@ class ProductManage extends React.Component {
     }
     const commision = () => {
       const priceDiscount = (data.isDiscount) ? data.price - ((data.price * data.discount) / 100) : data.price
-      return priceDiscount * (10 / 100)
+      return priceDiscount * (commissionKomuto / 100)
     }
     const moneyReceive = () => {
       const priceDiscount = (data.isDiscount) ? data.price - ((data.price * data.discount) / 100) : data.price
-      const commision = priceDiscount * (10 / 100)
+      const commision = priceDiscount * (commissionKomuto / 100)
       return priceDiscount - commision
     }
     let params = {
@@ -296,7 +315,7 @@ class ProductManage extends React.Component {
                     </li>
                     <li>
                       <div className='columns custom is-mobile'>
-                        <div className='column is-half'><span>Komisi  (10%  dari Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
+                        <div className='column is-half'><span>Komisi  ({`${commissionKomuto}`}%  dari Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
                         <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision()) }</strong></div>
                       </div>
                     </li>
@@ -373,12 +392,14 @@ class ProductManage extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    storeProductDetail: state.storeProductDetail
+    storeProductDetail: state.storeProductDetail,
+    commission: state.commission
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params))
+  getStoreProductDetail: (params) => dispatch(storesActions.getStoreProductDetail(params)),
+  getCommission: (params) => dispatch(otherActions.getCommission(params))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductManage)

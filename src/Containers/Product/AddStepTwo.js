@@ -74,7 +74,6 @@ class ProductAddStepTwo extends Component {
       this.props.getSubCategory3({ id: e.target.value })
     }
     if (name !== 'name') {
-      console.log('masuk')
       newState.form[name] = value
     }
     this.setState(newState)
@@ -145,36 +144,36 @@ class ProductAddStepTwo extends Component {
   }
 
   submit () {
-    const { form, tempCreateProduct, subCategory3 } = this.state
-    if (form.name === undefined || form.name === '') {
-      // var top = this.inputNameYA.position().top
-      // window.scrollTop(top)
-      // this.inputNameYA.scrollIntoView()
-      this.setState({ error: 'name' })
-    }
+    const { form, tempCreateProduct } = this.state
+    // if (form.name === undefined || form.name === '') {
+    //   // var top = this.inputNameYA.position().top
+    //   // window.scrollTop(top)
+    //   // this.inputNameYA.scrollIntoView()
+    //   this.setState({ error: 'name' })
+    // }
 
-    if (form.categoryOne === undefined) {
-      this.setState({ error: 'categoryOne' })
-    }
+    // if (form.categoryOne === undefined) {
+    //   this.setState({ error: 'categoryOne' })
+    // }
 
-    if (form.categoryTwo === undefined) {
-      this.setState({ error: 'categoryTwo' })
-    }
+    // if (form.categoryTwo === undefined) {
+    //   this.setState({ error: 'categoryTwo' })
+    // }
 
-    if (form.categoryThree === undefined) {
-      this.setState({ error: 'categoryThree' })
-    }
+    // if (form.categoryThree === undefined) {
+    //   this.setState({ error: 'categoryThree' })
+    // }
 
-    if (subCategory3.isFound && subCategory3.categories.sub_categories.length > 1) {
-      if (form.category_id === undefined) {
-        this.setState({ error: 'category_id' })
-      }
-    } else {
-      form.category_id = form.categoryThree
-    }
-    if (form.description === undefined || form.description === '') {
-      this.setState({ error: 'description' })
-    }
+    // if (subCategory3.isFound && subCategory3.categories.sub_categories.length > 1) {
+    //   if (form.category_id === undefined) {
+    //     this.setState({ error: 'category_id' })
+    //   }
+    // } else {
+    //   form.category_id = form.categoryThree
+    // }
+    // if (form.description === undefined || form.description === '') {
+    //   this.setState({ error: 'description' })
+    // }
 
     let nameProduct = form.name ? form.name : ''
     let categoryId = form.category_id ? form.category_id : ''
@@ -279,7 +278,6 @@ class ProductAddStepTwo extends Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { form, category, subCategory, subCategory2, subCategory3, brands, error } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
