@@ -8,6 +8,7 @@ require('dotenv').config()
 const dev = process.env.NODE_ENV !== 'production'
 const PORT = process.env.PORT || 8889
 const quiet = !dev
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 const appDir = './'
 const app = next({ dev, dir: appDir, quiet })
@@ -87,7 +88,7 @@ app.prepare().then(_ => {
 
   server.get('*', (req, res) => {
     global.hostNameServer = req.headers.host
-    console.log('global.hostNameServer: ', global.hostNameServer)
+    // console.log('global.hostNameServer: ', global.hostNameServer)
     return handle(req, res)
   })
 

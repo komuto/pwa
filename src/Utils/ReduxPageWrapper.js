@@ -16,7 +16,7 @@ let clientTask = null
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ store, req, isServer, query }) {
-      let token = await GET_TOKEN.getToken()
+      let token = ''
       if (isServer) {
         const rootTask = sagaMiddleware.run(dataSaga)
         store.dispatch(otherActions.resetMarketPlace())
