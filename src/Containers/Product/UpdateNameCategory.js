@@ -60,7 +60,7 @@ class ProductUpdateNameCategory extends Component {
       }
     }
     // fetch category level 1
-    if (e.target.name === 'category_id') {
+    if (name === 'category_id') {
       let resetState = { subCategory2, subCategory3, form }
       resetState.subCategory2.categories['sub_categories'] = []
       resetState.subCategory3.categories['sub_categories'] = []
@@ -72,7 +72,7 @@ class ProductUpdateNameCategory extends Component {
       this.props.getSubCategory({ id: e.target.value })
     }
     // fetch category level 2
-    if (e.target.name === 'categoryOne') {
+    if (name === 'categoryOne') {
       let resetState = { subCategory3, form }
       resetState.subCategory3.categories['sub_categories'] = []
       resetState.form['categoryTwo'] = ''
@@ -82,11 +82,13 @@ class ProductUpdateNameCategory extends Component {
       this.props.getSubCategory2({ id: e.target.value })
     }
     // fetch category level 3
-    if (e.target.name === 'categoryTwo') {
+    if (name === 'categoryTwo') {
       this.fetching = { ...this.fetching, subCategory3: true }
       this.props.getSubCategory3({ id: e.target.value })
     }
-    newState.form[name] = value
+    if (name !== 'name') {
+      newState.form[name] = value
+    }
     this.setState(newState)
   }
 
@@ -223,17 +225,6 @@ class ProductUpdateNameCategory extends Component {
         this.setState({ notification: notifError(subCategory3.message) })
       }
     }
-    // if (isFetching(subCategory)) {
-    //   const resetState = { subCategory2, subCategory3 }
-    //   resetState.subCategory2.categories['sub_categories'] = []
-    //   resetState.subCategory3.categories['sub_categories'] = []
-    //   this.setState(resetState)
-    // }
-    // if (isFetching(nextProps.subCategory2)) {
-    //   const resetState = { subCategory3 }
-    //   resetState.subCategory3.categories['sub_categories'] = []
-    //   this.setState(resetState)
-    // }
     if (!isFetching(brands) && this.fetching.brands) {
       NProgress.done()
       this.fetching = { ...this.fetching, brands: false }
@@ -357,7 +348,7 @@ class ProductUpdateNameCategory extends Component {
               <div className='field'>
                 <label>Nama Produk *</label>
                 <p className='control'>
-                  <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' value={(form.name !== undefined) ? form.name : ''} />
+                  <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' value={(form.name) ? form.name : ''} />
                   {this.renderValidation('name', 'Mohon isi nama produk 3-30 karakter')}
                 </p>
               </div>
@@ -442,7 +433,7 @@ class ProductUpdateNameCategory extends Component {
                 <label>Brand</label>
                 <p className='control'>
                   <span className='select'>
-                    <select onChange={(e) => this.formHandling(e)} value={form.brand_id ? form.brand_id : 'default'} name='brand_id'>
+                    <select onChange={(e) => this.formHandling(e)} value={form.brand_id ? form.brand_id : ''} name='brand_id'>
                       <option style={{display: 'none'}} disabled> Pilih</option>
                       {
                         brands.isFound &&
