@@ -9,8 +9,6 @@ import Wizard from '../../Components/Wizard'
 import * as homeActions from '../../actions/home'
 import * as brandActions from '../../actions/brand'
 import * as productActions from '../../actions/product'
-// Utils
-import { Status } from '../../Services/Status'
 
 class ProductAddStepTwo extends Component {
   constructor (props) {
@@ -27,8 +25,10 @@ class ProductAddStepTwo extends Component {
         ...stepTwo
       },
       includeBrand: false,
+      validation: false,
       error: null
     }
+    this.fetching = { storeProductDetail: false, brands: false, category: false, subCategory: false, subCategory2: false, subCategory3: false }
     this.submiting = false
   }
 
@@ -38,6 +38,47 @@ class ProductAddStepTwo extends Component {
   }
 
   formHandling (e) {
+    let { form, subCategory2, subCategory3 } = this.state
+    const { name, value } = e.target
+    const newState = { form }
+    if (name === 'name') {
+      if (value.length <= 30) {
+        newState.form[name] = value
+      }
+    }
+    // fetch category level 1
+    if (e.target.name === 'category_id') {
+      let resetState = { subCategory2, subCategory3, form }
+      resetState.subCategory2.categories['sub_categories'] = []
+      resetState.subCategory3.categories['sub_categories'] = []
+      resetState.form['categoryOne'] = ''
+      resetState.form['categoryTwo'] = ''
+      resetState.form['categoryThree'] = ''
+      this.setState(resetState)
+      this.fetching = { ...this.fetching, subCategory: true }
+      this.props.getSubCategory({ id: e.target.value })
+    }
+    // fetch category level 2
+    if (e.target.name === 'categoryOne') {
+      let resetState = { subCategory3, form }
+      resetState.subCategory3.categories['sub_categories'] = []
+      resetState.form['categoryTwo'] = ''
+      resetState.form['categoryThree'] = ''
+      this.setState(resetState)
+      this.fetching = { ...this.fetching, subCategory2: true }
+      this.props.getSubCategory2({ id: e.target.value })
+    }
+    // fetch category level 3
+    if (e.target.name === 'categoryTwo') {
+      this.fetching = { ...this.fetching, subCategory3: true }
+      this.props.getSubCategory3({ id: e.target.value })
+    }
+    if (name !== 'name') {
+      console.log('masuk')
+      newState.form[name] = value
+    }
+    this.setState(newState)
+    /**
     let { form, error } = this.state
     form[e.target.name] = e.target.value
     error = null
@@ -64,7 +105,35 @@ class ProductAddStepTwo extends Component {
       delete form.category_id
       this.props.getSubCategory3({ id: e.target.value })
     }
-    this.setState({ form, error })
+    this.setState({ form, error }) */
+  }
+
+  renderValidation (name, textFailed) {
+    const { form, validation } = this.state
+    let nameProduct = form.name ? form.name : ''
+    let categoryId = form.category_id ? form.category_id : ''
+    let categoryOne = form.categoryOne ? form.categoryOne : ''
+    let categoryTwo = form.categoryTwo ? form.categoryTwo : ''
+    let description = form.description ? form.description : ''
+    let nameVal = name === 'name' && nameProduct.length >= 3 && nameProduct.length <= 30
+    let categoryVal = name === 'category_id' && !!categoryId
+    let categoryOneVal = name === 'categoryOne' && !!categoryOne
+    let categoryTwoVal = name === 'categoryTwo' && !!categoryTwo
+    // let categoryThreeVal = name === 'categoryThree' && !!form.categoryThree
+    let descriptionVal = name === 'description' && description.length >= 30
+    let result = nameVal || categoryVal || categoryOneVal || categoryTwoVal || descriptionVal
+    let errorMsg = {
+      fontSize: '12px',
+      letterSpacing: '.2px',
+      color: '#ef5656',
+      paddingTop: '8px',
+      display: validation ? 'block' : 'none'
+    }
+    return (
+      <span className='error-msg' style={errorMsg}>
+        {result ? '' : textFailed}
+      </span>
+    )
   }
 
   includeBrandPress (e, isBrandChecked) {
@@ -80,52 +149,57 @@ class ProductAddStepTwo extends Component {
     if (form.name === undefined || form.name === '') {
       // var top = this.inputNameYA.position().top
       // window.scrollTop(top)
-      this.inputNameYA.scrollIntoView()
-
+      // this.inputNameYA.scrollIntoView()
       this.setState({ error: 'name' })
-      return
     }
 
     if (form.categoryOne === undefined) {
       this.setState({ error: 'categoryOne' })
-      return
     }
 
     if (form.categoryTwo === undefined) {
       this.setState({ error: 'categoryTwo' })
-      return
     }
 
     if (form.categoryThree === undefined) {
       this.setState({ error: 'categoryThree' })
-      return
     }
 
     if (subCategory3.isFound && subCategory3.categories.sub_categories.length > 1) {
       if (form.category_id === undefined) {
         this.setState({ error: 'category_id' })
-        return
       }
     } else {
       form.category_id = form.categoryThree
     }
     if (form.description === undefined || form.description === '') {
       this.setState({ error: 'description' })
-      return
     }
 
-    this.submiting = true
-    this.props.setTempCreateProduct({
-      ...tempCreateProduct,
-      stepTwo: {
-        ...form,
-        isFound: true
-      }
-    })
-  }
-
-  inputName (input) {
-    this.inputNameYA = input
+    let nameProduct = form.name ? form.name : ''
+    let categoryId = form.category_id ? form.category_id : ''
+    let categoryOne = form.categoryOne ? form.categoryOne : ''
+    let categoryTwo = form.categoryTwo ? form.categoryTwo : ''
+    let description = form.description ? form.description : ''
+    let nameVal = nameProduct.length >= 3 && nameProduct.length <= 30
+    let categoryVal = !!categoryId
+    let categoryOneVal = !!categoryOne
+    let categoryTwoVal = !!categoryTwo
+    // let categoryThreeVal = name === 'categoryThree' && !!form.categoryThree
+    let descriptionVal = description.length >= 30
+    let isValid = nameVal && categoryVal && categoryOneVal && categoryTwoVal && descriptionVal
+    if (isValid) {
+      this.submiting = true
+      this.props.setTempCreateProduct({
+        ...tempCreateProduct,
+        stepTwo: {
+          ...form,
+          isFound: true
+        }
+      })
+    } else {
+      this.setState({ validation: true })
+    }
   }
 
   async componentDidMount () {
@@ -134,42 +208,68 @@ class ProductAddStepTwo extends Component {
     if (!category.isFound) {
       NProgress.start()
       // fetch category level 1
+      this.fetching = { ...this.fetching, category: true }
       await this.props.getCategory()
     }
-
     if (!brands.isFound) {
       NProgress.start()
+      this.fetching = { ...this.fetching, brands: true }
       await this.props.getBrand()
     }
   }
 
   componentWillReceiveProps (nextProps) {
     const { category, subCategory, subCategory2, subCategory3, brands, tempCreateProduct } = nextProps
-
-    if (!category.isLoading) {
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(category) && this.fetching.category) {
       NProgress.done()
-      if (category.status === Status.SUCCESS) this.setState({ category })
-      if (category.status === Status.OFFLINE || category.status === Status.FAILED) this.setState({ notification: {status: true, message: category.message} })
+      this.fetching = { ...this.fetching, category: false }
+      if (isFound(category)) {
+        this.setState({ category })
+      }
+      if (isError(category)) {
+        this.setState({ notification: notifError(category.message) })
+      }
     }
-    if (!subCategory.isLoading) {
+    if (!isFetching(subCategory) && this.fetching.subCategory) {
       NProgress.done()
-      if (subCategory.status === Status.SUCCESS) this.setState({ subCategory })
-      if (subCategory.status === Status.OFFLINE || subCategory.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory.message} })
+      this.fetching = { ...this.fetching, subCategory: false }
+      if (isFound(subCategory)) {
+        this.setState({ subCategory })
+      }
+      if (isError(subCategory)) {
+        this.setState({ notification: notifError(subCategory.message) })
+      }
     }
-    if (!subCategory2.isLoading) {
+    if (!isFetching(subCategory2) && this.fetching.subCategory2) {
       NProgress.done()
-      if (subCategory2.status === Status.SUCCESS) this.setState({ subCategory2 })
-      if (subCategory2.status === Status.OFFLINE || subCategory2.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory2.message} })
+      this.fetching = { ...this.fetching, subCategory2: false }
+      if (isFound(subCategory2)) {
+        this.setState({ subCategory2 })
+      }
+      if (isError(subCategory2)) {
+        this.setState({ notification: notifError(subCategory2.message) })
+      }
     }
-    if (!subCategory3.isLoading) {
+    if (!isFetching(subCategory3) && this.fetching.subCategory3) {
       NProgress.done()
-      if (subCategory3.status === Status.SUCCESS) this.setState({ subCategory3 })
-      if (subCategory3.status === Status.OFFLINE || subCategory3.status === Status.FAILED) this.setState({ notification: {status: true, message: subCategory3.message} })
+      this.fetching = { ...this.fetching, subCategory3: false }
+      if (isFound(subCategory3)) {
+        this.setState({ subCategory3 })
+      }
+      if (isError(subCategory3)) {
+        this.setState({ notification: notifError(subCategory3.message) })
+      }
     }
-    if (!brands.isLoading) {
+    if (!isFetching(brands) && this.fetching.brands) {
       NProgress.done()
-      if (brands.status === Status.SUCCESS) this.setState({ brands })
-      if (brands.status === Status.OFFLINE || brands.status === Status.FAILED) this.setState({ notification: {status: true, message: brands.message} })
+      this.fetching = { ...this.fetching, brands: false }
+      if (isFound(brands)) {
+        this.setState({ brands })
+      }
+      if (isError(brands)) {
+        this.setState({ notification: notifError(brands.message) })
+      }
     }
 
     if (this.submiting && tempCreateProduct.stepTwo.isFound) {
@@ -179,6 +279,7 @@ class ProductAddStepTwo extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { form, category, subCategory, subCategory2, subCategory3, brands, error } = this.state
     const styleError = {
       borderBottomColor: '#ef5656',
@@ -195,15 +296,16 @@ class ProductAddStepTwo extends Component {
             <div className='field' style={error === 'name' ? styleError : {}}>
               <label>Nama Produk *</label>
               <p className='control'>
-                <input ref={(input) => this.inputName(input)} onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name !== undefined) ? form.name : ''} />
+                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name) ? form.name : ''} />
+                {this.renderValidation('name', 'Mohon isi nama produk 3-30 karakter')}
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryOne' ? styleError : {}}>Kategori *</label>
+              <label style={error === 'category_id' ? styleError : {}}>Kategori *</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryOne !== undefined ? form.categoryOne : 'default'} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
-                    <option value='default'> Pilih</option>
+                  <select onChange={(e) => this.formHandling(e)} value={form.category_id ? form.category_id : ''} name='category_id' style={error === 'category_id' ? styleError : {}}>
+                    <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                         category.isFound &&
                         category.categories.map((category) => {
@@ -212,51 +314,51 @@ class ProductAddStepTwo extends Component {
                       }
                   </select>
                 </span>
+                {this.renderValidation('category_id', 'Mohon isi nama Kategori')}
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 1 *</label>
+              <label style={error === 'categoryOne' ? styleError : {}}>Sub-Kategori 1 *</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo !== undefined ? form.categoryTwo : 'default'} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
-                    <option value='default'> Pilih</option>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryOne ? form.categoryOne : ''} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
+                    <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                       subCategory.isFound &&
-                      form.categoryOne !== undefined &&
                       subCategory.categories.sub_categories.map((sc) => {
                         return <option key={sc.id} value={sc.id}> {sc.name} </option>
                       })
                     }
                   </select>
                 </span>
+                {this.renderValidation('categoryOne', 'Mohon isi Sub-Kategori 1')}
               </p>
             </div>
             <div className='field'>
               <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2 *</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.categoryThree !== undefined ? form.categoryThree : 'default'} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
-                    <option value='default'> Pilih</option>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo ? form.categoryTwo : ''} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
+                    <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                       subCategory2.isFound &&
-                      form.categoryTwo !== undefined &&
                       subCategory2.categories.sub_categories.map((sc) => {
                         return <option key={sc.id} value={sc.id}>{ sc.name }</option>
                       })
                     }
                   </select>
                 </span>
+                {this.renderValidation('categoryTwo', 'Mohon isi Sub-Kategori 2')}
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'category_id' ? styleError : {}}>Sub-Kategori 3</label>
+              <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 3</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.category_id !== undefined ? form.category_id : 'default'} name='category_id' style={error === 'category_id' ? styleError : {}}>
-                    <option value='default'> Pilih</option>
+                  <select onChange={(e) => this.formHandling(e)} value={form.categoryThree ? form.categoryThree : ''} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
+                    <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                       subCategory3.isFound &&
-                      form.categoryThree !== undefined &&
                       subCategory3.categories.sub_categories.map((sc) => {
                         return <option key={sc.id} value={sc.id}>{ sc.name }</option>
                       })
@@ -279,8 +381,8 @@ class ProductAddStepTwo extends Component {
               <label>Brand</label>
               <p className='control'>
                 <span className='select'>
-                  <select onChange={(e) => this.formHandling(e)} value={form.brand_id !== undefined ? form.brand_id : 'default'} name='brand_id'>
-                    <option value='default'> Pilih</option>
+                  <select onChange={(e) => this.formHandling(e)} value={form.brand_id ? form.brand_id : ''} name='brand_id'>
+                    <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                       brands.isFound &&
                       brands.brands.map((brand) => {
@@ -294,7 +396,8 @@ class ProductAddStepTwo extends Component {
             <div className='field'>
               <label style={error === 'description' ? styleError : {}}>Deskripsi Produk *</label>
               <p className='control'>
-                <textarea onChange={(e) => this.formHandling(e)} value={form.description !== undefined ? form.description : ''} name='description' className='textarea' rows='2' />
+                <textarea onChange={(e) => this.formHandling(e)} value={form.description ? form.description : ''} name='description' className='textarea' rows='2' />
+                {this.renderValidation('description', 'Mohon isi deskripsi min 30 karakter')}
               </p>
             </div>
             <div className='field'>
