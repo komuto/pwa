@@ -17,6 +17,14 @@ export const getMarketPlace = () => {
   return axios.get('marketplace')
 }
 
+// export const getMarketPlace = () => {
+//   return axios.get(`${apiKomuto}/marketplace`).then(function (response) {
+//     console.log(response)
+//   }).catch(function (error) {
+//     console.log(error)
+//   })
+// }
+
 export const getBanner = () => {
   const axios = publicApiKomuto()
   return axios.get('banners')

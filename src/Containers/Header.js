@@ -8,16 +8,16 @@ import ReadAbleText from '../Lib/ReadAbleText'
 class Header extends Component {
   constructor (props) {
     super(props)
-    const { pageType, productDetail, marketplace } = props
-    console.log('marketplace: ', marketplace)
+    const { pageType, productDetail, tempMarketplace } = props
+    console.log('Header: ', props)
     let title = ''
     switch (pageType) {
       case 'product_detail':
         title = this._createTitle(title, productDetail)
         break
       default:
-        if (marketplace.isFound) {
-          const { data } = marketplace
+        if (tempMarketplace.code === 200) {
+          const { data } = tempMarketplace
           title = data.name
         }
         break
@@ -25,7 +25,7 @@ class Header extends Component {
 
     this.state = {
       title,
-      marketplace
+      tempMarketplace
     }
   }
 
@@ -52,8 +52,8 @@ class Header extends Component {
   }
 
   render () {
-    const { title, marketplace } = this.state
-    const hostName = `https://${marketplace.data.mobile_domain}/`
+    const { title, tempMarketplace } = this.state
+    const hostName = `https://${tempMarketplace.data.mobile_domain}/`
     return (
       <Head>
         <title>{ title }</title>
@@ -71,7 +71,7 @@ class Header extends Component {
 
 const mapStateToProps = (state) => ({
   productDetail: state.productDetail,
-  marketplace: state.marketplace
+  tempMarketplace: state.tempMarketplace
 })
 
 export default connect(mapStateToProps)(Header)

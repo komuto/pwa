@@ -190,7 +190,8 @@ const other = {
   commission: otherReducers.getCommission,
   saleCount: otherReducers.getSaleCount,
   marketplace: otherReducers.getMarketPlace,
-  getBanner: otherReducers.getBanner
+  getBanner: otherReducers.getBanner,
+  tempMarketplace: otherReducers.setMarketPlaceTemp
 }
 
 const payment = {

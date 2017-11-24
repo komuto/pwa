@@ -22,6 +22,11 @@ export function publicApiKomuto () {
   })
 }
 
+export function publicApiMarketplace () {
+  // console.log('apiKomuto', apiKomuto)
+  return apisauce
+}
+
 export function uploadApi () {
   const api = apisauce.create({
     baseURL: apiKomuto + '/',

@@ -16,6 +16,11 @@ let clientTask = null
 export default function reduxWrapper (ReduxComponent) {
   class ReduxContainer extends Component {
     static async getInitialProps ({ store, req, isServer, query }) {
+      if (req) {
+        if (req.marketplace) {
+          store.dispatch(otherActions.setMarketPlaceTemp(req.marketplace))
+        }
+      }
       let token = ''
       if (isServer) {
         const rootTask = sagaMiddleware.run(dataSaga)
@@ -68,7 +73,8 @@ export default function reduxWrapper (ReduxComponent) {
         status: false,
         message: 'Error, default message.'
       }
-
+      // this.props
+      // console.log('this.props: ', this.props.marketplace)
       return (
         <Content>
           <LoginAlert

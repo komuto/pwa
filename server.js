@@ -1,6 +1,8 @@
 const express = require('express')
 const next = require('next')
 const path = require('path')
+const axios = require('axios')
+const hostNameDev = 'mobiledev.komuto.com'
 // const compression = require('compression')
 require('dotenv').config()
 
@@ -18,8 +20,18 @@ app.prepare().then(_ => {
   const server = express()
   const defineASURL = (as, url) => (
     server.get(as, (req, res) => {
-      const params = Object.assign(req.query, req.params)
-      return app.render(req, res, url, params)
+      const hostName = req.host.includes('localhost') ? hostNameDev : req.host
+      let params = Object.assign(req.query, req.params)
+      let reqResponse = req
+      return axios.get(`https://api.${hostName}/marketplace`)
+        .then((response) => {
+          Object.assign(reqResponse, { marketplace: response.data, error: {} })
+          return app.render(req, res, url, params)
+        })
+        .catch((error) => {
+          Object.assign(reqResponse, { marketplace: { data: {}, error: error } })
+          return app.render(reqResponse, res, url, params)
+        })
     })
   )
 
@@ -85,11 +97,24 @@ app.prepare().then(_ => {
   // manage account
   defineASURL('/manage/account', '/manage-account')
   defineASURL('/resolution/center', '/resolution-center')
+  defineASURL('/profile', '/profile')
 
-  server.get('*', (req, res) => {
-    global.hostNameServer = req.headers.host
-    // console.log('global.hostNameServer: ', global.hostNameServer)
-    return handle(req, res)
+  server.get('/*', (req, res) => {
+    // let hostName = req.headers.host
+    const hostName = req.host.includes('localhost') ? hostNameDev : req.host
+    // const hostName = 'mobiledev.komuto.com'
+    // console.log('hostName: ', hostName)
+    let reqResponse = req
+    global.hostNameServer = hostName
+    return axios.get(`https://api.${hostName}/marketplace`)
+      .then((response) => {
+        Object.assign(reqResponse, { marketplace: response.data, error: {} })
+        return handle(reqResponse, res)
+      })
+      .catch((error) => {
+        Object.assign(reqResponse, { marketplace: { data: {}, error: error } })
+        return handle(reqResponse, res)
+      })
   })
 
   server.listen(PORT, err => {
