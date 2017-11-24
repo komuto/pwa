@@ -40,8 +40,8 @@ class Home extends Component {
 
     let textPath = ''
 
-    if (props.marketplace.isFound) {
-      const { data } = props.marketplace
+    if (props.tempMarketplace.code === 200) {
+      const { data } = props.tempMarketplace
       textPath = data.name
     }
     this.state = {
@@ -360,7 +360,7 @@ const mapStateToProps = (state) => ({
   category: state.category,
   addWishlist: state.addWishlist,
   countCart: state.countCart,
-  marketplace: state.marketplace,
+  tempMarketplace: state.tempMarketplace,
   banners: state.getBanner
 })
 
