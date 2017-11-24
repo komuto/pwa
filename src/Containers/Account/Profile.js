@@ -6,7 +6,6 @@
 
 /** including dependencies */
 import React, { Component } from 'react'
-import Link from 'next/link'
 import Router from 'next/router'
 /** including components */
 import Account from './Account'
@@ -35,7 +34,7 @@ const LoginContent = ({ localize }) => {
         </div>
         <div className='columns is-mobile'>
           <div className='column'>
-            <Link href='signup'><a className='button is-primary is-large is-fullwidth is-outlined'>{localize.signup}</a></Link>
+            <a onClick={() => Router.push('/signup')} className='button is-primary is-large is-fullwidth is-outlined'>{localize.signup}</a>
           </div>
           <div className='column'>
             <a onClick={() => Router.push('/signin')} className='button is-primary is-large is-fullwidth'>{localize.signin}</a>
