@@ -247,6 +247,10 @@ class ProductList extends Component {
     }
   }
 
+  rounding (number) {
+    return Math.ceil(number, -1)
+  }
+
   render () {
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
@@ -312,13 +316,15 @@ class ProductList extends Component {
             productChangeDropship={(e, id) => this.productChangeDropship(e, id)}
             dropdownSelected={dropdownSelected}
             productDetail={(e, product) => this.productDetail(e, product)}
-            search={search} />
+            search={search}
+            rounding={(price) => this.rounding(price)} />
           : (isEmpty.hiddenProducts || isEmpty.searchProducts) ? <ProductEmpty /> : <ContentHidden
             hiddenProducts={hiddenProducts}
             catalogProducts={catalogProducts}
             productDetail={(e, product) => this.productDetail(e, product)}
             loadMore={() => this.loadMore()}
-            hasMore={this.hasMore} />
+            hasMore={this.hasMore}
+            rounding={(price) => this.rounding(price)} />
         }
         <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
       </Content>
@@ -355,7 +361,7 @@ const ContentHidden = (props) => {
                         { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                         { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                         <p>Jumlah Stok : { p.stock }</p>
-                        <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                        <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p>
                       </div>
                     </div>
                   </div>
@@ -416,7 +422,7 @@ const ContentShow = (props) => {
                           { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                           { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
-                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p> }
+                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p> }
                         </div>
                       </div>
                     </div>
