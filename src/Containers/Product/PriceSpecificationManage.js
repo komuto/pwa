@@ -186,6 +186,10 @@ class ProductPriceSpecificationManage extends Component {
     }
   }
 
+  rounding (number) {
+    return Math.ceil(number, -1)
+  }
+
   render () {
     const { form, commission, error, notification } = this.state
     const styleError = {
@@ -195,8 +199,9 @@ class ProductPriceSpecificationManage extends Component {
     let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
     let price = form.price ? form.price : 0
     let discount = form.discount ? form.discount : 0
-    let priceAfterDiscount = price - (price * (discount / 100))
-    let commision = priceAfterDiscount * (commissionKomuto / 100)
+    let priceAfterDiscount = this.rounding(price - (price * (discount / 100)))
+    let commision = this.rounding(priceAfterDiscount * (commissionKomuto / 100))
+    let priceReceive = this.rounding(priceAfterDiscount - commision)
 
     let nameError = error === 'name' ? styleError : {}
     let discountError = error === 'discount' ? styleError : {}
@@ -258,7 +263,7 @@ class ProductPriceSpecificationManage extends Component {
                 <li>
                   <div className='columns custom is-mobile'>
                     <div className='column is-half'>Uang yang akan Anda terima</div>
-                    <div className='column is-half has-text-right'><strong className='total'>Rp { RupiahFormat(priceAfterDiscount - commision) }</strong></div>
+                    <div className='column is-half has-text-right'><strong className='total'>Rp { RupiahFormat(priceReceive) }</strong></div>
                   </div>
                 </li>
               </ul>

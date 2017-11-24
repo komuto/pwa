@@ -155,25 +155,22 @@ class ProductManage extends React.Component {
     }
   }
 
+  rounding (number) {
+    return Math.ceil(number, -1)
+  }
+
   render () {
     const { data, notification, commission } = this.state
     if (!this.props.storeProductDetail.isFound) return null
-    let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
     const toProductList = () => {
       Router.push('/product-list')
     }
-    const priceAfterDiscount = () => {
-      return (data.isDiscount) ? data.price - ((data.price * data.discount) / 100) : data.price
-    }
-    const commision = () => {
-      const priceDiscount = (data.isDiscount) ? data.price - ((data.price * data.discount) / 100) : data.price
-      return priceDiscount * (commissionKomuto / 100)
-    }
-    const moneyReceive = () => {
-      const priceDiscount = (data.isDiscount) ? data.price - ((data.price * data.discount) / 100) : data.price
-      const commision = priceDiscount * (commissionKomuto / 100)
-      return priceDiscount - commision
-    }
+    let commissionKomuto = commission.commission.commission ? commission.commission.commission : 0
+    let price = data.price ? data.price : 0
+    let discount = (data.isDiscount) ? data.discount : 0
+    let priceAfterDiscount = this.rounding(price - (price * (discount / 100)))
+    let commision = this.rounding(priceAfterDiscount * (commissionKomuto / 100))
+    let moneyReceive = this.rounding(priceAfterDiscount - commision)
     let params = {
       navbar: {
         searchBoox: false,
@@ -310,20 +307,20 @@ class ProductManage extends React.Component {
                     <li>
                       <div className='columns custom is-mobile'>
                         <div className='column is-half'><span>Harga Jual</span></div>
-                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(priceAfterDiscount()) }</strong></div>
+                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(priceAfterDiscount) }</strong></div>
                       </div>
                     </li>
                     <li>
                       <div className='columns custom is-mobile'>
-                        <div className='column is-half'><span>Komisi  ({`${commissionKomuto}`}%  dari Rp { RupiahFormat(priceAfterDiscount()) }</span></div>
-                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision()) }</strong></div>
+                        <div className='column is-half'><span>Komisi  ({`${commissionKomuto}`}%  dari Rp { RupiahFormat(priceAfterDiscount) }</span></div>
+                        <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(commision) }</strong></div>
                       </div>
                     </li>
                     <li>
                       <div className='columns custom is-mobile'>
                         <div className='column is-half'><span>Uang yang akan Anda terima</span></div>
                         <div className='column is-half has-text-right'>
-                          <strong className='text-green'>Rp { RupiahFormat(moneyReceive()) }</strong>
+                          <strong className='text-green'>Rp { RupiahFormat(moneyReceive) }</strong>
                         </div>
                       </div>
                     </li>
