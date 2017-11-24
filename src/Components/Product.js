@@ -27,7 +27,7 @@ class Product extends Component {
 
   productPress (product, store) {
     const { type } = this.props
-    const commission = product.commission * 100
+    const commission = product.commission
     if (type === 'dropship') {
       Router.push(
         url.format({
@@ -55,7 +55,7 @@ class Product extends Component {
     // set commission
     let commission = null
     if (product.hasOwnProperty('commission') && product.commission) {
-      commission = product.commission * 100
+      commission = product.commission
     }
     // <Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />
 

@@ -51,12 +51,12 @@ class AddAddress extends React.Component {
         message: 'Error, default message.'
       }
     }
+    this.fetching = { provinces: false, districts: false, subdistricts: false, villages: false }
   }
 
   handleAddress (e) {
     e.preventDefault()
     const { provinces, districts, subdistricts, villages } = this.state
-    const { getDistrict, getSubDistrict, getVillage } = this.props
     const { name, value } = e.target
     const { formAddress } = this.state
     const newState = { formAddress }
@@ -70,19 +70,22 @@ class AddAddress extends React.Component {
     switch (name) {
       case 'province_id':
         this.setState({ provinces: { ...provinces, selected: value }, districts: { ...districts, selected: value } })
-        getDistrict({ province_id: value })
+        this.fetching = { ...this.fetching, districts: true }
+        this.props.getDistrict({ province_id: value })
         break
       case 'district_id':
         const newSubdistrict = { subdistricts }
         newSubdistrict.subdistricts['selected'] = value
         this.setState(newSubdistrict)
-        getSubDistrict({ district_id: value })
+        this.fetching = { ...this.fetching, subdistricts: true }
+        this.props.getSubDistrict({ district_id: value })
         break
       case 'sub_district_id':
         const newVillages = { villages }
         newVillages.villages['selected'] = value
         this.setState(newVillages)
-        getVillage({ sub_district_id: value })
+        this.fetching = { ...this.fetching, villages: true }
+        this.props.getVillage({ sub_district_id: value })
         break
       default:
         break
@@ -135,6 +138,7 @@ class AddAddress extends React.Component {
     const { provinces } = this.state
     const { getProvince, isFound } = this.props
     if (!isFound(provinces)) {
+      this.fetching = { ...this.fetching, provinces: true }
       getProvince()
     }
   }
@@ -185,7 +189,19 @@ class AddAddress extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { provinces, districts, subdistricts, villages, submiting } = this.state
     const { isFetching, isFound, isError, notifError } = this.props
-    if (!isFetching(nextProps.provinces)) {
+    if (isFetching(nextProps.districts) && this.fetching.districts) {
+      const reset = { subdistricts, villages }
+      reset.subdistricts.data['subdistricts'] = []
+      reset.villages.data['villages'] = []
+      this.setState(reset)
+    }
+    if (isFetching(nextProps.subdistricts) && this.fetching.subdistricts) {
+      const resetVillages = { villages }
+      resetVillages.villages.data['villages'] = []
+      this.setState(resetVillages)
+    }
+    if (!isFetching(nextProps.provinces) && this.fetching.provinces) {
+      this.fetching = { ...this.fetching, provinces: false }
       if (isFound(nextProps.provinces)) {
         const newProvince = { provinces }
         newProvince.provinces['data'] = nextProps.provinces
@@ -195,7 +211,8 @@ class AddAddress extends React.Component {
         this.setState({ notification: notifError(nextProps.provinces.message) })
       }
     }
-    if (!isFetching(nextProps.districts)) {
+    if (!isFetching(nextProps.districts) && this.fetching.districts) {
+      this.fetching = { ...this.fetching, districts: false }
       if (isFound(nextProps.districts)) {
         const newDistrict = { districts }
         newDistrict.districts['data'] = nextProps.districts
@@ -205,7 +222,8 @@ class AddAddress extends React.Component {
         this.setState({ notification: notifError(nextProps.districts.message) })
       }
     }
-    if (!isFetching(nextProps.subdistricts)) {
+    if (!isFetching(nextProps.subdistricts) && this.fetching.subdistricts) {
+      this.fetching = { ...this.fetching, subdistricts: false }
       if (isFound(nextProps.subdistricts)) {
         const newSubdistrict = { subdistricts }
         newSubdistrict.subdistricts['data'] = nextProps.subdistricts
@@ -215,7 +233,8 @@ class AddAddress extends React.Component {
         this.setState({ notification: notifError(nextProps.subdistricts.message) })
       }
     }
-    if (!isFetching(nextProps.villages)) {
+    if (!isFetching(nextProps.villages) && this.fetching.villages) {
+      this.fetching = { ...this.fetching, villages: false }
       if (isFound(nextProps.villages)) {
         const newVillage = { villages }
         newVillage.villages['data'] = nextProps.villages
@@ -224,19 +243,6 @@ class AddAddress extends React.Component {
       if (isError(nextProps.villages)) {
         this.setState({ notification: notifError(nextProps.villages.message) })
       }
-    }
-    if (isFetching(nextProps.districts)) {
-      const resetSubdistricts = { subdistricts }
-      resetSubdistricts.subdistricts.data['subdistricts'] = []
-      const resetVillages = { villages }
-      resetVillages.villages.data['villages'] = []
-      this.setState(resetSubdistricts)
-      this.setState(resetVillages)
-    }
-    if (isFetching(nextProps.subdistricts)) {
-      const resetVillages = { villages }
-      resetVillages.villages.data['villages'] = []
-      this.setState(resetVillages)
     }
     if (!isFetching(nextProps.statusAddAddress) && submiting) {
       this.setState({ submiting: false })
