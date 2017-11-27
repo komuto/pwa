@@ -226,7 +226,7 @@ const WishlistContent = ({ wishlist, viewActive, wishlistPress }) => (
         {
           wishlist.map((myProduct, index) => {
             if (myProduct.product.is_liked) {
-              let idProduct = `${myProduct.product.id}.${myProduct.store.id}`
+              let idProduct = `${myProduct.product.id}`
               return <ProductContainers key={index}>
                 <Product
                   {...myProduct}
