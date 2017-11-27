@@ -112,7 +112,9 @@ class ProductList extends Component {
     this.fetching = { ...this.fetching, fetchHiddenProducts: true, fetchStoreProducts: true }
     this.props.getHiddenStoreProducts()
     Events.scrollEvent.register('end', (to, element) => {
-      this.setState({ showListCatalog: !this.state.showListCatalog })
+      if (!/menus/.test(to)) {
+        this.setState({ showListCatalog: !this.state.showListCatalog })
+      }
     })
   }
 
@@ -334,6 +336,7 @@ class ProductList extends Component {
 
 const ContentHidden = (props) => {
   if (props.hiddenProducts === undefined) return null
+  console.log('ContentHidden', props.hiddenProducts)
   return (
     <div>
       {
@@ -344,7 +347,10 @@ const ContentHidden = (props) => {
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
             props.hiddenProducts.map((p, i) => {
-              let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+              let priceAfterDiscount = (p.is_discount) ? props.rounding(p.price - ((p.price * p.discount) / 100)) : p.price
+              let commissionKomuto = p.commission ? p.commission : 0
+              let commision = props.rounding(priceAfterDiscount * (commissionKomuto / 100))
+              let priceReceive = props.rounding(priceAfterDiscount - commision)
               return (
                 <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
                   <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
@@ -361,7 +367,8 @@ const ContentHidden = (props) => {
                         { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                         { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                         <p>Jumlah Stok : { p.stock }</p>
-                        <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p>
+                        <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                        <p>Uang yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                       </div>
                     </div>
                   </div>
@@ -390,8 +397,9 @@ const ContentShow = (props) => {
                         <strong>{ ReadAbleText(sp.catalog.name)} ({sp.catalog.count_product})</strong>
                       </div>
                     </div>
-                    <div className='column is-half' onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
-                      <div className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
+                    {/* <div className='column is-half'> */}
+                    <Link activeClass='active' className={`column is-half ${String(sp.catalog.id)}`} to={`menus ${String(sp.catalog.id)}`} spy smooth duration={500} onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
+                      <Element name={`menus ${String(sp.catalog.id)}`} className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
                         <a className='option-content'><span /><span /><span /></a>
                         <ul className='option-dropdown'>
                           <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
@@ -399,14 +407,18 @@ const ContentShow = (props) => {
                           <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
                           <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
                         </ul>
-                      </div>
-                    </div>
+                      </Element>
+                    </Link>
+                    {/* </div> */}
                   </div>
                 </div>
               </div>
               {
                 sp.products.map((p, i) => {
-                  let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+                  let priceAfterDiscount = (p.is_discount) ? props.rounding(p.price - ((p.price * p.discount)) / 100) : p.price
+                  let commissionKomuto = p.commission ? p.commission : 0
+                  let commision = props.rounding(priceAfterDiscount * (commissionKomuto / 100))
+                  let priceReceive = props.rounding(priceAfterDiscount - commision)
                   return (
                     <div className='detail-product' key={i}>
                       <div className='remove rightTop'>
@@ -422,7 +434,8 @@ const ContentShow = (props) => {
                           { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                           { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
-                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p> }
+                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p> }
+                          <p>Uang yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                         </div>
                       </div>
                     </div>
