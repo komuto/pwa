@@ -46,7 +46,7 @@ export const storeExpeditionList = () => {
 }
 
 export const photoUpload = ({ data }) => {
-  const axios = authApiKomuto()
+  const axios = authApiKomuto(null, 30000)
   return axios.post('images', data)
 }
 
