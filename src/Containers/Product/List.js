@@ -336,6 +336,7 @@ class ProductList extends Component {
 
 const ContentHidden = (props) => {
   if (props.hiddenProducts === undefined) return null
+  console.log('ContentHidden', props.hiddenProducts)
   return (
     <div>
       {
@@ -346,7 +347,10 @@ const ContentHidden = (props) => {
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
             props.hiddenProducts.map((p, i) => {
-              let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+              let priceAfterDiscount = (p.is_discount) ? props.rounding(p.price - ((p.price * p.discount) / 100)) : p.price
+              let commissionKomuto = p.commission ? p.commission : 0
+              let commision = props.rounding(priceAfterDiscount * (commissionKomuto / 100))
+              let priceReceive = props.rounding(priceAfterDiscount - commision)
               return (
                 <Element name={String(p.id)} className={`section is-paddingless detail`} key={i} style={{ marginBottom: 20 }}>
                   <div className='detail-product' key={i} onClick={(e) => props.productDetail(e, p)}>
@@ -363,7 +367,8 @@ const ContentHidden = (props) => {
                         { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                         { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                         <p>Jumlah Stok : { p.stock }</p>
-                        <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p>
+                        <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
+                        <p>Uang yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                       </div>
                     </div>
                   </div>
@@ -410,7 +415,10 @@ const ContentShow = (props) => {
               </div>
               {
                 sp.products.map((p, i) => {
-                  let priceAfterDiscount = (p.is_discount) ? p.price - ((p.price * p.discount) / 100) : p.price
+                  let priceAfterDiscount = (p.is_discount) ? props.rounding(p.price - ((p.price * p.discount)) / 100) : p.price
+                  let commissionKomuto = p.commission ? p.commission : 0
+                  let commision = props.rounding(priceAfterDiscount * (commissionKomuto / 100))
+                  let priceReceive = props.rounding(priceAfterDiscount - commision)
                   return (
                     <div className='detail-product' key={i}>
                       <div className='remove rightTop'>
@@ -426,7 +434,8 @@ const ContentShow = (props) => {
                           { (p.dropship_origin !== undefined) && <p className='dropship-worldsports'>Dropship dari {p.dropship_origin.name}</p> }
                           { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
-                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(props.rounding(priceAfterDiscount)) }</p> }
+                          { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p> }
+                          <p>Uang yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                         </div>
                       </div>
                     </div>
