@@ -43,8 +43,8 @@ class OwnerInformation extends React.Component {
     const { formInfo, validation } = this.state
     let idNumber = formInfo.id_number
     let motherName = formInfo.mother_name
-    let idNumberRequired = name === 'id_number' && idNumber.length > 0
-    let motherNameRequired = name === 'mother_name' && motherName.length > 0
+    let idNumberRequired = name === 'id_number' && idNumber.length >= 7 && idNumber.length <= 16
+    let motherNameRequired = name === 'mother_name' && motherName.length >= 3
     let result = idNumberRequired || motherNameRequired
     let errorMsg = {
       fontSize: '12px',
@@ -66,8 +66,8 @@ class OwnerInformation extends React.Component {
     const { setOwnerInfo } = this.props
     let idNumber = formInfo.id_number
     let motherName = formInfo.mother_name
-    let idNumberRequired = idNumber.length > 0
-    let motherNameRequired = motherName.length > 0
+    let idNumberRequired = idNumber.length >= 7 && idNumber.length <= 16
+    let motherNameRequired = motherName.length >= 3
     let isValid = idNumberRequired && motherNameRequired
     if (isValid) {
       this.setState({ submitting: true }, () => {
@@ -108,7 +108,6 @@ class OwnerInformation extends React.Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { formInfo, profile, submitting } = this.state
     const { isFound } = this.props
     return (
@@ -152,7 +151,7 @@ class OwnerInformation extends React.Component {
                     placeholder='No Identitas (KTP/SIM/Paspor)'
                     value={formInfo.id_number}
                     onChange={(e) => this.handleInput(e)} />
-                  {this.renderValidation('id_number', 'Mohon isi no identitas')}
+                  {this.renderValidation('id_number', 'Mohon isi no identitas 7 - 16 digit')}
                 </p>
               </div>
               <div className='field'>

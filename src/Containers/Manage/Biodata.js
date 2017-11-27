@@ -117,11 +117,11 @@ class ManageBiodata extends React.Component {
     let gender = formBiodata.gender
     let placeOfBirth = formBiodata.place_of_birth
     let dateOfBirth = formBiodata.date_of_birth
-    let photoRequired = type === 'photo' && (photo !== '')
-    let nameRequired = type === 'name' && nameUser !== ''
-    let genderRequired = type === 'gender' && gender !== ''
-    let pobRequired = type === 'place_of_birth' && placeOfBirth !== null
-    let dobRequired = type === 'date_of_birth' && dateOfBirth !== null
+    let photoRequired = type === 'photo' && photo
+    let nameRequired = type === 'name' && nameUser.length >= 3
+    let genderRequired = type === 'gender' && gender
+    let pobRequired = type === 'place_of_birth' && placeOfBirth
+    let dobRequired = type === 'date_of_birth' && dateOfBirth
     let result = photoRequired || nameRequired || genderRequired || pobRequired || dobRequired
     let errorMsg = {
       fontSize: '12px',
@@ -146,10 +146,10 @@ class ManageBiodata extends React.Component {
     let placeOfBirth = formBiodata.place_of_birth
     let dateOfBirth = formBiodata.date_of_birth
     let photoRequired = (photo.hasOwnProperty('preview') || photo.length > 0)
-    let nameRequired = nameUser !== ''
-    let genderRequired = gender !== ''
-    let pobRequired = !!placeOfBirth !== null
-    let dobRequired = dateOfBirth !== null
+    let nameRequired = nameUser.length >= 3
+    let genderRequired = gender
+    let pobRequired = !!placeOfBirth
+    let dobRequired = dateOfBirth
     let isValid = photoRequired && nameRequired && genderRequired && pobRequired && dobRequired
     if (isValid) {
       this.setState({ validation: false })

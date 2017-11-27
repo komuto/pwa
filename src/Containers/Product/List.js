@@ -112,7 +112,9 @@ class ProductList extends Component {
     this.fetching = { ...this.fetching, fetchHiddenProducts: true, fetchStoreProducts: true }
     this.props.getHiddenStoreProducts()
     Events.scrollEvent.register('end', (to, element) => {
-      this.setState({ showListCatalog: !this.state.showListCatalog })
+      if (!/menus/.test(to)) {
+        this.setState({ showListCatalog: !this.state.showListCatalog })
+      }
     })
   }
 
@@ -390,8 +392,9 @@ const ContentShow = (props) => {
                         <strong>{ ReadAbleText(sp.catalog.name)} ({sp.catalog.count_product})</strong>
                       </div>
                     </div>
-                    <div className='column is-half' onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
-                      <div className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
+                    {/* <div className='column is-half'> */}
+                    <Link activeClass='active' className={`column is-half ${String(sp.catalog.id)}`} to={`menus ${String(sp.catalog.id)}`} spy smooth duration={500} onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
+                      <Element name={`menus ${String(sp.catalog.id)}`} className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
                         <a className='option-content'><span /><span /><span /></a>
                         <ul className='option-dropdown'>
                           <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
@@ -399,8 +402,9 @@ const ContentShow = (props) => {
                           <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
                           <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
                         </ul>
-                      </div>
-                    </div>
+                      </Element>
+                    </Link>
+                    {/* </div> */}
                   </div>
                 </div>
               </div>
