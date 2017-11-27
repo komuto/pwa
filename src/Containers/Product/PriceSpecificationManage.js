@@ -8,6 +8,8 @@ import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 // libs
 import RupiahFormat from '../../Lib/RupiahFormat'
+// validation
+import { inputNumber } from '../../Validations/Input'
 // actions
 import * as productActions from '../../actions/product'
 import * as storesActions from '../../actions/stores'
@@ -49,18 +51,25 @@ class ProductPriceSpecificationManage extends Component {
   formHandling (e) {
     let { form, error } = this.state
     let { name, value } = e.target
-    form[name] = value
     error = null
-    if (name === 'discount' && value > 100) {
-      error = 'discount'
-    }
-    if (name === 'price') {
+    if (name === 'discount') {
+      if (value > 100) {
+        error = 'discount'
+      } else {
+        form[name] = inputNumber(value)
+      }
+    } else if (name === 'price') {
+      form[name] = inputNumber(value)
       if (this.timeout) clearTimeout(this.timeout)
       this.timeout = setTimeout(() => {
         NProgress.start()
         this.fetching = { ...this.fetching, commission: true }
         this.props.getCommission({ price: value })
       }, 3000)
+    } else if (name === 'stock' || name === 'weight') {
+      form[name] = inputNumber(value)
+    } else {
+      form[name] = value
     }
     this.setState({ form, error })
   }
@@ -231,14 +240,14 @@ class ProductPriceSpecificationManage extends Component {
                   <label className='label' style={nameError}>Harga Produk</label>
                   <p className='control is-expanded price'>
                     <span className='currency' style={nameError}>Rp</span>
-                    <input onChange={(e) => this.formHandling(e)} value={form.price !== undefined && form.price} placeholder='0' name='price' className='input' type='number' style={nameError} />
+                    <input onChange={(e) => this.formHandling(e)} value={form.price !== undefined && form.price} placeholder='0' name='price' className='input' type='text' style={nameError} />
                   </p>
                 </div>
                 <div className='field column is-one-quarter'>
                   <label className='label' style={discountError}>Diskon</label>
                   <p className='control is-expanded discount'>
                     <span className='disc' style={discountError}>%</span>
-                    <input onChange={(e) => this.formHandling(e)} value={form.discount !== undefined && form.discount} placeholder='0' name='discount' className='input' type='number' style={discountError} />
+                    <input onChange={(e) => this.formHandling(e)} value={form.discount !== undefined && form.discount} placeholder='0' name='discount' className='input' type='text' style={discountError} />
                   </p>
                 </div>
               </div>
@@ -274,13 +283,13 @@ class ProductPriceSpecificationManage extends Component {
               <label className='label' style={weightError}>Berat Produk</label>
               <p className='control is-expanded discount'>
                 <span className='disc' style={weightError}>gram</span>
-                <input onChange={(e) => this.formHandling(e)} value={form.weight !== undefined && form.weight} placeholder='0' name='weight' className='input' type='number' style={weightError} />
+                <input onChange={(e) => this.formHandling(e)} value={form.weight !== undefined && form.weight} placeholder='0' name='weight' className='input' type='text' style={weightError} />
               </p>
             </div>
             <div className='field'>
               <label className='label' style={stockError}>Stock Produk</label>
               <p className='control is-expanded'>
-                <input onChange={(e) => this.formHandling(e)} value={form.stock !== undefined && form.stock} placeholder='0' name='stock' className='input' type='number' style={stockError} />
+                <input onChange={(e) => this.formHandling(e)} value={form.stock !== undefined && form.stock} placeholder='0' name='stock' className='input' type='text' style={stockError} />
               </p>
             </div>
             <div className='field radio-horizontal'>
