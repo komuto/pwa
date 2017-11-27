@@ -2,7 +2,8 @@ const express = require('express')
 const next = require('next')
 const path = require('path')
 const axios = require('axios')
-const hostNameDev = 'mobiledev.komuto.com'
+const hostNameDev = require('./src/Config/DefaultHostName')
+// const hostNameDev = 'mobiledev.komuto.com'
 // const compression = require('compression')
 require('dotenv').config()
 
