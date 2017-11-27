@@ -422,6 +422,7 @@ class ManageBiodata extends React.Component {
                     isOpen={isOpen}
                     onSelect={(e) => this.handleSelect(e)}
                     onCancel={(e) => this.handleCancel(e)}
+                    min={new Date(1930, 0, 1)}
                     confirmText='Set Tanggal Lahir'
                     cancelText='Batal' />
                   <span className='location-label js-option' onClick={(e) => this.handleCancel(e)}>
