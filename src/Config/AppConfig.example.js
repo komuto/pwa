@@ -1,42 +1,45 @@
-import os from 'os'
+import os, { hostname } from 'os'
+import DefaultHostName from './DefaultHostName'
 
-let hostName = 'localhost'
-// for server rendering
-if (typeof hostNameServer !== 'undefined') {
-  hostName = hostNameServer
-} else {
-  hostName = os.hostname()
-}
-const isLocalhost = hostName.includes('localhost')
-
-console.log('hostName: ', hostName)
-console.log('isLocalhost: ', isLocalhost)
-
-const baseURL = isLocalhost ? 'http://localhost:8889/' : `https://${hostName}/`
-const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com'
+const platform = os.platform()
 const languages = 'ID' // ID , EN
-const apiKomuto = isLocalhost ? `https://api.komuto.skyshi.com/` : `https://api.${hostName}/`
+const serviceUrl = 'https://private-f0902d-komuto.apiary-mock.com' // api ari
+const hostNameDev = DefaultHostName
+let baseURL = 'http://localhost:8889/'
+let apiKomuto = `https://api.${hostNameDev}/`
+let hostName = ''
+
+if (platform === 'browser') {
+  hostName = os.hostname()
+} else {
+  hostName = hostNameServer || hostname
+}
+
+if (!hostName.includes('localhost')) {
+  baseURL = `https://${hostName}/`
+  apiKomuto = `https://api.${hostName}/`
+}
 
 const midTrans = {
   production: {
-    BASE_URL: '',
+    BASE_URL: 'https://app.midtrans.com/snap/snap.js',
     ACCESS_KEY: {
-      CLIENT_KEY: '',
-      SERVER_KEY: ''
+      CLIENT_KEY: '-',
+      SERVER_KEY: '-'
     }
   },
   stagging: {
-    BASE_URL: '',
+    BASE_URL: 'https://app.sandbox.midtrans.com/snap/snap.js',
     ACCESS_KEY: {
-      CLIENT_KEY: '',
-      SERVER_KEY: ''
+      CLIENT_KEY: '-',
+      SERVER_KEY: '-'
     }
   }
 }
 
 const raven = {
-  secretKey: '',
-  id: ''
+  secretKey: '-',
+  id: '-'
 }
 
 const AppConfig = {
