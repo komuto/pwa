@@ -224,7 +224,7 @@ class Account extends Component {
                       <article className='media'>
                         <div className='media-left'>
                           <figure className='image user-pict'>
-                            <div style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'red', padding: 20, backgroundImage: `url(${profile.user.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+                            <div style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgb(226, 226, 226)', padding: 20, backgroundImage: `url(${profile.user.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
                           </figure>
                         </div>
                         <div className='media-content'>

@@ -9,7 +9,6 @@ class Header extends Component {
   constructor (props) {
     super(props)
     const { pageType, productDetail, tempMarketplace } = props
-    console.log('Header: ', props)
     let title = ''
     switch (pageType) {
       case 'product_detail':

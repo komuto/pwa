@@ -25,7 +25,7 @@ import * as expeditionActions from '../actions/expedition'
 import RupiahFormat from '../Lib/RupiahFormat'
 import UrlParam from '../Lib/UrlParam'
 // validations
-import * as inputValidations from '../Validations/Input'
+// import * as inputValidations from '../Validations/Input'
 // themes
 import Images from '../Themes/Images'
 
@@ -205,7 +205,8 @@ class Purchase extends Component {
   async onChangeNoted (e) {
     e.preventDefault()
     let { noted } = this.state
-    noted = inputValidations.inputNormal(e.target.value)
+    // noted = inputValidations.inputNormal(e.target.value)
+    noted = e.target.value
     await this.props.setNoted({ noted })
     this.setState({ noted })
   }
