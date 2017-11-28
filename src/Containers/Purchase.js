@@ -241,7 +241,7 @@ class Purchase extends Component {
       'destination_ro_id': address.selected.district.ro_id,
       'origin_ro_id': productDetail.detail.location.district.ro_id,
       'service': expeditionsPackage.selected.name,
-      'product_id': Number(id),
+      'product_id': id,
       'expedition_id': expeditions.selected.id,
       'expedition_service_id': expeditionsPackage.selected.id,
       'qty': amountProduct,
