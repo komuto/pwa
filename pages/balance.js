@@ -45,8 +45,8 @@ const Index = (props) => {
         icon: Images.phoneSuccess,
         title: 'Pembayaran Telah Berhasil',
         subTitle: 'Terimakasih telah melakukan topup saldo',
-        path: '/balance?type=topup',
-        alias: '/balance/topup',
+        path: '/balance?type=topup&status=history',
+        alias: '/balance/topup/history',
         text: 'Lihat balance status'
       }
       return <DefaultLayout> <NotificationPage {...params} /> </DefaultLayout>

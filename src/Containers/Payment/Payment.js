@@ -209,7 +209,7 @@ class Payment extends Component {
     if (paymentType === 'bucket') {
       status = cart.isFound
     }
-
+    
     if (paymentType === 'transaction') {
       status = transaction.isFound
     }
@@ -241,6 +241,7 @@ const Paymentcontent = (props) => {
   let { cart, transaction, paymentType, idT, snapToken, balance, submitting, paymentBalance, failTransaction, isBucketPayment, isTransactionPayment } = props
   let totalPayment = 0
   let pricePromo = 0
+  let userBalance = 0
 
   /** count total payment when type is bucket */
   if (isBucketPayment()) {
@@ -268,6 +269,10 @@ const Paymentcontent = (props) => {
     totalPayment = transaction.transaction.bucket.total_bill
   }
 
+  if (balance.isFound) {
+    userBalance = balance.balance.user_balance
+  }
+
   return (
     <Content>
       <section className='section payment'>
@@ -292,7 +297,7 @@ const Paymentcontent = (props) => {
         </div>
         <div className='box-rounded' onClick={() => !submitting.balance && balance.isFound && paymentBalance()}>
           <div className='payment-method'>
-            Saldo (Rp { RupiahFormat(balance.balance.user_balance) })
+            Saldo (Rp { RupiahFormat(userBalance) })
             {
               submitting.balance
               ? <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
