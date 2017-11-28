@@ -21,7 +21,7 @@ export default function reduxWrapper (ReduxComponent) {
           store.dispatch(otherActions.setMarketPlaceTemp(req.marketplace))
         }
       }
-      let token = ''
+      let token = null
       if (isServer) {
         const rootTask = sagaMiddleware.run(dataSaga)
         store.dispatch(otherActions.resetMarketPlace())
