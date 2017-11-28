@@ -18,6 +18,7 @@ import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
 // validations
 import * as constraints from '../../Validations/Auth'
+import { inputPhoneNumber, isValidPhoneNumber } from '../../Validations/Input'
 // actions
 import * as loginAction from '../../actions/user'
 
@@ -35,7 +36,7 @@ class SignUp extends Component {
           textHelp: ''
         },
         handphone: {
-          type: 'number',
+          type: 'text',
           placeholder: 'Nomor Handphone',
           name: 'handphone',
           value: '',
@@ -106,6 +107,10 @@ class SignUp extends Component {
           input.nama.classInfo = danger
           input.nama.textHelp = nama.alert.empty
           status = false
+        } else if (value.length < 3) {
+          input.nama.classInfo = danger
+          input.nama.textHelp = nama.alert.min
+          status = false
         } else {
           input.nama.classInfo = success
           input.nama.textHelp = ''
@@ -113,16 +118,53 @@ class SignUp extends Component {
         }
         break
       case input.handphone.name:
-        input.handphone.value = value
+        input.handphone.value = inputPhoneNumber(value)
         if (value === '') {
           input.handphone.classInfo = danger
           input.handphone.textHelp = handphone.alert.empty
           status = false
         } else {
-          if (value.match(handphone.regex)) {
+          if (isValidPhoneNumber(value)) {
             input.handphone.classInfo = success
             input.handphone.textHelp = ''
             status = true
+            switch (value.charAt(0)) {
+              case '0':
+                if (value.length >= 8 && value.length <= 13) {
+                  input.handphone.classInfo = success
+                  input.handphone.textHelp = ''
+                  status = true
+                } else {
+                  input.handphone.classInfo = danger
+                  input.handphone.textHelp = handphone.alert.minMax0
+                  status = false
+                }
+                break
+              case '+':
+                if (value.length >= 10 && value.length <= 15) {
+                  input.handphone.classInfo = success
+                  input.handphone.textHelp = ''
+                  status = true
+                } else {
+                  input.handphone.classInfo = danger
+                  input.handphone.textHelp = handphone.alert.minMaxPlus
+                  status = false
+                }
+                break
+              case '6':
+                if (value.length >= 9 && value.length <= 14) {
+                  input.handphone.classInfo = success
+                  input.handphone.textHelp = ''
+                  status = true
+                } else {
+                  input.handphone.classInfo = danger
+                  input.handphone.textHelp = handphone.alert.minMax62
+                  status = false
+                }
+                break
+              default:
+                break
+            }
           } else {
             input.handphone.classInfo = danger
             input.handphone.textHelp = handphone.alert.valid
@@ -206,7 +248,11 @@ class SignUp extends Component {
   onChange (event) {
     const { name, value } = event.target
     let { input } = this.state
-    input[name].value = value
+    if (name === 'handphone') {
+      input[name].value = inputPhoneNumber(value)
+    } else {
+      input[name].value = value
+    }
     this.setState({ input })
   }
 
@@ -316,7 +362,7 @@ class SignUp extends Component {
           message={notification.message} />
         <Section className='content'>
           <Containers>
-            <form action='#' className='form'>
+            <div className='form'>
               <Input
                 {...input.nama}
                 onChange={this.onChange}
@@ -366,7 +412,7 @@ class SignUp extends Component {
               <LoginFacebook
                 appId={this.props.marketplace.data.fb_app_id}
                 responseFacebook={(response) => this.responseFacebook(response)} />
-            </form>
+            </div>
           </Containers>
         </Section>
       </Content>
