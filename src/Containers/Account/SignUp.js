@@ -69,7 +69,9 @@ class SignUp extends Component {
         genderGroup: {
           type: 'radio',
           name: 'gender',
-          selected: 'male'
+          selected: '',
+          classInfo: '',
+          textHelp: ''
         }
       },
       notification: {
@@ -87,12 +89,12 @@ class SignUp extends Component {
     this.handleGenderChange = this.handleGenderChange.bind(this)
   }
 
-  scrollToBottom () {
-    animateScroll.scrollToBottom()
+  scrollToTop () {
+    animateScroll.scrollToTop()
   }
 
   validation (name, value) {
-    const { nama, handphone, email, password, retypePassword } = constraints.loginConstraints
+    const { nama, handphone, email, password, retypePassword, genderGroup } = constraints.loginConstraints
     const { danger, success } = constraints.classInfo
     let { input } = this.state
     let status = false
@@ -166,7 +168,7 @@ class SignUp extends Component {
         break
       case input.passwordRetype.name:
         input.passwordRetype.value = value
-        if (value === '') {
+        if (value === '-') {
           input.passwordRetype.classInfo = danger
           input.passwordRetype.textHelp = password.alert.empty
           status = false
@@ -180,6 +182,18 @@ class SignUp extends Component {
             input.passwordRetype.textHelp = ''
             status = true
           }
+        }
+        break
+      case input.genderGroup.name:
+        input.genderGroup.selected = value
+        if (value === '') {
+          input.genderGroup.classInfo = danger
+          input.genderGroup.textHelp = genderGroup.alert.empty
+          status = false
+        } else {
+          input.genderGroup.classInfo = success
+          input.genderGroup.textHelp = ''
+          status = true
         }
         break
       default:
@@ -221,7 +235,8 @@ class SignUp extends Component {
         this.validation(handphone.name, handphone.value) &&
         this.validation(email.name, email.value) &&
         this.validation(password.name, password.value) &&
-        this.validation(passwordRetype.name, passwordRetype.value)) {
+        this.validation(passwordRetype.name, passwordRetype.value) &&
+        this.validation(genderGroup.name, genderGroup.selected)) {
       NProgress.start()
       this.submitting = { ...this.submitting, register: true }
 
@@ -239,7 +254,7 @@ class SignUp extends Component {
   }
 
   async componentDidMount () {
-    this.scrollToBottom()
+    this.scrollToTop()
     let { fcmToken } = this.state
     fcmToken = await localforage.getItem('FCM_TOKEN')
     this.setState({ fcmToken })
@@ -337,6 +352,7 @@ class SignUp extends Component {
                     value='female'
                     {...input.genderGroup}
                     onChange={this.handleGenderChange} />
+                  <span className={`help ${input.genderGroup.classInfo}`}>{input.genderGroup.textHelp}</span>
                 </p>
               </div>
               <TermConditions

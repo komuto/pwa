@@ -40,5 +40,12 @@ export const loginConstraints = {
       empty: 'Konfirmasi Password tidak boleh kosong',
       valid: 'Konfirmasi password salah'
     }
+  },
+  genderGroup: {
+    presence: true,
+    alert: {
+      empty: 'Jenis kelamin harus di pilih',
+      valid: 'Jenis kelamin tidak valid'
+    }
   }
 }
