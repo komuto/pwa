@@ -32,7 +32,8 @@ export const Input = ({ classInfo, text, hasIconsRight, name, type, placeholder,
           className={`input ${classInfo}`}
           placeholder={placeholder}
           value={value}
-          onChange={onChange} />
+          onChange={onChange}
+          autoComplete='off' />
         {icon}
       </p>
       <p className={`help ${classInfo}`}>{textHelp}</p>
