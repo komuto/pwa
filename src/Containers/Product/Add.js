@@ -46,7 +46,7 @@ export default () => (
                     <div className='content'>
                       <p>
                         <strong>Ambil dari Dropshipper</strong><br />
-                        Ambil produk dari dropshipper. Dan Anda akan mendapat komisi. penjualan sebesar 10%
+                        Ambil produk dari dropshipper. Dan Anda akan mendapat komisi penjualan hingga sebesar 2.5%
                       </p>
                     </div>
                   </div>
