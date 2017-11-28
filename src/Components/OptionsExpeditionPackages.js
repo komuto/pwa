@@ -18,7 +18,7 @@ const OptionsExpeditionPackages = (props) => {
                     <label className={`radio ${props.expeditionsPackage.selected.id === data.id && 'checked'}`} key={data.id} onClick={(e) => props.expeditionsPackageSelected(e, data)}>
                       <input type='radio' name='reguler' />
                       <span className='service-name'>{ data.full_name }</span>
-                      <span>{data.etd} Hari</span>
+                      <span>{data.etd}</span>
                       <span>Rp {RupiahFormat(data.cost)}</span>
                     </label>
                   )
