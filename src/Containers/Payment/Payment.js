@@ -209,7 +209,7 @@ class Payment extends Component {
     if (paymentType === 'bucket') {
       status = cart.isFound
     }
-    
+
     if (paymentType === 'transaction') {
       status = transaction.isFound
     }
