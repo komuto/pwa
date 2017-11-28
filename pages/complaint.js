@@ -15,7 +15,7 @@ const Index = (props) => {
     /** default page */
     if (!id && !sub) {
       const params = {
-        style: 'main detail bg-grey',
+        style: 'main detail bg-grey disc',
         header: {
           title: 'Komplain Barang'
         }

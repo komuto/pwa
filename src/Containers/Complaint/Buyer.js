@@ -13,9 +13,9 @@ import Router from 'next/router'
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
-// import Images from '../../Themes/Images'
+import Images from '../../Themes/Images'
 // import InfiniteScroll from 'react-infinite-scroller'
-import { Navbar, Navtab } from '../Navbar'
+import { Navbar } from '../Navbar'
 /** including actions */
 import * as transactionActions from '../../actions/transaction'
 /** including custom lib */
@@ -53,6 +53,8 @@ class Buyer extends Component {
 
   render () {
     let { buyerComplainedOrders, buyerComplainedOrders2, tab, notification } = this.state
+    console.log('buyerComplainedOrders2: ', buyerComplainedOrders2)
+    console.log('buyerComplainedOrders: ', buyerComplainedOrders)
 
     let { isFound } = this.props
     let countUnreadResolved = 0
@@ -95,7 +97,6 @@ class Buyer extends Component {
     return (
       <Content>
         <Navbar {...params} />
-        <Navtab {...params.navtab} />
         <Notification
           type={notification.type}
           isShow={notification.status}
@@ -180,25 +181,37 @@ const BuyerContent = ({ buyerComplainedOrders, buyerComplainedOrders2, tab }) =>
   </Content>
 )
 
-const UnResolvedContent = ({ data }) => (
-  <Content>
-    {
-    data.orders.map((order, index) => (
-      <ItemStore key={index} order={order} />
-    ))
+const UnResolvedContent = ({ data }) => {
+  if (data.orders.length > 0) {
+    return (
+      <Content>
+        {
+        data.orders.map((order, index) => (
+          <ItemStore key={index} order={order} />
+        ))
+      }
+      </Content>
+    )
+  } else {
+    return <EmptyComplaint />
   }
-  </Content>
-)
+}
 
-const ResolvedContent = ({ data }) => (
-  <Content>
-    {
-    data.orders.map((order, index) => (
-      <ItemStore key={index} order={order} />
-    ))
+const ResolvedContent = ({ data }) => {
+  if (data.orders.length > 0) {
+    return (
+      <Content>
+        {
+        data.orders.map((order, index) => (
+          <ItemStore key={index} order={order} />
+        ))
+      }
+      </Content>
+    )
+  } else {
+    return <EmptyComplaint />
   }
-  </Content>
-)
+}
 
 export const ItemStore = ({ order }) => (
   <section onClick={() =>
@@ -248,20 +261,18 @@ export const ItemStore = ({ order }) => (
 
 const TabsName = ['Menunggu', 'Terselesaikan']
 
-// const EmptyComplain = () => {
-//   return (
-//     <div className='content'>
-//       <div className='container is-fluid'>
-//         <div className='desc has-text-centered'>
-//           <MyImage src={Images.emptyComplaint} alt='komuto' />
-//           <br /><br />
-//           <p><strong className='bold'>Komplain Barang Kosong</strong></p>
-//           <p>Anda belum memiliki komplain barang untuk diselesaikan masalahnya</p>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
+const EmptyComplaint = () => (
+  <div className='content'>
+    <div className='container is-fluid'>
+      <div className='desc has-text-centered'>
+        <MyImage src={Images.emptyComplaint} alt='komuto' />
+        <br /><br />
+        <p><strong className='bold'>Komplain Barang Kosong</strong></p>
+        <p>Anda belum memiliki komplain barang untuk diselesaikan masalahnya</p>
+      </div>
+    </div>
+  </div>
+)
 
 const mapStateToProps = (state) => ({
   buyerComplainedOrders: state.buyerComplainedOrders,
