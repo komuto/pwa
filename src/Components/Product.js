@@ -83,16 +83,16 @@ class Product extends Component {
           <div className='media'>
             <div className='media-left'>
               {/* <figure className='image' style={{width: '150px'}}> */}
-              <figure className='image'>
-                <MyImage src={product.image} alt={product.name} />
+              <figure className='image img-product'>
+                <MyImage src={product.image} alt={product.name} style={{ height: '150px' }} />
                 { pin }
               </figure>
             </div>
             <div className='media-content'>
-              <div className='content'>
-                <h4>{ ReadAbleText(product.name)}</h4>
+              <div className='content min-height'>
+                <h4 style={{ minHeight: '34px' }}>{ ReadAbleText(product.name)}</h4>
                 <div className='detail'>
-                  <p>{ ReadAbleText(store.name)} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
+                  <p className='store-name' style={{ minHeight: '39px', wordWrap: 'break-word' }}>{ ReadAbleText(store.name)} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
                   { commission ? <span className='commission'>Komisi { commission } %</span> : <span className='wish'>

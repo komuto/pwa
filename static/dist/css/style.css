@@ -5910,6 +5910,8 @@ strong {
         width: 100%;
         max-width: 150px;
         margin: 0 auto; }
+        .box .media .media-left .image.img-product img {
+          height: 150px; }
         .box .media .media-left .image.img-catalog {
           width: 40px;
           height: 40px;
@@ -5943,14 +5945,19 @@ strong {
         line-height: 1.38;
         letter-spacing: 0.2px;
         color: #404852;
-        margin-bottom: 5px; }
+        margin-bottom: 5px;
+        word-wrap: break-word; }
         .box .media .media-content .content h4 a {
           color: #404852; }
           .box .media .media-content .content h4 a:hover, .box .media .media-content .content h4 a:focus {
             color: #56aaef; }
-        .box .media .media-content .content h4 p a {
-          display: block;
-          color: #404852; }
+        .box .media .media-content .content h4 p {
+          word-wrap: break-word; }
+          .box .media .media-content .content h4 p a {
+            display: block;
+            color: #404852; }
+      .box .media .media-content .content.min-height h4 {
+        min-height: 34px; }
       .box .media .media-content .content.reseller .products-name span {
         color: #666666; }
       .box .media .media-content .content .commission {
@@ -5964,7 +5971,8 @@ strong {
           color: #a0a3ae;
           line-height: 1.33;
           letter-spacing: 0.2px;
-          vertical-align: middle; }
+          vertical-align: middle;
+          word-wrap: break-word; }
           .box .media .media-content .content .detail p span, .box .media .media-content .content .detail .discount span {
             vertical-align: middle; }
         .box .media .media-content .content .detail .discount {
@@ -5986,6 +5994,8 @@ strong {
           position: absolute;
           right: -14px;
           bottom: -14px; }
+        .box .media .media-content .content .detail .store-name {
+          min-height: 39px; }
   .box.list .media .media-left {
     margin-right: 10px;
     -ms-flex-item-align: inherit;
