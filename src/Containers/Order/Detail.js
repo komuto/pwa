@@ -48,27 +48,35 @@ class OrderDetail extends React.Component {
     const { id } = this.state
     if (id) {
       NProgress.start()
+      this.fetching = true
       this.props.getNewOrderDetail({ id })
     }
   }
 
   acceptOrder (id) {
     this.submiting = true
-    this.setState({ submitType: 'acceptOrder' })
-    this.props.acceptOrder({ id })
+    this.setState({ submitType: 'acceptOrder' }, () => {
+      if (this.state.submitType === 'acceptOrder') {
+        this.props.acceptOrder({ id })
+      }
+    })
   }
 
   rejectOrder (id) {
     this.submiting = true
-    this.setState({ submitType: 'rejectOrder' })
-    this.props.rejectOrder({ id })
+    this.setState({ submitType: 'rejectOrder' }, () => {
+      if (this.state.submitType === 'rejectOrder') {
+        this.props.rejectOrder({ id })
+      }
+    })
   }
 
   componentWillReceiveProps (nextProps) {
     const { newOrderDetail, updateStatus } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
 
-    if (!isFetching(newOrderDetail)) {
+    if (!isFetching(newOrderDetail) && this.fetching) {
+      this.fetching = false
       NProgress.done()
       if (isFound(newOrderDetail)) {
         this.setState({ newOrderDetail })
@@ -78,6 +86,7 @@ class OrderDetail extends React.Component {
       }
     }
     if (!isFetching(updateStatus) && this.submiting) {
+      this.submiting = false
       if (isFound(updateStatus)) {
         if (this.state.submitType === 'acceptOrder') {
           this.modalConfirm()
@@ -87,9 +96,9 @@ class OrderDetail extends React.Component {
         }
       }
       if (isError(updateStatus)) {
-        this.setState({ notification: notifError(updateStatus, 'Gagal update Order!') })
+        this.setState({ showModalReject: false })
+        this.setState({ notification: notifError(updateStatus.message, 'Gagal update Order!') })
       }
-      this.submiting = false
     }
   }
 

@@ -19,8 +19,8 @@ class ProductDetailSlider extends Component {
     return <Slider {...settings}>
       {
               images.map((image, index) => {
-                return <div key={index} style={{ width: '20%', ...imgStyle }}>
-                  <MyImage src={image.file} alt='sliderImage' />
+                return <div key={index} style={{ maxWidth: '100%', ...imgStyle }}>
+                  <MyImage src={image.file} alt='sliderImage' style={{ height: '150px' }} />
                 </div>
               })
             }

@@ -336,7 +336,6 @@ class ProductList extends Component {
 
 const ContentHidden = (props) => {
   if (props.hiddenProducts === undefined) return null
-  console.log('ContentHidden', props.hiddenProducts)
   return (
     <div>
       {
