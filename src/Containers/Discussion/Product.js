@@ -36,7 +36,7 @@ class DiscussionProduct extends React.Component {
 
   async loadMore () {
     let { pagination } = this.state
-    if (!this.fetching) {
+    if (!this.fetching.fetchingMore) {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
@@ -77,7 +77,7 @@ class DiscussionProduct extends React.Component {
       if (isFound(userDiscussion)) {
         this.hasMore = userDiscussion.discussions.length > 9
         newUserDiscussion.discussions = newUserDiscussion.discussions.concat(userDiscussion.discussions)
-        this.setState({ discussions: newUserDiscussion })
+        this.setState({ userDiscussion: newUserDiscussion })
       }
       if (isError(userDiscussion)) {
         this.setState({ notification: notifError(userDiscussion.message) })
@@ -88,7 +88,6 @@ class DiscussionProduct extends React.Component {
 
   render () {
     const { notification, userDiscussion, isEmpty } = this.state
-    if (!userDiscussion.isFound) return null
     moment.locale('id')
     return (
       <div>
