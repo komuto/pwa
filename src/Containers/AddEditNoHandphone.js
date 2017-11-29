@@ -6,6 +6,9 @@ import Router from 'next/router'
 import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
+// validations
+import * as constraints from '../Validations/Auth'
+import { inputPhoneNumber, isValidPhoneNumber } from '../Validations/Input'
 
 class NomorHandphone extends Component {
   constructor (props) {
@@ -28,14 +31,31 @@ class NomorHandphone extends Component {
     const { value } = e.target
     let { phoneNumber } = this.state
     const newState = { phoneNumber }
-    newState.phoneNumber = value
+    newState.phoneNumber = inputPhoneNumber(value)
     this.setState(newState)
   }
 
   renderValidation (name, textFailed) {
     const { phoneNumber, validation } = this.state
-    const regex = /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/g
-    let result = name === 'phoneNumber' && regex.test(phoneNumber)
+    let limitPhone
+    switch (phoneNumber.charAt(0)) {
+      case '0':
+        limitPhone = phoneNumber.length >= 8 && phoneNumber.length <= 13
+        break
+      case '+':
+        limitPhone = phoneNumber.length >= 10 && phoneNumber.length <= 15
+        break
+      case '6':
+        limitPhone = phoneNumber.length >= 9 && phoneNumber.length <= 14
+        break
+      default:
+        limitPhone = true
+        break
+    }
+    let emptyPhoneReq = name === 'emptyPhone' && phoneNumber.length > 0
+    let phoneNumberReq = name === 'phoneNumberValid' && isValidPhoneNumber(phoneNumber)
+    let limitPhoneReq = name === 'limitPhone' && limitPhone
+    let result = emptyPhoneReq || phoneNumberReq || limitPhoneReq
     let errorMsg = {
       fontSize: '12px',
       letterSpacing: '0.2px',
@@ -52,8 +72,26 @@ class NomorHandphone extends Component {
   postPhone (e) {
     e.preventDefault()
     const { phoneNumber } = this.state
-    const regex = /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/g
-    let isValid = regex.test(phoneNumber)
+    let limitPhone
+    if (phoneNumber.length > 0 && isValidPhoneNumber(phoneNumber)) {
+      switch (phoneNumber.charAt(0)) {
+        case '0':
+          limitPhone = phoneNumber.length >= 8 && phoneNumber.length <= 13
+          break
+        case '+':
+          limitPhone = phoneNumber.length >= 10 && phoneNumber.length <= 15
+          break
+        case '6':
+          limitPhone = phoneNumber.length >= 9 && phoneNumber.length <= 14
+          break
+        default:
+          limitPhone = true
+          break
+      }
+    }
+    let emptyPhoneReq = phoneNumber.length > 0
+    let phoneNumberReq = isValidPhoneNumber(phoneNumber)
+    let isValid = emptyPhoneReq && phoneNumberReq && limitPhone
     if (isValid) {
       this.setState({ submiting: { updatePhone: true, sendOTP: false } })
       this.props.updatePhone({phone_number: phoneNumber})
@@ -87,7 +125,23 @@ class NomorHandphone extends Component {
   }
 
   render () {
-    const { phoneNumber, validation, notification, submiting } = this.state
+    const { phoneNumber, notification, submiting } = this.state
+    const { handphone } = constraints.loginConstraints
+    let limitPhoneFailed
+    switch (phoneNumber.charAt(0)) {
+      case '0':
+        limitPhoneFailed = handphone.alert.minMax0
+        break
+      case '+':
+        limitPhoneFailed = handphone.alert.minMaxPlus
+        break
+      case '6':
+        limitPhoneFailed = handphone.alert.minMax62
+        break
+      default:
+        limitPhoneFailed = 'Mohon isi no handphone 8 -15 digit'
+        break
+    }
     return (
       <section className='content'>
         <Notification
@@ -109,9 +163,12 @@ class NomorHandphone extends Component {
                   type='text'
                   placeholder='Masukkan Nomor Handphone'
                   value={phoneNumber}
-                  onChange={(e) => this.handleInput(e)} />
+                  onChange={(e) => this.handleInput(e)}
+                  autoComplete='off' />
               </p>
-              {validation && this.renderValidation('phoneNumber', 'No handphone anda tidak valid')}
+              {this.renderValidation('emptyPhone', handphone.alert.empty)}
+              {this.renderValidation('phoneNumberValid', handphone.alert.valid)}
+              {this.renderValidation('limitPhone', limitPhoneFailed)}
             </div>
             <a
               className={`button is-primary is-large is-fullwidth ${(submiting.updatePhone || submiting.sendOTP) && 'is-loading'}`}

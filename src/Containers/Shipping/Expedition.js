@@ -110,7 +110,6 @@ class ShippingExpedition extends React.Component {
         this.submiting = { ...this.submiting, updateStore: true }
         updateExpedition({ data: newExpedition })
       } else {
-        console.log('masuk')
         this.submiting = { ...this.submiting, createStore: true }
         postExpedition({ expedition_services: tempExpeditionServices })
       }
