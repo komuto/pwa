@@ -18,6 +18,7 @@ class ReviewProducts extends Component {
     super(props)
     this.state = {
       buyerReview: props.buyerReview || null,
+      isEmpty: false,
       pagination: {
         page: 1,
         limit: 10
@@ -46,12 +47,9 @@ class ReviewProducts extends Component {
   }
 
   async componentDidMount () {
-    const { buyerReview, pagination } = this.state
-    if (!this.props.isFound(buyerReview)) {
-      NProgress.start()
-      this.fetchingFirst = true
-      this.props.getBuyerReview(pagination)
-    }
+    NProgress.start()
+    this.fetchingFirst = true
+    this.props.getBuyerReview({ page: 1, limit: 10 })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -62,8 +60,9 @@ class ReviewProducts extends Component {
       NProgress.done()
       this.fetchingFirst = false
       if (isFound(buyerReview)) {
-        this.setState({ buyerReview })
+        let isEmpty = buyerReview.buyerReview.length < 1
         this.hasMore = buyerReview.buyerReview.length > 9
+        this.setState({ buyerReview, isEmpty })
       }
       if (isError(buyerReview)) {
         this.setState({ notification: notifError(buyerReview.message) })
@@ -96,8 +95,7 @@ class ReviewProducts extends Component {
   }
 
   render () {
-    const { buyerReview, notification } = this.state
-    if (!buyerReview.isFound) return null
+    const { buyerReview, isEmpty, notification } = this.state
     return (
       <Content>
         <Notification
@@ -112,8 +110,7 @@ class ReviewProducts extends Component {
           hasMore={this.hasMore}
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
-          buyerReview.buyerReview.length > 0
-          ? buyerReview.buyerReview.map((review, i) => {
+          isEmpty ? <EmptyReview /> : buyerReview.buyerReview.map((review, i) => {
             return (
               <section key={i}>
                 <div className='profile-content rating'>
@@ -177,7 +174,6 @@ class ReviewProducts extends Component {
               </section>
             )
           })
-        : <EmptyReview />
         }
         </InfiniteScroll>
       </Content>
