@@ -283,14 +283,23 @@ const Cart = (props) => {
         data.cart.items.map((item) => {
           let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
           // calc delivery cost
-          let deliveryCost = item.shipping.delivery_cost
-          let price = item.product.price
+          // let deliveryCost = item.shipping.delivery_cost
+          let price = 0
           let qty = item.qty
           let wholesalerSelected = null
           // calc insurance
-          let insuranceFee = 0
+          // let insuranceFee = 0
+          // real price
+          if (item.product) {
+            price = item.product.price
+          }
+          // price after discount
+          if (item.product.is_discount) {
+            price = price - (price * (item.product.discount / 100))
+          }
+
           if (item.shipping.is_insurance) {
-            insuranceFee = item.shipping.insurance_fee
+            // insuranceFee = item.shipping.insurance_fee
           }
 
           // check wholesaler or not
@@ -309,7 +318,7 @@ const Cart = (props) => {
             price = wholesalerSelected.price
           }
 
-          let subTotal = price + deliveryCost + insuranceFee
+          let subTotal = item.total_price
           totalPayment += subTotal
           return (
             <section className='section is-paddingless has-shadow' key={item.id}>
