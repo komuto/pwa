@@ -6,6 +6,7 @@ import Router from 'next/router'
 import Section from '../../Components/Section'
 import Content from '../../Components/Content'
 import MyImage from '../../Components/MyImage'
+import Notification from '../../Components/Notification'
 // actions
 import * as productActions from '../../actions/product'
 // lib
@@ -23,6 +24,11 @@ class New extends Component {
         value: '',
         error: false,
         errorMessage: null
+      },
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
       }
     }
     this.submitting = {
@@ -95,17 +101,21 @@ class New extends Component {
   }
 
   render () {
-    const { productDetail, question } = this.state
+    const { productDetail, question, notification } = this.state
     const { product, images } = productDetail.detail
     const styleError = {
       color: 'red',
       borderColor: 'red'
     }
-
-    if (!productDetail.isFound) return null
     return (
       <Content>
         <Section>
+          <Notification
+            type={notification.type}
+            isShow={notification.status}
+            activeClose
+            onClose={() => this.setState({notification: {status: false, message: ''}})}
+            message={notification.message} />
           <div className='discuss gap'>
             <ul className='product-discuss'>
               <li>
@@ -114,15 +124,15 @@ class New extends Component {
                     <div className='media-left'>
                       {/* <figure className='image product-pict' style={{ width: 40 }}> */}
                       <figure className='image product-pict'>
-                        <MyImage src={images[0].file} alt={product.name} />
+                        <MyImage src={productDetail.isFound ? images[0].file : ''} alt='product' />
                       </figure>
                     </div>
                     <div className='media-content'>
                       <div className='content'>
                         <p className='products-name'>
-                          <strong>{ product.name }</strong>
+                          <strong>{ productDetail.isFound ? product.name : '' }</strong>
                           <br />
-                          Rp { RupiahFormat(product.price) }
+                          Rp { RupiahFormat(productDetail.isFound ? product.price : 0) }
                         </p>
                       </div>
                     </div>
