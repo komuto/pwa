@@ -252,7 +252,7 @@ class ProductPhotoManage extends Component {
               <p className='control'>
                 <button onClick={() => this.submit()}
                   className={`button is-primary is-large is-fullwidth ${this.submiting || this.uploading ? 'is-loading' : ''}`}>
-                  Lanjutkan
+                  Simpan Perubahan
                 </button>
               </p>
             </div>
