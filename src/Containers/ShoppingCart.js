@@ -284,7 +284,7 @@ const Cart = (props) => {
           let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
           // calc delivery cost
           let deliveryCost = item.shipping.delivery_cost
-          let price = item.total_price
+          let price = item.product.price
           let qty = item.qty
           let wholesalerSelected = null
           // calc insurance
