@@ -320,7 +320,7 @@ const VerificationContent = ({ store }) => (
         <div className='is-left'>
           <ul className='list-inline col2'>
             <li className='label-text'>
-              <span><strong>Batas Pembayaran :</strong> {store.verification_left} hari</span>
+              <span><strong>Batas Pembayaran :</strong> {store.verification_left ? store.verification_left : '0' } hari</span>
             </li>
           </ul>
         </div>
