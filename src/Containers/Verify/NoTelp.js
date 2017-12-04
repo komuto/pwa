@@ -5,10 +5,9 @@ import { connect } from 'react-redux'
 import Link from 'next/link'
 import {Images} from '../../Themes'
 import Notification from '../../Components/Notification'
+import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../../actions/user'
-// services
-import { Status } from '../../Services/Status'
 // validation
 import { inputNumber } from '../../Validations/Input'
 
@@ -26,12 +25,13 @@ class VerifyNoTelp extends React.Component {
         digit5: ''
       },
       notification: {
+        type: 'is-success',
         status: false,
         message: 'Error, default message.'
-      },
-      submitting: false,
-      submitOTPPhone: false
+      }
     }
+    this.fetching = false
+    this.submiting = { verifyPhone: false, sendOTPPhone: false }
   }
 
   handleInput (e) {
@@ -69,14 +69,14 @@ class VerifyNoTelp extends React.Component {
 
   handleVerify () {
     const { formVerify } = this.state
-    this.setState({ submitting: true })
+    this.submiting = { ...this.submiting, verifyPhone: true }
     const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
     this.props.verifyPhone({ code })
   }
 
   sendOTPPhone (e) {
     e.preventDefault()
-    this.setState({ submitOTPPhone: true })
+    this.submiting = { ...this.submiting, sendOTPPhone: true }
     this.props.sendOTPToPhone()
   }
 
@@ -96,59 +96,55 @@ class VerifyNoTelp extends React.Component {
   }
 
   componentDidMount () {
+    NProgress.start()
+    this.fetching = true
     this.props.getProfile()
   }
 
   componentWillReceiveProps (nextProps) {
     const { stateVerifyPhone, profile, statusSendOTPPhone } = nextProps
-    let { notification, verify, submitting, submitOTPPhone } = this.state
-    notification = {status: false, message: 'Error, default message.'}
-    if (profile.isFound) {
-      this.setState({ profile: nextProps.profile })
-    }
-    if (!statusSendOTPPhone.isLoading && submitOTPPhone) {
-      switch (statusSendOTPPhone.status) {
-        case Status.SUCCESS:
-          this.setState({ submitOTPPhone: false })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ submitOTPBank: false })
-          notification = {status: true, message: statusSendOTPPhone.message}
-          break
-        default:
-          break
+    let { verify } = this.state
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    if (!isFetching(profile) && this.fetching) {
+      NProgress.done()
+      this.fetching = false
+      if (isFound(profile)) {
+        this.setState({ profile })
       }
-      this.setState({ notification })
-    }
-    if (!stateVerifyPhone.isLoading && submitting) {
-      switch (stateVerifyPhone.status) {
-        case Status.SUCCESS:
-          this.setState({ submitting: false, verify: !verify })
-          break
-        case Status.OFFLINE :
-        case Status.FAILED :
-          this.setState({ submitting: false })
-          notification = {status: true, message: stateVerifyPhone.message}
-          break
-        default:
-          break
+      if (isError(profile)) {
+        this.setState({ notification: notifError(profile.message) })
       }
-      this.setState({ notification })
+    }
+    if (!isFetching(stateVerifyPhone) && this.submiting.verifyPhone) {
+      this.submiting = { ...this.submiting, verifyPhone: false }
+      if (isFound(stateVerifyPhone)) {
+        this.setState({ verify: !verify })
+      }
+      if (isError(stateVerifyPhone)) {
+        this.setState({ notification: notifError(stateVerifyPhone.message) })
+      }
+    }
+    if (!isFetching(statusSendOTPPhone) && this.submiting.sendOTPPhone) {
+      this.submiting = { ...this.submiting, sendOTPPhone: false }
+      if (isFound(statusSendOTPPhone)) {
+        this.setState({ notification: notifSuccess(statusSendOTPPhone.message) })
+      }
+      if (isError(statusSendOTPPhone)) {
+        this.setState({ notification: notifError(statusSendOTPPhone.message) })
+      }
     }
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submitting, submitOTPPhone } = this.state
+    const { formVerify, verify, profile, notification } = this.state
     return (
       <div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <section className='content'>
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
@@ -218,12 +214,12 @@ class VerifyNoTelp extends React.Component {
                 </div>
               </div>
               <a
-                className={`button is-primary is-large is-fullwidth js-sort ${submitting && 'is-loading'}`}
+                className={`button is-primary is-large is-fullwidth js-sort ${this.submiting.verifyPhone && 'is-loading'}`}
                 onClick={() => this.handleVerify()}>
                 Verifikasi Nomor Telepon
               </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
-                <a className={submitOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+                <a className={this.submiting.sendOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
               </p>
             </form>
           </div>

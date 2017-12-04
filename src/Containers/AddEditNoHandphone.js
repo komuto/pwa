@@ -16,15 +16,12 @@ class NomorHandphone extends Component {
     this.state = {
       phoneNumber: '',
       validation: false,
-      submiting: {
-        sendOTP: false,
-        updatePhone: false
-      },
       notification: {
         status: false,
         message: 'Error, default message.'
       }
     }
+    this.submiting = { sendOTP: false, updatePhone: false }
   }
 
   handleInput (e) {
@@ -93,7 +90,7 @@ class NomorHandphone extends Component {
     let phoneNumberReq = isValidPhoneNumber(phoneNumber)
     let isValid = emptyPhoneReq && phoneNumberReq && limitPhone
     if (isValid) {
-      this.setState({ submiting: { updatePhone: true, sendOTP: false } })
+      this.submiting = { updatePhone: true, sendOTP: false }
       this.props.updatePhone({phone_number: phoneNumber})
     } else {
       this.setState({ validation: true })
@@ -101,31 +98,32 @@ class NomorHandphone extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    let { submiting } = this.state
     const { isFetching, isFound, isError, notifError } = this.props
     const { statusUpdatePhone, statusOTPPhone } = nextProps
-    if (!isFetching(statusUpdatePhone) && submiting.updatePhone) {
-      this.setState({ submiting: { updatePhone: false, sendOTP: true } })
+    if (!isFetching(statusUpdatePhone) && this.submiting.updatePhone) {
+      this.submiting = { ...this.submiting, updatePhone: false }
       if (isFound(statusUpdatePhone)) {
+        this.submiting = { ...this.submiting, sendOTP: true }
         this.props.sendOTPToPhone()
       }
       if (isError(statusUpdatePhone)) {
         this.setState({ notification: notifError(statusUpdatePhone.message) })
       }
     }
-    if (!isFetching(statusOTPPhone) && submiting.sendOTP) {
-      this.setState({ submiting: { updatePhone: false, sendOTP: false } })
-      if (isFound(statusUpdatePhone)) {
+    if (!isFetching(statusOTPPhone) && this.submiting.sendOTP) {
+      this.submiting = { updatePhone: false, sendOTP: false }
+      if (isFound(statusOTPPhone)) {
         Router.push('/verify-no-hp')
       }
-      if (isError(statusUpdatePhone)) {
+      if (isError(statusOTPPhone)) {
         this.setState({ notification: notifError(statusUpdatePhone.message) })
       }
     }
   }
 
   render () {
-    const { phoneNumber, notification, submiting } = this.state
+    console.log('state', this.submiting)
+    const { phoneNumber, notification } = this.state
     const { handphone } = constraints.loginConstraints
     let limitPhoneFailed
     switch (phoneNumber.charAt(0)) {
@@ -145,12 +143,11 @@ class NomorHandphone extends Component {
     return (
       <section className='content'>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <div className='container is-fluid'>
           <form className='form edit'>
             <div className='has-text-centered noted'>
@@ -171,7 +168,7 @@ class NomorHandphone extends Component {
               {this.renderValidation('limitPhone', limitPhoneFailed)}
             </div>
             <a
-              className={`button is-primary is-large is-fullwidth ${(submiting.updatePhone || submiting.sendOTP) && 'is-loading'}`}
+              className={`button is-primary is-large is-fullwidth ${(this.submiting.updatePhone || this.submiting.sendOTP) && 'is-loading'}`}
               onClick={(e) => this.postPhone(e)}>
               Simpan Nomor Handphone
             </a>
