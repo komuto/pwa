@@ -122,7 +122,6 @@ class NomorHandphone extends Component {
   }
 
   render () {
-    console.log('state', this.submiting)
     const { phoneNumber, notification } = this.state
     const { handphone } = constraints.loginConstraints
     let limitPhoneFailed
