@@ -16,6 +16,7 @@ import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 import { Navbar } from '../Navbar'
+import { New } from '../../Components/Comment'
 /** including actions */
 import * as messageActions from '../../actions/message'
 import RegexNormal from '../../Lib/RegexNormal'
@@ -197,13 +198,11 @@ class MessageDetail extends Component {
   }
 
   replyMessageSubmit (e) {
-    let content = e.target.value
+    let content = this.state.replyMessage.answer
     let { id } = this.state
-    if (e.key === 'Enter') {
-      if (content !== '') {
-        this.submitting = { ...this.submitting, replyMessage: true }
-        this.props.sellerReplyMessage({ id, content })
-      }
+    if (content !== '') {
+      this.submitting = { ...this.submitting, replyMessage: true }
+      this.props.sellerReplyMessage({ id, content })
     }
   }
 
@@ -241,14 +240,12 @@ const MessageDetailContent = ({ sellerDetailMessage, replyMessage, submitting, m
       <div className='field'>
         <p className='control'>
           <span className={`${submitting.replyMessage && 'button self is-loading right'}`} />
-          <input
-            name='answer'
+          <New
+            onSubmit={(e) => !submitting.replyMessage && replyMessage.submit(e)}
             onChange={(e) => !submitting.replyMessage && replyMessage.onChange(e)}
             value={replyMessage.answer}
-            onKeyPress={(e) => !submitting.replyMessage && replyMessage.submit(e)}
-            className='textarea'
-            placeholder='Tulis pessan Anda disini'
-            readOnly={submitting.replyMessage} />
+            submitting={submitting.replyMessage}
+          />
         </p>
       </div>
     </div>
