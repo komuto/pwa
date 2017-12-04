@@ -6,6 +6,7 @@ import Router from 'next/router'
 import url from 'url'
 import Slider from 'react-slick'
 import moment from 'moment'
+import ReactNotify from 'react-notify'
 // component
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
@@ -212,6 +213,7 @@ class Store extends Component {
     /** handling state favorite */
     if (!isFetching(favorite) && this.submitting.favorite) {
       this.submitting = { ...this.submitting, favorite: false }
+      this.refs.notificator.success('', favorite.message, 2000)
       if (isError(favorite)) {
         this.setState({ notification: notifError(favorite.message) })
       }
@@ -336,6 +338,7 @@ class Store extends Component {
               <Message {...this.state.modalMessage} store={myStore} submitting={this.submitting} />
             </Content>
         }
+        <ReactNotify ref='notificator' />
       </Content>
     )
   }

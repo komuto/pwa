@@ -21,7 +21,6 @@ export default function reduxWrapper (ReduxComponent) {
           store.dispatch(otherActions.setMarketPlaceTemp(req.marketplace))
         }
       }
-      let token = null
       if (isServer) {
         const rootTask = sagaMiddleware.run(dataSaga)
         store.dispatch(otherActions.resetMarketPlace())
@@ -32,9 +31,9 @@ export default function reduxWrapper (ReduxComponent) {
           return null
         })
 
-        return {query, token, isServer}
+        return {query, isServer}
       } else {
-        return {query, token}
+        return {query}
       }
     }
 
@@ -44,7 +43,7 @@ export default function reduxWrapper (ReduxComponent) {
         clientTask = sagaMiddleware.run(dataSaga)
       }
       this.state = {
-        token: props.token,
+        token: 'default',
         mustLogin: false,
         error: null
       }
