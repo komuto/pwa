@@ -32,15 +32,16 @@ class ManageAccount extends Component {
   }
 
   componentDidMount () {
-    const { query, changePassword, isFetching, isFound, isError, notifError, notifSuccess } = this.props
+    const { query, changePassword, isFetching, isFound, notifSuccess } = this.props
     this.props.getProfile()
     if (query.hasOwnProperty('isSuccess')) {
       if (!isFetching(changePassword)) {
         if (isFound(changePassword)) {
           this.setState({ notification: notifSuccess(changePassword.message) })
-        }
-        if (isError(changePassword)) {
-          this.setState({ notification: notifError(changePassword.message) })
+          if (this.timeout) clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            this.setState({ notification: { ...this.state.notification, status: false } })
+          }, 3000)
         }
       }
     }
