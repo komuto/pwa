@@ -6005,6 +6005,9 @@ strong {
       width: 100%;
       max-width: 150px;
       margin: 0 auto; }
+  .box.list .media .media-content .detail .remove-item {
+    right: -10px;
+    bottom: 0; }
   .box.grid .media {
     display: block; }
     .box.grid .media .media-left {
@@ -6917,6 +6920,16 @@ strong.total {
       max-width: 130px;
       color: #41475e;
       margin: 0 auto; }
+
+.wrapword {
+  white-space: -moz-pre-wrap !important;
+  white-space: -webkit-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal; }
 
 @media screen and (max-width: 360px) {
   .box.list .media .media-left {

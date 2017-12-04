@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import { animateScroll } from 'react-scroll'
+import ReactNotify from 'react-notify'
 // components
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
@@ -80,6 +81,7 @@ class ProductDetail extends Component {
     /** delete/add favorite store  */
     if (!isFetching(favorite) && this.submiting.favorite) {
       this.submiting = { ...this.submiting, favorite: false }
+      this.refs.notificator.success('', favorite.message, 2000)
       if (isError(favorite)) {
         this.setState({ notification: notifError(favorite.message) })
       }
@@ -255,6 +257,7 @@ class ProductDetail extends Component {
                 query={query} />
             </Content>
         }
+        <ReactNotify ref='notificator' />
       </Content>
     )
   }
