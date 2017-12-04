@@ -50,7 +50,7 @@ class Product extends Component {
   }
 
   render () {
-    const { product, store, viewActive } = this.props
+    const { product, store, viewActive, isWishlist } = this.props
     const { pressId } = this.state
     // set commission
     let commission = null
@@ -71,7 +71,7 @@ class Product extends Component {
       </div>
     }
     // set real price
-    const priceBeforeDiscount = (product.discount > 0) ? <div className='discount'> Rp { RupiahFormat(product.price) } </div> : ''
+    const priceBeforeDiscount = <div className='discount'> {(product.discount > 0) ? `Rp ${RupiahFormat(product.price)}` : '' } </div>
     // set price - dicsount
     const priceAfterDiscount = (product.discount > 0) ? (product.price - (product.price * (product.discount / 100))) : product.price
     return (
@@ -90,22 +90,30 @@ class Product extends Component {
             </div>
             <div className='media-content'>
               <div className='content min-height'>
-                <h4 style={{ minHeight: '34px' }}>{ ReadAbleText(product.name)}</h4>
+                <h4 className='wrapword' style={{ minHeight: '34px' }}>{ ReadAbleText(product.name)}</h4>
                 <div className='detail'>
-                  <p className='store-name' style={{ minHeight: '39px', wordWrap: 'break-word' }}>{ ReadAbleText(store.name)} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
+                  <p className='store-name wrapword' style={{ minHeight: '39px', wordWrap: 'break-word' }}>{ ReadAbleText(store.name)} <span className={`icon-verified ${!store.is_verified ? 'unverified' : ''}`} /></p>
                   { priceBeforeDiscount }
                   <span className='price' style={{ width: '100%' }}>Rp { RupiahFormat(priceAfterDiscount) } </span>
-                  { commission ? <span className='commission'>Komisi { commission } %</span> : <span className='wish'>
-                    <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => this.wishlistPress(e, product.id)} />
-                    { product.count_like }
-                  </span>
+                  {
+                    commission
+                      ? <span className='commission'>Komisi { commission } %</span>
+                      : <span className='wish'>
+                        <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => !isWishlist && this.wishlistPress(e, product.id)} />
+                        { product.count_like }
+                      </span>
+                  }
+                  {
+                    isWishlist && <div className='remove-item'><span onClick={(e) => this.wishlistPress(e, product.id)} className='icon-trash' /></div>
                   }
                 </div>
               </div>
-              { commission ? <div className='total-wishlisted'>
-                <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => this.wishlistPress(e, product.id)} />
-                { product.count_like }
-              </div> : ''
+              { commission
+                ? <div className='total-wishlisted'>
+                  <span style={{ zIndex: 100 }} className={`icon-wishlist ${product.is_liked && 'solid'}`} onClick={(e) => !isWishlist && this.wishlistPress(e, product.id)} />
+                  { product.count_like }
+                </div>
+                : ''
               }
             </div>
           </div>
