@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 // components
 import Router from 'next/router'
 import Notification from '../../Components/Notification'
+import NProgress from 'nprogress'
 // actions
 import * as actionTypes from '../../actions/user'
 // validation
@@ -26,10 +27,10 @@ class VerifyNoTelp extends React.Component {
         type: 'is-success',
         status: false,
         message: 'Error, default message.'
-      },
-      submiting: false,
-      submitOTPPhone: false
+      }
     }
+    this.fetching = false
+    this.submiting = { verifyPhone: false, sendOTPPhone: false }
   }
 
   handleInput (e) {
@@ -67,26 +68,29 @@ class VerifyNoTelp extends React.Component {
 
   handleVerify () {
     const { formVerify } = this.state
-    this.setState({ submiting: true })
+    this.submiting = { ...this.submiting, verifyPhone: true }
     const code = `${formVerify.digit1}${formVerify.digit2}${formVerify.digit3}${formVerify.digit4}${formVerify.digit5}`
     this.props.verifyPhone({ code })
   }
 
   sendOTPPhone (e) {
     e.preventDefault()
-    this.setState({ submitOTPPhone: true })
+    this.submiting = { ...this.submiting, sendOTPPhone: true }
     this.props.sendOTPToPhone()
   }
 
   componentDidMount () {
+    NProgress.start()
+    this.fetching = true
     this.props.getProfile()
   }
 
   componentWillReceiveProps (nextProps) {
     const { stateVerifyPhone, profile, statusSendOTPPhone } = nextProps
-    let { submitOTPPhone, submiting } = this.state
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    if (!isFetching(profile)) {
+    if (!isFetching(profile) && this.fetching) {
+      NProgress.done()
+      this.fetching = false
       if (isFound(profile)) {
         this.setState({ profile })
       }
@@ -94,8 +98,8 @@ class VerifyNoTelp extends React.Component {
         this.setState({ notification: notifError(profile.message) })
       }
     }
-    if (!isFetching(stateVerifyPhone) && submiting) {
-      this.setState({ submiting: false })
+    if (!isFetching(stateVerifyPhone) && this.submiting.verifyPhone) {
+      this.submiting = { ...this.submiting, verifyPhone: false }
       if (isFound(stateVerifyPhone)) {
         const href = `/nomor-handphone?isSuccess`
         const as = 'nomor-handphone'
@@ -105,8 +109,8 @@ class VerifyNoTelp extends React.Component {
         this.setState({ notification: notifError(stateVerifyPhone.message) })
       }
     }
-    if (!isFetching(statusSendOTPPhone) && submitOTPPhone) {
-      this.setState({ submitOTPPhone: false })
+    if (!isFetching(statusSendOTPPhone) && this.submiting.sendOTPPhone) {
+      this.submiting = { ...this.submiting, sendOTPPhone: false }
       if (isFound(statusSendOTPPhone)) {
         this.setState({ notification: notifSuccess(statusSendOTPPhone.message) })
       }
@@ -117,16 +121,15 @@ class VerifyNoTelp extends React.Component {
   }
 
   render () {
-    const { formVerify, verify, profile, notification, submiting, submitOTPPhone } = this.state
+    const { formVerify, verify, profile, notification } = this.state
     return (
       <div>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message}
-          />
+          message={notification.message} />
         <section className='content'>
           <div className='container is-fluid'>
             <form action='#' className='form edit'>
@@ -196,12 +199,12 @@ class VerifyNoTelp extends React.Component {
                 </div>
               </div>
               <a
-                className={`button is-primary is-large is-fullwidth js-sort ${submiting && 'is-loading'}`}
+                className={`button is-primary is-large is-fullwidth js-sort ${this.submiting.verifyPhone && 'is-loading'}`}
                 onClick={() => this.handleVerify()}>
                 Verifikasi Nomor Telepon
               </a>
               <p className='text-ask has-text-centered'>Belum menerima kode aktivasi?
-                <a className={submitOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
+                <a className={this.submiting.sendOTPPhone && 'button self is-loading'} onClick={(e) => this.sendOTPPhone(e)}> Klik Disini</a>
               </p>
             </form>
           </div>

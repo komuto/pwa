@@ -179,7 +179,7 @@ class SignIn extends Component {
     return (
       <Content>
         <Notification
-          type='is-danger'
+          type={notification.type}
           isShow={notification.status}
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
