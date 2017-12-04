@@ -245,7 +245,7 @@ const transaction = {
   buyerRefund: transactionReducers.buyerRefund
 }
 
-const komutoApps = storage.reducer(combineReducers({
+const komutoApps = combineReducers({
   ...purchase,
   ...user,
   ...home,
@@ -264,6 +264,15 @@ const komutoApps = storage.reducer(combineReducers({
   ...message,
   ...other,
   ...saldo
-}))
+})
 
-export default komutoApps
+const rootReducer = (state, action) => {
+  // console.log('state: ', state);
+  // console.log('action: ', action);
+  // if (action.type === 'USER_LOGOUT_SUCCESS') {
+  //   state = undefined
+  // }
+  return komutoApps(state, action)
+}
+
+export default storage.reducer(rootReducer)
