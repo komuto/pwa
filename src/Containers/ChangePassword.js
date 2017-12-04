@@ -3,6 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Router from 'next/router'
 // components
+import Notification from '../Components/Notification'
 // actions
 import * as actionTypes from '../actions/user'
 
@@ -15,6 +16,11 @@ class ChangePassword extends React.Component {
         old_password: '',
         password: '',
         password2: ''
+      },
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
       },
       submitting: false,
       validation: false
@@ -89,20 +95,36 @@ class ChangePassword extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    const { submitting, notification } = this.state
     const { statusChangePassword } = nextProps
-    const { isFetching } = this.props
-    if (!isFetching(statusChangePassword)) {
+    const { isFetching, isFound, isError, notifError } = this.props
+    if (!isFetching(statusChangePassword) && submitting) {
       this.setState({ submitting: false })
-      const href = `/manage-account?isSuccess`
-      const as = '/manage/account'
-      Router.push(href, as)
+      if (isFound(statusChangePassword)) {
+        const href = `/manage-account?isSuccess`
+        const as = '/manage/account'
+        Router.push(href, as)
+      }
+      if (isError(statusChangePassword)) {
+        this.setState({ notification: notifError(statusChangePassword.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.setState({ notification: { ...notification, status: false } })
+        }, 3000)
+      }
     }
   }
 
   render () {
-    const { formPassword, submitting } = this.state
+    const { formPassword, submitting, notification } = this.state
     return (
       <section className='section is-paddingless'>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
         <div className='edit-data-delivery bg-white'>
           <form action='#' className='form edit'>
             <div className='field '>
