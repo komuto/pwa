@@ -25,7 +25,7 @@ class Wishlist extends Component {
     this.state = {
       products: props.products || null,
       addWishlist: props.addWishlist || null,
-      viewActive: 'list',
+      viewActive: 'grid',
       sortActive: false,
       selectedSort: null,
       emptyWishlist: 'default',
@@ -230,6 +230,7 @@ const WishlistContent = ({ wishlist, viewActive, wishlistPress }) => (
               return <ProductContainers key={index}>
                 <Product
                   {...myProduct}
+                  isWishlist
                   viewActive={viewActive}
                   wishlistPress={() => wishlistPress(idProduct)} />
               </ProductContainers>
@@ -245,6 +246,7 @@ const WishlistContent = ({ wishlist, viewActive, wishlistPress }) => (
               return <Product
                 {...myProduct}
                 key={index}
+                isWishlist
                 viewActive={viewActive}
                 wishlistPress={() => wishlistPress(idProduct)} />
             }
