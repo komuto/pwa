@@ -5508,7 +5508,10 @@ strong {
   padding-top: 64px;
   padding-bottom: 46px;
   min-height: 100%;
-  overflow: hidden; }
+  overflow: hidden;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative; }
   .main.disc {
     padding-top: 105px; }
   .main.home {
@@ -6060,9 +6063,13 @@ strong {
   display: none;
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
   right: 0;
   bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   background-color: rgba(38, 39, 41, 0.9);
   z-index: 999; }
   .sort-option .sort-list {
@@ -6468,7 +6475,11 @@ strong {
     max-width: 80px; }
 
 .modal {
-  z-index: 999; }
+  z-index: 999;
+  left: 50%;
+  max-width: 480px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
 
 .is-loading.self {
   position: absolute;
@@ -6958,8 +6969,11 @@ strong.total {
 .level.header {
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
   width: 100%;
+  max-width: 480px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   background-color: #ef5656;
   z-index: 999;
   padding: 0 15px;
@@ -6971,7 +6985,9 @@ strong.total {
   display: -ms-flexbox;
   display: flex;
   margin-bottom: 0;
-  height: 64px; }
+  height: 64px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
   .level.header .nav-left {
     overflow: visible; }
     .level.header .nav-left .level-item {
@@ -7124,7 +7140,8 @@ strong.total {
     margin-bottom: 20px; }
   .main.home .level.header {
     position: relative;
-    margin-bottom: -15px; }
+    margin-bottom: -15px;
+    max-width: inherit; }
     .main.home .level.header .nav-left .level-item > span {
       padding-left: 0; }
 
@@ -7183,13 +7200,13 @@ strong.total {
   position: fixed;
   top: 0;
   right: 0;
-  width: 100%;
+  width: 480px;
   height: 100%;
   background-color: #ffffff;
   z-index: 9999;
   transition: all 300ms linear; }
   .on-search.slide {
-    right: 0; }
+    right: 396px; }
   .on-search .header-search {
     background-color: #ffffff;
     position: relative;
@@ -10179,13 +10196,15 @@ strong.total {
 
 .level.nav-bottom {
   position: fixed;
-  left: 0;
+  left: 50%;
   bottom: 0;
-  width: 100%;
+  width: 480px;
   height: 46px;
   border-top: 1px solid #cccccc;
   background-color: #ffffff;
-  z-index: 99; }
+  z-index: 99;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
   .level.nav-bottom.nav-button {
     height: 66px;
     padding: 10px; }
@@ -10357,3 +10376,9 @@ strong.total {
   .catalog-button > span {
     margin-top: -2px;
     margin-left: -8px; }
+
+@media screen and (min-width: 480px) {
+  right: 0;
+  left: 65%;
+  -webkit-transform: translateX(-65%);
+  transform: translateX(-65%); }
