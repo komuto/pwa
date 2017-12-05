@@ -216,7 +216,7 @@ class ManageStore extends Component {
                       <div className='media-content'>
                         <div className='content'>
                           <p>
-                            <strong>Chat dengan Pelanggan</strong><br />
+                            <strong>Pesan</strong><br />
                           </p>
                         </div>
                       </div>
