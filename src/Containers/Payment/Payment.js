@@ -285,7 +285,7 @@ const Paymentcontent = (props) => {
                 <span className='price'>Rp { RupiahFormat(totalPayment - pricePromo) }</span>
               </li>
               <li className='has-text-right' style={{ minWidth: '0px' }}>
-                <a onClick={() => paymentType === 'bucket' ? Router.push('/shopping-cart') : Router.push(`/transaction-detail?id=${idT}`)} className='button is-primary is-outlined full-rounded'>Detail</a>
+                <a onClick={() => paymentType === 'bucket' ? Router.push('/cart-preview') : Router.push(`/transaction-preview?id=${idT}`)} className='button is-primary is-outlined full-rounded'>Detail</a>
               </li>
             </ul>
             <div className='text-msg'>

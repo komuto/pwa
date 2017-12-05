@@ -4,7 +4,7 @@ import DefaultLayout from '../src/Layout/DefaultLayout'
 // wrapper
 import ReduxPageWrapper from '../src/Utils/ReduxPageWrapper'
 // containers
-import ShoppingCart from '../src/Containers/ShoppingCart'
+import TransactionPreview from '../src/Containers/Transaction/Preview'
 
 const Index = (props) => {
   const { localize } = props
@@ -21,7 +21,7 @@ const Index = (props) => {
   }
   return (
     <DefaultLayout {...params} {...props}>
-      <ShoppingCart {...props} />
+      <TransactionPreview {...props} />
     </DefaultLayout>
   )
 }

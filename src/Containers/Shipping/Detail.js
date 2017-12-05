@@ -226,7 +226,7 @@ class ShippingDetail extends Component {
       }
 
       if (isFound(rsAddToCart)) {
-        Router.push('/shopping-cart')
+        Router.push('/cart')
       }
     }
 

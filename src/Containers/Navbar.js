@@ -43,7 +43,7 @@ export class Navbar extends PureComponent {
 
   shoppingCartPress () {
     if (this.props.isLogin) {
-      Router.push('/shopping-cart')
+      Router.push('/cart')
     } else {
       this.props.alertLogin()
     }

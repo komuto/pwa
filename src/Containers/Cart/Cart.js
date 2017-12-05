@@ -3,23 +3,23 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 // component
-import Section from '../Components/Section'
-import Loading from '../Components/Loading'
-import Notification from '../Components/Notification'
-import MyImage from '../Components/MyImage'
-import Content from '../Components/Content'
+import Section from '../../Components/Section'
+import Loading from '../../Components/Loading'
+import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
+import Content from '../../Components/Content'
 // import Content from '../Components/Content'
 // actions
-import * as cartActions from '../actions/cart'
+import * as cartActions from '../../actions/cart'
 // lib
-import RupiahFormat from '../Lib/RupiahFormat'
-import Promo from '../Lib/Promo'
+import RupiahFormat from '../../Lib/RupiahFormat'
+import Promo from '../../Lib/Promo'
 // services
-import { isFetching, isError, isFound, notifError } from '../Services/Status'
+import { isFetching, isError, isFound, notifError } from '../../Services/Status'
 // validations
-import * as inputValidations from '../Validations/Input'
+import * as inputValidations from '../../Validations/Input'
 // themes
-import Images from '../Themes/Images'
+import Images from '../../Themes/Images'
 
 class ShoppingCart extends Component {
   constructor (props) {

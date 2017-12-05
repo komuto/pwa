@@ -630,7 +630,7 @@ class Purchase extends Component {
           <div className='notif-report add-cart-notif'>
             <MyImage src={Images.phoneAccount} alt='phoneAccout' />
             <p>Produk telah berhasil dimasukkan ke Keranjang Belanja</p>
-            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/shopping-cart')}>Lihat Keranjang Belanja</button>
+            <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/cart')}>Lihat Keranjang Belanja</button>
             <button className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push('/')}>Kembali Belanja</button>
           </div>
         </div>
