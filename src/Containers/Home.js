@@ -179,7 +179,7 @@ class Home extends Component {
     /** handling state get category */
     if (!isFetching(countCart) && this.submitting.countCart) {
       this.submitting = { ...this.submitting, countCart: false }
-      if (isError(countCart)) {
+      if (isError(countCart, false)) {
         // this.setState({ notification: notifError(countCart.message) })
       }
       if (isFound(countCart)) {

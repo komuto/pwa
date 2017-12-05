@@ -14,6 +14,7 @@ import {Images} from '../../Themes'
 import * as userActions from '../../actions/user'
 // lib
 import RupiahFormat from '../../Lib/RupiahFormat'
+import { LoginContent } from './Profile'
 
 class Account extends Component {
   constructor (props) {
@@ -21,6 +22,7 @@ class Account extends Component {
     this.state = {
       profile: props.profile,
       verify: false,
+      showLoginPage: false,
       notification: {
         status: false,
         message: 'Error, default message.'
@@ -96,8 +98,9 @@ class Account extends Component {
 
     if (!isFetching(profile) && this.submitting.profile) {
       this.submitting = { ...this.submitting, profile: false }
-      if (isError(profile)) {
-        this.setState({ notification: notifError(profile.message) })
+      NProgress.done()
+      if (isError(profile, false)) {
+        this.setState({ showLoginPage: true })
       }
       if (isFound(profile)) {
         this.setState({ profile })
@@ -180,7 +183,10 @@ class Account extends Component {
   }
 
   render () {
-    const { profile, notification } = this.state
+    const { profile, showLoginPage, notification } = this.state
+    if (showLoginPage) {
+      return <LoginContent {...this.props} />
+    }
     return (
       <Content>
         <Notification

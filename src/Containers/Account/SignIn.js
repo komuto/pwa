@@ -146,7 +146,7 @@ class SignIn extends Component {
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { user, profile } = nextProps
+    const { user } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
     /** handling state get login */
     if (!isFetching(user) && this.submitting.user) {
@@ -157,21 +157,21 @@ class SignIn extends Component {
       }
       if (isFound(user)) {
         NProgress.start()
-        this.submitting = { ...this.submitting, profile: true }
-        await this.props.getProfile()
-      }
-    }
-    /** handling state get profile */
-    if (!isFetching(profile) && this.submitting.profile) {
-      NProgress.done()
-      this.submitting = { ...this.submitting, profile: false }
-      if (isError(profile)) {
-        this.setState({ notification: notifError(profile.message) })
-      }
-      if (isFound(profile)) {
+        // this.submitting = { ...this.submitting, profile: true }
         Router.push('/profile')
       }
     }
+    /** handling state get profile */
+    // if (!isFetching(profile) && this.submitting.profile) {
+    //   NProgress.done()
+    //   this.submitting = { ...this.submitting, profile: false }
+    //   if (isError(profile)) {
+    //     this.setState({ notification: notifError(profile.message) })
+    //   }
+    //   if (isFound(profile)) {
+    //     Router.push('/profile')
+    //   }
+    // }
   }
 
   render () {

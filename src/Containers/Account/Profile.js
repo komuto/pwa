@@ -23,7 +23,7 @@ class Profile extends Component {
 }
 
 /** form login */
-const LoginContent = ({ localize }) => {
+export const LoginContent = ({ localize }) => {
   return (
     <section className='content'>
       <div className='container is-fluid'>

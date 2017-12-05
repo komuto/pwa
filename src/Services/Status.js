@@ -63,7 +63,7 @@ export const isFound = ({ isFound }) => {
   return isFound
 }
 
-export const isError = ({ status, isFound }) => {
+export const isError = ({ status, isFound }, redirect = true) => {
   if (status === Status.SUCCESS && !isFound) {
     return true
   } else if (status === Status.DEFAULT) {
@@ -71,7 +71,9 @@ export const isError = ({ status, isFound }) => {
   } else if (status === Status.FAILED) {
     return true
   } else if (status === Status.UNAUTHORIZED) {
-    Router.push(`${AppConfig.baseURL}signin`)
+    if (redirect) {
+      Router.push(`${AppConfig.baseURL}signin`)
+    }
     return true
   } else if (status === Status.BAD_GATEWAY) {
     return true
