@@ -31,7 +31,7 @@ export const getArchiveBuyerMessages = () => {
 export const getArchiveSellerMessages = (params) => {
   const axios = authApiKomuto()
   const query = buildQuery(params)
-  return axios.get(`users/store/messages?${query}`)
+  return axios.get(`users/store/messages?is_archived=true&${query}`)
 }
 
 export const updateBuyerMessage = ({ id, messageType }) => {

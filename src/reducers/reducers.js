@@ -190,6 +190,7 @@ const other = {
   commission: otherReducers.getCommission,
   saleCount: otherReducers.getSaleCount,
   marketplace: otherReducers.getMarketPlace,
+  marketplaceCommission: otherReducers.getMarketPlaceCommission,
   getBanner: otherReducers.getBanner,
   tempMarketplace: otherReducers.setMarketPlaceTemp
 }
@@ -245,8 +246,7 @@ const transaction = {
   buyerRefund: transactionReducers.buyerRefund
 }
 
-const komutoApps = combineReducers({
-  ...purchase,
+const komutoApps = storage.reducer(combineReducers({
   ...user,
   ...home,
   ...product,
@@ -263,8 +263,9 @@ const komutoApps = combineReducers({
   ...transaction,
   ...message,
   ...other,
-  ...saldo
-})
+  ...saldo,
+  ...purchase
+}))
 
 const rootReducer = (state, action) => {
   // console.log('state: ', state);

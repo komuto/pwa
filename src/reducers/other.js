@@ -20,6 +20,12 @@ export const getMarketPlace = createReducer(buildInitState({ data: {} }))
     includeNonSaga: true
   }).run()
 
+export const getMarketPlaceCommission = createReducer(buildInitState({ commission: {} }))
+  .addReducer({
+    type: actions.GET_MARKETPLACE_COMMISSION,
+    resultName: 'commission'
+  }).run()
+
 export function setMarketPlaceTemp (state = {}, action) {
   switch (action.type) {
     case actions.SET_MARKETPLACE:
