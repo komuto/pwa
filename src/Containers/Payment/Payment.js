@@ -98,6 +98,7 @@ class Payment extends Component {
   setCheckout () {
     if (this.isBucketPayment()) {
       this.submitting = {...this.submitting, checkout: true}
+      this.props.getCartReset()
       this.props.setCheckout({'is_wallet': false})
     }
   }
@@ -342,7 +343,8 @@ const mapDiaptchToProps = (dispatch) => ({
   getTransaction: (params) => dispatch(transactionActions.getTransaction(params)),
   getBalance: () => dispatch(userActions.getBalance()),
   getMidtransToken: (params) => dispatch(paymentActions.getMidtransToken(params)),
-  setCheckout: (params) => dispatch(cartActions.checkout(params))
+  setCheckout: (params) => dispatch(cartActions.checkout(params)),
+  getCartReset: () => dispatch(cartActions.getCartReset())
 })
 
 export default connect(mapStateToProps, mapDiaptchToProps)(Payment)

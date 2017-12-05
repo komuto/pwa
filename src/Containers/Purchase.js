@@ -295,6 +295,7 @@ class Purchase extends Component {
     /** handling state addtocart */
     if (!isFetching(addToCart) && this.submiting.addToCart) {
       this.submiting = { ...this.submiting, addToCart: false }
+      this.props.addToCartReset()
       if (isError(addToCart)) {
         this.setState({ notification: notifError(addToCart.message) })
       }
@@ -661,6 +662,7 @@ const mapDispatchToProps = (dispatch) => ({
   setInsurance: (params) => dispatch(purchaseActions.insurance(params)),
   setNoted: (params) => dispatch(purchaseActions.noted(params)),
   setAddToCart: (params) => dispatch(cartActions.addToCart(params)),
+  addToCartReset: () => dispatch(cartActions.addToCartReset()),
   getProduct: (params) => dispatch(productActions.getProduct(params)),
   getListAddress: () => dispatch(addressActions.getListAddress())
 })
