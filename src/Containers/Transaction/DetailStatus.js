@@ -487,7 +487,7 @@ const TabsStatusContent = (props) => {
           invoiceStatus === 0 &&
           <section className='section is-paddingless'>
             <div className='container is-fluid'>
-              <a className='button is-primary is-outlined is-large is-fullwidth'>Lihat Saldo</a>
+              <a onClick={() => Router.push(`/balance`)} className='button is-primary is-outlined is-large is-fullwidth'>Lihat Saldo</a>
             </div>
             </section>
         }
