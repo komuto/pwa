@@ -26,6 +26,7 @@ class Messages extends React.Component {
       buyerMessages: props.buyerMessages || null,
       archiveBuyerMessages: props.archiveBuyerMessages || null,
       tabs: TAB_CONVERSATION,
+      isEmpty: { buyerMessages: false, archiveBuyerMessages: false },
       pagination: {
         page: 1,
         limit: 10
@@ -41,7 +42,7 @@ class Messages extends React.Component {
       }
     }
     this.hasMore = { buyerMessages: false, archiveBuyerMessages: false }
-    this.fetching = { buyerMessages: false, archiveBuyerMessages: false }
+    this.fetchingMore = { buyerMessages: false, archiveBuyerMessages: false }
     this.fetchingFirst = { buyerMessages: false, archiveBuyerMessages: false }
   }
 
@@ -56,22 +57,22 @@ class Messages extends React.Component {
 
   async loadMoreBuyerMessages () {
     let { pagination } = this.state
-    if (!this.fetching.buyerMessages) {
+    if (!this.fetchingMore.buyerMessages) {
       const newState = { pagination }
       pagination['page'] = pagination.page + 1
       this.setState(newState)
-      this.fetching = { ...this.fetching, buyerMessages: true }
+      this.fetchingMore = { ...this.fetchingMore, buyerMessages: true }
       await this.props.getBuyerMessages({ ...this.state.pagination, is_archived: false })
     }
   }
 
   async loadMoreArchiveBuyerMessages () {
     let { pagination2 } = this.state
-    if (!this.fetching.archiveBuyerMessages) {
+    if (!this.fetchingMore.archiveBuyerMessages) {
       const newState = { pagination2 }
       pagination2['page'] = pagination2.page + 1
       this.setState(newState)
-      this.fetching = { ...this.fetching, archiveBuyerMessages: true }
+      this.fetchingMore = { ...this.fetchingMore, archiveBuyerMessages: true }
       await this.props.getArchiveBuyerMessages(this.state.pagination2)
     }
   }
@@ -79,7 +80,7 @@ class Messages extends React.Component {
   componentDidMount () {
     NProgress.start()
     this.fetchingFirst = { buyerMessages: true, archiveBuyerMessages: true }
-    this.props.getBuyerMessages({ is_archived: false, page: 1, limit: 10 })
+    this.props.getBuyerMessages({ page: 1, limit: 10 })
     this.props.getArchiveBuyerMessages({ page: 1, limit: 10 })
   }
 
@@ -91,18 +92,19 @@ class Messages extends React.Component {
       NProgress.done()
       this.fetchingFirst = { ...this.fetchingFirst, buyerMessages: false }
       if (isFound(buyerMessages)) {
-        this.setState({ buyerMessages })
+        let isEmpty = { ...this.state.isEmpty, buyerMessages: buyerMessages.buyerMessages.length < 1 }
         this.hasMore = { ...this.hasMore, buyerMessages: buyerMessages.buyerMessages.length > 9 }
+        this.setState({ buyerMessages, isEmpty })
       }
       if (isError(buyerMessages)) {
         this.setState({ notification: notifError(buyerMessages.message) })
       }
     }
 
-    if (!isFetching(buyerMessages) && this.fetching.buyerMessages) {
-      this.fetching = { ...this.fetching, buyerMessages: false }
-      let newBuyerMessages = this.state.buyerMessages
+    if (!isFetching(buyerMessages) && this.fetchingMore.buyerMessages) {
+      this.fetchingMore = { ...this.fetchingMore, buyerMessages: false }
       if (isFound(buyerMessages)) {
+        let newBuyerMessages = this.state.buyerMessages
         this.hasMore = { ...this.hasMore, buyerMessages: buyerMessages.buyerMessages.length > 9 }
         newBuyerMessages.buyerMessages = newBuyerMessages.buyerMessages.concat(buyerMessages.buyerMessages)
         this.setState({ buyerMessages: newBuyerMessages })
@@ -118,17 +120,19 @@ class Messages extends React.Component {
       this.fetchingFirst = { ...this.fetchingFirst, archiveBuyerMessages: false }
       if (isFound(archiveBuyerMessages)) {
         this.setState({ archiveBuyerMessages })
+        let isEmpty = { ...this.state.isEmpty, archiveBuyerMessages: archiveBuyerMessages.archiveMessages.length < 1 }
         this.hasMore = { ...this.hasMore, archiveBuyerMessages: archiveBuyerMessages.archiveMessages.length > 9 }
+        this.setState({ archiveBuyerMessages, isEmpty })
       }
       if (isError(archiveBuyerMessages)) {
         this.setState({ notification: notifError(archiveBuyerMessages.message) })
       }
     }
 
-    if (!isFetching(archiveBuyerMessages) && this.fetching.archiveBuyerMessages) {
-      this.fetching = { ...this.fetching, archiveBuyerMessages: false }
-      let newArchiveBuyerMessages = this.state.archiveBuyerMessages
+    if (!isFetching(archiveBuyerMessages) && this.fetchingMore.archiveBuyerMessages) {
+      this.fetchingMore = { ...this.fetchingMore, archiveBuyerMessages: false }
       if (isFound(archiveBuyerMessages)) {
+        let newArchiveBuyerMessages = this.state.archiveBuyerMessages
         this.hasMore = { ...this.hasMore, archiveBuyerMessages: archiveBuyerMessages.archiveMessages.length > 9 }
         newArchiveBuyerMessages.archiveMessages = newArchiveBuyerMessages.archiveMessages.concat(archiveBuyerMessages.archiveMessages)
         this.setState({ archiveBuyerMessages: newArchiveBuyerMessages })
@@ -153,7 +157,7 @@ class Messages extends React.Component {
   }
 
   render () {
-    const { notification, tabs, buyerMessages, archiveBuyerMessages } = this.state
+    const { notification, tabs, buyerMessages, archiveBuyerMessages, isEmpty } = this.state
     return (
       <div>
         <div className='nav-tabs'>
@@ -175,12 +179,14 @@ class Messages extends React.Component {
                   buyerMessages={buyerMessages}
                   messageDetail={(id) => this.messageDetail(id)}
                   hasMore={this.hasMore.buyerMessages}
-                  loadMore={() => this.loadMoreBuyerMessages()} />
+                  loadMore={() => this.loadMoreBuyerMessages()}
+                  isEmpty={isEmpty.buyerMessages} />
                 : <ListArcheiveMessages
                   archiveBuyerMessages={archiveBuyerMessages}
                   messageDetail={(id) => this.messageDetail(id)}
                   hasMore2={this.hasMore.archiveBuyerMessages}
-                  loadMore2={() => this.loadMoreArchiveBuyerMessages()} />
+                  loadMore2={() => this.loadMoreArchiveBuyerMessages()}
+                  isEmpty={isEmpty.archiveBuyerMessages} />
               }
             </ul>
           </div>
@@ -191,14 +197,14 @@ class Messages extends React.Component {
 }
 
 const ListConversationMessages = (props) => {
-  const { buyerMessages } = props
+  const { buyerMessages, isEmpty } = props
   if (buyerMessages === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        buyerMessages.buyerMessages.length > 0
-        ? <InfiniteScroll
+        isEmpty ? <EmptyMessage title='Belum ada Percakapan' message='Anda belum pernah melakukan percakapan dengan seller' />
+        : <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(props.loadMore.bind(this), 500)}
           hasMore={props.hasMore}
@@ -233,21 +239,20 @@ const ListConversationMessages = (props) => {
             })
           }
         </InfiniteScroll>
-        : <EmptyMessage title='Belum ada Percakapan' message='Anda belum pernah melakukan percakapan dengan seller manapun' />
       }
     </div>
   )
 }
 
 const ListArcheiveMessages = (props) => {
-  const { archiveBuyerMessages } = props
+  const { archiveBuyerMessages, isEmpty } = props
   if (archiveBuyerMessages === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        archiveBuyerMessages.archiveMessages.length > 0
-        ? <InfiniteScroll
+        isEmpty ? <EmptyMessage title='Belum ada Arsip' message='Anda belum memiliki arsip percakapan dengan seller' />
+        : <InfiniteScroll
           pageStart={0}
           loadMore={_.debounce(props.loadMore2.bind(this), 500)}
           hasMore={props.hasMore2}
@@ -282,7 +287,6 @@ const ListArcheiveMessages = (props) => {
             })
           }
         </InfiniteScroll>
-        : <EmptyMessage title='Tidak ada Arsip' message='Anda belum memiliki arsip percakapan dengan seller manapun' />
       }
     </div>
   )
