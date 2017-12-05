@@ -33,7 +33,11 @@ class MessageDetail extends Component {
         onChange: (e) => this.handleInputAnswer(e),
         submit: (e) => this.replyMessageSubmit(e)
       },
-      notification: props.notification,
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      },
       moreMessage: {
         show: false,
         press: (e) => this.moreMessagePress(e),

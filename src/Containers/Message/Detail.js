@@ -9,6 +9,7 @@ import { Navbar } from '../Navbar'
 import Images from '../../Themes/Images'
 import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
+import { New } from '../../Components/Comment'
 // actions
 import * as messageAction from '../../actions/message'
 // services
@@ -42,18 +43,16 @@ class MessageDetail extends React.Component {
 
   async submitMessage (e) {
     const { id, message } = this.state
-    if (e.key === 'Enter') {
-      if (this.state.message !== '') {
-        this.afterSendMessage = true
-        await this.props.buyerReplyMessage({ id: id, content: message })
-        this.setState({ message: '' })
-      }
+    if (this.state.message !== '') {
+      this.afterSendMessage = true
+      await this.props.buyerReplyMessage({ id: id, content: message })
+      this.setState({ message: '' })
     }
   }
 
   componentDidMount () {
     const { id } = this.state
-    if (id !== '') {
+    if (id) {
       NProgress.start()
       this.props.getBuyerDetailMessage({ id })
     }
@@ -193,12 +192,13 @@ class MessageDetail extends React.Component {
         <div className='add-comment'>
           <div className='field'>
             <p className='control'>
-              <textarea
-                name='message'
-                onChange={(e) => this.handleInput(e)}
+              <span className={`${this.afterSendMessage && 'button self is-loading right'}`} />
+              <New
+                onSubmit={(e) => !this.afterSendMessage && this.submitMessage(e)}
+                onChange={(e) => !this.afterSendMessage && this.handleInput(e)}
                 value={message}
-                onKeyPress={(e) => this.submitMessage(e)}
-                className='textarea' placeholder='Tulis pesan Anda disini' />
+                submitting={this.afterSendMessage}
+              />
             </p>
           </div>
         </div>
