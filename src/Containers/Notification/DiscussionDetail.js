@@ -17,6 +17,7 @@ import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
 import { Navbar } from '../Navbar'
+import { New } from '../../Components/Comment'
 /** including actions */
 import * as productActions from '../../actions/product'
 /** including libs */
@@ -47,18 +48,16 @@ class DiscussionDetail extends Component {
 
   render () {
     const { comments, notification } = this.state
+    const { product } = comments.comments
     const { isFound } = this.props
     let params = {
       navbar: {
         searchBoox: false,
         path: '/',
-        textPath: 'Detail Pesan'
-      }
-    }
-
-    if (isFound(comments)) {
-      let { product } = comments.comments
-      params.navbar.textPath = product.name
+        callBack: () => Router.push('/notification-discussion'),
+        textPath: ''
+      },
+      productDetail: product
     }
 
     return (
@@ -124,13 +123,11 @@ class DiscussionDetail extends Component {
   }
 
   newCommentSubmit (e) {
-    let content = e.target.value
+    let content = this.state.newComment.answer
     let { id } = this.state
-    if (e.key === 'Enter') {
-      if (content !== '') {
-        this.submitting = { ...this.submitting, newComment: true }
-        this.props.addNewComment({ id, content })
-      }
+    if (content !== '') {
+      this.submitting = { ...this.submitting, newComment: true }
+      this.props.addNewComment({ id, content })
     }
   }
 
@@ -180,14 +177,11 @@ const MessageDetailContent = ({ comments, newComment, submitting, messagesEnd })
         <div className='field'>
           <p className='control'>
             <span className={`${submitting.newComment && 'button self is-loading right'}`} />
-            <input
-              name='answer'
+            <New
               onChange={(e) => !submitting.newComment && newComment.onChange(e)}
               value={newComment.answer}
-              onKeyPress={(e) => !submitting.newComment && newComment.submit(e)}
-              className='textarea'
-              placeholder='Tulis pessan Anda disini'
-              readOnly={submitting.newComment} />
+              onSubmit={(e) => !submitting.newComment && newComment.submit(e)}
+              submitting={submitting.newComment} />
           </p>
         </div>
       </div>

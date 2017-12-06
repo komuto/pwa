@@ -14,6 +14,7 @@ import MyImage from '../../Components/MyImage'
 import Loading from '../../Components/Loading'
 import { Navbar } from './../Navbar'
 import Notification from '../../Components/Notification'
+import { New } from '../../Components/Comment'
 // actions
 import * as productActions from '../../actions/product'
 
@@ -46,12 +47,10 @@ class DiscussionProductDetail extends React.Component {
 
   async submitDiscussion (e) {
     const { id, content } = this.state
-    if (e.key === 'Enter') {
-      if (content) {
-        this.sendQuestion = true
-        await this.props.addNewComment({ id, content })
-        this.setState({ content: '' })
-      }
+    if (content) {
+      this.sendQuestion = true
+      await this.props.addNewComment({ id, content })
+      this.setState({ content: '' })
     }
   }
 
@@ -199,12 +198,12 @@ class DiscussionProductDetail extends React.Component {
         <div className='add-comment'>
           <div className='field'>
             <p className='control'>
-              <textarea
-                name='content'
-                onChange={(e) => this.handleInput(e)}
+              <span className={`${this.sendQuestion && 'button self is-loading right'}`} />
+              <New
+                onChange={(e) => !this.sendQuestion && this.handleInput(e)}
                 value={content}
-                onKeyPress={(e) => this.submitDiscussion(e)}
-                className='textarea' placeholder='Tulis pertanyaan Anda disini' />
+                onSubmit={(e) => !this.sendQuestion && this.submitDiscussion(e)}
+                submitting={this.sendQuestion} />
             </p>
           </div>
         </div>
