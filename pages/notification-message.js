@@ -1,3 +1,4 @@
+import Router from 'next/router'
 /** includes layout */
 import DefaultLayout from '../src/Layout/DefaultLayout'
 /** includes wrapper */
@@ -14,6 +15,7 @@ const Index = (props) => {
     navbar: {
       searchBoox: false,
       path: '/',
+      callBack: () => Router.push('/manage-store'),
       textPath: 'Pesan'
     }
   }

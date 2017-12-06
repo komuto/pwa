@@ -13,11 +13,8 @@ import MyImage from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 // actions
 import * as messageAction from '../../actions/message'
-// services
-import { validateResponseAlter } from '../../Services/Status'
 
-const TAB_CONVERSATION = 'TAB_CONVERSATION'
-const TAB_ARCHIVE = 'TAB_ARCHIVE'
+const TABS = ['CHAT', 'ARCHIVES']
 
 class Messages extends React.Component {
   constructor (props) {
@@ -25,7 +22,6 @@ class Messages extends React.Component {
     this.state = {
       buyerMessages: props.buyerMessages || null,
       archiveBuyerMessages: props.archiveBuyerMessages || null,
-      tabs: TAB_CONVERSATION,
       isEmpty: { buyerMessages: false, archiveBuyerMessages: false },
       pagination: {
         page: 1,
@@ -34,6 +30,10 @@ class Messages extends React.Component {
       pagination2: {
         page: 1,
         limit: 10
+      },
+      tab: {
+        active: props.query.tab || TABS[0],
+        press: (p) => this.onSelectTab(p)
       },
       notification: {
         type: 'is-success',
@@ -44,22 +44,25 @@ class Messages extends React.Component {
     this.hasMore = { buyerMessages: false, archiveBuyerMessages: false }
     this.fetchingMore = { buyerMessages: false, archiveBuyerMessages: false }
     this.fetchingFirst = { buyerMessages: false, archiveBuyerMessages: false }
+
+    moment.locale('id')
   }
 
-  switchTab (e) {
-    const { tabs } = this.state
-    this.setState({ tabs: (tabs === TAB_CONVERSATION) ? TAB_ARCHIVE : TAB_CONVERSATION })
-  }
-
-  messageDetail (messageId) {
-    Router.push(`/message-detail?id=${messageId}`)
+  onSelectTab (active) {
+    Router.push(`/messages?tab=${active}`)
+    this.setState({
+      tab: {
+        ...this.state.tab,
+        active
+      }
+    })
   }
 
   async loadMoreBuyerMessages () {
     let { pagination } = this.state
     if (!this.fetchingMore.buyerMessages) {
       const newState = { pagination }
-      pagination['page'] = pagination.page + 1
+      newState.pagination['page'] = pagination.page + 1
       this.setState(newState)
       this.fetchingMore = { ...this.fetchingMore, buyerMessages: true }
       await this.props.getBuyerMessages({ ...this.state.pagination, is_archived: false })
@@ -70,11 +73,18 @@ class Messages extends React.Component {
     let { pagination2 } = this.state
     if (!this.fetchingMore.archiveBuyerMessages) {
       const newState = { pagination2 }
-      pagination2['page'] = pagination2.page + 1
+      newState.pagination2['page'] = pagination2.page + 1
       this.setState(newState)
       this.fetchingMore = { ...this.fetchingMore, archiveBuyerMessages: true }
       await this.props.getArchiveBuyerMessages(this.state.pagination2)
     }
+  }
+
+  closeNotification () {
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      this.setState({ notification: { ...this.state.notification, status: false } })
+    }, 3000)
   }
 
   componentDidMount () {
@@ -82,11 +92,31 @@ class Messages extends React.Component {
     this.fetchingFirst = { buyerMessages: true, archiveBuyerMessages: true }
     this.props.getBuyerMessages({ page: 1, limit: 10 })
     this.props.getArchiveBuyerMessages({ page: 1, limit: 10 })
+
+    let { notifSuccess } = this.props
+    let toArchive = this.props.query.toArchive || null
+    let toConversation = this.props.query.toConversation || null
+    let toDelete = this.props.query.toDelete || null
+
+    if (toArchive) {
+      this.setState({ notification: notifSuccess('Berhasil memindahkan ke arsip') })
+      this.closeNotification()
+    }
+
+    if (toConversation) {
+      this.setState({ notification: notifSuccess('Berhasil memindahkan ke percakapan') })
+      this.closeNotification()
+    }
+
+    if (toDelete) {
+      this.setState({ notification: notifSuccess('Berhasil menghapus percakapan') })
+      this.closeNotification()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
-    const { query, isFetching, isFound, isError, notifError } = this.props
-    const { buyerMessages, archiveBuyerMessages, updateMessage, deleteMessage } = nextProps
+    const { isFetching, isFound, isError, notifError } = this.props
+    const { buyerMessages, archiveBuyerMessages } = nextProps
 
     if (!isFetching(buyerMessages) && this.fetchingFirst.buyerMessages) {
       NProgress.done()
@@ -142,27 +172,17 @@ class Messages extends React.Component {
         this.hasMore = { ...this.hasMore, archiveBuyerMessages: false }
       }
     }
-    if (query.hasOwnProperty('archeived')) {
-      this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Arsip', 'Gagal memindahkan ke Arsip') })
-    }
-    if (query.hasOwnProperty('conversation')) {
-      this.setState({ notification: validateResponseAlter(updateMessage, 'Berhasil memindahkan ke Percakapan', 'Gagal memindahkan ke Percakapan') })
-    }
-    if (query.hasOwnProperty('deleteArcheive')) {
-      this.setState({ notification: validateResponseAlter(deleteMessage, 'Berhasil menghapus Pesan', 'Gagal menghapus Pesan') })
-    }
-    if (query.hasOwnProperty('deleteConversation')) {
-      this.setState({ notification: validateResponseAlter(deleteMessage, 'Berhasil menghapus Pesan', 'Gagal menghapus Pesan') })
-    }
   }
 
   render () {
-    const { notification, tabs, buyerMessages, archiveBuyerMessages, isEmpty } = this.state
+    const { notification, tab, buyerMessages, archiveBuyerMessages, isEmpty } = this.state
+    let isChat = tab.active === TABS[0]
+    let isArchives = tab.active === TABS[1]
     return (
       <div>
         <div className='nav-tabs'>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_CONVERSATION && 'active'}>Percakapan</a>
-          <a onClick={(e) => this.switchTab(e)} className={tabs === TAB_ARCHIVE && 'active'}>Arsip</a>
+          <a className={isChat ? 'active' : ''} onClick={() => tab.press(TABS[0])}><span className='text'>Percakapan</span></a>
+          <a className={isArchives ? 'active' : ''} onClick={() => tab.press(TABS[1])}><span className='text'>Arsip</span></a>
         </div>
         <Notification
           type={notification.type}
@@ -170,27 +190,22 @@ class Messages extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
-              {
-                tabs === TAB_CONVERSATION
-                ? <ListConversationMessages
-                  buyerMessages={buyerMessages}
-                  messageDetail={(id) => this.messageDetail(id)}
-                  hasMore={this.hasMore.buyerMessages}
-                  loadMore={() => this.loadMoreBuyerMessages()}
-                  isEmpty={isEmpty.buyerMessages} />
-                : <ListArcheiveMessages
-                  archiveBuyerMessages={archiveBuyerMessages}
-                  messageDetail={(id) => this.messageDetail(id)}
-                  hasMore2={this.hasMore.archiveBuyerMessages}
-                  loadMore2={() => this.loadMoreArchiveBuyerMessages()}
-                  isEmpty={isEmpty.archiveBuyerMessages} />
-              }
-            </ul>
-          </div>
-        </section>
+        <WrapperList>
+          {
+            isChat && <ListConversationMessages
+              buyerMessages={buyerMessages}
+              hasMore={this.hasMore.buyerMessages}
+              loadMore={() => this.loadMoreBuyerMessages()}
+              isEmpty={isEmpty.buyerMessages} />
+          }
+          {
+            isArchives && <ListArcheiveMessages
+              archiveBuyerMessages={archiveBuyerMessages}
+              hasMore2={this.hasMore.archiveBuyerMessages}
+              loadMore2={() => this.loadMoreArchiveBuyerMessages()}
+              isEmpty={isEmpty.archiveBuyerMessages} />
+          }
+        </WrapperList>
       </div>
     )
   }
@@ -199,7 +214,6 @@ class Messages extends React.Component {
 const ListConversationMessages = (props) => {
   const { buyerMessages, isEmpty } = props
   if (buyerMessages === undefined) return null
-  moment.locale('id')
   return (
     <div>
       {
@@ -210,31 +224,9 @@ const ListConversationMessages = (props) => {
           hasMore={props.hasMore}
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
-            buyerMessages.buyerMessages.map((message, i) => {
+            buyerMessages.buyerMessages.map((message, index) => {
               return (
-                <li key={i}>
-                  <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
-                    <article className='media'>
-                      <div className='media-left top'>
-                        <figure className='image user-pict'>
-                          <MyImage src={message.store.logo}
-                            style={{width: '50px', height: '50px'}} alt='pict' />
-                        </figure>
-                      </div>
-                      <div className='media-content'>
-                        <div className='content'>
-                          <p className='user-name'>
-                            <strong>{message.subject}</strong>
-                            <span>{message.store.name}</span>
-                            <br />
-                            {message.detail_message.content}
-                          </p>
-                        </div>
-                        <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
-                      </div>
-                    </article>
-                  </div>
-                </li>
+                <List key={index} message={message} />
               )
             })
           }
@@ -247,7 +239,6 @@ const ListConversationMessages = (props) => {
 const ListArcheiveMessages = (props) => {
   const { archiveBuyerMessages, isEmpty } = props
   if (archiveBuyerMessages === undefined) return null
-  moment.locale('id')
   return (
     <div>
       {
@@ -258,31 +249,9 @@ const ListArcheiveMessages = (props) => {
           hasMore={props.hasMore2}
           loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
           {
-            archiveBuyerMessages.archiveMessages.map((message, i) => {
+            archiveBuyerMessages.archiveMessages.map((message, index) => {
               return (
-                <li key={i}>
-                  <div className='box is-paddingless' onClick={() => props.messageDetail(message.id)}>
-                    <article className='media'>
-                      <div className='media-left top'>
-                        <figure className='image user-pict'>
-                          <MyImage src={message.store.logo}
-                            style={{width: '50px', height: '50px'}} alt='pict' />
-                        </figure>
-                      </div>
-                      <div className='media-content'>
-                        <div className='content'>
-                          <p className='user-name'>
-                            <strong>{message.subject}</strong>
-                            <span>{message.store.name}</span>
-                            <br />
-                            {message.detail_message.content}
-                          </p>
-                        </div>
-                        <span className='time-discuss'>{moment.unix(message.detail_message.created_at).format('DD MMM YYYY')}</span>
-                      </div>
-                    </article>
-                  </div>
-                </li>
+                <List key={index} message={message} />
               )
             })
           }
@@ -291,6 +260,41 @@ const ListArcheiveMessages = (props) => {
     </div>
   )
 }
+
+const WrapperList = ({ children }) => (
+  <section className='section is-paddingless'>
+    <div className='discuss'>
+      <ul className='notif-detail conversation bordered'>
+        { children }
+      </ul>
+    </div>
+  </section>
+)
+
+const List = ({ message }) => (
+  <li onClick={() => Router.push(`/message-detail?id=${message.id}`)}>
+    <div className='box is-paddingless'>
+      <article className='media'>
+        <div className='media-left top'>
+          <figure className='image user-pict'>
+            <MyImage src={message.store.logo} alt='pict' />
+          </figure>
+        </div>
+        <div className='media-content'>
+          <div className='content'>
+            <p className='user-name'>
+              <strong>{ message.subject }</strong>
+              <span>{message.store.name}</span>
+              <br />
+              { message.detail_message.content }
+            </p>
+          </div>
+          <span className='time-discuss'>{ moment.unix(message.detail_message.created_at).format('DD MMMM YYYY') }</span>
+        </div>
+      </article>
+    </div>
+  </li>
+)
 
 const EmptyMessage = ({ title, message }) => {
   return (
@@ -310,9 +314,7 @@ const EmptyMessage = ({ title, message }) => {
 const mapStateToProps = (state) => {
   return {
     buyerMessages: state.buyerMessages,
-    archiveBuyerMessages: state.archiveBuyerMessages,
-    updateMessage: state.updateMessage,
-    deleteMessage: state.deleteMessage
+    archiveBuyerMessages: state.archiveBuyerMessages
   }
 }
 

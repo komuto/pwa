@@ -1,140 +1,51 @@
-/**
- * Safei Muslim
- * Yogyakarta , 12 Oktober 2017
- * PT Skyshi Digital Indonesa
- */
-
-/** including dependencies */
-import React, { Component } from 'react'
+// @flow
+import React from 'react'
 import { connect } from 'react-redux'
-import Router from 'next/router'
 import moment from 'moment'
-import NProgress from 'nprogress'
-import _ from 'lodash'
 import InfiniteScroll from 'react-infinite-scroller'
-
-/** including component */
-import Content from '../../Components/Content'
-import Notification from '../../Components/Notification'
-import MyImage from '../../Components/MyImage'
+import _ from 'lodash'
+import Router from 'next/router'
+import NProgress from 'nprogress'
+// components
 import Loading from '../../Components/Loading'
-/** including actions */
-import * as messageActions from '../../actions/message'
+import Images from '../../Themes/Images'
+import MyImage from '../../Components/MyImage'
+import Notification from '../../Components/Notification'
+// actions
+import * as messageAction from '../../actions/message'
 
-class Message extends Component {
+const TABS = ['CHAT', 'ARCHIVES']
+
+class Messages extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      sellerMessages: {
-        data: props.sellerMessages,
-        hasMore: true,
-        loadMore: () => this.messageLoadMore(),
-        params: {
-          page: 1,
-          limit: 10
-        }
-      },
+      sellerMessages: props.sellerMessages || null,
       archiveSellerMessages: props.archiveSellerMessages || null,
+      isEmpty: { sellerMessages: false, archiveSellerMessages: false },
+      pagination: {
+        page: 1,
+        limit: 10
+      },
+      pagination2: {
+        page: 1,
+        limit: 10
+      },
       tab: {
         active: props.query.tab || TABS[0],
         press: (p) => this.onSelectTab(p)
       },
-      notification: props.notification
+      notification: {
+        type: 'is-success',
+        status: false,
+        message: 'Error, default message.'
+      }
     }
-    this.submitting = {
-      sellerMessages: false,
-      archiveSellerMessages: false
-    }
+    this.hasMore = { sellerMessages: false, archiveSellerMessages: false }
+    this.fetchingMore = { sellerMessages: false, archiveSellerMessages: false }
+    this.fetchingFirst = { sellerMessages: false, archiveSellerMessages: false }
 
     moment.locale('id')
-  }
-
-  render () {
-    let { tab, sellerMessages, archiveSellerMessages, notification } = this.state
-    let { isFound } = this.props
-
-    let isChat = tab.active === TABS[0]
-    let isArchives = tab.active === TABS[1]
-    let toArchive = this.props.query.toArchive || null
-    let toConversation = this.props.query.toConversation || null
-    let toDelete = this.props.query.toDelete || null
-
-    if (toArchive) {
-      notification = { type: 'is-success', status: true, message: 'Berhasil memindahkan ke arsip' }
-    }
-
-    if (toConversation) {
-      notification = { type: 'is-success', status: true, message: 'Berhasil memindahkan ke percakapan' }
-    }
-
-    if (toDelete) {
-      notification = { type: 'is-success', status: true, message: 'Berhasil menghapus percakapan' }
-    }
-
-    return (
-      <Content>
-        <div className='nav-tabs'>
-          <a className={isChat ? 'active' : ''} onClick={() => tab.press(TABS[0])}><span className='text'>Percakapan</span></a>
-          <a className={isArchives ? 'active' : ''} onClick={() => tab.press(TABS[1])}><span className='text'>Arsip</span></a>
-        </div>
-        <Notification
-          type={notification.type}
-          isShow={notification.status}
-          activeClose
-          onClose={() => this.setState({notification: {status: false, message: ''}})}
-          message={notification.message} />
-        { isFound(sellerMessages.data) && isChat && <ChatContent {...this.state} /> }
-        { isFound(archiveSellerMessages) && isArchives && <ArchivesContent {...this.state} /> }
-      </Content>
-    )
-  }
-
-  componentDidMount () {
-    NProgress.start()
-    this.loadconversationMessages()
-    this.loadArchivesMessages()
-  }
-
-  loadconversationMessages () {
-    let { params } = this.state.sellerMessages
-    this.submitting = {...this.submitting, sellerMessages: true}
-    this.props.getSellerMessages(params)
-  }
-
-  loadArchivesMessages () {
-    this.submitting = {...this.submitting, archiveSellerMessages: true}
-    this.props.getArchiveSellerMessages()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { sellerMessages, archiveSellerMessages } = nextProps
-    const { isFetching, isError, isFound, notifError } = this.props
-
-    /** handling state sellerMessages */
-    if (!isFetching(sellerMessages) && this.submitting.sellerMessages) {
-      this.submitting = { ...this.submitting, sellerMessages: false }
-      NProgress.done()
-      if (isError(sellerMessages)) {
-        this.setState({ notification: notifError(sellerMessages.message) })
-      }
-      if (isFound(sellerMessages)) {
-        let hasMore = sellerMessages.sellerMessages.length > 9
-        let tam = sellerMessages.sellerMessages.concat(this.state.sellerMessages.data.sellerMessages)
-        sellerMessages.sellerMessages = tam
-        this.setState({ sellerMessages: { ...this.state.sellerMessages, data: sellerMessages, hasMore } })
-      }
-    }
-
-    /** handling state archive seller message */
-    if (!isFetching(archiveSellerMessages) && this.submitting.archiveSellerMessages) {
-      this.submitting = { ...this.submitting, archiveSellerMessages: false }
-      if (isError(archiveSellerMessages)) {
-        this.setState({ notification: notifError(archiveSellerMessages.message) })
-      }
-      if (isFound(archiveSellerMessages)) {
-        this.setState({ archiveSellerMessages })
-      }
-    }
   }
 
   onSelectTab (active) {
@@ -147,42 +58,207 @@ class Message extends Component {
     })
   }
 
-  messageLoadMore () {
-    let { sellerMessages } = this.state
-    if (!this.submitting.sellerMessages) {
-      this.submitting = { ...this.submitting, sellerMessages: true }
-      sellerMessages.params.page += 1
-      this.props.getSellerMessages(sellerMessages.params)
-      this.setState({ sellerMessages })
+  async loadMoreBuyerMessages () {
+    let { pagination } = this.state
+    if (!this.fetchingMore.sellerMessages) {
+      const newState = { pagination }
+      newState.pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetchingMore = { ...this.fetchingMore, sellerMessages: true }
+      await this.props.getSellerMessages({ ...this.state.pagination, is_archived: false })
     }
+  }
+
+  async loadMoreArchiveBuyerMessages () {
+    let { pagination2 } = this.state
+    if (!this.fetchingMore.archiveSellerMessages) {
+      const newState = { pagination2 }
+      newState.pagination2['page'] = pagination2.page + 1
+      this.setState(newState)
+      this.fetchingMore = { ...this.fetchingMore, archiveSellerMessages: true }
+      await this.props.getArchiveSellerMessages(this.state.pagination2)
+    }
+  }
+
+  closeNotification () {
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      this.setState({ notification: { ...this.state.notification, status: false } })
+    }, 3000)
+  }
+
+  componentDidMount () {
+    NProgress.start()
+    this.fetchingFirst = { sellerMessages: true, archiveSellerMessages: true }
+    this.props.getSellerMessages({ page: 1, limit: 10 })
+    this.props.getArchiveSellerMessages({ page: 1, limit: 10 })
+
+    let { notifSuccess } = this.props
+    let toArchive = this.props.query.toArchive || null
+    let toConversation = this.props.query.toConversation || null
+    let toDelete = this.props.query.toDelete || null
+
+    if (toArchive) {
+      this.setState({ notification: notifSuccess('Berhasil memindahkan ke arsip') })
+      this.closeNotification()
+    }
+
+    if (toConversation) {
+      this.setState({ notification: notifSuccess('Berhasil memindahkan ke percakapan') })
+      this.closeNotification()
+    }
+
+    if (toDelete) {
+      this.setState({ notification: notifSuccess('Berhasil menghapus percakapan') })
+      this.closeNotification()
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { isFetching, isFound, isError, notifError } = this.props
+    const { sellerMessages, archiveSellerMessages } = nextProps
+
+    if (!isFetching(sellerMessages) && this.fetchingFirst.sellerMessages) {
+      NProgress.done()
+      this.fetchingFirst = { ...this.fetchingFirst, sellerMessages: false }
+      if (isFound(sellerMessages)) {
+        let isEmpty = { ...this.state.isEmpty, sellerMessages: sellerMessages.sellerMessages.length < 1 }
+        this.hasMore = { ...this.hasMore, sellerMessages: sellerMessages.sellerMessages.length > 9 }
+        this.setState({ sellerMessages, isEmpty })
+      }
+      if (isError(sellerMessages)) {
+        this.setState({ notification: notifError(sellerMessages.message) })
+      }
+    }
+
+    if (!isFetching(sellerMessages) && this.fetchingMore.sellerMessages) {
+      this.fetchingMore = { ...this.fetchingMore, sellerMessages: false }
+      if (isFound(sellerMessages)) {
+        let newBuyerMessages = this.state.sellerMessages
+        this.hasMore = { ...this.hasMore, sellerMessages: sellerMessages.sellerMessages.length > 9 }
+        newBuyerMessages.sellerMessages = newBuyerMessages.sellerMessages.concat(sellerMessages.sellerMessages)
+        this.setState({ sellerMessages: newBuyerMessages })
+      }
+      if (isError(sellerMessages)) {
+        this.setState({ notification: notifError(sellerMessages.message) })
+        this.hasMore = { ...this.hasMore, sellerMessages: false }
+      }
+    }
+
+    if (!isFetching(archiveSellerMessages) && this.fetchingFirst.archiveSellerMessages) {
+      NProgress.done()
+      this.fetchingFirst = { ...this.fetchingFirst, archiveSellerMessages: false }
+      if (isFound(archiveSellerMessages)) {
+        this.setState({ archiveSellerMessages })
+        let isEmpty = { ...this.state.isEmpty, archiveSellerMessages: archiveSellerMessages.archiveMessages.length < 1 }
+        this.hasMore = { ...this.hasMore, archiveSellerMessages: archiveSellerMessages.archiveMessages.length > 9 }
+        this.setState({ archiveSellerMessages, isEmpty })
+      }
+      if (isError(archiveSellerMessages)) {
+        this.setState({ notification: notifError(archiveSellerMessages.message) })
+      }
+    }
+
+    if (!isFetching(archiveSellerMessages) && this.fetchingMore.archiveSellerMessages) {
+      this.fetchingMore = { ...this.fetchingMore, archiveSellerMessages: false }
+      if (isFound(archiveSellerMessages)) {
+        let newArchiveBuyerMessages = this.state.archiveSellerMessages
+        this.hasMore = { ...this.hasMore, archiveSellerMessages: archiveSellerMessages.archiveMessages.length > 9 }
+        newArchiveBuyerMessages.archiveMessages = newArchiveBuyerMessages.archiveMessages.concat(archiveSellerMessages.archiveMessages)
+        this.setState({ archiveSellerMessages: newArchiveBuyerMessages })
+      }
+      if (isError(archiveSellerMessages)) {
+        this.setState({ notification: notifError(archiveSellerMessages.message) })
+        this.hasMore = { ...this.hasMore, archiveSellerMessages: false }
+      }
+    }
+  }
+
+  render () {
+    const { notification, tab, sellerMessages, archiveSellerMessages, isEmpty } = this.state
+    let isChat = tab.active === TABS[0]
+    let isArchives = tab.active === TABS[1]
+    return (
+      <div>
+        <div className='nav-tabs'>
+          <a className={isChat ? 'active' : ''} onClick={() => tab.press(TABS[0])}><span className='text'>Percakapan</span></a>
+          <a className={isArchives ? 'active' : ''} onClick={() => tab.press(TABS[1])}><span className='text'>Arsip</span></a>
+        </div>
+        <Notification
+          type={notification.type}
+          isShow={notification.status}
+          activeClose
+          onClose={() => this.setState({notification: {status: false, message: ''}})}
+          message={notification.message} />
+        <WrapperList>
+          {
+            isChat
+            ? <ListConversationMessages
+              sellerMessages={sellerMessages}
+              hasMore={this.hasMore.sellerMessages}
+              loadMore={() => this.loadMoreBuyerMessages()}
+              isEmpty={isEmpty.sellerMessages} />
+            : <ListArcheiveMessages
+              archiveSellerMessages={archiveSellerMessages}
+              hasMore2={this.hasMore.archiveSellerMessages}
+              loadMore2={() => this.loadMoreArchiveBuyerMessages()}
+              isEmpty={isEmpty.archiveSellerMessages} />
+          }
+        </WrapperList>
+      </div>
+    )
   }
 }
 
-const ChatContent = ({ sellerMessages }) => (
-  <WrapperList>
-    <InfiniteScroll
-      pageStart={0}
-      loadMore={_.debounce(sellerMessages.loadMore, 500)}
-      hasMore={sellerMessages.hasMore}
-      loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+const ListConversationMessages = (props) => {
+  const { sellerMessages, isEmpty } = props
+  if (sellerMessages === undefined) return null
+  return (
+    <div>
       {
-        sellerMessages.data.sellerMessages.map((message, index) =>
-          <List key={index} message={message} />
-        )
+        isEmpty ? <EmptyMessage title='Belum ada Percakapan' message='Anda belum pernah melakukan percakapan dengan pelanggan' />
+        : <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMore.bind(this), 500)}
+          hasMore={props.hasMore}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            sellerMessages.sellerMessages.map((message, index) => {
+              return (
+                <List key={index} message={message} />
+              )
+            })
+          }
+        </InfiniteScroll>
       }
-    </InfiniteScroll>
-  </WrapperList>
-)
+    </div>
+  )
+}
 
-const ArchivesContent = ({ archiveSellerMessages }) => (
-  <WrapperList>
-    {
-      archiveSellerMessages.archiveMessages.map((message, index) =>
-        <List key={index} message={message} />
-      )
-    }
-  </WrapperList>
-)
+const ListArcheiveMessages = (props) => {
+  const { archiveSellerMessages, isEmpty } = props
+  if (archiveSellerMessages === undefined) return null
+  return (
+    <div>
+      {
+        isEmpty ? <EmptyMessage title='Belum ada Arsip' message='Anda belum memiliki arsip percakapan dengan pelanggan' />
+        : <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(props.loadMore2.bind(this), 500)}
+          hasMore={props.hasMore2}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            archiveSellerMessages.archiveMessages.map((message, index) => {
+              return (
+                <List key={index} message={message} />
+              )
+            })
+          }
+        </InfiniteScroll>
+      }
+    </div>
+  )
+}
 
 const WrapperList = ({ children }) => (
   <section className='section is-paddingless'>
@@ -212,23 +288,38 @@ const List = ({ message }) => (
               { message.detail_message.content }
             </p>
           </div>
-          <span className='time-discuss'>{ moment.unix(message.detail_message.created_at).format('Do MMMM YY') }</span>
+          <span className='time-discuss'>{ moment.unix(message.detail_message.created_at).format('DD MMMM YYYY') }</span>
         </div>
       </article>
     </div>
   </li>
 )
 
-const TABS = ['CHAT', 'ARCHIVES']
+const EmptyMessage = ({ title, message }) => {
+  return (
+    <div className='content' style={{ paddingTop: '10%' }}>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesMessage} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>{title}</strong></p>
+          <p>{message}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-const mapStateToProps = (state) => ({
-  sellerMessages: state.sellerMessages,
-  archiveSellerMessages: state.archiveSellerMessages
+const mapStateToProps = (state) => {
+  return {
+    sellerMessages: state.sellerMessages,
+    archiveSellerMessages: state.archiveSellerMessages
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  getSellerMessages: (params) => dispatch(messageAction.getSellerMessages(params)),
+  getArchiveSellerMessages: (params) => dispatch(messageAction.getArchiveSellerMessages(params))
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  getSellerMessages: (params) => dispatch(messageActions.getSellerMessages(params)),
-  getArchiveSellerMessages: () => dispatch(messageActions.getArchiveSellerMessages())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Message)
+export default connect(mapStateToProps, mapDispatchToProps)(Messages)

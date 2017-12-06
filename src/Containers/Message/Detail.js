@@ -12,8 +12,6 @@ import Notification from '../../Components/Notification'
 import { New } from '../../Components/Comment'
 // actions
 import * as messageAction from '../../actions/message'
-// services
-import { isFetching, validateResponse } from '../../Services/Status'
 import RegexNormal from '../../Lib/RegexNormal'
 
 class MessageDetail extends React.Component {
@@ -76,38 +74,51 @@ class MessageDetail extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { buyerDetailMessage, replyMessage, updateMessage, deleteMessage } = nextProps
+    const { isFetching, isError, isFound, notifError } = this.props
     if (!isFetching(buyerDetailMessage)) {
       NProgress.done()
-      this.setState({
-        buyerDetailMessage: nextProps.buyerDetailMessage,
-        notification: validateResponse(buyerDetailMessage, buyerDetailMessage.message),
-        messageType: nextProps.buyerDetailMessage.buyerDetailMessage.type
-      })
+      if (isFound(buyerDetailMessage)) {
+        this.setState({ buyerDetailMessage, messageType: buyerDetailMessage.buyerDetailMessage.type })
+      }
+      if (isError(buyerDetailMessage)) {
+        this.setState({ notification: notifError(buyerDetailMessage.message) })
+      }
     }
     if (!isFetching(replyMessage) && this.afterSendMessage) {
       this.afterSendMessage = false
-      if (replyMessage.isFound) {
+      if (isFound(replyMessage)) {
         this.props.getBuyerDetailMessage({ id: this.state.id, is_archived: false })
-      } else {
-        this.setState({ notification: validateResponse(buyerDetailMessage, buyerDetailMessage.message) })
+      }
+      if (isError(replyMessage)) {
+        this.setState({ notification: notifError(replyMessage.message) })
       }
     }
     if (!isFetching(updateMessage) && this.moveMessage) {
       this.moveMessage = false
-      if (this.state.messageType === 'conversation') {
-        Router.push(`/messages?archeived=${updateMessage.updateMessage.id}`)
+      if (isFound(updateMessage)) {
+        if (this.state.messageType === 'conversation') {
+          Router.push(`/messages?tab=CHAT&toArchive=success`)
+        }
+        if (this.state.messageType === 'archive') {
+          Router.push(`/messages?tab=ARCHIVES&toConversation=success`)
+        }
       }
-      if (this.state.messageType === 'archive') {
-        Router.push(`/messages?conversation=${updateMessage.updateMessage.id}`)
+      if (isError(updateMessage)) {
+        this.setState({ notification: notifError(updateMessage.message) })
       }
     }
     if (!isFetching(deleteMessage) && this.deleteMessage) {
       this.deleteMessage = false
-      if (this.state.messageType === 'conversation') {
-        Router.push(`/messages?deleteArcheive=${deleteMessage.status}`)
+      if (isFound(deleteMessage)) {
+        if (this.state.messageType === 'conversation') {
+          Router.push(`/messages?tab=CHAT&toDelete=success`)
+        }
+        if (this.state.messageType === 'archive') {
+          Router.push(`/messages?tab=CHAT&toDelete=success`)
+        }
       }
-      if (this.state.messageType === 'archive') {
-        Router.push(`/messages?deleteConversation=${deleteMessage.status}`)
+      if (isError(deleteMessage)) {
+        this.setState({ notification: notifError(deleteMessage.message) })
       }
     }
   }

@@ -59,6 +59,7 @@ class MessageDetail extends Component {
         searchBoox: false,
         path: '/',
         textPath: 'Detail Pesan',
+        callBack: () => Router.push('/notification-message'),
         moreMessage: {
           ...this.state.moreMessage,
           type: (isFound(sellerDetailMessage)) ? sellerDetailMessage.sellerDetailMessage.type : null
