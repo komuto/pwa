@@ -269,7 +269,7 @@ const TabsDataContent = (props) => {
               <li>
                 <div className='columns custom is-mobile'>
                   <div className='column'>
-                    <strong>Alamat Pengirim</strong>
+                    <strong>Alamat Pengiriman</strong>
                     <span className='address'>
                       {invoice.shipping.address.name}<br />
                       {invoice.shipping.address.address}, <br />
