@@ -323,7 +323,7 @@ class ProductAddStepTwo extends Component {
                     <option style={{display: 'none'}} disabled> Pilih</option>
                     {
                       subCategory.isFound &&
-                      subCategory.categories.sub_categories.map((sc) => {
+                      subCategory.categories && subCategory.categories.sub_categories.map((sc) => {
                         return <option key={sc.id} value={sc.id}> {sc.name} </option>
                       })
                     }
@@ -333,7 +333,7 @@ class ProductAddStepTwo extends Component {
               </p>
             </div>
             <div className='field'>
-              <label style={error === 'categoryThree' ? styleError : {}}>Sub-Kategori 2 *</label>
+              <label style={error === 'categoryTwo' ? styleError : {}}>Sub-Kategori 2 *</label>
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo ? form.categoryTwo : ''} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
