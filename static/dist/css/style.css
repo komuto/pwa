@@ -5571,6 +5571,8 @@ strong {
     background-color: #ffffff; }
   .section.payment {
     padding: 0 20px; }
+  .section.content > div {
+    max-width: 480px; }
 
 .container.is-fluid {
   margin: 0 20px; }
@@ -6194,6 +6196,11 @@ strong {
   border-radius: 0;
   padding: 20px;
   letter-spacing: 0.2px; }
+  .notification .fix-fit {
+    left: 50% !important;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    max-width: 480px; }
   .notification > .delete {
     width: 24px;
     height: 24px;
@@ -7206,7 +7213,7 @@ strong.total {
   z-index: 9999;
   transition: all 300ms linear; }
   .on-search.slide {
-    right: 396px; }
+    right: 408px; }
   .on-search .header-search {
     background-color: #ffffff;
     position: relative;
@@ -10127,6 +10134,11 @@ strong.total {
   .list-saldo li .columns .column {
     padding: 0; }
 
+.payment-detail.action {
+  background-color: transparent; }
+  .payment-detail.action > .button {
+    margin-top: 15px; }
+
 .main.bg-grey.resolusi section {
   margin-top: 20px;
   margin-bottom: 0;
@@ -10198,8 +10210,9 @@ strong.total {
   position: fixed;
   left: 50%;
   bottom: 0;
-  width: 480px;
+  width: 100%;
   height: 46px;
+  max-width: 480px;
   border-top: 1px solid #cccccc;
   background-color: #ffffff;
   z-index: 99;
