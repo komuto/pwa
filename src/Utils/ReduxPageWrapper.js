@@ -53,7 +53,7 @@ export default function reduxWrapper (ReduxComponent) {
     }
 
     async componentDidMount () {
-      if (!this.state.token) {
+      if (this.state.token === 'default') {
         let token = await GET_TOKEN.getToken()
         this.setState({ token })
       }
