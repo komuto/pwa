@@ -7,7 +7,7 @@ const Tabbar = (props) => {
   const filter = filterButton ? <a onClick={props.filterOnClick} className='level-item has-text-centered modal-button' data-target='#modal-filter'><span className='icon-filter' />Filter</a> : null
   const view = viewButton
                 ? <a onClick={props.viewOnClick} className='level-item has-text-centered'>
-                  { (viewActive === 'list') ? <span className='icon-grid-view' /> : <span className='icon-list' /> }
+                  { (viewActive === 'list') ? <span className='icon-list' /> : <span className='icon-grid-view' /> }
                     Tampilan
                   </a>
                 : null
