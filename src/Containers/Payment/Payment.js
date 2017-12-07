@@ -98,7 +98,6 @@ class Payment extends Component {
   setCheckout () {
     if (this.isBucketPayment()) {
       this.submitting = {...this.submitting, checkout: true}
-      this.props.getCartReset()
       this.props.setCheckout({'is_wallet': false})
     }
   }
@@ -157,6 +156,7 @@ class Payment extends Component {
       }
       if (isFound(snapToken)) {
         // this.loadMidtransPayment(snapToken.token)
+        this.props.getCartReset()
         Midtrans({...snapToken})
         this.setState({ snapToken })
       }
