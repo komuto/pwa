@@ -5509,6 +5509,7 @@ strong {
   padding-bottom: 46px;
   min-height: 100%;
   overflow: hidden;
+  width: 100%;
   max-width: 480px;
   margin: 0 auto;
   position: relative; }
@@ -5572,6 +5573,7 @@ strong {
   .section.payment {
     padding: 0 20px; }
   .section.content > div {
+    width: 100%;
     max-width: 480px; }
 
 .container.is-fluid {
@@ -6200,6 +6202,7 @@ strong {
     left: 50% !important;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
+    width: 100%;
     max-width: 480px; }
   .notification > .delete {
     width: 24px;
@@ -6484,6 +6487,7 @@ strong {
 .modal {
   z-index: 999;
   left: 50%;
+  width: 100%;
   max-width: 480px;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%); }
@@ -7712,11 +7716,14 @@ strong.total {
           .modal-filter .modal-card .modal-card-body .filter-option .sort-list .checkbox .field .select select {
             font-size: 12px; }
 
-.modal-filter.categories .modal-card .modal-card-body {
-  margin-left: 0;
-  background-color: #f4f5f6; }
-  .modal-filter.categories .modal-card .modal-card-body .section .title {
-    padding-top: 20px; }
+.modal-filter.categories .modal-card {
+  padding-bottom: 0; }
+  .modal-filter.categories .modal-card .modal-card-body {
+    margin-left: 0;
+    background-color: #f4f5f6;
+    padding: 20px; }
+    .modal-filter.categories .modal-card .modal-card-body .section .title {
+      padding-top: 20px; }
 
 .modal-filter.modal-dropship .modal-card .modal-card-head {
   box-shadow: 0 2px 6px 0 #eaedef; }
