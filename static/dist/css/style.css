@@ -5573,8 +5573,9 @@ strong {
   .section.payment {
     padding: 0 20px; }
   .section.content > div {
-    width: 100%;
     max-width: 480px; }
+    .section.content > div.w100 {
+      width: 100%; }
 
 .container.is-fluid {
   margin: 0 20px; }
@@ -6196,9 +6197,9 @@ strong {
 
 .notification {
   border-radius: 0;
-  padding: 20px;
+  padding: 20px 60px 20px 20px;
   letter-spacing: 0.2px; }
-  .notification .fix-fit {
+  .notification.fix-fit {
     left: 50% !important;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
@@ -7211,13 +7212,16 @@ strong.total {
   position: fixed;
   top: 0;
   right: 0;
-  width: 480px;
+  width: 100%;
   height: 100%;
+  max-width: 480px;
   background-color: #ffffff;
   z-index: 9999;
   transition: all 300ms linear; }
   .on-search.slide {
-    right: 408px; }
+    right: 50%;
+    -webkit-transform: translateX(50%);
+    transform: translateX(50%); }
   .on-search .header-search {
     background-color: #ffffff;
     position: relative;
@@ -7427,7 +7431,11 @@ strong.total {
   .discuss ul.product-discuss.is-fixed {
     position: fixed;
     top: 64px;
-    width: 100%; }
+    width: 100%;
+    max-width: 480px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%); }
   .discuss ul.main-discuss {
     margin: 0; }
   .discuss ul li {
