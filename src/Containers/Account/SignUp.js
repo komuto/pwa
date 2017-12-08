@@ -302,7 +302,11 @@ class SignUp extends Component {
   async componentDidMount () {
     this.scrollToTop()
     let { fcmToken } = this.state
-    fcmToken = await localforage.getItem('FCM_TOKEN')
+    fcmToken = await localforage.getItem('FCM_TOKEN').then((value) => {
+      return value
+    }).catch(() => {
+      return null
+    })
     this.setState({ fcmToken })
   }
 

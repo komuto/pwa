@@ -141,7 +141,11 @@ class SignIn extends Component {
   async componentDidMount () {
     this.scrollToBottom()
     let { fcmToken } = this.state
-    fcmToken = await localforage.getItem('FCM_TOKEN')
+    fcmToken = await localforage.getItem('FCM_TOKEN').then((value) => {
+      return value
+    }).catch(() => {
+      return null
+    })
     this.setState({ fcmToken })
   }
 

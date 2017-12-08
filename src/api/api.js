@@ -36,7 +36,11 @@ export function uploadApi () {
     }
   })
   api.addAsyncRequestTransform(config => async () => {
-    const token = await storage.getItem('token')
+    const token = await storage.getItem('token').then((value) => {
+      return value
+    }).catch(() => {
+      return null
+    })
     if (token !== null) {
       config.headers['Authorization'] = 'JWT ' + token
     }
