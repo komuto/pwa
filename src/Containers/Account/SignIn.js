@@ -16,7 +16,7 @@ import Section from '../../Components/Section'
 import Containers from '../../Components/Containers'
 import { LoginFacebook } from '../../Components/Facebook'
 import { Input } from '../../Components/Input'
-import { ButtonFullWidth } from '../../Components/Button'
+import { ButtonFullSubmit } from '../../Components/Button'
 import { HrText } from '../../Components/Hr'
 import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
@@ -89,7 +89,8 @@ class SignIn extends Component {
   }
 
   /** submit login */
-  submit () {
+  submit (event) {
+    event.preventDefault()
     let { loginConstraints } = constraints
     let { danger, success } = constraints.classInfo
     let { input, fcmToken } = this.state
@@ -124,18 +125,19 @@ class SignIn extends Component {
     }
 
     if (isError) {
+      console.log('isError: ', isError)
       this.setState({ input })
-      return
+    } else {
+      console.log('isError: ', isError)
+      /** process */
+      NProgress.start()
+      this.submitting = { ...this.submitting, user: true }
+      this.props.login({
+        email: email.value,
+        password: password.value,
+        reg_token: fcmToken
+      })
     }
-
-    /** process */
-    NProgress.start()
-    this.submitting = { ...this.submitting, user: true }
-    this.props.login({
-      email: email.value,
-      password: password.value,
-      reg_token: fcmToken
-    })
   }
 
   async componentDidMount () {
@@ -190,28 +192,30 @@ class SignIn extends Component {
           message={notification.message} />
         <Section className='content'>
           <Containers className='form'>
-            <Input
-              {...input.email}
-              onChange={this.onChange}
-              hasIconsRight />
-            <Input
-              {...input.password}
-              onChange={this.onChange}
-              hasIconsRight />
-            <TermConditions
-              name={this.props.marketplace.data.name} />
-            <ButtonFullWidth
-              text={localize.signin}
-              isLoading={this.submitting.user}
-              onClick={() => this.submit()} />
-            <div className='has-text-centered'>
-              <a onClick={() => Router.push('/password?type=reset', '/password/reset')}>{localize.lost_password}</a>
-            </div>
-            <HrText text={localize.or} />
-            <LoginFacebook
-              appId={this.props.marketplace.data.fb_app_id}
-              text={localize.login_facebook}
-              responseFacebook={(response) => this.responseFacebook(response)} />
+            <form onSubmit={(e) => this.submit(e)}>
+              <Input
+                {...input.email}
+                onChange={this.onChange}
+                hasIconsRight />
+              <Input
+                {...input.password}
+                onChange={this.onChange}
+                hasIconsRight />
+              <TermConditions
+                name={this.props.marketplace.data.name} />
+              <ButtonFullSubmit
+                type='submit'
+                text={localize.signin}
+                isLoading={this.submitting.user} />
+              <div className='has-text-centered'>
+                <a onClick={() => Router.push('/password?type=reset', '/password/reset')}>{localize.lost_password}</a>
+              </div>
+              <HrText text={localize.or} />
+              <LoginFacebook
+                appId={this.props.marketplace.data.fb_app_id}
+                text={localize.login_facebook}
+                responseFacebook={(response) => this.responseFacebook(response)} />
+            </form>
           </Containers>
         </Section>
       </Content>

@@ -17,3 +17,14 @@ export const ButtonFullWidth = ({ isLoading, onClick, text }) => {
     </button>
   )
 }
+
+export const ButtonFullSubmit = ({ isLoading, text }) => {
+  return (
+    <button
+      type='submit'
+      className={`button is-primary is-large is-fullwidth ${isLoading ? 'is-loading' : ''}`}
+      value='Submit' >
+      {text}
+    </button>
+  )
+}
