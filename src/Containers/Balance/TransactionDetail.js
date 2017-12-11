@@ -28,7 +28,7 @@ class TransactionDetail extends Component {
     this.state = {
       id: props.query.id,
       transType: props.query.transType,
-      saldoHistoryDetail: props.saldoHistoryDetail || null,
+      saldoHistoryDetail: null,
       balanceDetail: {
         active: false,
         show: () => this.balanceDetailShow()
@@ -54,9 +54,7 @@ class TransactionDetail extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        {
-            isFound(saldoHistoryDetail) && <TransactionDetailContent {...this.state} />
-          }
+        { saldoHistoryDetail && isFound(saldoHistoryDetail) && <TransactionDetailContent {...this.state} /> }
       </Content>
     )
   }
@@ -90,7 +88,6 @@ class TransactionDetail extends Component {
 }
 
 const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
-  console.log('saldoHistoryDetail: ', saldoHistoryDetail)
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
@@ -164,7 +161,7 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
   )
 }
 
-const PaidInformation = ({ orders }) => (
+const PaidInformation = ({ orders, bucket }) => (
   <WrapperList title='Daftar barang yang di beli'>
     {
       orders.map((order, index) => {
@@ -186,8 +183,8 @@ const PaidInformation = ({ orders }) => (
                       return (
                         <div key={index} onClick={() =>
                           Router.push(
-                            `/product-detail?id=${item.product.id}`,
-                            `/product-detail/${item.product.id}`
+                            `/transaction-detail?id=${bucket.id}`,
+                            `/transaction/${bucket.id}`
                           )} className='columns is-mobile is-multiline no-margin-bottom'>
                           <div className='column'>
                             <div className='box'>
