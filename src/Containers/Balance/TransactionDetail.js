@@ -90,6 +90,7 @@ class TransactionDetail extends Component {
 }
 
 const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
+  console.log('saldoHistoryDetail: ', saldoHistoryDetail);
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
@@ -148,7 +149,7 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
             { isWithdraw && <List title='Jumlah Penarikan' data={<BalanceDecreases amount={amount} />} /> }
             { isWithdraw && <List title='Metode Pembayaran' data='Transfer Bank' /> }
             { isTopup && <List title='Jumlah Top-up Saldo' data={<BalanceIncreases amount={amount} />} /> }
-            { isTopup && <List title='Metode Pembayaran' data={'null'} /> }
+            { isTopup && <List title='Metode Pembayaran' data={saldoHistoryDetail.historyDetail.payment_method} /> }
             { isRefund && <List title='Uang Yang Anda Terima' data={<BalanceIncreases amount={amount} />} /> }
             { isRefund && <List title='Nomor Refund' data={refundNumber} /> }
           </ul>
@@ -253,8 +254,8 @@ const WithdrawInformation = ({ bankAccount }) => (
 
 const TopupInformation = ({ amount }) => (
   <WrapperList title='Detail Pembayaran'>
-    <List title='Harga saldo nominal' data={`null`} />
-    <List title='Kode unik' data={`null`} />
+    <List title='Harga saldo nominal' data={`Rp ${RupiahFormat(amount)}`} />
+    {/* <List title='Kode unik' data={`null`} /> */}
     <List title='Total' data={`Rp ${RupiahFormat(amount)}`} />
   </WrapperList>
 )
