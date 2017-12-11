@@ -14,11 +14,17 @@ const OptionsExpeditionPackages = (props) => {
             <div className='control popup-option package' style={{ height: '400px', overflow: 'scroll' }}>
               {
                 epFilterByExpeditions.map((data) => {
+                  let etd = ''
+                  if (data.etd.includes('hari')) {
+                    etd = data.etd
+                  } else {
+                    etd = `${data.etd} hari`
+                  }
                   return (
                     <label className={`radio ${props.expeditionsPackage.selected.id === data.id && 'checked'}`} key={data.id} onClick={(e) => props.expeditionsPackageSelected(e, data)}>
                       <input type='radio' name='reguler' />
                       <span className='service-name'>{ data.full_name }</span>
-                      <span>{data.etd}</span>
+                      <span>{etd}</span>
                       <span>Rp {RupiahFormat(data.cost)}</span>
                     </label>
                   )
