@@ -90,7 +90,7 @@ class TransactionDetail extends Component {
 }
 
 const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
-  console.log('saldoHistoryDetail: ', saldoHistoryDetail);
+  console.log('saldoHistoryDetail: ', saldoHistoryDetail)
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
