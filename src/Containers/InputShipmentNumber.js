@@ -158,7 +158,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{`Anda memiliki waktu 3 hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.confirmed_at).add(3, 'days').format(' DD MMMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
+                  <strong>{`Anda memiliki waktu ${processingOrderDetail.orderDetail.invoice.day_limit} hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.date_limit).format(' DD MMMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
                 </p>
               </div>
             </div>
@@ -407,7 +407,7 @@ const OrderDetail = (props) => {
               <li>
                 <div className='columns custom is-mobile'>
                   <div className='column'>
-                    <strong>Alamat Pengirim</strong>
+                    <strong>Alamat Pengiriman</strong>
                     <span className='address'>
                       {processingOrderDetail.orderDetail.buyer.name}<br />
                       {processingOrderDetail.orderDetail.buyer.address.address}<br />

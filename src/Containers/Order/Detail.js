@@ -235,7 +235,7 @@ class OrderDetail extends React.Component {
                   <li>
                     <div className='columns custom is-mobile'>
                       <div className='column'>
-                        <strong>Alamat Pengirim</strong>
+                        <strong>Alamat Pengiriman</strong>
                         <span className='address'>
                           {newOrderDetail.orderDetail.buyer.name}<br />
                           {newOrderDetail.orderDetail.buyer.address.address}<br />

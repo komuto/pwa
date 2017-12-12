@@ -120,9 +120,11 @@ class Discussion extends Component {
         this.isAddNewDiscussion = true
         this.props.resetDiscussion()
         discussions.discussions.unshift(newDiscussion.discussion)
-        this.setState({
-          notification: notifSuccess(newDiscussion.message)
-        })
+        this.setState({ notification: notifSuccess(newDiscussion.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.setState({ notification: { ...this.state.notification, status: false } })
+        }, 3000)
       }
     }
 

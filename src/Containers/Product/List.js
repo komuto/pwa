@@ -254,6 +254,7 @@ class ProductList extends Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
@@ -386,6 +387,10 @@ const ContentShow = (props) => {
     <div>
       {
         props.search.status ? <SearchContent search={props.search} /> : props.catalogProducts.map((sp, index) => {
+          let isLastCatalog = (props.catalogProducts.length - 1) === index
+          if (isLastCatalog) {
+            sp.catalog['id'] = 0
+          }
           return (
             <Element name={String(sp.catalog.id)} className={`section is-paddingless detail`} key={index} style={{ marginBottom: 20 }}>
               <div className='info-purchase'>
@@ -396,19 +401,30 @@ const ContentShow = (props) => {
                         <strong>{ ReadAbleText(sp.catalog.name)} ({sp.catalog.count_product})</strong>
                       </div>
                     </div>
-                    {/* <div className='column is-half'> */}
-                    <Link activeClass='active' className={`column is-half ${String(sp.catalog.id)}`} to={`menus ${String(sp.catalog.id)}`} spy smooth duration={500} onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
-                      <Element name={`menus ${String(sp.catalog.id)}`} className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
-                        <a className='option-content'><span /><span /><span /></a>
-                        <ul className='option-dropdown'>
-                          <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
-                          <li><a className='js-option' onClick={(e) => props.productDeleteInCatalog(e, sp.catalog.id)} >Hapus Barang di Katalog</a></li>
-                          <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
-                          <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
-                        </ul>
-                      </Element>
-                    </Link>
-                    {/* </div> */}
+                    {
+                      isLastCatalog ? <Link activeClass='active' className={`column is-half ${String(sp.catalog.id)}`} to={`menus ${String(sp.catalog.id)}`} spy smooth duration={500} onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
+                        <Element name={`menus ${String(sp.catalog.id)}`} className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
+                          <a className='option-content'><span /><span /><span /></a>
+                          <ul className='option-dropdown'>
+                            <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productDeleteInCatalog(e, sp.catalog.id)} >Hapus Barang di Katalog</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
+                          </ul>
+                        </Element>
+                      </Link>
+                      : <div className='column is-half' onClick={(e) => props.handleDropdown(e, sp.catalog.id)}>
+                        <Element name={`menus ${String(sp.catalog.id)}`} className={`rating-content has-text-right menu-top ${props.dropdownSelected === sp.catalog.id && 'open'}`}>
+                          <a className='option-content'><span /><span /><span /></a>
+                          <ul className='option-dropdown'>
+                            <li><a className='js-option' onClick={(e) => props.productHidden(e, sp.catalog.id)} >Sembunyikan Barang</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productDeleteInCatalog(e, sp.catalog.id)} >Hapus Barang di Katalog</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productMoveCatalogOther(e, sp.catalog.id)} >Pindahkan Barang ke Katalog Lain</a></li>
+                            <li><a className='js-option' onClick={(e) => props.productChangeDropship(e, sp.catalog.id)} >Pindahkan Barang ke Dropshipping</a></li>
+                          </ul>
+                        </Element>
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
