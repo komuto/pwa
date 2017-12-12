@@ -185,7 +185,7 @@ class ShoppingCart extends Component {
     if (!isFetching(cart) && this.state.cart.submitting) {
       NProgress.done()
       if (isError(cart)) {
-        this.setState({ cart: { ...this.state.cart, emptyCart: true, submitting: false }, notification: notifError(cart.message) })
+        this.setState({ cart: { ...this.state.cart, data: cart, emptyCart: true, submitting: false }, notification: notifError(cart.message) })
       }
       if (isFound(cart)) {
         this.setState({ cart: { ...this.state.cart, data: cart, emptyCart: cart.cart.items < 1, submitting: false } })
@@ -227,6 +227,7 @@ class ShoppingCart extends Component {
 
   render () {
     let { cart, notification } = this.state
+    console.log('cart: ', cart)
     if (!cart.data) {
       return null
     }
