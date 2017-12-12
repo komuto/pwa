@@ -99,7 +99,7 @@ class ShippingDetail extends Component {
       id: item.item.product.id,
       origin_id: item.item.product.location.district.ro_id,
       destination_id: item.item.shipping.address.district.ro_id,
-      weight: item.item.weight * item.item.qty
+      weight: item.item.weight
     }
     // handling get estimate charges
     await this.props.estimatedShipping(params)
@@ -268,7 +268,7 @@ class ShippingDetail extends Component {
             id: item.item.product.id,
             origin_id: item.item.product.location.district.ro_id,
             destination_id: item.item.shipping.address.district.ro_id,
-            weight: item.item.weight * item.item.qty
+            weight: item.item.weight
           }
           this.props.estimatedShipping(params)
         }

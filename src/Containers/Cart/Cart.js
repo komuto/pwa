@@ -27,7 +27,7 @@ class ShoppingCart extends Component {
     this.state = {
       localize: props.localize,
       cart: {
-        data: props.cart || null,
+        data: null,
         submitting: false,
         emptyCart: false
       },
@@ -227,6 +227,9 @@ class ShoppingCart extends Component {
 
   render () {
     let { cart, notification } = this.state
+    if (!cart.data) {
+      return null
+    }
     return (
       <Section className={`${cart.emptyCart && 'content'}`}>
         {
