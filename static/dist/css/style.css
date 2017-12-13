@@ -6199,12 +6199,6 @@ strong {
   border-radius: 0;
   padding: 20px 60px 20px 20px;
   letter-spacing: 0.2px; }
-  .notification.fix-fit {
-    left: 50% !important;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 480px; }
   .notification > .delete {
     width: 24px;
     height: 24px;
@@ -6235,6 +6229,12 @@ strong {
       background-color: #e4172d; }
   .notification:not(:last-child) {
     margin-bottom: 0; }
+  .notification.fix-fit {
+    left: 50% !important;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px; }
 
 .owl-stage {
   display: -webkit-box;
@@ -10040,7 +10040,15 @@ strong.total {
 
 @media screen and (max-width: 599px) {
   .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong {
-    max-width: 68%; } }
+    max-width: 66%; } }
+
+@media screen and (max-width: 411px) {
+  .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong {
+    max-width: 64%; } }
+
+@media screen and (max-width: 359px) {
+  .discuss .notif-detail li .box .media .media-content .content p strong, .discuss .conversation li .box .media .media-content .content p strong {
+    max-width: 57%; } }
 
 @media screen and (max-width: 360px) {
   .discuss .notif-detail li .box .media .media-content .time-discuss.relativeMobile {
@@ -10221,6 +10229,7 @@ strong.total {
     transform: translate(-50%, -50%);
     color: #ef5656; }
 
+/* footer */
 .level.nav-bottom {
   position: fixed;
   left: 50%;
@@ -10320,10 +10329,13 @@ strong.total {
 
 .add-comment {
   position: fixed;
-  left: 0;
+  left: 50%;
   bottom: 0;
   width: 100%;
-  height: 46px; }
+  height: 46px;
+  max-width: 480px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
   .add-comment .control {
     position: relative; }
     .add-comment .control button {
@@ -10359,8 +10371,17 @@ strong.total {
       color: #a0a3ae;
       opacity: 1; }
 
-.sticky-button {
+.wrapper-sticky {
   position: fixed;
+  width: 100%;
+  max-width: 480px;
+  left: 50%;
+  bottom: 0;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
+
+.sticky-button {
+  position: absolute;
   right: 20px;
   bottom: 30px;
   width: 56px;
@@ -10404,9 +10425,3 @@ strong.total {
   .catalog-button > span {
     margin-top: -2px;
     margin-left: -8px; }
-
-@media screen and (min-width: 480px) {
-  right: 0;
-  left: 65%;
-  -webkit-transform: translateX(-65%);
-  transform: translateX(-65%); }
