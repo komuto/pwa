@@ -300,7 +300,7 @@ class ShippingDetail extends Component {
     // let weight = product.weight
     let qty = item.item.qty
     let isInsurance = shipping.is_insurance
-    let insuranceFee = 0
+    let insuranceFee = shipping.insurance_fee
     let insurancePrice = 0
     let shippingCost = 0
     let totalPrice = 0
@@ -313,12 +313,11 @@ class ShippingDetail extends Component {
 
     if (shipping.expedition_service) {
       if (shipping.expedition_service.expedition) {
-        insuranceFee = shipping.expedition_service.expedition.insurance_fee
         expeditionName = shipping.expedition_service.expedition.name
       }
-      insurancePrice = isInsurance ? (insuranceFee * price * qty) / 100 : 0
+      insurancePrice = isInsurance ? insuranceFee : 0
       shippingCost = estimatedCost
-      totalPrice = (price * qty) + shippingCost + insurancePrice
+      totalPrice = item.item.total_price + shippingCost + insurancePrice
       serviceName = shipping.expedition_service.name
     }
 

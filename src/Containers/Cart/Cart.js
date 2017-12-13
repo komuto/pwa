@@ -171,6 +171,9 @@ class ShoppingCart extends Component {
           if (item.id === rsAddToCart.cart.id) {
             item.qty = rsAddToCart.cart.qty
             item.total_price = rsAddToCart.cart.total_price
+            let oldShipping = item.shipping
+            let newShipping = rsAddToCart.cart.shipping
+            item.shipping = { ...oldShipping, ...newShipping }
             return true
           }
         })
@@ -227,7 +230,6 @@ class ShoppingCart extends Component {
 
   render () {
     let { cart, notification } = this.state
-    console.log('cart: ', cart)
     if (!cart.data) {
       return null
     }
@@ -287,12 +289,12 @@ const Cart = (props) => {
         data.cart.items.map((item) => {
           let isSubmitting = rsAddToCart.submitting && (rsAddToCart.productClick === item.product.id)
           // calc delivery cost
-          // let deliveryCost = item.shipping.delivery_cost
+          let deliveryCost = item.shipping.delivery_cost
           let price = 0
           let qty = item.qty
           let wholesalerSelected = null
           // calc insurance
-          // let insuranceFee = 0
+          let insuranceFee = 0
           // real price
           if (item.product) {
             price = item.product.price
@@ -303,7 +305,7 @@ const Cart = (props) => {
           }
 
           if (item.shipping.is_insurance) {
-            // insuranceFee = item.shipping.insurance_fee
+            insuranceFee = item.shipping.insurance_fee
           }
 
           // check wholesaler or not
@@ -322,7 +324,7 @@ const Cart = (props) => {
             price = wholesalerSelected.price
           }
 
-          let subTotal = item.total_price
+          let subTotal = item.total_price + deliveryCost + insuranceFee
           totalPayment += subTotal
           return (
             <section className='section is-paddingless has-shadow' key={item.id}>
