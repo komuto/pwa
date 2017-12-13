@@ -80,10 +80,13 @@ class ManageBiodata extends React.Component {
     this.setState({ ...newFormBiodata, ...newTime, ...newIsOpen })
   }
 
-  onDrop (files) {
+  async onDrop (files) {
+    const imageCompressor = require('../../Lib/ImagesCompression')
+    let f = await imageCompressor.compress(files[0])
+    f['preview'] = files[0].preview
     const { formBiodata } = this.state
     const newState = { formBiodata }
-    newState.formBiodata['photo'] = files[0]
+    newState.formBiodata['photo'] = f
     this.setState(newState)
   }
 
