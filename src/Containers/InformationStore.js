@@ -8,7 +8,7 @@ import Router from 'next/router'
 import { Navbar } from './Navbar'
 import Notification from '../Components/Notification'
 import {Images} from '../Themes'
-import MyImage from '../Components/MyImage'
+// import MyImage from '../Components/MyImage'
 import Wizard from '../Components/Wizard'
 // actions
 import * as actionTypes from '../actions/stores'
@@ -39,9 +39,12 @@ class InformationStore extends React.Component {
     this.submiting = { upload: false, updateStore: false, createStore: false }
   }
 
-  onDrop (files) {
+  async onDrop (files) {
+    const imageCompressor = require('../Lib/ImagesCompression')
+    let f = await imageCompressor.compress(files[0])
+    f['preview'] = files[0].preview
     this.setState({
-      files: files[0]
+      files: f
     })
   }
 
@@ -279,10 +282,10 @@ class InformationStore extends React.Component {
               accept='image/jpeg, image/png'
               onDrop={this.onDrop.bind(this)}>
               {
-                files.preview && <div className='pict-wrapper' style={{ backgroundImage: `url(${files.preview})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+                files.preview && <div className='pict-wrapper' style={{ backgroundImage: `url(${files.preview})`, backgroundPosition: 'center', backgroundSize: 'cover', marginBottom: '20px' }} />
               }
               {
-                !files.preview && <div className='pict-wrapper'>{ <MyImage src={logoImages} alt='' /> }</div>
+                !files.preview && <div className='pict-wrapper' style={{ backgroundImage: `url(${logoImages})`, backgroundPosition: 'center', backgroundSize: 'cover', marginBottom: '20px' }} />
               }
               <p className='has-text-centered'>
                 <a>{ (!files) ? 'Upload Foto Profil Toko' : 'Ganti Foto Profil Toko'}</a>
