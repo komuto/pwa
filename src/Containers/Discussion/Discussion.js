@@ -265,11 +265,13 @@ const ListDiscussion = ({ sttNewDisscussion, product, discussion, createDate }) 
 )
 
 const NewDiscussionContent = ({ addNewDiscussion }) => (
-  <a
-    className='sticky-button' style={{ position: 'fixed' }}
-    onClick={() => addNewDiscussion()}>
-    <span className='icon-comment-sticky' />
-  </a>
+  <div className='wrapper-sticky'>
+    <a
+      className='sticky-button' style={{ position: 'fixed' }}
+      onClick={() => addNewDiscussion()}>
+      <span className='icon-comment-sticky' />
+    </a>
+  </div>
 )
 
 const mapStateToProps = (state) => ({

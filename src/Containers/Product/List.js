@@ -329,7 +329,9 @@ class ProductList extends Component {
             hasMore={this.hasMore}
             rounding={(price) => this.rounding(price)} />
         }
-        <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
+        <div className='wrapper-sticky'>
+          <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
+        </div>
       </Content>
     )
   }

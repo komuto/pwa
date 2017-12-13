@@ -159,9 +159,11 @@ class CatalogList extends React.Component {
             </section>
           )
         }) }
-        <a className='sticky-button' onClick={(e) => this.toAddCatalog(e)}>
-          <span className='txt'>+</span>
-        </a>
+        <div className='wrapper-sticky'>
+          <a className='sticky-button' onClick={(e) => this.toAddCatalog(e)}>
+            <span className='txt'>+</span>
+          </a>
+        </div>
         <div className='sort-option' style={{display: confirmDelete && 'block'}}>
           <div className='notif-report'>
             <h3>Anda yakin akan menghapus</h3>

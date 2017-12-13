@@ -176,9 +176,11 @@ class DataAddress extends React.Component {
             </section>
           )
         }) : <p style={{textAlign: 'center', paddingTop: '20px'}}>Silahkan tambah alamat baru</p>}
-        <a className='sticky-button' onClick={(e) => this.toAddAddress(e)}>
-          <span className='txt'>+</span>
-        </a>
+        <div className='wrapper-sticky'>
+          <a className='sticky-button' onClick={(e) => this.toAddAddress(e)}>
+            <span className='txt'>+</span>
+          </a>
+        </div>
         <div className='sort-option' style={{display: confirmDelete && 'block'}}>
           <div className='notif-report'>
             <h3>Anda yakin akan menghapus Alamat tersebut?</h3>

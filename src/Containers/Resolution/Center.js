@@ -204,7 +204,9 @@ class ResolutionCenter extends React.Component {
             </ul>
           </div>
         </section>
-        <a className='sticky-button' onClick={() => Router.push(`/resolution-add`)}><span className='txt'>+</span></a>
+        <div className='wrapper-sticky'>
+          <a className='sticky-button' onClick={() => Router.push(`/resolution-add`)}><span className='txt'>+</span></a>
+        </div>
       </div>
     )
   }
