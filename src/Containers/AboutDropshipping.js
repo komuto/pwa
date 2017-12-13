@@ -73,7 +73,15 @@ class AboutDropshipping extends React.Component {
                     <a className='js-collapse collapse-title'>{data.question} <span className='icon-arrow-down' /></a>
                     <div className={`collapse-body ${collapse[i] && 'collapsed'}`}>
                       <div className='collapse-in'>
-                        {data.answer}
+                        { data.answer.split('\n').map((item, key) => {
+                          return (
+                            <span key={key}>
+                              {item}
+                              <br />
+                            </span>
+                          )
+                        })
+                        }
                       </div>
                     </div>
                   </div>
