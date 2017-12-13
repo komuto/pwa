@@ -21,6 +21,7 @@
   "author": "@pesakitan22",
   "license": "UNLICENSED",
   "dependencies": {
+    "@xkeshi/image-compressor": "^0.5.2",
     "apisauce": "^0.14.1",
     "cors": "^2.8.4",
     "css-loader": "^0.28.7",
