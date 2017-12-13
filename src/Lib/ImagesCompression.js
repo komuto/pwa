@@ -6,7 +6,7 @@
 
 import ImageCompressor from '@xkeshi/image-compressor'
 
-export default (file) => {
+export const compress = (file) => {
   return new ImageCompressor().compress(file, { quality: 0.4, maxWidth: 600 })
     .then((result) => {
       return result

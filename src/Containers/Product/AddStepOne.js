@@ -8,8 +8,6 @@ import { animateScroll } from 'react-scroll'
 import MyImage from '../../Components/MyImage'
 import Wizard from '../../Components/Wizard'
 import Notification from '../../Components/Notification'
-// lib
-import imageCompressor from '../../Lib/ImagesCompression'
 // actions
 import * as productActions from '../../actions/product'
 
@@ -61,6 +59,9 @@ class ProductAddStepOne extends Component {
 
   async onDropFile (e) {
     e.preventDefault()
+
+    const imageCompressor = require('../../Lib/ImagesCompression')
+
     let files = e.target.files
     let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
     notification = {
@@ -69,7 +70,7 @@ class ProductAddStepOne extends Component {
     }
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
-      let f = await imageCompressor(files[i])
+      let f = await imageCompressor.compress(files[i])
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
