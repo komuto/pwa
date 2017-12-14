@@ -148,8 +148,9 @@ class TransactionConfirmation extends Component {
     this.inputElementPress.click()
   }
 
-  onDropFile (e) {
+  async onDropFile (e) {
     let files = e.target.files
+    const imageCompressor = require('../../Lib/ImagesCompression')
     let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
     notification = {
       status: false,
@@ -157,7 +158,7 @@ class TransactionConfirmation extends Component {
     }
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
-      let f = files[i]
+      let f = await imageCompressor.compress(files[i])
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
@@ -316,6 +317,11 @@ class TransactionConfirmation extends Component {
       ...this.submiting,
       upload: true
     }
+  }
+
+  typeRating (rate) {
+    let ratingTypes = ['sangat buruk', 'buruk', 'cukup', 'baik', 'sangat baik']
+    return ratingTypes[Number(rate) - 1]
   }
 
   submitReview () {
@@ -498,7 +504,7 @@ class TransactionConfirmation extends Component {
         </section>
         <section className='section is-paddingless'>
           <div className='confirm-transaction has-text-centered bg-grey'>
-            <p>Apakah barang yang anda terima sesuai?</p>
+            <p>Apakah Anda memiliki komplain terhadap barang yang Anda terima?</p>
             <ul className='list-inline'>
               <li onClick={() => this.setState({ isMatching: false })} className={`${isMatching !== null ? !isMatching && 'active' : ''}`}><div className='confirm-btn confirm-no'><div><span className='icon-tidak' /><span>Tidak</span></div></div></li>
               <li onClick={() => this.setState({ isMatching: true })} className={`${isMatching !== null ? isMatching && 'active' : ''}`}><div className='confirm-btn confirm-yes active'><div><span className='icon-ya' /><span>Ya</span></div></div></li>
@@ -514,7 +520,8 @@ class TransactionConfirmation extends Component {
                   onSelectQualityProduct={(e, p) => this.onSelectQualityProduct(e, p)}
                   onSelectAccuracyProduct={(e, p) => this.onSelectAccuracyProduct(e, p)}
                   onChangeNoteReview={(e, p) => this.onChangeNoteReview(e, p)}
-                  submitReview={() => this.submitReview()} />
+                  submitReview={() => this.submitReview()}
+                  typeRating={(rate) => this.typeRating(rate)} />
                 : <NotMatchingContent
                   {...buyerInvoiceDetail}
                   {...this.state}
@@ -529,7 +536,8 @@ class TransactionConfirmation extends Component {
                   inputElement={(i) => this.inputElement(i)}
                   onDropFile={(e) => this.onDropFile(e)}
                   removeImage={(p) => this.removeImage(p)}
-                  submitComplaint={() => this.submitComplaint()} />
+                  submitComplaint={() => this.submitComplaint()}
+                  typeRating={(rate) => this.typeRating(rate)} />
               : null
           }
         </section>

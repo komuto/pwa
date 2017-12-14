@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import _ from 'lodash'
+import Router from 'next/router'
+import url from 'url'
+import UrlParam from '../../Lib/UrlParam'
 // components
 import MyRating from '../../Components/MyRating'
 import Content from '../../Components/Content'
@@ -124,7 +127,15 @@ class ReviewProducts extends Component {
                                 <MyImage src={review.product.image} alt='pict' />
                               </figure>
                             </div>
-                            <div className='media-content'>
+                            <div className='media-content' onClick={() =>
+                              Router.push(
+                                url.format({
+                                  pathname: '/product-detail-view',
+                                  query: {id: review.product.id}
+                                }),
+                                `/detail/${UrlParam(review.product.store.name)}/${review.product.slug}-${review.product.id}`
+                              )
+                            }>
                               <div className='content'>
                                 <p>
                                   <strong>{review.product.name}</strong>

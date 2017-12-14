@@ -10,11 +10,13 @@ const MatchingContent = (props) => {
     <Content>
       <section className='section is-paddingless has-shadow'>
         <div className='mark'>
-          <p>Silahkan memberi review untuk barang yang telahAnda terima</p>
+          <p>Silahkan memberi review untuk barang yang telah Anda terima</p>
         </div>
         <div className='edit-data-delivery bg-white'>
           {
             invoice.items && invoice.items.map((item, index) => {
+              let itemQuality = item.quality !== undefined ? item.quality : 0
+              let itemAccuracy = item.accuracy !== undefined ? item.accuracy : 0
               return <div key={index}>
                 <div className='box'>
                   <div className='media'>
@@ -37,10 +39,10 @@ const MatchingContent = (props) => {
                       <MyRating
                         onChange={(e) => props.onSelectQualityProduct(e, item)}
                         size={24}
-                        initialRate={item.quality !== undefined ? item.quality : 0}
+                        initialRate={itemQuality}
                         start={0}
                         stop={5} />
-                      <span className='review-result'>Bagus</span>
+                      <span className='review-result'>{props.typeRating(itemQuality)}</span>
                     </div>
                   </div>
                 </div>
@@ -51,10 +53,10 @@ const MatchingContent = (props) => {
                       <MyRating
                         onChange={(e) => props.onSelectAccuracyProduct(e, item)}
                         size={24}
-                        initialRate={item.accuracy !== undefined ? item.accuracy : 0}
+                        initialRate={itemAccuracy}
                         start={0}
                         stop={5} />
-                      <span className='review-result'>Bagus</span>
+                      <span className='review-result'>{props.typeRating(itemAccuracy)}</span>
                     </div>
                   </div>
                 </div>

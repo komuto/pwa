@@ -143,7 +143,7 @@ class DiscussionProductDetail extends React.Component {
             <span className='link' onClick={() =>
               Router.push(
                 url.format({
-                  pathname: '/product-detail',
+                  pathname: '/product-detail-view',
                   query: {id: product.id}
                 }),
                 `/detail/${UrlParam(product.name)}/${product.slug}?id=${product.id}`
