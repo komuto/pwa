@@ -510,6 +510,7 @@ class TransactionConfirmation extends Component {
                 ? <MatchingContent
                   {...buyerInvoiceDetail}
                   {...this.state}
+                  isEmptyForm
                   submiting={this.submiting}
                   onSelectQualityProduct={(e, p) => this.onSelectQualityProduct(e, p)}
                   onSelectAccuracyProduct={(e, p) => this.onSelectAccuracyProduct(e, p)}

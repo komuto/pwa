@@ -5,7 +5,7 @@ import MyRating from '../../Components/MyRating'
 import { FieldError } from '../../Components/Notification'
 
 const MatchingContent = (props) => {
-  const { invoice, submiting } = props
+  const { invoice, submiting, isEmptyForm } = props
   return (
     <Content>
       <section className='section is-paddingless has-shadow'>
@@ -15,6 +15,10 @@ const MatchingContent = (props) => {
         <div className='edit-data-delivery bg-white'>
           {
             invoice.items && invoice.items.map((item, index) => {
+              let noted = ''
+              if (!isEmptyForm) {
+                noted = item.note !== undefined ? item.note : ''
+              }
               return <div key={index}>
                 <div className='box'>
                   <div className='media'>
@@ -62,7 +66,7 @@ const MatchingContent = (props) => {
                 <div className='field'>
                   <p className='control'>
                     { item.error !== 'note' ? '' : <FieldError /> }
-                    <input value={item.note !== undefined ? item.note : ''} onChange={(e) => props.onChangeNoteReview(e, item)} className='input' type='text' placeholder='Apa pendapat Anda tentang barang ini?' />
+                    <input defaultValue={noted} onChange={(e) => props.onChangeNoteReview(e, item)} className='input' type='text' placeholder='Apa pendapat Anda tentang barang ini?' />
                   </p>
                 </div>
               </div>
