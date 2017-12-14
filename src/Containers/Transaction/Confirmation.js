@@ -148,16 +148,17 @@ class TransactionConfirmation extends Component {
     this.inputElementPress.click()
   }
 
-  onDropFile (e) {
+  async onDropFile (e) {
     let files = e.target.files
     let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
     notification = {
       status: false,
       message: 'Error, default message.'
     }
+    const imageCompressor = require('../../Lib/ImagesCompression')
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
-      let f = files[i]
+      let f = await imageCompressor.compress(files[i])
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
