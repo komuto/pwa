@@ -151,7 +151,7 @@ const MessageDetailContent = ({ comments, newComment, submitting, messagesEnd })
           <span onClick={() =>
             Router.push(
               url.format({
-                pathname: '/product-detail',
+                pathname: '/product-detail-view',
                 query: {id: myComment.product.id}
               }),
               `/detail/${UrlParam(myComment.store.name)}/${myComment.product.slug}-${myComment.product.id}`
