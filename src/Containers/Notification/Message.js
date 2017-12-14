@@ -288,7 +288,7 @@ const List = ({ message }) => (
               { message.detail_message.content }
             </p>
           </div>
-          <span className='time-discuss'>{ moment.unix(message.detail_message.created_at).format('DD MMMM YYYY') }</span>
+          <span className='time-discuss'>{ moment.unix(message.detail_message.created_at).format('DD MMM YYYY') }</span>
         </div>
       </article>
     </div>
