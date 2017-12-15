@@ -111,7 +111,7 @@ class ProductList extends Component {
     this.props.getStoreProducts({hidden: false})
     this.fetching = { ...this.fetching, fetchHiddenProducts: true, fetchStoreProducts: true }
     this.props.getHiddenStoreProducts()
-    Events.scrollEvent.register('end', (to, element) => {
+    Events.scrollEvent.register('begin', (to, element) => {
       if (!/menus/.test(to)) {
         this.setState({ showListCatalog: !this.state.showListCatalog })
       }

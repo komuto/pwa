@@ -51,7 +51,11 @@ class ResolutionAdd extends React.Component {
     this.inputElementPress.click()
   }
 
-  onDropFile (e) {
+  async onDropFile (e) {
+    e.preventDefault()
+
+    const imageCompressor = require('../../Lib/ImagesCompression')
+
     let files = e.target.files
     let { images, notAcceptedFileType, notAcceptedFileSize, notification } = this.state
     notification = {
@@ -60,7 +64,7 @@ class ResolutionAdd extends React.Component {
     }
     // Iterate over all uploaded files
     for (let i = 0; i < files.length; i++) {
-      let f = files[i]
+      let f = await imageCompressor.compress(files[i])
       // Check for file extension
       if (!this.hasExtension(f.name)) {
         notAcceptedFileType.push(f.name)
@@ -97,9 +101,7 @@ class ResolutionAdd extends React.Component {
 
   removeImage (picture) {
     const filteredAry = this.state.images.filter((e) => e !== picture)
-    const filteredImageOrigin = this.state.imagesOrigin.filter((e) => e !== picture)
     this.setState({images: filteredAry})
-    this.setState({imagesOrigin: filteredImageOrigin})
   }
 
   renderValidation (name, textFailed) {
