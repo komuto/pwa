@@ -43,7 +43,7 @@ export const Item = ({ data }) => (
         </div>
         <div className='media-content'>
           <div className='content'>
-            <p className='user-name'>
+            <p className='user-name wrapword'>
               <strong>{ data.user.name }</strong>
               { data.content }
             </p>
