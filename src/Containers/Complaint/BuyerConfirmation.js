@@ -511,8 +511,8 @@ const BuyerConfimationContent = ({ props, state, submiting, field, setMatching, 
         <div className='confirm-transaction has-text-centered bg-grey'>
           <p style={{ marginLeft: 20, marginRight: 20 }}>Apakah memiliki komplain terhadap barang yang Anda terima?</p>
           <ul className='list-inline'>
-            <li onClick={() => setMatching(false)} className={`${isMatching !== null ? !isMatching && 'active' : ''}`}><div className='confirm-btn confirm-no'><div><span className='icon-tidak' /><span>Tidak</span></div></div></li>
-            <li onClick={() => setMatching(true)} className={`${isMatching !== null ? isMatching && 'active' : ''}`}><div className='confirm-btn confirm-yes active'><div><span className='icon-ya' /><span>Ya</span></div></div></li>
+            <li onClick={() => setMatching(false)} className={`${isMatching !== null ? !isMatching && 'active' : ''}`}><div className='confirm-btn confirm-no'><div><span className='icon-tidak' /><span>Ya</span></div></div></li>
+            <li onClick={() => setMatching(true)} className={`${isMatching !== null ? isMatching && 'active' : ''}`}><div className='confirm-btn confirm-yes active'><div><span className='icon-ya' /><span>Tidak</span></div></div></li>
           </ul>
         </div>
         {

@@ -506,8 +506,8 @@ class TransactionConfirmation extends Component {
           <div className='confirm-transaction has-text-centered bg-grey'>
             <p>Apakah Anda memiliki komplain terhadap barang yang Anda terima?</p>
             <ul className='list-inline'>
-              <li onClick={() => this.setState({ isMatching: false })} className={`${isMatching !== null ? !isMatching && 'active' : ''}`}><div className='confirm-btn confirm-no'><div><span className='icon-tidak' /><span>Tidak</span></div></div></li>
-              <li onClick={() => this.setState({ isMatching: true })} className={`${isMatching !== null ? isMatching && 'active' : ''}`}><div className='confirm-btn confirm-yes active'><div><span className='icon-ya' /><span>Ya</span></div></div></li>
+              <li onClick={() => this.setState({ isMatching: false })} className={`${isMatching !== null ? !isMatching && 'active' : ''}`}><div className='confirm-btn confirm-no'><div><span className='icon-tidak' /><span>Ya</span></div></div></li>
+              <li onClick={() => this.setState({ isMatching: true })} className={`${isMatching !== null ? isMatching && 'active' : ''}`}><div className='confirm-btn confirm-yes active'><div><span className='icon-ya' /><span>Tidak</span></div></div></li>
             </ul>
           </div>
           {
