@@ -33,10 +33,7 @@ class DataAddress extends React.Component {
 
   handleDropdown (e, id) {
     e.preventDefault()
-    const { dropdownSelected } = this.state
-    const newState = { dropdownSelected }
-    newState.dropdownSelected = id
-    this.setState(newState)
+    this.setState({ dropdownSelected: this.state.dropdownSelected === id ? null : id })
   }
 
   modalShowDelete (e, address) {
