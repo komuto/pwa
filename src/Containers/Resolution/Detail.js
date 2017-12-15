@@ -165,6 +165,7 @@ class ResolutionDetail extends React.Component {
 
 const InformationResolution = (props) => {
   const { resolutionDetail } = props
+  console.log('state', resolutionDetail)
   if (resolutionDetail === undefined) return null
   moment.locale('id')
   return (
