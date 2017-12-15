@@ -10403,16 +10403,19 @@ strong.total {
   padding: 20px;
   background-color: #ffffff;
   position: fixed;
-  left: 0;
+  left: 50%;
   bottom: 0;
   width: 100%;
-  height: auto; }
+  height: auto;
+  max-width: 480px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
   .btn-wrapp .columns {
     width: 100%; }
 
 .catalog-button {
   color: #ffffff;
-  position: fixed;
+  position: absolute;
   left: 20px;
   bottom: 20px;
   z-index: 99;
