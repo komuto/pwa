@@ -9,7 +9,12 @@
 // Give the service worker access to Firebase Messaging.
 // Note that you can only use Firebase Messaging here, other Firebase libraries
 // are not available in the service worker.
-/** 
+
+self.addEventListener('message', function(event){
+  console.log("SW Received Message: " + event.data);
+});
+
+/**
  * import firebase
  * import firebase message
  */
@@ -47,6 +52,7 @@ self.addEventListener('install', (event) => {
  */
 
 self.addEventListener('notificationclick', (event) => {
+  console.log('event: ', event);
   // Event actions derived from event.notification.data from data received
   var eventURL = event.notification.data;
   event.notification.close();
@@ -55,7 +61,7 @@ self.addEventListener('notificationclick', (event) => {
   } else if (event.action === 'cancel') {
     clients.openWindow(eventURL.decline);
   } else {
-    clients.openWindow(eventURL.open);
+    clients.openWindow(eventURL.click_action);
   }
 }, false);
 
@@ -76,18 +82,20 @@ self.addEventListener('notificationclick', (event) => {
  */
 
 messaging.setBackgroundMessageHandler((payload) => {
+  console.log('payload: ', payload);
   let data = JSON.parse(payload.data.custom_notification);
   let notificationTitle = `${data.title}`;
   let notificationOptions = {
     body: data.body,
     icon: 'https://image.flaticon.com/icons/png/128/107/107822.png',
     // options event
-    actions: [
-      {action: 'confirmAttendance', title: '👍 Confirm attendance'},
-      {action: 'cancel', title: '👎 Not coming'}
-    ],
+    // actions: [
+    //   {action: 'confirmAttendance', title: '👍 Confirm attendance'},
+    //   {action: 'cancel', title: '👎 Not coming'}
+    // ],
     // For additional data to be sent to event listeners, needs to be set in this data {}
-    data: {confirm: data.confirm, decline: data.decline, open: data.open}
+    // data: {confirm: data.confirm, decline: data.decline, open: data.open}
+    data: { click_action: data.click_action }
   };
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
