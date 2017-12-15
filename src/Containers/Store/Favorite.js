@@ -71,7 +71,7 @@ class StoreFavorite extends Component {
           <div className='field search-form paddingless'>
             <p className='control has-icons-left'>
               <span className={`${this.submitting.listFavoriteStoreSearch && 'button self is-loading right'}`} />
-              <input onChange={(e) => listFavoriteStore.search(e.target)} className='input is-medium' type='text' placeholder='Cari toko Anda di sini' />
+              <input onChange={(e) => listFavoriteStore.search(e.target)} className='input is-medium' type='text' placeholder='Cari Toko Favorit Anda Disini' />
               <span className='icon is-left'>
                 <span className='icon-search' />
               </span>
@@ -298,6 +298,7 @@ const EmptySearch = () => (
         <p><strong>Toko Favorit Anda Kosong</strong></p>
         <p>Anda belum menambahkan toko apapun ke dalam daftar toko favorit</p>
       </div>
+      <a onClick={() => Router.push('/')} className='button is-primary is-large is-fullwidth'>Kembali Ke Home</a>
     </div>
   </section>
 )

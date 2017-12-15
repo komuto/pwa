@@ -102,7 +102,7 @@ const BalanceContent = (props) => {
       </Card>
       <Card>
         <WrapperList>
-          <CardList className='icon-history' title='History Saldo' url='/balance?type=history' as='/balance/history' />
+          <CardList className='icon-history' title='Riwayat Saldo' url='/balance?type=history' as='/balance/history' />
         </WrapperList>
       </Card>
     </Content>
