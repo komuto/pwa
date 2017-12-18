@@ -57,7 +57,6 @@ class History extends Component {
 
   render () {
     const { saldoHistory, notification } = this.state
-    console.log('saldoHistory: ', saldoHistory)
     const { isFound } = this.props
     let params = {
       navbar: {
