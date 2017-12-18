@@ -331,7 +331,7 @@ const WithdrawContent = ({ defProps, balance, banks, listBankAccounts, inputAcco
             <label className='label'>Nominal Penarikan Dana</label>
             <p className={`control with-currency ${error.includes(amount) && 'is-error'}`}>
               <span className='cur-val'>Rp</span>
-              <input name={amount} onChange={(e) => handleInput(e.target)} className='input' type='number' />
+              <input name={amount} onChange={(e) => handleInput(e.target)} className='input' type='number' placeholder='0000' />
               <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
