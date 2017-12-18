@@ -337,7 +337,7 @@ const WithdrawContent = ({ defProps, balance, banks, listBankAccounts, inputAcco
           </div>
           <div className='field sortButton' onClick={(e) => listBankAccounts.showPress(e)}>
             <p className={`control detail-address sortButton with-currency ${error.includes(bankAccountId) && 'is-error'}`}>
-              <span className='location-label js-option sortButton'>{ dispalayAccount || 'Pilih Rekening Bank' }</span>
+              <span className='location-label js-option sortButton'>{ dispalayAccount || 'Pilih Rekening' }</span>
               <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
