@@ -26,9 +26,9 @@ export default (active = 'ID') => {
     'signup': ['Daftar', 'Register'][index],
     'signup_hero_path': ['Login Disini', 'Login Here'][index],
     'signup_hero_info': ['Sudah punya akun?', 'Do you have account?'][index],
-    'or': ['atau', 'or'][index],
+    'or': ['Atau', 'Or'][index],
     'lost_password': ['Lupa password', 'Lost password'][index],
-    'login_facebook': ['Login dengan facebook', 'Login with facebook'][index],
+    'login_facebook': ['Login dengan Facebook', 'Login with Facebook'][index],
     // shopping cart
     'shopping_cart': ['Keranjang belanja', 'Shopping cart'][index],
     'delete': ['Hapus', 'Delete'][index],
