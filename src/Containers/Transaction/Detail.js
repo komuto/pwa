@@ -22,6 +22,7 @@ import RupiahFormat from '../../Lib/RupiahFormat'
 import Promo from '../../Lib/Promo'
 /** define payment status */
 export const PAYMENT_STATUS = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Sudah dibayar', 'Cancel']
+export const PAYMENT_STATUS_MESSAGE = ['add', 'checkout', 'delete', 'Menunggu Pembayaran', 'Verifikasi', 'Kadaluarsa', 'Pembayaran Telah Diterima. Pesanan sudah dilanjutkan ke Seller.', 'Cancel']
 export const PAYMENT_ICON = [Images.paymentWaiting, Images.paymentVerification, Images.paymentExpired, Images.paymentDone]
 export const PAYMENT_CLASS = ['notif-payment', 'notif-payment-waiting', 'notif-payment-expiry', 'notif-payment-success']
 /** define invoce status */
@@ -105,7 +106,7 @@ const TransactionDetailContent = (props) => {
   let { days, hours, minutes } = summary_transaction.time_left
 
   let totalPayment = summary_transaction.total_price
-  let promoCode = '-'
+  let promoCode = null
   let pricePromo = 0
 
   if (bucket.promo) {
@@ -128,7 +129,7 @@ const TransactionDetailContent = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{ isExpired ? 'Kadaluarsa' : PAYMENT_STATUS[paymentStatus] }</strong>
+                  <strong>{ isExpired ? 'Kadaluarsa' : PAYMENT_STATUS_MESSAGE[paymentStatus] }</strong>
                   <br />
                   {
                     (!isExpired && paymentStatus === 3) &&
@@ -180,27 +181,30 @@ const TransactionDetailContent = (props) => {
                             </div>
                           </div>
                         </div>
-                        <div className='columns is-mobile is-multiline no-margin-bottom'>
-                          <div className='column'>
-                            <div className='label-text is-left'>
-                              <span className='pay-code'>
-                                  Kode Voucher { promoCode }
-                              </span>
+                        {
+                          promoCode &&
+                          <div className='columns is-mobile is-multiline no-margin-bottom'>
+                            <div className='column'>
+                              <div className='label-text is-left'>
+                                <span className='pay-code'>
+                                    Kode Voucher { promoCode }
+                                </span>
+                              </div>
+                            </div>
+                            <div className='column is-one-third'>
+                              <div className='has-text-right'>
+                                <span className='pay-code'> - Rp { RupiahFormat(pricePromo) }</span>
+                              </div>
                             </div>
                           </div>
-                          <div className='column is-one-third'>
-                            <div className='has-text-right'>
-                              <span className='pay-code'> - Rp { RupiahFormat(pricePromo) }</span>
-                            </div>
-                          </div>
-                        </div>
+                        }
                       </li>
                       <li>
                         <div className='columns is-mobile is-multiline no-margin-bottom'>
                           <div className='column'>
                             <div className='label-text is-left'>
                               <span>
-                                  Sisa Pembayaran
+                                  Total Pembayaran
                                 </span>
                             </div>
                           </div>
@@ -228,7 +232,7 @@ const TransactionDetailContent = (props) => {
                   index === 0 &&
                   <div className='container is-fluid'>
                     <div className='title'>
-                      <h3>Daftar Barang Yang Dibeli</h3>
+                      <h3>Daftar Barang yang dibeli</h3>
                     </div>
                   </div>
                 }
