@@ -384,7 +384,7 @@ const OrderDetail = (props) => {
                         <h4>{item.product.name} </h4>
                         <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
                         <strong>Jumlah : {item.qty}</strong>
-                        <span>{item.note !== '' && `"${item.note}"`}</span>
+                        <span>{item.note !== '' && `${item.note}`}</span>
                       </div>
                     </div>
                   </div>

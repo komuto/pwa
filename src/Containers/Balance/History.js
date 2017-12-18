@@ -372,14 +372,11 @@ export const BalanceIncreases = ({amount}) => <strong className='text-green'>+Rp
  * TOPUP: 'TPUP',
  * WITHDRAW: 'WTHD',
  */
-export const SummTransType = ['PAID', 'RFND', 'SELL', 'SFEE', 'TPUP', 'WTHD']
-
+export const SummTransType = ['SFEE', 'SELL', 'RFND', 'TPUP', 'PAID', 'WTHD']
 /** summary transaction type for end point format */
-export const SummTransTypeEndPointFormat = ['buy', 'refund', 'sale', 'commission', 'topup', 'withdraw']
-
+export const SummTransTypeEndPointFormat = ['commission', 'sale', 'refund', 'topup', 'buy', 'withdraw']
 /** summary transaction type message */
-export const SummTransTypeMessage = ['Pembelian Barang', 'Dana Refund Barang', 'Dana Penjualan Barang', 'Komisi Reseller', 'Top Up Saldo', 'Penarikan Saldo']
-
+export const SummTransTypeMessage = ['Komisi Reseller', 'Dana Penjualan Barang', 'Dana Refund Barang', 'Top Up Saldo', 'Pembelian Barang', 'Penarikan Saldo']
 /** function get state from redux */
 const mapStateToProps = (state) => ({
   saldoHistory: state.saldoHistory
