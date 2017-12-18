@@ -18,7 +18,7 @@ import { LoginFacebook } from '../../Components/Facebook'
 import { Input } from '../../Components/Input'
 import { ButtonFullSubmit } from '../../Components/Button'
 import { HrText } from '../../Components/Hr'
-import TermConditions from '../../Components/TermConditions'
+// import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
 import localforage from 'localforage'
 import { animateScroll } from 'react-scroll'
@@ -201,8 +201,8 @@ class SignIn extends Component {
                 {...input.password}
                 onChange={this.onChange}
                 hasIconsRight />
-              <TermConditions
-                name={this.props.marketplace.data.name} />
+              {/* <TermConditions
+                name={this.props.marketplace.data.name} /> */}
               <ButtonFullSubmit
                 type='submit'
                 text={localize.signin}
