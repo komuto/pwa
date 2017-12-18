@@ -329,7 +329,7 @@ const OrderDetail = (props) => {
                     <div className='media-content'>
                       <div className='content'>
                         <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
+                        <strong>Harga : Rp { RupiahFormat(item.product.price) }/item</strong>
                         <strong>Jumlah : {item.qty}</strong>
                         <span>{item.note !== '' && `'${item.note}'`}</span>
                       </div>
@@ -395,7 +395,7 @@ const OrderDetail = (props) => {
         </div>
         <div className='column is-paddingless'>
           <div className='see-all'>
-            <span className='link black js-option'>Pilih Paket Pengiriman <span className='kurir normal'>{processingOrderDetail.orderDetail.invoice.expedition.name}</span></span>
+            <span className='link black js-option'>Paket Pengiriman <span className='kurir normal'>{processingOrderDetail.orderDetail.invoice.expedition.name}</span></span>
           </div>
         </div>
         <div className='column is-paddingless'>
