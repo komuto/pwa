@@ -217,7 +217,7 @@ const InformationResolution = (props) => {
                       </p>
                     </div>
                     <label className='transaction'>{props.topicType(resolutionDetail.resolution.topic)}</label>
-                    <span className='date-trans'>{moment.unix(resolutionDetail.resolution.created_at).format('DD MMMM YYYY')}</span>
+                    <span className='date-trans'>{moment.unix(resolutionDetail.resolution.created_at).format('DD MMM YYYY')}</span>
                   </div>
                 </article>
               </div>

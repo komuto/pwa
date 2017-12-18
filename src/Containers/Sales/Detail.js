@@ -571,7 +571,7 @@ const OrderDetail = (props) => {
               </div>
               <div className='column'>
                 <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
+                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMM YYYY')}</span>
                 </div>
               </div>
             </div>
@@ -832,7 +832,7 @@ const OrderDetailDropship = (props) => {
               </div>
               <div className='column'>
                 <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
+                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMM YYYY')}</span>
                 </div>
               </div>
             </div>
