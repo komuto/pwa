@@ -460,7 +460,8 @@ const ContentShow = (props) => {
                 })
               }
               <div className='see-all'>
-                <span className='link' onClick={() => Router.push(`/catalog?id=${sp.catalog.id}`)}>Lihat semua produk di katalog ini
+                <span className='link'
+                  onClick={() => Router.push(`/catalog?id=${sp.catalog.id}`)}>Lihat semua produk di katalog ini
                   <span className='icon-arrow-right' />
                 </span>
               </div>

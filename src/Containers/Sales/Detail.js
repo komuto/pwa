@@ -9,12 +9,9 @@ import Images from '../../Themes/Images'
 import Notification from '../../Components/Notification'
 import MyRating from '../../Components/MyRating'
 import MyImage from '../../Components/MyImage'
-// lib
-import RupiahFormat from '../../Lib/RupiahFormat'
+import SaleDetail from '../../Components/SaleDetail'
 // actions
 import * as transactionAction from '../../actions/transaction'
-// services
-import { isFetching, validateResponse, validateResponseAlter, isError, isFound } from '../../Services/Status'
 
 const TAB_DELIVERY_STATUS = 'TAB_DELIVERY_STATUS'
 const TAB_SALES_DETAIL = 'TAB_SALES_DETAIL'
@@ -232,6 +229,8 @@ class SalesDetail extends React.Component {
 
   renderContentTabs (tabs) {
     const { saleDetail } = this.state
+    const { sale } = saleDetail
+    const newOrderDetail = { orderDetail: sale, ...saleDetail }
     if (tabs === TAB_DELIVERY_STATUS) {
       return (
         <DeliveryStatus
@@ -244,17 +243,11 @@ class SalesDetail extends React.Component {
       )
     }
     if (tabs === TAB_SALES_DETAIL) {
-      if (saleDetail.sale.invoice.type === 'reseller') {
-        return (
-          <OrderDetailDropship
-            saleDetail={saleDetail} />
-        )
-      } else {
-        return (
-          <OrderDetail
-            saleDetail={saleDetail} />
-        )
-      }
+      // delete newOrderDetail.sale
+      return (
+        <SaleDetail
+          newOrderDetail={newOrderDetail} />
+      )
     }
   }
 
@@ -268,6 +261,7 @@ class SalesDetail extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { saleDetail, updateStatus } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(saleDetail) && !this.submiting) {
       if (isFound(saleDetail)) {
         NProgress.done()
@@ -277,20 +271,19 @@ class SalesDetail extends React.Component {
         }
       }
       if (isError(saleDetail)) {
-        this.setState({ notification: validateResponse(saleDetail, saleDetail.message) })
+        this.setState({ notification: notifError(saleDetail.message) })
       }
     }
     if (!isFetching(updateStatus) && this.submiting) {
+      this.submiting = false
       if (isFound(updateStatus)) {
-        this.submiting = false
         const { saleDetail, receiptNumber, showModal } = this.state
-        const setReceiptNumber = { saleDetail, showModal: !showModal, notification: validateResponseAlter(updateStatus, updateStatus.message, updateStatus.message) }
+        const setReceiptNumber = { saleDetail, showModal: !showModal, notification: notifSuccess(updateStatus.message) }
         setReceiptNumber.saleDetail.sale.shipping['airway_bill'] = receiptNumber
         this.setState(setReceiptNumber)
       }
       if (isError(updateStatus)) {
-        this.submiting = false
-        this.setState({ notification: validateResponse(updateStatus, 'Gagal mengubah No Resi') })
+        this.setState({ notification: notifError(updateStatus.message) })
       }
     }
   }
@@ -533,486 +526,6 @@ const DeliveryStatus = (props) => {
         </section>
         </div>
       }
-    </div>
-  )
-}
-
-const OrderDetail = (props) => {
-  const { saleDetail } = props
-  if (saleDetail === undefined) return null
-  let subTotal = 0
-  moment.locale('id')
-  return (
-    <div>
-      <section className='section is-paddingless has-shadow'>
-        <div className='info-purchase'>
-          <div className='detail-rate is-purchase'>
-            <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-              <div className='column is-half'>
-                <div className='rating-content is-left'>
-                  <strong>No Invoice</strong>
-                </div>
-              </div>
-              <div className='column is-half'>
-                <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{saleDetail.sale.invoice.invoice_number}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className='info-purchase'>
-          <div className='detail-rate is-purchase'>
-            <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-              <div className='column is-one-quarter'>
-                <div className='rating-content is-left'>
-                  <strong>Tanggal Transaksi</strong>
-                </div>
-              </div>
-              <div className='column'>
-                <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <br />
-            <h3>{saleDetail.sale.invoice.type === 'seller' ? 'Info Reseller' : 'Info Pembeli'}</h3>
-          </div>
-        </div>
-        <div className='payment-detail step-pay'>
-          <ul>
-            <li>
-              <div className='columns is-mobile is-multiline no-margin-bottom'>
-                <div className='column'>
-                  <div className='box'>
-                    <div className='media'>
-                      <div className='media-left is-full-bordered'>
-                        <figure className='image list-transaction sm'>
-                          <a><MyImage src={saleDetail.sale.invoice.type === 'seller' ? saleDetail.sale.reseller.store.logo : saleDetail.sale.buyer.photo} alt='Image' /></a>
-                        </figure>
-                      </div>
-                      <div className='media-content middle is-right-content'>
-                        <div className='content'>
-                          <h4>{saleDetail.sale.invoice.type === 'seller' ? saleDetail.sale.reseller.store.name : saleDetail.sale.buyer.name}</h4>
-                        </div>
-                      </div>
-                      <div className='right-top' style={{paddingRight: '16px'}}>
-                        {
-                          saleDetail.sale.invoice.type === 'seller'
-                          ? <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-sales?id=${saleDetail.sale.invoice.id}&type=reseller`)}>Kirim Pesan</a>
-                          : <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-sales?id=${saleDetail.sale.invoice.id}&type=buyer`)}>Kirim Pesan</a>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <br />
-            <h3>Daftar Barang yang dibeli</h3>
-          </div>
-        </div>
-        <ul className='list-trans-product'>
-          { saleDetail.sale.items.map((item, i) => {
-            subTotal += item.total_price
-            return (
-              <li key={i}>
-                <div className='box'>
-                  <div className='media'>
-                    <div className='media-left is-bordered top'>
-                      <figure className='image list-transaction lg'>
-                        <a><MyImage src={item.product.image} alt='Image' /></a>
-                      </figure>
-                    </div>
-                    <div className='media-content'>
-                      <div className='content'>
-                        <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) } / item</strong>
-                        <strong>Jumlah : {item.qty}</strong>
-                        <span>{item.note !== '' && `'${item.note}'`}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            )
-          })
-          }
-        </ul>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <h3>Informasi Pengiriman</h3>
-          </div>
-        </div>
-        <div className='detail-purchase summary at-cart'>
-          <div className='detail-result white'>
-            <ul className='data-delivery'>
-              <li>
-                <div className='columns custom is-mobile'>
-                  <div className='column'>
-                    <strong>Alamat Pengirim</strong>
-                    <span className='address'>
-                      {saleDetail.sale.buyer.name}<br />
-                      {saleDetail.sale.buyer.address.address}<br />
-                      {saleDetail.sale.buyer.address.village.name}, {saleDetail.sale.buyer.address.subdistrict.name}, {saleDetail.sale.buyer.address.district.name}<br />
-                      {saleDetail.sale.buyer.address.province.name}, {saleDetail.sale.buyer.address.postal_code}<br />
-                      Telp: {saleDetail.sale.buyer.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                    </span>
-                    <div className='right-top topR'>
-                      <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        {
-          saleDetail.sale.invoice.type === 'seller' && <div className='notif-inside'>
-            <div className='notif-info'>
-              <span>Barang ini terjual dari reseller. Sehingga nama toko reseller disertakan.</span>
-            </div>
-          </div>
-        }
-        { saleDetail.sale.invoice.type === 'seller'
-          ? <div className='detail-purchase summary at-cart'>
-            <div className='detail-result white'>
-              <ul className='data-delivery'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column'>
-                      <strong>Info Alamat Penjual</strong>
-                      <span className='address'>
-                        {saleDetail.sale.seller.name} {saleDetail.sale.reseller ? `(${saleDetail.sale.reseller.store.name})` : ''} <br />
-                        {saleDetail.sale.seller.address.address}<br />
-                        {saleDetail.sale.seller.address.village.name}, {saleDetail.sale.seller.address.subdistrict.name}, {saleDetail.sale.seller.address.district.name}<br />
-                        {saleDetail.sale.seller.address.province.name}, {saleDetail.sale.seller.address.postal_code}<br />
-                        Telp: {saleDetail.sale.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                      </span>
-                      <div className='right-top topR'>
-                        <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          : <div className='detail-purchase summary at-cart'>
-            <div className='detail-result white'>
-              <ul className='data-delivery'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column'>
-                      <strong>Info Alamat Penjual</strong>
-                      <span className='address'>
-                        {saleDetail.sale.seller.name}<br />
-                        {saleDetail.sale.seller.address.address}<br />
-                        {saleDetail.sale.seller.address.village.name}, {saleDetail.sale.seller.address.subdistrict.name}, {saleDetail.sale.seller.address.district.name}<br />
-                        {saleDetail.sale.seller.address.province.name}, {saleDetail.sale.seller.address.postal_code}<br />
-                        Telp: {saleDetail.sale.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                      </span>
-                      <div className='right-top topR'>
-                        <a className='button is-primary is-outlined'>Cetak Alamat</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        }
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Kurir Pengiriman <span className='kurir normal'>{saleDetail.sale.invoice.expedition.expedition.name}</span></span>
-          </div>
-        </div>
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Pilih Paket Pengiriman <span className='kurir normal'>{saleDetail.sale.invoice.expedition.name}</span></span>
-          </div>
-        </div>
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Asuransi <span className='kurir normal'>{saleDetail.sale.invoice.is_insurance ? 'Ya' : 'Tidak'}</span></span>
-          </div>
-        </div>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <h3>Detail Harga</h3>
-          </div>
-        </div>
-        <div className='info-purchase'>
-          <div className='detail-purchase summary trans-detail'>
-            <div className='detail-result white'>
-              <ul>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Subtotal</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(subTotal) }</span></div>
-                  </div>
-                </li>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Biaya Asuransi</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.insurance_fee) }</span></div>
-                  </div>
-                </li>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Ongkos Kirim</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.delivery_cost) }</span></div>
-                  </div>
-                </li>
-              </ul>
-              <ul className='total'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Total</strong></div>
-                    <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(saleDetail.sale.invoice.total_bill) }</strong></div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-const OrderDetailDropship = (props) => {
-  const { saleDetail } = props
-  if (saleDetail === undefined) return null
-  let subTotal = 0
-  moment.locale('id')
-  return (
-    <div>
-      <section className='section is-paddingless has-shadow'>
-        <div className='info-purchase'>
-          <div className='detail-rate is-purchase'>
-            <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-              <div className='column is-half'>
-                <div className='rating-content is-left'>
-                  <strong>No Invoice</strong>
-                </div>
-              </div>
-              <div className='column is-half'>
-                <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{saleDetail.sale.invoice.invoice_number}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className='info-purchase'>
-          <div className='detail-rate is-purchase'>
-            <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
-              <div className='column is-one-quarter'>
-                <div className='rating-content is-left'>
-                  <strong>Tanggal Transaksi</strong>
-                </div>
-              </div>
-              <div className='column'>
-                <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(saleDetail.sale.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <br />
-            <h3>Info Pembeli</h3>
-          </div>
-        </div>
-        <div className='payment-detail step-pay'>
-          <ul>
-            <li>
-              <div className='columns is-mobile is-multiline no-margin-bottom'>
-                <div className='column'>
-                  <div className='box'>
-                    <div className='media'>
-                      <div className='media-left is-full-bordered'>
-                        <figure className='image list-transaction sm'>
-                          <a><MyImage src={saleDetail.sale.buyer.photo} alt='Image' /></a>
-                        </figure>
-                      </div>
-                      <div className='media-content middle is-right-content'>
-                        <div className='content'>
-                          <h4>{saleDetail.sale.buyer.name}</h4>
-                        </div>
-                      </div>
-                      <div className='right-top' style={{paddingRight: '16px'}}>
-                        <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message-sales?id=${saleDetail.sale.invoice.id}&type=buyer`)}>Kirim Pesan</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <br />
-            <h3>Daftar Barang yang dibeli</h3>
-          </div>
-        </div>
-        <ul className='list-trans-product'>
-          { saleDetail.sale.items.map((item, i) => {
-            subTotal += item.total_price
-            return (
-              <li key={i}>
-                <div className='box'>
-                  <div className='media'>
-                    <div className='media-left is-bordered top'>
-                      <figure className='image list-transaction lg'>
-                        <a><MyImage src={item.product.image} alt='Image' /></a>
-                      </figure>
-                    </div>
-                    <div className='media-content'>
-                      <div className='content'>
-                        <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) } / item</strong>
-                        <strong>Jumlah : {item.qty}</strong>
-                        <span>{item.note !== '' && `'${item.note}'`}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            )
-          })
-          }
-        </ul>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <h3>Informasi Pengiriman</h3>
-          </div>
-        </div>
-        <div className='detail-purchase summary at-cart'>
-          <div className='detail-result white'>
-            <ul className='data-delivery'>
-              <li>
-                <div className='columns custom is-mobile'>
-                  <div className='column'>
-                    <strong>Alamat Pengirim</strong>
-                    <span className='address'>
-                      {saleDetail.sale.buyer.name}<br />
-                      {saleDetail.sale.buyer.address.address}<br />
-                      {saleDetail.sale.buyer.address.village.name}, {saleDetail.sale.buyer.address.subdistrict.name}, {saleDetail.sale.buyer.address.district.name}<br />
-                      {saleDetail.sale.buyer.address.province.name}, {saleDetail.sale.buyer.address.postal_code}<br />
-                      Telp: {saleDetail.sale.buyer.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className='detail-purchase summary at-cart'>
-          <div className='detail-result white'>
-            <ul className='data-delivery'>
-              <li>
-                <div className='columns custom is-mobile'>
-                  <div className='column'>
-                    <strong>Info Alamat Penjual</strong>
-                    <span className='address'>
-                      {saleDetail.sale.seller.name} {saleDetail.sale.reseller ? `(${saleDetail.sale.reseller.store.name})` : ''} <br />
-                      {saleDetail.sale.seller.address.address}<br />
-                      {saleDetail.sale.seller.address.village.name}, {saleDetail.sale.seller.address.subdistrict.name}, {saleDetail.sale.seller.address.district.name}<br />
-                      {saleDetail.sale.seller.address.province.name}, {saleDetail.sale.seller.address.postal_code}<br />
-                      Telp: {saleDetail.sale.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Kurir Pengiriman <span className='kurir normal'>{saleDetail.sale.invoice.expedition.expedition.name}</span></span>
-          </div>
-        </div>
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Pilih Paket Pengiriman <span className='kurir normal'>{saleDetail.sale.invoice.expedition.name}</span></span>
-          </div>
-        </div>
-        <div className='column is-paddingless'>
-          <div className='see-all'>
-            <span className='link black js-option'>Asuransi <span className='kurir normal'>{saleDetail.sale.invoice.is_insurance ? 'Ya' : 'Tidak'}</span></span>
-          </div>
-        </div>
-      </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='container is-fluid'>
-          <div className='title'>
-            <h3>Detail Harga</h3>
-          </div>
-        </div>
-        <div className='info-purchase'>
-          <div className='detail-purchase summary trans-detail'>
-            <div className='detail-result white'>
-              <ul>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Subtotal</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(subTotal) }</span></div>
-                  </div>
-                </li>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Biaya Asuransi</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.insurance_fee) }</span></div>
-                  </div>
-                </li>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Ongkos Kirim</strong></div>
-                    <div className='column is-half has-text-right'><span>Rp { RupiahFormat(saleDetail.sale.invoice.delivery_cost) }</span></div>
-                  </div>
-                </li>
-              </ul>
-              <ul className='total'>
-                <li>
-                  <div className='columns custom is-mobile'>
-                    <div className='column is-half'><strong>Total</strong></div>
-                    <div className='column is-half has-text-right'><strong>Rp { RupiahFormat(saleDetail.sale.invoice.total_bill) }</strong></div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

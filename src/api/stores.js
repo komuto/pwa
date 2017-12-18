@@ -84,7 +84,11 @@ export const getStoreProducts = (params) => {
 export const getStoreCatalogProducts = ({ id, ...params }) => {
   const axios = authApiKomuto()
   const query = buildQuery(params)
-  return axios.get(`users/store/products/catalogs/${id}?${query}`)
+  if (id) {
+    return axios.get(`users/store/products/catalogs/${id}?${query}`)
+  } else {
+    return axios.get(`users/store/products/catalogs?${query}`)
+  }
 }
 
 export const updateInformation = (data) => {
