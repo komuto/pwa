@@ -39,7 +39,8 @@ const images = {
   emptyConfirmation: `${AppConfig.baseURL}static/images/empty-confirmation.svg`,
   emptyStateNewOrder: `${AppConfig.baseURL}static/images/empty-state-new-order.svg`,
   emptyDropshipping: `${AppConfig.baseURL}static/images/empty-dropshipping.svg`,
-  emptyKatalog: `${AppConfig.baseURL}static/images/empty-katalog.svg`
+  emptyKatalog: `${AppConfig.baseURL}static/images/empty-katalog.svg`,
+  emptyProduct: `${AppConfig.baseURL}static/images/empty-product.svg`
 }
 
 export default images

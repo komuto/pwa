@@ -127,12 +127,11 @@ class AddEditCatalog extends Component {
   handleButton () {
     const { submiting } = this.state
     const { query } = this.props
-    const isUpdate = this.props.hasOwnProperty('query') && query.id !== ''
     return (
       <button
         className={`button is-primary is-large is-fullwidth ${(submiting.create || submiting.update) ? 'is-loading' : ''}`}
         onClick={(e) => this.postCatalog(e)} >
-        { isUpdate ? 'Simpan Perubahan' : 'Buat Katalog Baru'}
+        { query.id ? 'Simpan Perubahan' : 'Buat Katalog Baru'}
       </button>
     )
   }
@@ -151,11 +150,11 @@ class AddEditCatalog extends Component {
           <form className='form edit'>
             <div className='has-text-centered noted' />
             <div className='field '>
+              <label className='label'>Nama Katalog</label>
               <p className='control'>
                 <input
                   className='input'
                   type='text'
-                  placeholder='Masukkan Nama Katalog'
                   value={catalog}
                   onChange={(e) => this.handleInput(e)} />
               </p>

@@ -140,7 +140,7 @@ class ResolutionAdd extends React.Component {
     this.state.images.map((image) => {
       images.append('images', image)
     })
-    images.append('type', 'product')
+    images.append('type', 'resolution')
     if (images) {
       this.uploading = true
       this.props.photoUpload(images)

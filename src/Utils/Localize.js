@@ -17,7 +17,7 @@ export default (active = 'ID') => {
     'transaction': ['Transaksi', 'Transaction'][index],
     // profile
     'profile': ['Profil', 'Profile'][index],
-    'signin': ['Masuk', 'Sign In'][index],
+    'signin': ['Login', 'Sign In'][index],
     'signin_hero_path': ['Daftar Disini', 'Register Here'][index],
     'signin_hero_info': ['Belum punya akun ?', 'No account yet?'][index],
     'signin_info': ['Masuk ke Akun Anda untuk mempermudah proses pembelian', 'Sign in to your Account to make purchasing easier'][index],
@@ -26,9 +26,9 @@ export default (active = 'ID') => {
     'signup': ['Daftar', 'Register'][index],
     'signup_hero_path': ['Login Disini', 'Login Here'][index],
     'signup_hero_info': ['Sudah punya akun?', 'Do you have account?'][index],
-    'or': ['atau', 'or'][index],
-    'lost_password': ['Lupa password', 'Lost password'][index],
-    'login_facebook': ['Login dengan facebook', 'Login with facebook'][index],
+    'or': ['Atau', 'or'][index],
+    'lost_password': ['Lupa password?', 'Lost password?'][index],
+    'login_facebook': ['Login dengan Facebook', 'Login with Facebook'][index],
     // shopping cart
     'shopping_cart': ['Keranjang belanja', 'Shopping cart'][index],
     'delete': ['Hapus', 'Delete'][index],

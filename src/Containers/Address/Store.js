@@ -117,7 +117,7 @@ class AddressStore extends React.Component {
                   <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
                     <div className='column'>
                       <div className='rating-content is-left'>
-                        <label className='lable'>Alamat</label>
+                        <label className='lable'>Alamat Lengkap</label>
                         <p><strong>{storeAddress.storeAddress.address}</strong></p>
                       </div>
                     </div>

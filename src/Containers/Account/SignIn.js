@@ -35,7 +35,7 @@ class SignIn extends Component {
       input: {
         email: {
           type: 'email',
-          placeholder: 'Email',
+          placeholder: 'Alamat Email',
           name: 'email',
           value: '',
           classInfo: '',

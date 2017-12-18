@@ -253,8 +253,19 @@ class ProductList extends Component {
     return Math.ceil(number, -1)
   }
 
+  isEmptyContentShow () {
+    const { isEmpty } = this.state
+    if (isEmpty.storeProducts) return (<ProductShowEmpty />)
+    if (isEmpty.searchProducts) return (<ProductNotFound />)
+  }
+
+  isEmptyContentHidden () {
+    const { isEmpty } = this.state
+    if (isEmpty.hiddenProducts) return (<ProductHiddenEmpty />)
+    if (isEmpty.searchProducts) return (<ProductNotFound />)
+  }
+
   render () {
-    console.log('state', this.state)
     const { tabs, showListCatalog, storeProducts, hiddenStoreProducts, search, notification, dropdownSelected, isEmpty } = this.state
     const toManageStore = () => {
       Router.push('/manage-store')
@@ -296,19 +307,9 @@ class ProductList extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='field search-form paddingless'>
-            <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' value={search.value} placeholder='Cari barang ' onChange={(e) => this.searchOnChange(e)} />
-              <span className='icon is-left'>
-                <span className='icon-search' />
-              </span>
-            </p>
-          </div>
-        </section>
         {
           tabs === TAB_SHOW_IN_PAGE
-          ? (isEmpty.storeProducts || isEmpty.searchProducts) ? <ProductEmpty /> : <ContentShow
+          ? <ContentShow
             catalogProducts={catalogProducts}
             showListCatalog={showListCatalog}
             showListCatalogPress={() => this.showListCatalogPress()}
@@ -320,27 +321,42 @@ class ProductList extends Component {
             dropdownSelected={dropdownSelected}
             productDetail={(e, product) => this.productDetail(e, product)}
             search={search}
-            rounding={(price) => this.rounding(price)} />
-          : (isEmpty.hiddenProducts || isEmpty.searchProducts) ? <ProductEmpty /> : <ContentHidden
+            rounding={(price) => this.rounding(price)}
+            isEmpty={isEmpty}
+            searchOnChange={(e) => this.searchOnChange(e)}
+            searchValue={search.value} />
+          : <ContentHidden
             hiddenProducts={hiddenProducts}
             catalogProducts={catalogProducts}
             productDetail={(e, product) => this.productDetail(e, product)}
             loadMore={() => this.loadMore()}
             hasMore={this.hasMore}
-            rounding={(price) => this.rounding(price)} />
+            rounding={(price) => this.rounding(price)}
+            isEmpty={isEmpty}
+            searchOnChange={(e) => this.searchOnChange(e)}
+            searchValue={search.value} />
         }
-        <div className='wrapper-sticky'>
-          <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
-        </div>
       </Content>
     )
   }
 }
 
 const ContentHidden = (props) => {
-  if (props.hiddenProducts === undefined) return null
+  const { isEmpty, searchValue } = props
+  if (isEmpty.hiddenProducts) return (<ProductHiddenEmpty />)
+  if (isEmpty.searchProducts) return (<ProductNotFound />)
   return (
     <div>
+      <section className='section is-paddingless'>
+        <div className='field search-form paddingless'>
+          <p className='control has-icons-left'>
+            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari barang ' onChange={(e) => props.searchOnChange(e)} />
+            <span className='icon is-left'>
+              <span className='icon-search' />
+            </span>
+          </p>
+        </div>
+      </section>
       {
         <InfiniteScroll
           pageStart={0}
@@ -385,8 +401,21 @@ const ContentHidden = (props) => {
 }
 
 const ContentShow = (props) => {
+  const { isEmpty, searchValue } = props
+  if (isEmpty.storeProducts) return (<ProductShowEmpty />)
+  if (isEmpty.searchProducts) return (<ProductNotFound />)
   return (
     <div>
+      <section className='section is-paddingless'>
+        <div className='field search-form paddingless'>
+          <p className='control has-icons-left'>
+            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari barang ' onChange={(e) => props.searchOnChange(e)} />
+            <span className='icon is-left'>
+              <span className='icon-search' />
+            </span>
+          </p>
+        </div>
+      </section>
       {
         props.search.status ? <SearchContent search={props.search} /> : props.catalogProducts.map((sp, index) => {
           let isLastCatalog = (props.catalogProducts.length - 1) === index
@@ -490,6 +519,9 @@ const ContentShow = (props) => {
           <span className='icon-close white' />
         </a>
       </div>
+      <div className='wrapper-sticky'>
+        <a className='sticky-button' onClick={() => Router.push('/product-add', '/product/add')}><span className='txt'>+</span></a>
+      </div>
     </div>
   )
 }
@@ -539,7 +571,37 @@ const SearchContent = (props) => {
 }
 
 /** product empty content */
-const ProductEmpty = () => {
+const ProductShowEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyProduct} alt='notFound' />
+          <p><strong>Tidak ada Produk yang Ditampilkan</strong></p>
+          <p>Anda belum memiliki produk yang ditampilkan</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** product empty content */
+const ProductHiddenEmpty = () => {
+  return (
+    <section className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyProduct} alt='notFound' />
+          <p><strong>Tidak ada Produk yang disembunyikan</strong></p>
+          <p>Anda belum memiliki produk yang disembunyikan</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** product empty content */
+const ProductNotFound = () => {
   return (
     <section className='content'>
       <div className='container is-fluid'>

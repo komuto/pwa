@@ -30,7 +30,6 @@ export const LoginContent = ({ localize }) => {
         <div className='desc has-text-centered'>
           <MyImage src={Images.phoneAccount} alt='phoneAccount' />
           <p><strong>{localize.signin_info}</strong></p>
-          <p>{localize.signin_sub_info}</p>
         </div>
         <div className='columns is-mobile'>
           <div className='column'>
