@@ -38,7 +38,7 @@ export const Item = ({ data }) => (
       <article className='media'>
         <div className='media-left top is-full-bordered'>
           <figure className='image list-transaction xs'>
-            <div style={{ width: '100%', height: '100%', borderRadius: 20, backgroundImage: `url(${data.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+            <div style={{ width: '100%', height: '100%', borderRadius: 0, backgroundImage: `url(${data.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
           </figure>
         </div>
         <div className='media-content'>
@@ -48,7 +48,7 @@ export const Item = ({ data }) => (
               { data.content }
             </p>
           </div>
-          <span className='time-discuss'>{moment.unix(data.created_at).format('Do MMMM YYYY')}</span>
+          <span className='time-discuss'>{moment.unix(data.created_at).format('Do MMMM YYYY - hh:mm')}</span>
         </div>
       </article>
     </div>
