@@ -57,15 +57,17 @@ class History extends Component {
 
   render () {
     const { saldoHistory, notification } = this.state
+    console.log('saldoHistory: ', saldoHistory)
     const { isFound } = this.props
     let params = {
       navbar: {
         searchBoox: false,
         path: '/',
         callBack: () => Router.push('/balance'),
-        textPath: 'History Saldo',
+        textPath: 'Riwayat Saldo',
         filterBalance: {
           show: true,
+          value: this.state.params.filter.length,
           press: () => this.filterPress()
         }
       }
@@ -299,7 +301,7 @@ const FilterContent = ({ params, filter, submitting, summTransSelected, datePick
 const List = ({id, amount, last_saldo, date, transType}) => {
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
-  let TransDate = moment.unix(date).format('Do MMMM YY')
+  let TransDate = moment.unix(date).format('Do MMM YY')
   let Amount = isDecreasses(transType) ? <BalanceDecreases amount={amount} /> : <BalanceIncreases amount={amount} />
   return (
     <section onClick={() =>
