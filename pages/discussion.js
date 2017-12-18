@@ -31,12 +31,12 @@ const Index = (props) => {
     const params = {
       style: 'main user bg-white is-padding-160',
       header: {
-        title: 'Diskusi'
+        title: 'Diskusi Produk'
       },
       navbar: {
         searchBoox: false,
         path: '/',
-        textPath: 'Diskusi'
+        textPath: 'Diskusi Produk'
       }
     }
     return (

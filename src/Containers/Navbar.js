@@ -151,6 +151,7 @@ export class Navbar extends PureComponent {
             filterBalance && filterBalance.show &&
             <div className='button-search js-option' onClick={() => filterBalance.press()}>
               <span className='icon-filter-y' />
+              <span className='notif'> { filterBalance.value } </span>
             </div>
           }
           {

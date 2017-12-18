@@ -104,7 +104,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{`Anda memiliki waktu 3 hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.created_at).add(3, 'days').format(' DD MMMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
+                  <strong>{`Anda memiliki waktu 3 hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.created_at).add(3, 'days').format(' DD MMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
                 </p>
               </div>
             </div>
@@ -265,7 +265,7 @@ const OrderDetail = (props) => {
               </div>
               <div className='column'>
                 <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(processingOrderDetail.orderDetail.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
+                  <span className='has-text-left'>{moment.unix(processingOrderDetail.orderDetail.invoice.created_at).format('DD MMM YYYY')}</span>
                 </div>
               </div>
             </div>
@@ -329,7 +329,7 @@ const OrderDetail = (props) => {
                     <div className='media-content'>
                       <div className='content'>
                         <h4>{item.product.name} </h4>
-                        <strong>Harga : Rp { RupiahFormat(item.product.price) }</strong>
+                        <strong>Harga : Rp { RupiahFormat(item.product.price) }/item</strong>
                         <strong>Jumlah : {item.qty}</strong>
                         <span>{item.note !== '' && `'${item.note}'`}</span>
                       </div>
@@ -395,7 +395,7 @@ const OrderDetail = (props) => {
         </div>
         <div className='column is-paddingless'>
           <div className='see-all'>
-            <span className='link black js-option'>Pilih Paket Pengiriman <span className='kurir normal'>{processingOrderDetail.orderDetail.invoice.expedition.name}</span></span>
+            <span className='link black js-option'>Paket Pengiriman <span className='kurir normal'>{processingOrderDetail.orderDetail.invoice.expedition.name}</span></span>
           </div>
         </div>
         <div className='column is-paddingless'>

@@ -162,7 +162,7 @@ const ShipmentReceiptNumber = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{`Anda memiliki waktu ${processingOrderDetail.orderDetail.invoice.day_limit} hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.date_limit).format(' DD MMMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
+                  <strong>{`Anda memiliki waktu ${processingOrderDetail.orderDetail.invoice.day_limit} hari sampai tanggal ${moment.unix(processingOrderDetail.orderDetail.invoice.date_limit).format(' DD MMM YYYY')} untuk menginformasikan nomor resi. Jika tidak kami akan membatalkan pesanan ini`}</strong>
                 </p>
               </div>
             </div>

@@ -221,7 +221,7 @@ const Index = (props) => {
       const params = {
         style: 'main no-padding-bottom bg-grey saldo',
         header: {
-          title: 'History Saldo'
+          title: 'Riwayat Saldo'
         }
       }
       return (

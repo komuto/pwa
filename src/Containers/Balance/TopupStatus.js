@@ -95,7 +95,7 @@ const TopupContent = ({ topupStatus }) => {
 
 /** list of topupContent content */
 const List = ({ amount, created_at, status }) => {
-  let createDate = moment.unix(created_at).format('Do MMMM YY')
+  let createDate = moment.unix(created_at).format('Do MMM YY')
   let statusTopup = [<Waiting />, <Success />, <Failed />][status]
   return (
     <li>

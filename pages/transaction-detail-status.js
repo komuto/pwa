@@ -10,13 +10,13 @@ const Index = (props) => {
   const params = {
     style: 'main detail bg-grey',
     header: {
-      title: 'Detail Pesanan'
+      title: 'Detail Status Pesanan'
     },
     navbar: {
       searchBoox: false,
       path: '/',
       callBack: () => Router.push(`/transaction-detail?id=${props.query.id}`),
-      textPath: 'Detail Pesanan'
+      textPath: 'Detail Status Pesanan'
     }
   }
   return (
