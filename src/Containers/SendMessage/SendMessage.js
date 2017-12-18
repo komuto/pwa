@@ -9,8 +9,6 @@ import MyImage from '../../Components/MyImage'
 // actions
 import * as messageAction from '../../actions/message'
 import * as transactionAction from '../../actions/transaction'
-// services
-import { validateResponse, validateResponseAlter, isFetching, isFound, isError } from '../../Services/Status'
 
 class SendMessage extends React.Component {
   constructor (props) {
@@ -48,6 +46,14 @@ class SendMessage extends React.Component {
     if (id) {
       NProgress.start()
       this.props.getNewOrderDetail({ id })
+      // if (type === 'buyer') {
+      // }
+      // if (type === 'seller') {
+      //   this.props.getProcessingOrderDetail({ id })
+      // }
+      // if (type === 'reseller') {
+      //   this.props.getSaleDetail({ id })
+      // }
     }
   }
 
@@ -128,14 +134,20 @@ class SendMessage extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { newOrderDetail, transactionMessage } = nextProps
+    const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
     if (!isFetching(newOrderDetail)) {
       NProgress.done()
-      this.setState({ newOrderDetail, notification: validateResponse(newOrderDetail, 'Data order tidak ditemukan!') })
+      if (isFound(newOrderDetail)) {
+        this.setState({ newOrderDetail })
+      }
+      if (isError(newOrderDetail)) {
+        this.setState({ notification: notifError(newOrderDetail.message) })
+      }
     }
     if (!isFetching(transactionMessage) && this.submitting) {
+      this.submitting = false
       if (isFound(transactionMessage)) {
-        this.submitting = false
-        this.setState({ notification: validateResponseAlter(transactionMessage, 'Berhasil mengirim Pesan', 'Gagal mengirim Pesan') })
+        this.setState({ notification: notifSuccess(transactionMessage.message) })
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           Router.back()
@@ -143,14 +155,13 @@ class SendMessage extends React.Component {
       }
       if (isError(transactionMessage)) {
         this.submitting = false
-        this.setState({ notification: validateResponse(transactionMessage, 'Gagal mengirim Pesan') })
+        this.setState({ notification: notifError(transactionMessage.message) })
       }
     }
   }
 
   render () {
     const { newOrderDetail, type, form, validation, notification } = this.state
-    if (!newOrderDetail.isFound) return null
     return (
       <section className='section is-paddingless bg-white'>
         <Notification
@@ -159,49 +170,53 @@ class SendMessage extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <div className='profile-wrapp border-bottom'>
-          <ul>
-            <li>
-              <div className='box is-paddingless'>
-                <article className='media'>
-                  <div className='media-left'>
-                    <figure className='image user-pict'>
-                      <MyImage src={this.photoType(type, newOrderDetail)} alt='pict' />
-                    </figure>
+        {
+          this.props.isFound(newOrderDetail) && <div>
+            <div className='profile-wrapp border-bottom'>
+              <ul>
+                <li>
+                  <div className='box is-paddingless'>
+                    <article className='media'>
+                      <div className='media-left'>
+                        <figure className='image user-pict'>
+                          <MyImage src={this.photoType(type, newOrderDetail)} alt='pict' />
+                        </figure>
+                      </div>
+                      <div className='media-content'>
+                        <div className='content reseller'>
+                          <p className='products-name'>
+                            <strong>{this.nameType(type, newOrderDetail)}</strong>
+                            <br />
+                            <span>{this.typeInvoice(type)}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </article>
                   </div>
-                  <div className='media-content'>
-                    <div className='content reseller'>
-                      <p className='products-name'>
-                        <strong>{this.nameType(type, newOrderDetail)}</strong>
-                        <br />
-                        <span>{this.typeInvoice(type)}</span>
-                      </p>
-                    </div>
-                  </div>
-                </article>
+                </li>
+              </ul>
+            </div>
+            <div className='add-discussion'>
+              <div className='field'>
+                <label>Judul Pesan</label>
+                <p className={`control ${validation && 'is-error'}`}>
+                  <input type='text' className='input' name='subject' value={form.subject} onChange={(e) => this.handleInput(e)} />
+                  {validation && this.renderValidation('subject', 'Mohon isi judul')}
+                </p>
               </div>
-            </li>
-          </ul>
-        </div>
-        <div className='add-discussion'>
-          <div className='field'>
-            <label>Judul Pesan</label>
-            <p className={`control ${validation && 'is-error'}`}>
-              <input type='text' className='input' name='subject' value={form.subject} onChange={(e) => this.handleInput(e)} />
-              {validation && this.renderValidation('subject', 'Mohon isi judul')}
-            </p>
+              <div className='field'>
+                <label>Pesan Anda</label>
+                <p className={`control ${validation && 'is-error'}`}>
+                  <textarea className='textarea text-discus' rows='3' name='content' value={form.content} onChange={(e) => this.handleInput(e)} />
+                  {validation && this.renderValidation('content', 'Mohon isi pesan')}
+                </p>
+                <p className='control'>
+                  <button className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
+                </p>
+              </div>
+            </div>
           </div>
-          <div className='field'>
-            <label>Pesan Anda</label>
-            <p className={`control ${validation && 'is-error'}`}>
-              <textarea className='textarea text-discus' rows='3' name='content' value={form.content} onChange={(e) => this.handleInput(e)} />
-              {validation && this.renderValidation('content', 'Mohon isi pesan')}
-            </p>
-            <p className='control'>
-              <button className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
-            </p>
-          </div>
-        </div>
+        }
       </section>
     )
   }
@@ -209,13 +224,17 @@ class SendMessage extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    transactionMessage: state.transactionMessage,
-    newOrderDetail: state.newOrderDetail
+    newOrderDetail: state.newOrderDetail,
+    processingOrderDetail: state.processingOrderDetail,
+    saleDetail: state.saleDetail,
+    transactionMessage: state.transactionMessage
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params)),
+  getProcessingOrderDetail: (params) => dispatch(transactionAction.getProcessingOrderDetail(params)),
+  getSaleDetail: (params) => dispatch(transactionAction.getSaleDetail(params)),
   messageBuyer: (params) => dispatch(messageAction.messageBuyer(params)),
   messageSeller: (params) => dispatch(messageAction.messageSeller(params)),
   messageReseller: (params) => dispatch(messageAction.messageReseller(params))

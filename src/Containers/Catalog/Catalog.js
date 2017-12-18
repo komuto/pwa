@@ -63,7 +63,11 @@ class Catalog extends Component {
       if (searchValue) {
         this.fetching = { ...this.fetching, searchItem: true }
         NProgress.start()
-        this.props.getStoreProductsByCatalogSearch({ catalog_id: this.state.id, q: searchValue })
+        if (Number(this.state.id) !== 0) {
+          this.props.getStoreProductsByCatalogSearch({ catalog_id: this.state.id, q: searchValue })
+        } else {
+          this.props.getStoreProductsByCatalogSearch({ q: searchValue })
+        }
       } else {
         this.setState({ isEmpty: false })
       }
@@ -85,7 +89,12 @@ class Catalog extends Component {
     const { id } = this.state
     NProgress.start()
     this.fetching = { ...this.fetching, fetchingFirst: true }
-    this.props.getStoreCatalogProducts({ id, page: 1, hidden: false })
+
+    if (Number(id) !== 0) {
+      this.props.getStoreCatalogProducts({ id, page: 1, hidden: false })
+    } else {
+      this.props.getStoreCatalogProducts({ page: 1, hidden: false })
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -165,14 +174,17 @@ class Catalog extends Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         <section className='section is-paddingless'>
-          <div className='field search-form paddingless'>
-            <p className='control has-icons-left'>
-              <input className='input is-medium' type='text' value={searchText} placeholder='Cari barang ' onChange={(e) => this.doSearch(e)} />
-              <span className='icon is-left'>
-                <span className='icon-search' />
-              </span>
-            </p>
-          </div>
+          {
+            storeCatalogProducts.isFound &&
+            <div className='field search-form paddingless'>
+              <p className='control has-icons-left'>
+                <input className='input is-medium' type='text' value={searchText} placeholder='Cari barang ' onChange={(e) => this.doSearch(e)} />
+                <span className='icon is-left'>
+                  <span className='icon-search' />
+                </span>
+              </p>
+            </div>
+          }
         </section>
         <section className='section is-paddingless detail'>
           {
