@@ -115,7 +115,7 @@ class OrderDetail extends React.Component {
         { (newOrderDetail.isFound) && <div>
           <SaleDetail newOrderDetail={newOrderDetail} />
           {
-            newOrderDetail.orderDetail.invoice.type === 'seller' && <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
+            (newOrderDetail.orderDetail.invoice.type === 'seller' || newOrderDetail.orderDetail.invoice.type === 'buyer') && <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
               <div className='columns is-mobile'>
                 <div className='column is-half'>
                   <a className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.modalReject()}>Tolak</a>
