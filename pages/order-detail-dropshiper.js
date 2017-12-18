@@ -10,12 +10,12 @@ const Index = (props) => {
   const params = {
     style: 'main detail bg-grey lg',
     header: {
-      title: 'Detail Pesanan'
+      title: 'Detail Status Pesanan'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Detail Pesanan'
+      textPath: 'Detail Status Pesanan'
     }
   }
   return (
