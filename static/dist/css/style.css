@@ -9880,8 +9880,7 @@ strong.total {
     .list-trans-product li .media .media-content strong {
       display: block; }
     .list-trans-product li .media .media-content span {
-      font-size: 12px;
-      font-style: italic; }
+      font-size: 12px; }
   .list-trans-product li:last-child {
     border-bottom: none; }
 
