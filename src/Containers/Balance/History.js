@@ -353,7 +353,8 @@ const getStartAt = (params) => { return (params.start_at) ? dateFormatID(params.
 const getEndAt = (params) => { return (params.end_at) ? dateFormatID(params.end_at) : 'Pilih Tanggal' }
 
 /** format indonesian date */
-const dateFormatID = (date) => { return moment.unix(date).format('dddd[,] Do MMMM YYYY') }
+const dateFormatID = (date) => { return moment.unix(date).format('Do MMM YYYY') }
+// const dateFormatID = (date) => { return moment.unix(date).format('dddd[,] Do MMMM YYYY') }
 
 /** is trans decreasses or incresses ?  */
 const isDecreasses = (transType) => { return transType === 'PAID' || transType === 'WTHD' }
