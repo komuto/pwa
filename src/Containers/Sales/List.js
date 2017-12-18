@@ -432,8 +432,8 @@ const OrdersEmpty = () => {
       <div className='container is-fluid'>
         <div className='desc has-text-centered'>
           <MyImage src={Images.emptySelling} alt='notFound' />
-          <p><strong>Penjualan kosong</strong></p>
-          <p>Anda belum memiliki penjualan saat ini</p>
+          <p><strong>Daftar Penjualan Anda Kosong</strong></p>
+          <p>Anda belum memiliki histori transaksi penjualan</p>
         </div>
       </div>
     </section>

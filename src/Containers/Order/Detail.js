@@ -114,16 +114,23 @@ class OrderDetail extends React.Component {
           message={notification.message} />
         { (newOrderDetail.isFound) && <div>
           <SaleDetail newOrderDetail={newOrderDetail} />
-          <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
-            <div className='columns is-mobile'>
-              <div className='column is-half'>
-                <a className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.modalReject()}>Tolak</a>
-              </div>
-              <div className='column'>
-                <a className={`button is-primary is-large is-fullwidth js-option ${this.submiting && 'is-loading'}`} onClick={() => this.acceptOrder(newOrderDetail.orderDetail.invoice.id)}>Terima</a>
+          {
+            newOrderDetail.orderDetail.invoice.type === 'seller' && <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
+              <div className='columns is-mobile'>
+                <div className='column is-half'>
+                  <a className='button is-primary is-large is-fullwidth is-outlined js-option' onClick={() => this.modalReject()}>Tolak</a>
+                </div>
+                <div className='column'>
+                  <a className={`button is-primary is-large is-fullwidth js-option ${this.submiting && 'is-loading'}`} onClick={() => this.acceptOrder(newOrderDetail.orderDetail.invoice.id)}>Terima</a>
+                </div>
               </div>
             </div>
-          </div>
+          }
+          {
+            newOrderDetail.orderDetail.invoice.type === 'reseller' && <div className='level btn-wrapp'>
+              <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=seller`)}>Kirim Pesan ke Seller</a>
+            </div>
+          }
           <div className='sort-option' style={{ display: this.state.showModalConfirm ? 'block' : 'none', zIndex: 1000 }}>
             <div className='notif-report'>
               <MyImage src={Images.transaksiDetail} alt='pict' />

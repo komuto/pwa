@@ -44,7 +44,7 @@ export default ({ newOrderDetail }) => (
       <div className='container is-fluid'>
         <div className='title'>
           <br />
-          <h3>{newOrderDetail.orderDetail.invoice.type === 'reseller' ? 'Info Reseller' : 'Info Pembeli'}</h3>
+          <h3>{newOrderDetail.orderDetail.invoice.type === 'seller' ? 'Info Reseller' : 'Info Pembeli'}</h3>
         </div>
       </div>
       <div className='payment-detail step-pay'>
@@ -56,17 +56,17 @@ export default ({ newOrderDetail }) => (
                   <div className='media'>
                     <div className='media-left is-full-bordered'>
                       <figure className='image list-transaction sm'>
-                        <a><MyImage src={newOrderDetail.orderDetail.invoice.type === 'reseller' ? newOrderDetail.orderDetail.reseller.store.logo : newOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
+                        <a><MyImage src={newOrderDetail.orderDetail.invoice.type === 'seller' ? newOrderDetail.orderDetail.reseller.store.logo : newOrderDetail.orderDetail.buyer.photo} alt='Image' /></a>
                       </figure>
                     </div>
                     <div className='media-content middle is-right-content'>
                       <div className='content'>
-                        <h4>{newOrderDetail.orderDetail.invoice.type === 'reseller' ? newOrderDetail.orderDetail.reseller.store.name : newOrderDetail.orderDetail.buyer.name}</h4>
+                        <h4>{newOrderDetail.orderDetail.invoice.type === 'seller' ? newOrderDetail.orderDetail.reseller.store.name : newOrderDetail.orderDetail.buyer.name}</h4>
                       </div>
                     </div>
                     <div className='right-top'>
                       {
-                        newOrderDetail.orderDetail.invoice.type === 'reseller'
+                        newOrderDetail.orderDetail.invoice.type === 'seller'
                         ? <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=reseller`)}>Kirim Pesan</a>
                         : <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=buyer`)}>Kirim Pesan</a>
                       }
@@ -136,7 +136,7 @@ export default ({ newOrderDetail }) => (
                     Telp: {newOrderDetail.orderDetail.buyer.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
                   </span>
                   <div className='right-top topR'>
-                    <a className='button is-primary is-outlined'>Cetak Alamat</a>
+                    { newOrderDetail.orderDetail.invoice.type !== 'reseller' && <a className='button is-primary is-outlined'>Cetak Alamat</a> }
                   </div>
                 </div>
               </div>
@@ -145,13 +145,13 @@ export default ({ newOrderDetail }) => (
         </div>
       </div>
       {
-        newOrderDetail.orderDetail.invoice.type === 'reseller' && <div className='notif-inside'>
+        newOrderDetail.orderDetail.invoice.type === 'seller' && <div className='notif-inside'>
           <div className='notif-info'>
             <span>Barang ini terjual dari reseller. Sehingga nama toko reseller disertakan.</span>
           </div>
         </div>
       }
-      { newOrderDetail.orderDetail.invoice.type === 'reseller'
+      { newOrderDetail.orderDetail.invoice.type === 'seller' || newOrderDetail.orderDetail.invoice.type === 'reseller'
         ? <ul className='list-trans-product'>
           <li>
             <div className='columns custom is-mobile'>
@@ -162,10 +162,9 @@ export default ({ newOrderDetail }) => (
                   {newOrderDetail.orderDetail.seller.address.address}<br />
                   {newOrderDetail.orderDetail.seller.address.village.name}, {newOrderDetail.orderDetail.seller.address.subdistrict.name}, {newOrderDetail.orderDetail.seller.address.district.name}<br />
                   {newOrderDetail.orderDetail.seller.address.province.name}, {newOrderDetail.orderDetail.seller.address.postal_code}<br />
-                  Telp: {newOrderDetail.orderDetail.seller.phone_number.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')}
                 </span>
                 <div className='right-top topR'>
-                  <a className='button is-primary is-outlined'>Cetak Alamat</a>
+                  { newOrderDetail.orderDetail.invoice.type !== 'reseller' && <a className='button is-primary is-outlined'>Cetak Alamat</a> }
                 </div>
               </div>
             </div>
@@ -183,7 +182,7 @@ export default ({ newOrderDetail }) => (
                   {newOrderDetail.orderDetail.seller.address.province.name}, {newOrderDetail.orderDetail.seller.address.postal_code}<br />
                 </span>
                 <div className='right-top topR'>
-                  <a className='button is-primary is-outlined'>Cetak Alamat</a>
+                  { newOrderDetail.orderDetail.invoice.type !== 'reseller' && <a className='button is-primary is-outlined'>Cetak Alamat</a> }
                 </div>
               </div>
             </div>
