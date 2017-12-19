@@ -6,7 +6,7 @@ import NProgress from 'nprogress'
 // components
 import Content from '../../Components/Content'
 import { Input } from '../../Components/Input'
-import { ButtonFullWidth } from '../../Components/Button'
+import { ButtonFullSubmit } from '../../Components/Button'
 import Containers from '../../Components/Containers'
 import Notification from '../../Components/Notification'
 // validations
@@ -114,24 +114,20 @@ class PasswordNew extends Component {
     this.props.validateToken({ token })
   }
 
-  handleNewPasswordClick () {
+  handleNewPasswordClick (e) {
+    e.preventDefault()
     const { token, input } = this.state
     const { password, passwordRetype } = input
     /** validate password */
-    if (this.validatePassword({...password})) {
-      return
+    if (!this.validatePassword({...password}) && !this.validatePasswordRetype({...passwordRetype})) {
+      /** update new password */
+      NProgress.start()
+      this.submitting = { ...this.submitting, newPassword: true }
+      this.props.setNewPassword({
+        password: password.value,
+        token
+      })
     }
-    /** validate retype password */
-    if (this.validatePasswordRetype({...passwordRetype})) {
-      return
-    }
-    /** update new password */
-    NProgress.start()
-    this.submitting = { ...this.submitting, newPassword: true }
-    this.props.setNewPassword({
-      password: password.value,
-      token
-    })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -177,7 +173,7 @@ class PasswordNew extends Component {
           message={notification.message} />
         <section className='content'>
           <Containers>
-            <form action='#' className='form'>
+            <form onSubmit={(e) => this.handleNewPasswordClick(e)} className='form'>
               {
                 (isFound(validToken)) &&
                 <Content>
@@ -187,10 +183,9 @@ class PasswordNew extends Component {
                   <Input
                     {...input.passwordRetype}
                     hasIconsRight />
-                  <ButtonFullWidth
+                  <ButtonFullSubmit
                     isLoading={this.submitting.newPassword}
-                    text='Buat Password Baru'
-                    onClick={() => this.handleNewPasswordClick()} />
+                    text='Buat Password Baru' />
                 </Content>
               }
             </form>

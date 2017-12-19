@@ -12,9 +12,9 @@ import Section from '../../Components/Section'
 import Containers from '../../Components/Containers'
 import { LoginFacebook } from '../../Components/Facebook'
 import { Input, InputRadio } from '../../Components/Input'
-import { ButtonFullWidth } from '../../Components/Button'
+import { ButtonFullSubmit } from '../../Components/Button'
 import { HrText } from '../../Components/Hr'
-import TermConditions from '../../Components/TermConditions'
+// import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
 // validations
 import * as constraints from '../../Validations/Auth'
@@ -274,7 +274,8 @@ class SignUp extends Component {
     }
   }
 
-  handleRegisterClick () {
+  handleRegisterClick (e) {
+    e.preventDefault()
     let { nama, handphone, email, password, passwordRetype, genderGroup } = this.state.input
     if (this.validation(nama.name, nama.value) &&
         this.validation(email.name, email.value) &&
@@ -366,57 +367,58 @@ class SignUp extends Component {
           message={notification.message} />
         <Section className='content'>
           <Containers>
-            <div className='form'>
-              <Input
-                {...input.nama}
-                onChange={this.onChange}
-                hasIconsRight />
-              <Input
-                {...input.handphone}
-                onChange={this.onChange}
-                hasIconsRight />
-              <Input
-                {...input.email}
-                onChange={this.onChange}
-                hasIconsRight />
-              <Input
-                {...input.password}
-                onChange={this.onChange}
-                hasIconsRight />
-              <Input
-                {...input.passwordRetype}
-                onChange={this.onChange}
-                hasIconsRight />
+            <form onSubmit={(e) => !this.submitting.register && this.handleRegisterClick(e)}>
+              <div className='form'>
+                <Input
+                  {...input.nama}
+                  onChange={this.onChange}
+                  hasIconsRight />
+                <Input
+                  {...input.handphone}
+                  onChange={this.onChange}
+                  hasIconsRight />
+                <Input
+                  {...input.email}
+                  onChange={this.onChange}
+                  hasIconsRight />
+                <Input
+                  {...input.password}
+                  onChange={this.onChange}
+                  hasIconsRight />
+                <Input
+                  {...input.passwordRetype}
+                  onChange={this.onChange}
+                  hasIconsRight />
 
-              <div className='field'>
-                <label className='label'>Gender</label>
-                <p className='control'>
-                  <InputRadio
-                    text='Pria'
-                    value='male'
-                    {...input.genderGroup}
-                    onChange={this.handleGenderChange} />
+                <div className='field'>
+                  <label className='label'>Gender</label>
+                  <p className='control'>
+                    <InputRadio
+                      text='Pria'
+                      value='male'
+                      {...input.genderGroup}
+                      onChange={this.handleGenderChange} />
 
-                  <InputRadio
-                    text='Wanita'
-                    value='female'
-                    {...input.genderGroup}
-                    onChange={this.handleGenderChange} />
-                  <span className={`help ${input.genderGroup.classInfo}`}>{input.genderGroup.textHelp}</span>
-                </p>
+                    <InputRadio
+                      text='Wanita'
+                      value='female'
+                      {...input.genderGroup}
+                      onChange={this.handleGenderChange} />
+                    <span className={`help ${input.genderGroup.classInfo}`}>{input.genderGroup.textHelp}</span>
+                  </p>
+                </div>
+                {/* <TermConditions
+                  name={this.props.marketplace.data.name} /> */}
+                <ButtonFullSubmit
+                  isLoading={this.submitting.register}
+                  text='Register' />
+                <HrText
+                  text='atau' />
+                <LoginFacebook
+                  appId={this.props.marketplace.data.fb_app_id}
+                  responseFacebook={(response) => this.responseFacebook(response)} />
               </div>
-              <TermConditions
-                name={this.props.marketplace.data.name} />
-              <ButtonFullWidth
-                isLoading={this.submitting.register}
-                text='Register'
-                onClick={() => !this.submitting.register && this.handleRegisterClick()} />
-              <HrText
-                text='atau' />
-              <LoginFacebook
-                appId={this.props.marketplace.data.fb_app_id}
-                responseFacebook={(response) => this.responseFacebook(response)} />
-            </div>
+            </form>
           </Containers>
         </Section>
       </Content>
