@@ -241,7 +241,7 @@ const ListUnresolvedResolution = (props) => {
                                 </p>
                               </div>
                               <label className='transaction'>{props.topicType(resolution.topic)}</label>
-                              <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMMM YYYY')}</span>
+                              <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMM YYYY')}</span>
                             </div>
                           </article>
                         </div>
@@ -288,7 +288,7 @@ const ListResolvedResolution = (props) => {
                                 </p>
                               </div>
                               <label className='transaction'>{props.topicType(resolution.topic)}</label>
-                              <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMMM YYYY')}</span>
+                              <span className='date-trans'>{moment.unix(resolution.created_at).format('DD MMM YYYY')}</span>
                             </div>
                           </article>
                         </div>

@@ -88,7 +88,7 @@ class OrderDetailDropshiper extends React.Component {
                   </div>
                   <div className='column'>
                     <div className='rating-content item-qty has-text-right'>
-                      <span className='has-text-left'>{moment.unix(newOrderDetail.orderDetail.invoice.created_at).format('ddd, DD MMMM YYYY')}</span>
+                      <span className='has-text-left'>{moment.unix(newOrderDetail.orderDetail.invoice.created_at).format('ddd, DD MMM YYYY')}</span>
                     </div>
                   </div>
                 </div>

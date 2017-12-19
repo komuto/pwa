@@ -50,7 +50,7 @@ export const Item = ({ data }) => (
               { data.content }
             </p>
           </div>
-          <span className='time-discuss'>{moment.unix(data.created_at).format('DD MMMM YYYY')}</span>
+          <span className='time-discuss'>{moment.unix(data.created_at).format('DD MMMM YYYY - hh:mm')}</span>
         </div>
       </article>
     </div>

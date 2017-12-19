@@ -424,7 +424,7 @@ const ListComplainOrderDetail = (props) => {
               </div>
               <div className='column'>
                 <div className='rating-content item-qty has-text-right'>
-                  <span className='has-text-left'>{moment.unix(sellerComplainedOrderDetail.orderDetail.invoice.created_at).format('DD MMMM YYYY')}</span>
+                  <span className='has-text-left'>{moment.unix(sellerComplainedOrderDetail.orderDetail.invoice.created_at).format('DD MMM YYYY')}</span>
                 </div>
               </div>
             </div>

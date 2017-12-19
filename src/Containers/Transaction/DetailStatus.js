@@ -117,7 +117,7 @@ class TransactionDetailStatus extends Component {
       <Content>
         <div className='nav-tabs'>
           <a className={tab === TABS[0] ? 'active' : ''} onClick={() => this.onChangeTab(TABS[0])}><span className='text'>Status</span></a>
-          <a className={tab === TABS[1] ? 'active' : ''} onClick={() => this.onChangeTab(TABS[1])}><span className='text'>Data Pembelian</span></a>
+          <a className={tab === TABS[1] ? 'active' : ''} onClick={() => this.onChangeTab(TABS[1])}><span className='text'>Detail Pembelian</span></a>
         </div>
         <Notification
           type={notification.type}
@@ -455,7 +455,7 @@ const TabsStatusContent = (props) => {
             <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
               <div className='column is-half'>
                 <div className='rating-content is-left'>
-                  <strong>Status Barang</strong>
+                  <strong>Status</strong>
                 </div>
               </div>
               <div className='column is-half'>

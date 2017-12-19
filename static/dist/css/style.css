@@ -5964,6 +5964,8 @@ strong {
           .box .media .media-content .content h4 p a {
             display: block;
             color: #404852; }
+      .box .media .media-content .content.no-margin {
+        margin: 0; }
       .box .media .media-content .content.min-height h4 {
         min-height: 34px; }
       .box .media .media-content .content.reseller .products-name span {
@@ -7466,7 +7468,11 @@ strong.total {
         letter-spacing: 0.2px;
         margin-bottom: 10px; }
   .discuss .product-discuss .box .media .media-left .image {
-    border-radius: 0; }
+    border-radius: 0;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    overflow: hidden; }
     .discuss .product-discuss .box .media .media-left .image img {
       border-radius: 0; }
   .discuss .product-discuss .box .media .media-content .content .products-name {
@@ -8833,6 +8839,8 @@ strong.total {
       color: #ea8c2f;
       font-size: 13px;
       opacity: 1; }
+    .box.notif-payment .media .media-content p.m-top {
+      margin-top: 6px; }
 
 .box.notif-payment-expiry {
   padding: 15px;
@@ -8840,8 +8848,7 @@ strong.total {
   margin-bottom: 0; }
   .box.notif-payment-expiry .media .media-content p {
     color: #ef5656;
-    letter-spacing: 0.2px;
-    margin-top: 6px; }
+    letter-spacing: 0.2px; }
     .box.notif-payment-expiry .media .media-content p strong {
       color: #ef5656;
       font-size: 13px;
@@ -8853,8 +8860,7 @@ strong.total {
   margin-bottom: 0; }
   .box.notif-payment-waiting .media .media-content p {
     color: #6ca2e8;
-    letter-spacing: 0.2px;
-    margin-top: 6px; }
+    letter-spacing: 0.2px; }
     .box.notif-payment-waiting .media .media-content p strong {
       color: #6ca2e8;
       font-size: 13px;
@@ -8866,8 +8872,7 @@ strong.total {
   margin-bottom: 0; }
   .box.notif-payment-success .media .media-content p {
     color: #45a35f;
-    letter-spacing: 0.2px;
-    margin-top: 6px; }
+    letter-spacing: 0.2px; }
     .box.notif-payment-success .media .media-content p strong {
       color: #45a35f;
       font-size: 13px;
@@ -9880,8 +9885,7 @@ strong.total {
     .list-trans-product li .media .media-content strong {
       display: block; }
     .list-trans-product li .media .media-content span {
-      font-size: 12px;
-      font-style: italic; }
+      font-size: 12px; }
   .list-trans-product li:last-child {
     border-bottom: none; }
 

@@ -63,9 +63,10 @@ class History extends Component {
         searchBoox: false,
         path: '/',
         callBack: () => Router.push('/balance'),
-        textPath: 'History Saldo',
+        textPath: 'Riwayat Saldo',
         filterBalance: {
           show: true,
+          value: this.state.params.filter.length,
           press: () => this.filterPress()
         }
       }
@@ -299,7 +300,7 @@ const FilterContent = ({ params, filter, submitting, summTransSelected, datePick
 const List = ({id, amount, last_saldo, date, transType}) => {
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
-  let TransDate = moment.unix(date).format('Do MMMM YY')
+  let TransDate = moment.unix(date).format('Do MMM YY')
   let Amount = isDecreasses(transType) ? <BalanceDecreases amount={amount} /> : <BalanceIncreases amount={amount} />
   return (
     <section onClick={() =>
@@ -353,7 +354,8 @@ const getStartAt = (params) => { return (params.start_at) ? dateFormatID(params.
 const getEndAt = (params) => { return (params.end_at) ? dateFormatID(params.end_at) : 'Pilih Tanggal' }
 
 /** format indonesian date */
-const dateFormatID = (date) => { return moment.unix(date).format('dddd[,] Do MMMM YYYY') }
+const dateFormatID = (date) => { return moment.unix(date).format('Do MMM YYYY') }
+// const dateFormatID = (date) => { return moment.unix(date).format('dddd[,] Do MMMM YYYY') }
 
 /** is trans decreasses or incresses ?  */
 const isDecreasses = (transType) => { return transType === 'PAID' || transType === 'WTHD' }
@@ -372,14 +374,11 @@ export const BalanceIncreases = ({amount}) => <strong className='text-green'>+Rp
  * TOPUP: 'TPUP',
  * WITHDRAW: 'WTHD',
  */
-export const SummTransType = ['PAID', 'RFND', 'SELL', 'SFEE', 'TPUP', 'WTHD']
-
+export const SummTransType = ['SFEE', 'SELL', 'RFND', 'TPUP', 'PAID', 'WTHD']
 /** summary transaction type for end point format */
-export const SummTransTypeEndPointFormat = ['buy', 'refund', 'sale', 'commission', 'topup', 'withdraw']
-
+export const SummTransTypeEndPointFormat = ['commission', 'sale', 'refund', 'topup', 'buy', 'withdraw']
 /** summary transaction type message */
-export const SummTransTypeMessage = ['Pembelian Barang', 'Dana Refund Barang', 'Dana Penjualan Barang', 'Komisi Reseller', 'Top Up Saldo', 'Penarikan Saldo']
-
+export const SummTransTypeMessage = ['Komisi Reseller', 'Dana Penjualan Barang', 'Dana Refund Barang', 'Top Up Saldo', 'Pembelian Barang', 'Penarikan Saldo']
 /** function get state from redux */
 const mapStateToProps = (state) => ({
   saldoHistory: state.saldoHistory

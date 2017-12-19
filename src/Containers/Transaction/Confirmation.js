@@ -490,7 +490,7 @@ class TransactionConfirmation extends Component {
               <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
                 <div className='column is-half'>
                   <div className='rating-content is-left'>
-                    <strong>Status Barang</strong>
+                    <strong>Status</strong>
                   </div>
                 </div>
                 <div className='column is-half'>

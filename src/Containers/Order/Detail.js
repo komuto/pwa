@@ -11,7 +11,6 @@ import SaleDetail from '../../Components/SaleDetail'
 import Images from '../../Themes/Images'
 // actions
 import * as transactionAction from '../../actions/transaction'
-
 class OrderDetail extends React.Component {
   constructor (props) {
     super(props)
@@ -30,19 +29,15 @@ class OrderDetail extends React.Component {
     }
     this.submiting = false
   }
-
   modalConfirm () {
     this.setState({ showModalConfirm: !this.state.showModalConfirm })
   }
-
   modalReject () {
     this.setState({ showModalReject: !this.state.showModalReject })
   }
-
   showModalConfirmReject () {
     this.setState({ showModalReject: false, showModalConfirmReject: !this.state.showModalConfirmReject })
   }
-
   componentDidMount () {
     const { id } = this.state
     if (id) {
@@ -51,7 +46,6 @@ class OrderDetail extends React.Component {
       this.props.getNewOrderDetail({ id })
     }
   }
-
   acceptOrder (id) {
     this.submiting = true
     this.setState({ submitType: 'acceptOrder' }, () => {
@@ -60,7 +54,6 @@ class OrderDetail extends React.Component {
       }
     })
   }
-
   rejectOrder (id) {
     this.submiting = true
     this.setState({ submitType: 'rejectOrder' }, () => {
@@ -69,11 +62,9 @@ class OrderDetail extends React.Component {
       }
     })
   }
-
   componentWillReceiveProps (nextProps) {
     const { newOrderDetail, updateStatus } = nextProps
     const { isFetching, isFound, isError, notifError } = this.props
-
     if (!isFetching(newOrderDetail) && this.fetching) {
       this.fetching = false
       NProgress.done()
@@ -100,7 +91,6 @@ class OrderDetail extends React.Component {
       }
     }
   }
-
   render () {
     const { newOrderDetail, notification } = this.state
     console.log('newOrder', newOrderDetail)
@@ -140,7 +130,6 @@ class OrderDetail extends React.Component {
               <a className='cancel' onClick={() => Router.push('/order-new')}>Kembali ke Daftar Pesanan</a>
             </div>
           </div>
-
           <div className='sort-option' style={{ display: this.state.showModalConfirmReject ? 'block' : 'none', zIndex: 1000 }}>
             <div className='notif-report'>
               <h3>Order telah ditolak</h3>
@@ -148,7 +137,6 @@ class OrderDetail extends React.Component {
               <button className='button is-primary is-large is-fullwidth' onClick={() => Router.push('/delivery-confirmation')}>Kembali ke Daftar Pengiriman</button>
             </div>
           </div>
-
           <div className='sort-option' style={{ display: this.state.showModalReject ? 'block' : 'none', zIndex: 1000 }}>
             <div className='notif-report'>
               <MyImage src={Images.transaksiDetail} alt='pict' />
@@ -170,18 +158,15 @@ class OrderDetail extends React.Component {
     )
   }
 }
-
 const mapStateToProps = (state) => {
   return {
     newOrderDetail: state.newOrderDetail,
     updateStatus: state.updateStatus
   }
 }
-
 const mapDispatchToProps = dispatch => ({
   getNewOrderDetail: (params) => dispatch(transactionAction.getNewOrderDetail(params)),
   acceptOrder: (params) => dispatch(transactionAction.acceptOrder(params)),
   rejectOrder: (params) => dispatch(transactionAction.rejectOrder(params))
 })
-
 export default connect(mapStateToProps, mapDispatchToProps)(OrderDetail)
