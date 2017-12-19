@@ -98,7 +98,7 @@ class SalesDetail extends React.Component {
         break
       case 3:
         className = 'item-status md right delivered'
-        status = 'Barang sudah dikirim '
+        status = 'Menunggu Konfirmasi Pembeli'
         break
       case 4:
         className = 'item-status md right accepted'
