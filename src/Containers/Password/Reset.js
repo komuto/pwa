@@ -6,7 +6,7 @@ import NProgress from 'nprogress'
 import Router from 'next/router'
 // components
 import { Input } from '../../Components/Input'
-import { ButtonFullWidth } from '../../Components/Button'
+import { ButtonFullSubmit } from '../../Components/Button'
 import Notification from '../../Components/Notification'
 // validations
 import * as constraints from '../../Validations/Auth'
@@ -74,16 +74,16 @@ class PasswordReset extends Component {
     this.setState({ input })
   }
 
-  handleResetPasswordClick () {
+  handleResetPasswordClick (e) {
+    e.preventDefault()
     let { email } = this.state.input
     /** validate email */
-    if (this.validateEmail({...email})) {
-      return
+    if (!this.validateEmail({...email})) {
+      /** request reset password  */
+      NProgress.start()
+      this.submitting = { ...this.submitting, forgetPassword: true }
+      this.props.setForgetPassword({ email: email.value })
     }
-    /** request reset password  */
-    NProgress.start()
-    this.submitting = { ...this.submitting, forgetPassword: true }
-    this.props.setForgetPassword({ email: email.value })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -120,14 +120,13 @@ class PasswordReset extends Component {
             activeClose
             onClose={() => this.setState({notification: false})}
             message={notification.message} />
-          <form action='#' className='form'>
+          <form onSubmit={(e) => this.handleResetPasswordClick(e)} className='form'>
             <Input
               {...input.email}
               hasIconsRight />
-            <ButtonFullWidth
+            <ButtonFullSubmit
               isLoading={this.submitting.forgetPassword}
-              text='Reset Password'
-              onClick={() => this.handleResetPasswordClick()} />
+              text='Reset Password' />
           </form>
         </div>
       </section>
