@@ -196,7 +196,7 @@ class ProductDetail extends Component {
         searchBoox: false,
         path: '/',
         callBack: () => Router.back(),
-        textPath: 'Produk Detail'
+        textPath: 'Detail'
       },
       moreButton: true,
       productId: productId,

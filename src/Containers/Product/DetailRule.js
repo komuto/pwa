@@ -25,6 +25,11 @@ class ProductDetailRule extends Component {
     return (
       <Section className='section is-paddingless has-shadow'>
         <div className='info-product'>
+          <div className='container is-fluid'>
+            <div className='title'>
+              <h3>Info Penjual</h3>
+            </div>
+          </div>
           <div className='detail-rate'>
             <div className='columns detail-rating is-mobile is-multiline no-margin-bottom'>
               <div className='column is-half'>

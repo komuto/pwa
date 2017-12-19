@@ -160,33 +160,34 @@ class Detail extends Component {
 const DiscussionDetailContent = ({ comments, comment, submitting, messagesEnd }) => {
   let { product } = comments.comments
   return (
-    <Section>
-      <div className='discuss gap'>
-        <ul className='product-discuss is-fixed' style={{ zIndex: 2, marginBottom: '15px' }}>
-          <li>
-            <div className='box is-paddingless'>
-              <article className='media'>
-                <div className='media-left top'>
-                  {/* <figure className='image product-pict' style={{ width: 40 }}> */}
-                  <figure className='image product-pict'>
-                    <MyImage src={product.image} alt={product.name} />
-                  </figure>
-                </div>
-                <div className='media-content'>
-                  <div className='content'>
-                    <p className='products-name'>
-                      <strong>{ product.name }</strong>
-                      Rp { RupiahFormat(product.price) }
-                    </p>
+    <div>
+      <Section>
+        <div className='discuss'>
+          <ul className='product-discuss is-fixed' style={{ zIndex: 2, marginBottom: '15px' }}>
+            <li>
+              <div className='box is-paddingless'>
+                <article className='media'>
+                  <div className='media-left top'>
+                    <figure className='image product-pict'>
+                      <MyImage src={product.image} alt={product.name} />
+                    </figure>
                   </div>
-                </div>
-              </article>
-            </div>
-          </li>
-        </ul>
-        <Comment {...comment} />
-      </div>
-    </Section>
+                  <div className='media-content'>
+                    <div className='content'>
+                      <p className='products-name'>
+                        <strong>{ product.name }</strong>
+                        Rp { RupiahFormat(product.price) }
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </li>
+          </ul>
+          <Comment {...comment} />
+        </div>
+      </Section>
+    </div>
   )
 }
 

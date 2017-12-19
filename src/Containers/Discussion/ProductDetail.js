@@ -166,8 +166,7 @@ class DiscussionProductDetail extends React.Component {
                       comments.comments.comments.map((comment, index) => {
                         let createDate = moment.unix(comment.created_at).format('h:mm')
                         return (
-                          <li
-                            key={index}>
+                          <li key={index}>
                             <div className='box is-paddingless'>
                               <article className='media'>
                                 <div className='media-left top'>

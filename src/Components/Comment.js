@@ -1,6 +1,7 @@
 import Content from './Content'
 // import Section from './Section'
 import moment from 'moment'
+// import MyImage from './MyImage'
 moment.locale('id')
 
 /** comment component */
@@ -37,8 +38,9 @@ export const Item = ({ data }) => (
     <div className='box is-paddingless'>
       <article className='media'>
         <div className='media-left top is-full-bordered'>
-          <figure className='image list-transaction xs'>
+          <figure className='image user-pict'>
             <div style={{ width: '100%', height: '100%', borderRadius: 20, backgroundImage: `url(${data.user.photo})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+            {/* <MyImage src={data.user.photo} alt='pict' /> */}
           </figure>
         </div>
         <div className='media-content'>
@@ -48,7 +50,7 @@ export const Item = ({ data }) => (
               { data.content }
             </p>
           </div>
-          <span className='time-discuss'>{moment.unix(data.created_at).format('Do MMMM YYYY')}</span>
+          <span className='time-discuss'>{moment.unix(data.created_at).format('DD MMMM YYYY')}</span>
         </div>
       </article>
     </div>
@@ -68,7 +70,7 @@ export const New = ({ onSubmit, onChange, value, submitting }) => {
     <div className='add-comment'>
       <div className='field'>
         <p className='control'>
-          <textarea onChange={onChange} value={submitting ? 'Loading...' : value} className='textarea' placeholder={`${'Tulis pesan Anda disini'}`} readOnly={submitting} />
+          <textarea onChange={onChange} value={submitting ? 'Loading...' : value} className='textarea' placeholder={`${'Tulis Komentar'}`} readOnly={submitting} />
           <button onClick={() => isActive && onSubmit()} className={`icon-btn-send-inactive ${(isActive) ? 'active' : ''}`} />
         </p>
       </div>

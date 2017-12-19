@@ -294,7 +294,7 @@ const DetailContent = ({ orderDetail }) => {
         <Item title='Penjual' data={<SellerInfo {...orderDetail} />} type='custom' />
         <Item title='Solusi yang diinginkan' data={SolutionType[orderDetail.solution - 1]} type='standard' />
       </Section>
-      <Card title='Barang bermasalah'>
+      <Card title='Daftar barang bermasalah'>
         {
           orderDetail.dispute_products.map((product, index) =>
             <Media key={index} product={product} />
@@ -460,7 +460,7 @@ const Info = ({ text }) => (
 const TabsName = ['Detail', 'Diskusi']
 
 /** define solution type */
-const SolutionType = ['Refund Dana', 'Tukar Barang']
+const SolutionType = ['Refund Dana', 'Tukar Baru']
 
 /** content when solution is waiting */
 export const SolutionWaiting = () => (<div className='item-status md right reject'>Menunggu Penyelesaian</div>)

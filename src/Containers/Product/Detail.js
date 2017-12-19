@@ -195,7 +195,7 @@ class ProductDetail extends Component {
         searchBoox: false,
         path: '/',
         callBack: () => query.type !== 'dropship' ? Router.push('/product', '/p') : Router.push('/dropship?sort=newest'),
-        textPath: 'Produk Detail'
+        textPath: 'Detail'
       },
       moreButton: true,
       productId: productId,

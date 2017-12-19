@@ -145,7 +145,7 @@ class New extends Component {
               <div className='field'>
                 <label style={question.error ? styleError : {}}> {question.error ? question.errorMessage : 'Pertanyaan Anda'} </label>
                 <p className='control'>
-                  <textarea style={question.error ? styleError : {}} onChange={(e) => this.questionOnChange(e)} value={question.value} className='textarea text-discus' placeholder='Tulis Pertanyaan' rows='1' />
+                  <textarea style={question.error ? styleError : {}} onChange={(e) => this.questionOnChange(e)} value={question.value} className='textarea text-discus' placeholder='Tulis Pertanyaan Anda' rows='1' />
                 </p>
                 <p className='control'>
                   <button
