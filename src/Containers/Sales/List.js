@@ -104,7 +104,7 @@ class SalesList extends React.Component {
         break
       case 3:
         className = 'item-status delivered'
-        status = 'Barang sudah dikirim'
+        status = 'Menunggu Konfirmasi Pembeli'
         break
       case 4:
         className = 'item-status accepted'
@@ -192,7 +192,6 @@ class SalesList extends React.Component {
 
   render () {
     const { notification, tabs, sales, sales2, isEmpty } = this.state
-    if (!sales.isFound) return null
     return (
       <div>
         <div className='nav-tabs'>

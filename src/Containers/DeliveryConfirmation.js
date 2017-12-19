@@ -95,6 +95,7 @@ class DeliveryConfirmation extends React.Component {
 
   render () {
     const { processingOrders, isEmpty } = this.state
+    console.log('process', processingOrders)
     moment.locale('id')
     return (
       <div>
