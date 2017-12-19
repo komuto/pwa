@@ -91,7 +91,7 @@ export default ({ newOrderDetail }) => (
         { newOrderDetail.orderDetail.items.map((item, i) => {
           subTotal += item.total_price
           return (
-            <li key={i}>
+            <li key={i} style={{ padding: '0px' }}>
               <div className='box'>
                 <div className='media'>
                   <div className='media-left is-bordered top'>

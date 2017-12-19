@@ -135,9 +135,9 @@ class DeliveryConfirmation extends React.Component {
                                         <a><MyImage src={order.products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
-                                    <div className='media-content'>
+                                    <div className='media-content middle'>
                                       <div className='content'>
-                                        <h4 className='txt-overflow'>{order.products[0].name}</h4>
+                                        <h4 className='txt-overflow no-margin'>{order.products[0].name}</h4>
                                       </div>
                                     </div>
                                     <div className='right-middle'>

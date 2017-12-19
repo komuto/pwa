@@ -15,7 +15,7 @@ const OptionsExpeditionPackages = (props) => {
               {
                 epFilterByExpeditions.map((data) => {
                   let etd = ''
-                  if (data.etd.toLowerCase().includes('hari')) {
+                  if (data.etd.toLowerCase().includes('hari') || data.etd.toLowerCase().includes('jam')) {
                     etd = data.etd
                   } else {
                     etd = `${data.etd} hari`
