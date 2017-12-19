@@ -153,7 +153,7 @@ const ShipmentReceiptNumber = (props) => {
     <div>
       <section className='section is-paddingless has-shadow'>
         <div className='box notif-payment-waiting'>
-          <article className='media'>
+          <article className='media top'>
             <div className='media-left'>
               <figure className='image user-pict'>
                 <img src={Images.IconInfoBlue} alt='icon' />
