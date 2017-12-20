@@ -204,27 +204,21 @@ class SalesList extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
-              {
-                tabs === TAB_MY_ITEM
-                ? <MyItemsSales
-                  sales={sales}
-                  hasMore={this.hasMore.sales}
-                  loadMore={() => this.loadMore()}
-                  transactionType={(type) => this.transactionType(type)}
-                  isEmpty={isEmpty.sales} />
-                : <ItemsDropshipperSales
-                  sales2={sales2}
-                  hasMore2={this.hasMore.dropshipSales}
-                  loadMoreDropshipSales={() => this.loadMoreDropshipSales()}
-                  transactionType={(type) => this.transactionType(type)}
-                  isEmpty={isEmpty.dropshipSales} />
-              }
-            </ul>
-          </div>
-        </section>
+        {
+          tabs === TAB_MY_ITEM
+          ? <MyItemsSales
+            sales={sales}
+            hasMore={this.hasMore.sales}
+            loadMore={() => this.loadMore()}
+            transactionType={(type) => this.transactionType(type)}
+            isEmpty={isEmpty.sales} />
+          : <ItemsDropshipperSales
+            sales2={sales2}
+            hasMore2={this.hasMore.dropshipSales}
+            loadMoreDropshipSales={() => this.loadMoreDropshipSales()}
+            transactionType={(type) => this.transactionType(type)}
+            isEmpty={isEmpty.dropshipSales} />
+        }
       </div>
     )
   }
@@ -342,79 +336,81 @@ const ItemsDropshipperSales = (props) => {
           {
             sales2.sales.map((sale, i) => {
               return (
-                <section className='section is-paddingless has-shadow list-order' key={i} onClick={() => Router.push(`/sales-detail?id=${sale.invoice.id}`)}>
+                <div>
                   <div className='note bg-white'>
                     <p>Menampilkan penjualan dari barang yang Anda ambil dari Seller lain</p>
                   </div>
-                  <ul className='customer-order'>
-                    <li>
-                      <div className='columns custom is-mobile'>
-                        <div className='column is-half'><strong>{sale.user.name}</strong></div>
-                        <div className='column is-half has-text-right'><span>{moment.unix(sale.invoice.created_at).format('ddd, DD MMM YYYY')}</span></div>
-                      </div>
-                    </li>
-                  </ul>
-                  <div className='payment-detail step-pay'>
-                    <ul>
+                  <section className='section is-paddingless has-shadow list-order' key={i} onClick={() => Router.push(`/sales-detail?id=${sale.invoice.id}`)}>
+                    <ul className='customer-order'>
                       <li>
-                        <div className='columns is-mobile is-multiline no-margin-bottom'>
-                          <div className='column'>
-                            <div className='box'>
-                              {
-                                sale.products.length === 1
-                                ? <div className='media is-right-content'>
-                                  <div className='media-left'>
-                                    <figure className='image list-transaction xs'>
-                                      <a><MyImage src={sale.products[0].image} alt='Pict' /></a>
-                                    </figure>
-                                  </div>
-                                  <div className='media-content'>
-                                    <div className='content'>
-                                      <h4 className='txt-overflow'>{sale.products[0].name}</h4>
-                                    </div>
-                                  </div>
-                                  <div className='right-middle' style={{paddingRight: '16px'}}>
-                                    <strong>Rp { RupiahFormat(sale.invoice.total_price) }</strong>
-                                  </div>
-                                </div>
-                                : <div className='media is-right-content'>
-                                  {
-                                    sale.products.map((p, i) => {
-                                      if (i < 3) {
-                                        return (
-                                          <div className='media-left sm-margin' key={i}>
-                                            <figure className='image list-transaction xs'>
-                                              <a><MyImage src={p.image} alt='Pict' /></a>
-                                            </figure>
-                                          </div>
-                                        )
-                                      } else {
-                                        return (
-                                          <div className='media-left sm-margin'>
-                                            <figure className='image list-transaction xs plus3'>
-                                              <span>+{i++}</span>
-                                              <a><MyImage src={p.image} alt='Pict' /></a>
-                                            </figure>
-                                          </div>
-                                        )
-                                      }
-                                    })
-                                  }
-                                  <div className='right-middle' style={{paddingRight: '16px'}}>
-                                    <strong>Rp { RupiahFormat(sale.invoice.total_price) }</strong>
-                                  </div>
-                                </div>
-                              }
-                            </div>
-                          </div>
+                        <div className='columns custom is-mobile'>
+                          <div className='column is-half'><strong>{sale.user.name}</strong></div>
+                          <div className='column is-half has-text-right'><span>{moment.unix(sale.invoice.created_at).format('ddd, DD MMM YYYY')}</span></div>
                         </div>
                       </li>
                     </ul>
-                  </div>
-                  <div className='block-status has-text-right'>
-                    { props.transactionType(sale.invoice.transaction_status) }
-                  </div>
-                </section>
+                    <div className='payment-detail step-pay'>
+                      <ul>
+                        <li>
+                          <div className='columns is-mobile is-multiline no-margin-bottom'>
+                            <div className='column'>
+                              <div className='box'>
+                                {
+                                  sale.products.length === 1
+                                  ? <div className='media is-right-content'>
+                                    <div className='media-left'>
+                                      <figure className='image list-transaction xs'>
+                                        <a><MyImage src={sale.products[0].image} alt='Pict' /></a>
+                                      </figure>
+                                    </div>
+                                    <div className='media-content'>
+                                      <div className='content'>
+                                        <h4 className='txt-overflow'>{sale.products[0].name}</h4>
+                                      </div>
+                                    </div>
+                                    <div className='right-middle' style={{paddingRight: '16px'}}>
+                                      <strong>Rp { RupiahFormat(sale.invoice.total_price) }</strong>
+                                    </div>
+                                  </div>
+                                  : <div className='media is-right-content'>
+                                    {
+                                      sale.products.map((p, i) => {
+                                        if (i < 3) {
+                                          return (
+                                            <div className='media-left sm-margin' key={i}>
+                                              <figure className='image list-transaction xs'>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
+                                              </figure>
+                                            </div>
+                                          )
+                                        } else {
+                                          return (
+                                            <div className='media-left sm-margin'>
+                                              <figure className='image list-transaction xs plus3'>
+                                                <span>+{i++}</span>
+                                                <a><MyImage src={p.image} alt='Pict' /></a>
+                                              </figure>
+                                            </div>
+                                          )
+                                        }
+                                      })
+                                    }
+                                    <div className='right-middle' style={{paddingRight: '16px'}}>
+                                      <strong>Rp { RupiahFormat(sale.invoice.total_price) }</strong>
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className='block-status has-text-right'>
+                      { props.transactionType(sale.invoice.transaction_status) }
+                    </div>
+                  </section>
+                </div>
               )
             })
           }
