@@ -112,25 +112,19 @@ class InputShipmentNumber extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
-              {
-                tabs === TAB_NO_RESI
-                ? <ShipmentReceiptNumber
-                  processingOrderDetail={processingOrderDetail}
-                  receiptNumber={receiptNumber}
-                  submiting={this.submiting}
-                  submit={() => this.submit()}
-                  validation={validation}
-                  renderValidation={(name, textFailed) => this.renderValidation(name, textFailed)}
-                  handleInput={(e) => this.handleInput(e)} />
-                : <SaleDetail
-                  newOrderDetail={newOrderDetail} />
-              }
-            </ul>
-          </div>
-        </section>
+        {
+          tabs === TAB_NO_RESI
+          ? <ShipmentReceiptNumber
+            processingOrderDetail={processingOrderDetail}
+            receiptNumber={receiptNumber}
+            submiting={this.submiting}
+            submit={() => this.submit()}
+            validation={validation}
+            renderValidation={(name, textFailed) => this.renderValidation(name, textFailed)}
+            handleInput={(e) => this.handleInput(e)} />
+          : <SaleDetail
+            newOrderDetail={newOrderDetail} />
+        }
         <div className='sort-option' style={{ display: showModal && 'block' }}>
           <div className='notif-report'>
             <MyImage src={Images.transaksiDetail} alt='pict' />
