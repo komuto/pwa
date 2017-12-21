@@ -249,7 +249,7 @@ const ListComplainOrderWaiting = (props) => {
                                       order.dispute_products.map((p, i) => {
                                         if (i < 3) {
                                           return (
-                                            <div className='media-left sm-margin' key={i}>
+                                            <div className='media-left md-margin' key={i}>
                                               <figure className='image list-transaction xs'>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
@@ -257,7 +257,7 @@ const ListComplainOrderWaiting = (props) => {
                                           )
                                         } else {
                                           return (
-                                            <div className='media-left sm-margin'>
+                                            <div className='media-left md-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>
@@ -267,6 +267,9 @@ const ListComplainOrderWaiting = (props) => {
                                         }
                                       })
                                     }
+                                    <div className='right-middle'>
+                                      <span className='icon-arrow-right' />
+                                    </div>
                                   </div>
                                 }
                               </div>
@@ -346,7 +349,7 @@ const ListComplainOrderDone = (props) => {
                                       order.dispute_products.map((p, i) => {
                                         if (i < 3) {
                                           return (
-                                            <div className='media-left sm-margin' key={i}>
+                                            <div className='media-left md-margin' key={i}>
                                               <figure className='image list-transaction xs'>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
@@ -354,7 +357,7 @@ const ListComplainOrderDone = (props) => {
                                           )
                                         } else {
                                           return (
-                                            <div className='media-left sm-margin'>
+                                            <div className='media-left md-margin'>
                                               <figure className='image list-transaction xs plus3'>
                                                 <span>+{i++}</span>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>

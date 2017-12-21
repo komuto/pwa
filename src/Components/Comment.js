@@ -15,23 +15,26 @@ export default (props) => (
 
 /** list of discussion */
 export const List = ({ data, messagesEnd }) => {
-  if (data.length > 0) return <EmptyDiscussion />
-  return (
-    <section className='section is-paddingless bg-white'>
-      <div className='discuss'>
-        <ul className='notif-detail'>
-          {
-            data.map((data, index) => (
-              <Item key={index} data={data} />
-            ))
-          }
-          <div
-            style={{ float: 'left', clear: 'both' }}
-            ref={(el) => { messagesEnd = el }} />
-        </ul>
-      </div>
-    </section>
-  )
+  if (data.length === 0) {
+    return <EmptyDiscussion />
+  } else {
+    return (
+      <section className='section is-paddingless bg-white'>
+        <div className='discuss'>
+          <ul className='notif-detail'>
+            {
+              data.map((data, index) => (
+                <Item key={index} data={data} />
+              ))
+            }
+            <div
+              style={{ float: 'left', clear: 'both' }}
+              ref={(el) => { messagesEnd = el }} />
+          </ul>
+        </div>
+      </section>
+    )
+  }
 }
 
 /** item list of discussion */
