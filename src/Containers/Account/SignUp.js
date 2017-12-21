@@ -14,7 +14,7 @@ import { LoginFacebook } from '../../Components/Facebook'
 import { Input, InputRadio } from '../../Components/Input'
 import { ButtonFullSubmit } from '../../Components/Button'
 import { HrText } from '../../Components/Hr'
-// import TermConditions from '../../Components/TermConditions'
+import TermConditions from '../../Components/TermConditions'
 import Notification from '../../Components/Notification'
 // validations
 import * as constraints from '../../Validations/Auth'
@@ -407,8 +407,8 @@ class SignUp extends Component {
                     <span className={`help ${input.genderGroup.classInfo}`}>{input.genderGroup.textHelp}</span>
                   </p>
                 </div>
-                {/* <TermConditions
-                  name={this.props.marketplace.data.name} /> */}
+                <TermConditions
+                  name={this.props.marketplace.data.name} />
                 <ButtonFullSubmit
                   isLoading={this.submitting.register}
                   text='Register' />

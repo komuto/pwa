@@ -7,6 +7,7 @@ import moment from 'moment'
 import Images from '../../Themes/Images'
 import Notification from '../../Components/Notification'
 import MyImage from '../../Components/MyImage'
+import { New } from '../../Components/Comment'
 // actions
 import * as transactionAction from '../../actions/transaction'
 // services
@@ -64,12 +65,10 @@ class ComplainItemDetail extends React.Component {
 
   async submitMessage (e) {
     const { id, message } = this.state
-    if (e.key === 'Enter') {
-      if (this.state.message !== '') {
-        this.afterSendMessage = true
-        await this.props.createComplaintDiscussionSeller({ id: id, content: message })
-        this.setState({ message: '' })
-      }
+    if (this.state.message !== '') {
+      this.afterSendMessage = true
+      await this.props.createComplaintDiscussionSeller({ id: id, content: message })
+      this.setState({ message: '' })
     }
   }
 
@@ -633,12 +632,13 @@ const ListDiscustionComplainOrders = (props) => {
       <div className='add-comment'>
         <div className='field'>
           <p className='control'>
-            <textarea
-              name='message'
-              onChange={(e) => props.handleInput(e)}
+            <span className={`${props.afterSendMessage && 'button self is-loading right'}`} />
+            <New
+              onChange={(e) => !props.afterSendMessage && props.handleInput(e)}
               value={props.message}
-              onKeyPress={(e) => props.submitMessage(e)}
-              className='textarea' placeholder='Tulis pesan Anda disini' />
+              onSubmit={(e) => !props.afterSendMessage && props.submitMessage(e)}
+              submitting={props.afterSendMessage}
+              placeHolder={'Tulis pesan Anda disini'} />
           </p>
         </div>
       </div>
