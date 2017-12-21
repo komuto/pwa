@@ -226,7 +226,6 @@ class SalesList extends React.Component {
 
 const MyItemsSales = (props) => {
   const { sales, isEmpty } = props
-  if (sales === undefined) return null
   moment.locale('id')
   return (
     <div>
@@ -323,23 +322,22 @@ const MyItemsSales = (props) => {
 
 const ItemsDropshipperSales = (props) => {
   const { sales2, isEmpty } = props
-  if (sales2 === undefined) return null
   moment.locale('id')
   return (
     <div>
       {
-        isEmpty ? <SalesDropshipEmpty /> : <InfiniteScroll
-          pageStart={0}
-          loadMore={_.debounce(props.loadMoreDropshipSales.bind(this), 500)}
-          hasMore={props.hasMore2}
-          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
-          {
-            sales2.sales.map((sale, i) => {
-              return (
-                <div>
-                  <div className='note bg-white'>
-                    <p>Menampilkan penjualan dari barang yang Anda ambil dari Seller lain</p>
-                  </div>
+        isEmpty ? <SalesDropshipEmpty /> : <div>
+          <div className='note bg-white'>
+            <p>Menampilkan penjualan dari barang yang Anda ambil dari Seller lain</p>
+          </div>
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={_.debounce(props.loadMoreDropshipSales.bind(this), 500)}
+            hasMore={props.hasMore2}
+            loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+            {
+              sales2.sales.map((sale, i) => {
+                return (
                   <section className='section is-paddingless has-shadow list-order' key={i} onClick={() => Router.push(`/sales-detail?id=${sale.invoice.id}`)}>
                     <ul className='customer-order'>
                       <li>
@@ -410,11 +408,11 @@ const ItemsDropshipperSales = (props) => {
                       { props.transactionType(sale.invoice.transaction_status) }
                     </div>
                   </section>
-                </div>
-              )
-            })
-          }
-        </InfiniteScroll>
+                )
+              })
+            }
+          </InfiniteScroll>
+        </div>
       }
     </div>
   )
