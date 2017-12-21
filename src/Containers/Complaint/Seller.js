@@ -168,23 +168,17 @@ class ComplainItems extends React.Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        <section className='section is-paddingless'>
-          <div className='discuss'>
-            <ul className='notif-detail conversation bresolutioned'>
-              {
-                tabs === TAB_WAIT
-                ? <ListComplainOrderWaiting
-                  sellerComplainedOrders={sellerComplainedOrders}
-                  hasMore={this.hasMore}
-                  loadMore={() => this.loadMore()} />
-                : <ListComplainOrderDone
-                  sellerComplainedOrders2={sellerComplainedOrders2}
-                  hasMore2={this.hasMore2}
-                  loadMore2={() => this.loadMore2()} />
-              }
-            </ul>
-          </div>
-        </section>
+        {
+          tabs === TAB_WAIT
+          ? <ListComplainOrderWaiting
+            sellerComplainedOrders={sellerComplainedOrders}
+            hasMore={this.hasMore}
+            loadMore={() => this.loadMore()} />
+          : <ListComplainOrderDone
+            sellerComplainedOrders2={sellerComplainedOrders2}
+            hasMore2={this.hasMore2}
+            loadMore2={() => this.loadMore2()} />
+        }
       </div>
     )
   }
@@ -234,17 +228,20 @@ const ListComplainOrderWaiting = (props) => {
                                   order.dispute_products.length === 1
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
-                                      <figure className='image list-transaction xs'>
+                                      <figure className='image list-transaction md'>
                                         <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
-                                    <div className='media-content'>
+                                    <div className='media-content middle'>
                                       <div className='content'>
                                         <h4 className='txt-overflow'>{order.dispute_products[0].name}</h4>
                                       </div>
                                     </div>
+                                    <div className='right-middle'>
+                                      <span className='icon-arrow-right' />
+                                    </div>
                                   </div>
-                                  : <div className='media is-right-content'>
+                                  : <div className='media list-item is-right-content middle'>
                                     {
                                       order.dispute_products.map((p, i) => {
                                         if (i < 3) {
@@ -258,7 +255,7 @@ const ListComplainOrderWaiting = (props) => {
                                         } else {
                                           return (
                                             <div className='media-left md-margin'>
-                                              <figure className='image list-transaction xs plus3'>
+                                              <figure className='image list-transaction md plus3'>
                                                 <span>+{i++}</span>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
@@ -334,17 +331,20 @@ const ListComplainOrderDone = (props) => {
                                   order.dispute_products.length === 1
                                   ? <div className='media is-right-content'>
                                     <div className='media-left'>
-                                      <figure className='image list-transaction xs'>
+                                      <figure className='image list-transaction md'>
                                         <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
                                       </figure>
                                     </div>
-                                    <div className='media-content'>
+                                    <div className='media-content middle'>
                                       <div className='content'>
                                         <h4 className='txt-overflow'>{order.dispute_products[0].name}</h4>
                                       </div>
                                     </div>
+                                    <div className='right-middle'>
+                                      <span className='icon-arrow-right' />
+                                    </div>
                                   </div>
-                                  : <div className='media is-right-content'>
+                                  : <div className='media list-item is-right-content middle'>
                                     {
                                       order.dispute_products.map((p, i) => {
                                         if (i < 3) {
@@ -358,7 +358,7 @@ const ListComplainOrderDone = (props) => {
                                         } else {
                                           return (
                                             <div className='media-left md-margin'>
-                                              <figure className='image list-transaction xs plus3'>
+                                              <figure className='image list-transaction md plus3'>
                                                 <span>+{i++}</span>
                                                 <a><MyImage src={p.image} alt='Pict' /></a>
                                               </figure>
@@ -367,6 +367,9 @@ const ListComplainOrderDone = (props) => {
                                         }
                                       })
                                     }
+                                    <div className='right-middle'>
+                                      <span className='icon-arrow-right' />
+                                    </div>
                                   </div>
                                 }
                               </div>
