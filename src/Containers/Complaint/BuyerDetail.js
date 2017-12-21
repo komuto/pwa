@@ -320,7 +320,7 @@ const DetailContent = ({ orderDetail }) => {
   )
 }
 
-const DiscussionContent = ({ comment }) => comment.data.length > 0 ? <Comment {...comment} /> : <EmptyDiscussion />
+const DiscussionContent = ({ comment }) => <Comment {...comment} />
 
 /** item component */
 export const Item = ({ title, data, type, children }) => (
@@ -479,21 +479,6 @@ export const SellerInfo = ({store}) => (
     </li>
   </ul>
 )
-
-const EmptyDiscussion = () => {
-  return (
-    <div className='content'>
-      <div className='container is-fluid'>
-        <div className='desc has-text-centered'>
-          <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
-          <br /><br />
-          <p><strong className='bold'>Diskusi Anda Kosong</strong></p>
-          <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk menyelesaikan masalah</p>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 const mapStateToProps = (state) => ({
   buyerComplainedOrderDetail: state.buyerComplainedOrderDetail,

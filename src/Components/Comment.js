@@ -1,7 +1,8 @@
 import Content from './Content'
 // import Section from './Section'
 import moment from 'moment'
-// import MyImage from './MyImage'
+import MyImage from './MyImage'
+import Images from '../Themes/Images'
 moment.locale('id')
 
 /** comment component */
@@ -14,6 +15,7 @@ export default (props) => (
 
 /** list of discussion */
 export const List = ({ data, messagesEnd }) => {
+  if (data.length > 0) return <EmptyDiscussion />
   return (
     <section className='section is-paddingless bg-white'>
       <div className='discuss'>
@@ -73,6 +75,21 @@ export const New = ({ onSubmit, onChange, value, submitting, placeHolder }) => {
           <textarea onChange={onChange} value={submitting ? 'Loading...' : value} className='textarea' placeholder={`${placeHolder !== undefined ? placeHolder : 'Tulis Komentar'}`} readOnly={submitting} />
           <button onClick={() => isActive && onSubmit()} className={`icon-btn-send-inactive ${(isActive) ? 'active' : ''}`} />
         </p>
+      </div>
+    </div>
+  )
+}
+
+const EmptyDiscussion = () => {
+  return (
+    <div className='content'>
+      <div className='container is-fluid'>
+        <div className='desc has-text-centered'>
+          <MyImage src={Images.emptyStatesDiscussion} alt='komuto' />
+          <br /><br />
+          <p><strong className='bold'>Diskusi Anda Kosong</strong></p>
+          <p>Anda belum pernah melakukan tanya jawab kepada penjual untuk menyelesaikan masalah</p>
+        </div>
       </div>
     </div>
   )
