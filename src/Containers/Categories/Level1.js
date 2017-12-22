@@ -111,7 +111,8 @@ class Level1 extends Component {
             {
               category.sub_categories.map((subCategory, index) => {
                 return <List
-                  icon={subCategory.icon}
+                  // icon={subCategory.icon}
+                  icon={category.icon}
                   key={index}
                   onClick={() => this.handleSubCategoryRouter(subCategory)}
                   name={subCategory.name} />

@@ -26,6 +26,7 @@ class SignUp extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      localize: props.localize,
       input: {
         nama: {
           type: 'text',
@@ -356,7 +357,7 @@ class SignUp extends Component {
   }
 
   render () {
-    const { input, notification } = this.state
+    const { localize, input, notification } = this.state
     return (
       <Content>
         <Notification
@@ -411,10 +412,11 @@ class SignUp extends Component {
                   name={this.props.marketplace.data.name} />
                 <ButtonFullSubmit
                   isLoading={this.submitting.register}
-                  text='Register' />
+                  text='Daftar' />
                 <HrText
                   text='atau' />
                 <LoginFacebook
+                  text={localize.login_facebook}
                   appId={this.props.marketplace.data.fb_app_id}
                   responseFacebook={(response) => this.responseFacebook(response)} />
               </div>

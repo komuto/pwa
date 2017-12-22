@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import Content from '../Components/Content'
 import _ from 'lodash'
+import ReactNotify from 'react-notify'
 // import RegexNormal from '../Lib/RegexNormal'
 import { inputNumber } from '../Validations/Input'
 
@@ -45,8 +46,10 @@ export class Filter extends Component {
           name: 'Rentang Harga',
           viewCheckAll: false,
           customComponent: true,
-          priceMinimum: 0,
-          priceMaximum: 0
+          priceMinimum: '',
+          priceMaximum: '',
+          errorPriceMinimum: '',
+          errorPriceMaximum: ''
         },
         {
           id: 'sendFrom',
@@ -166,7 +169,30 @@ export class Filter extends Component {
 
   // filter event button
   filterRealization () {
-    this.props.filterRealization(this.state.tabs)
+    const { tabs } = this.state
+    let error = false
+    tabs.map((tab) => {
+      if (tab.id === 'harga') {
+        if (tab.priceMinimum !== '' || tab.priceMaximum !== '') {
+          if (tab.priceMinimum === '') {
+            this.refs.notificator.success('', 'Mohon isi harga minimal terlebih dahulu', 2000)
+            error = true
+          } else if (tab.priceMaximum === '') {
+            this.refs.notificator.success('', 'Mohon isi harga maksimal terlebih dahulu', 2000)
+            error = true
+          } else if (Number(tab.priceMinimum) > Number(tab.priceMaximum)) {
+            this.refs.notificator.success('', 'Harga minimal harus lebih kecil dari harga maksimal', 2000)
+            error = true
+          } else {
+            error = false
+          }
+        }
+        return true
+      }
+    })
+    if (!error) {
+      this.props.filterRealization(this.state.tabs)
+    }
   }
   // change provinces event selected
   onChangeProvinces (event) {
@@ -184,6 +210,13 @@ export class Filter extends Component {
     let value = inputNumber(e.target.value)
     let { tabs } = this.state
     tabs.map((tab) => { if (tab.id === 'harga') tab.priceMinimum = value })
+    this.setState({ tabs })
+  }
+
+  onFocusPriceMinimum (e) {
+    console.log('onFocusPriceMinimum: ', e)
+    let { tabs } = this.state
+    tabs.map((tab) => { if (tab.id === 'harga') tab.priceMinimum = '' })
     this.setState({ tabs })
   }
 
@@ -226,14 +259,14 @@ export class Filter extends Component {
           <span className='label'>Harga Minimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
-            <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} />
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} placeholder='0' />
           </div>
         </label>
         <label className='checkbox is-other'>
           <span className='label'>Harga Maksimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
-            <input type='text' className='input' onChange={(e) => this.onChangePriceMaximun(e)} value={filterTabResults.priceMaximum} />
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMaximun(e)} value={filterTabResults.priceMaximum} placeholder='0' />
           </div>
         </label>
       </Content>
@@ -275,6 +308,7 @@ export class Filter extends Component {
               </div>
             </div>
           </section>
+          <ReactNotify ref='notificator' />
           <footer className='modal-card-foot'>
             <div className='columns is-mobile'>
               <div className='column is-half'>

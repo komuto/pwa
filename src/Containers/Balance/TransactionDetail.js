@@ -91,10 +91,10 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
-  let isPaid = transType === SummTransType[0]
-  let isRefund = transType === SummTransType[1]
+  let isPaid = transType === SummTransType[4]
+  let isRefund = transType === SummTransType[2]
   // let isCommission = transType === SummTransType[3]
-  let isTopup = transType === SummTransType[4]
+  let isTopup = transType === SummTransType[3]
   let isWithdraw = transType === SummTransType[5]
   let amount = 0
   let refundNumber = 0
