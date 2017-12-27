@@ -27,7 +27,7 @@ export default (active = 'ID') => {
     'signup_hero_path': ['Masuk Disini', 'Login Here'][index],
     'signup_hero_info': ['Sudah punya akun?', 'Do you have account?'][index],
     'or': ['Atau', 'Or'][index],
-    'lost_password': ['Lupa password', 'Lost password'][index],
+    'lost_password': ['Lupa Password?', 'Lost Your Password?'][index],
     'login_facebook': ['Masuk dengan Facebook', 'Login with Facebook'][index],
     // shopping cart
     'shopping_cart': ['Keranjang belanja', 'Shopping cart'][index],
