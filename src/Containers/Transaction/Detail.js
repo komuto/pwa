@@ -129,7 +129,7 @@ const TransactionDetailContent = (props) => {
             <div className='media-content'>
               <div className='content'>
                 <p>
-                  <strong>{ isExpired ? 'Kadaluarsa' : PAYMENT_STATUS_MESSAGE[paymentStatus] }</strong>
+                  <strong>{ (isExpired) ? 'Kadaluarsa' : PAYMENT_STATUS_MESSAGE[paymentStatus] }</strong>
                   <br />
                   {
                     (!isExpired && paymentStatus === 3) &&

@@ -88,17 +88,39 @@ class TransactionDetail extends Component {
 }
 
 const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
+  console.log('balanceDetail: ', balanceDetail)
+  console.log('saldoHistoryDetail: ', saldoHistoryDetail)
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
-  let isPaid = transType === SummTransType[4]
+  let isReSell = transType === SummTransType[0]
+  console.log('isReSell: ', isReSell)
+  let isSell = transType === SummTransType[1]
   let isRefund = transType === SummTransType[2]
-  // let isCommission = transType === SummTransType[3]
   let isTopup = transType === SummTransType[3]
+  let isPaid = transType === SummTransType[4]
+  // let isCommission = transType === SummTransType[3]
   let isWithdraw = transType === SummTransType[5]
   let amount = 0
-  let refundNumber = 0
+  let refundNumber = null
   let balanceUsed = 0
+  let comission = 0
+  let comissionPercent = 0
+  let realRefund = false
+
+  /** ReSell */
+  if (isReSell) {
+    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
+    amount = saldoHistoryDetail.historyDetail.invoice.total_price
+    comission = saldoHistoryDetail.historyDetail.commission.nominal
+    comissionPercent = saldoHistoryDetail.historyDetail.commission.percent * 100
+  }
+
+  /** SELL / sell transaction */
+  if (isSell) {
+    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
+    amount = saldoHistoryDetail.historyDetail.invoice.total_price
+  }
 
   /** PAID / paid transaction  */
   if (isPaid) {
@@ -109,9 +131,12 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
 
   /** RFND / refund transaction  */
   if (isRefund) {
+    realRefund = saldoHistoryDetail.historyDetail.transaction.summaryable_type === 'bucket_refund'
     TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
     amount = saldoHistoryDetail.historyDetail.transaction.amount
-    refundNumber = saldoHistoryDetail.historyDetail.refund.refund_number
+    if (realRefund) {
+      refundNumber = saldoHistoryDetail.historyDetail.refund.refund_number
+    }
   }
 
   /** TPUP / topup transaction */
@@ -134,13 +159,14 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
             <List title='Jenis Transaksi' data={TransTypeMessage} />
             <List title='Tanggal Transaksi' data={TransDate} />
             {
-              isPaid &&
+              (isPaid || isSell || isReSell) &&
               <WrapperList>
                 <List
                   title='Total Tagihan'
                   data={`Rp ${RupiahFormat(amount)}`}
                   colapse={balanceDetail} />
-                <ListDetail {...balanceDetail} {...saldoHistoryDetail.historyDetail} />
+                { (isSell || isReSell) && <ListDetailSell {...balanceDetail} {...saldoHistoryDetail.historyDetail} /> }
+                { isPaid && <ListDetailPaid {...balanceDetail} {...saldoHistoryDetail.historyDetail} /> }
               </WrapperList>
             }
             { isWithdraw && <List title='Jumlah Penarikan' data={<BalanceDecreases amount={amount} />} /> }
@@ -148,16 +174,74 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
             { isTopup && <List title='Jumlah Top-up Saldo' data={<BalanceIncreases amount={amount} />} /> }
             { isTopup && <List title='Metode Pembayaran' data={saldoHistoryDetail.historyDetail.payment_method} /> }
             { isRefund && <List title='Uang Yang Anda Terima' data={<BalanceIncreases amount={amount} />} /> }
-            { isRefund && <List title='Nomor Refund' data={refundNumber} /> }
+            { (isRefund && realRefund) && <List title='Nomor Refund' data={refundNumber} /> }
           </ul>
         </div>
       </section>
+      {
+        isReSell &&
+        <WrapperList>
+          <List title={`Komisi yang Anda terima (${comissionPercent.toFixed(0)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
+        </WrapperList>
+      }
+      { (isSell || isReSell) && <SellInformation {...saldoHistoryDetail.historyDetail} /> }
       { isPaid && <WrapperList><List title='Saldo yang digunakan' data={`Rp ${RupiahFormat(balanceUsed)}`} /> </WrapperList> }
       { isPaid && <PaidInformation {...saldoHistoryDetail.historyDetail} />}
       { isWithdraw && <WithdrawInformation {...saldoHistoryDetail.historyDetail} />}
       { isTopup && <TopupInformation {...saldoHistoryDetail.historyDetail} />}
       { isRefund && <RefundInformation {...saldoHistoryDetail.historyDetail} /> }
     </Content>
+  )
+}
+
+const SellInformation = ({ buyer, invoice }) => {
+  return (
+    <div>
+      <WrapperList title='Info Penjualan' >
+        <List title='No Invoice' data={invoice.invoice_number} />
+        <li>
+          <div className='columns is-mobile is-multiline no-margin-bottom'>
+            <div className='column is-one-third'>
+              <div className='rating-content is-left'>
+                <span className='semi-bold'>Pembeli</span>
+              </div>
+            </div>
+            <div className='column'>
+              <div className='rating-content is-left has-text-right'>
+                <span><img src={buyer.photo} alt='' className='pict-buyer sm' />{ buyer.name }</span>
+              </div>
+            </div>
+          </div>
+        </li>
+      </WrapperList>
+      <WrapperList title='Daftar barang yang di beli'>
+        <ul className='list-trans-product'>
+          {
+            invoice.items.map((item, index) =>
+              <li key={index}>
+                <div className='box'>
+                  <div className='media'>
+                    <div className='media-left is-bordered top'>
+                      <figure className='image list-transaction lg'>
+                        <a><MyImage src={item.product.image} alt='Image' /></a>
+                      </figure>
+                    </div>
+                    <div className='media-content'>
+                      <div className='content'>
+                        <h4>{item.product.name} </h4>
+                        <strong>Harga : Rp {RupiahFormat(item.product.price)} / item</strong>
+                        <strong>Jumlah : {item.item.qty}</strong>
+                        <span>'{item.item.note}'</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            )
+          }
+        </ul>
+      </WrapperList>
+    </div>
   )
 }
 
@@ -230,14 +314,40 @@ const PaidInformation = ({ orders, bucket }) => (
           </section>
         )
       }
-
-    )}
+      )}
   </WrapperList>
 )
 
-const RefundInformation = ({ refund }) => (
+const RefundInformation = ({ refund, invoice }) => (
   <WrapperList title='Daftar barang yang di refund'>
-    { refund.items.map((item, index) => <LisProduct key={index} {...item} />) }
+    { refund && refund.items.map((item, index) => <LisProduct key={index} {...item} />) }
+    { invoice &&
+      <ul className='list-trans-product'>
+        {
+          invoice.items.map((item, index) =>
+            <li key={index}>
+              <div className='box'>
+                <div className='media'>
+                  <div className='media-left is-bordered top'>
+                    <figure className='image list-transaction lg'>
+                      <a><MyImage src={item.product.image} alt='Image' /></a>
+                    </figure>
+                  </div>
+                  <div className='media-content'>
+                    <div className='content'>
+                      <h4>{item.product.name} </h4>
+                      <strong>Harga : Rp {RupiahFormat(item.product.price)} / item</strong>
+                      <strong>Jumlah : {item.item.qty}</strong>
+                      <span>'{item.item.note}'</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          )
+        }
+      </ul>
+    }
   </WrapperList>
 )
 
@@ -320,7 +430,18 @@ const LisProduct = (product) => (
   </li>
 )
 
-const ListDetail = ({ active, bucket }) => {
+const ListDetailSell = ({ active, invoice }) => {
+  let totalPayment = invoice.total_price
+  let promoCode = '-'
+  let pricePromo = 0
+  if (invoice.promo) {
+    promoCode = invoice.promo.promo_code
+    pricePromo = Promo({ ...invoice, totalPayment })
+  }
+  return <Detail active={active} totalPayment={totalPayment} promoCode={promoCode} pricePromo={pricePromo} />
+}
+
+const ListDetailPaid = ({ active, bucket }) => {
   let totalPayment = bucket.total_bill
   let promoCode = '-'
   let pricePromo = 0
@@ -329,27 +450,32 @@ const ListDetail = ({ active, bucket }) => {
     promoCode = bucket.promo.promo_code
     pricePromo = Promo({ ...bucket, totalPayment })
   }
-  return (
-    <li className='collapsed' style={{ display: active ? 'block' : 'none' }}>
-      <div className='payment-detail step-pay'>
-        <ul className='detail-transaction'>
-          <li>
-            <ul className='total-pay'>
-              <li>
-                <div className='columns is-mobile is-multiline no-margin-bottom'>
-                  <div className='column'>
-                    <div className='label-text is-left'>
-                      <span>
-                          Total Belanja
-                        </span>
-                    </div>
-                  </div>
-                  <div className='column is-one-third'>
-                    <div className='has-text-right'>
-                      <span>Rp { RupiahFormat(totalPayment) }</span>
-                    </div>
+  return <Detail active={active} totalPayment={totalPayment} promoCode={promoCode} pricePromo={pricePromo} />
+}
+
+const Detail = ({ active, totalPayment, promoCode, pricePromo }) => (
+  <li className='collapsed' style={{ display: active ? 'block' : 'none' }}>
+    <div className='payment-detail step-pay'>
+      <ul className='detail-transaction'>
+        <li>
+          <ul className='total-pay'>
+            <li>
+              <div className='columns is-mobile is-multiline no-margin-bottom'>
+                <div className='column'>
+                  <div className='label-text is-left'>
+                    <span>
+                        Total Belanja
+                    </span>
                   </div>
                 </div>
+                <div className='column is-one-third'>
+                  <div className='has-text-right'>
+                    <span>Rp { RupiahFormat(totalPayment) }</span>
+                  </div>
+                </div>
+              </div>
+              {
+                promoCode !== '-' &&
                 <div className='columns is-mobile is-multiline no-margin-bottom'>
                   <div className='column'>
                     <div className='label-text is-left'>
@@ -364,30 +490,30 @@ const ListDetail = ({ active, bucket }) => {
                     </div>
                   </div>
                 </div>
-              </li>
-              <li>
-                <div className='columns is-mobile is-multiline no-margin-bottom'>
-                  <div className='column'>
-                    <div className='label-text is-left'>
-                      <span>
-                          Sisa Pembayaran
-                        </span>
-                    </div>
-                  </div>
-                  <div className='column is-one-third'>
-                    <div className='has-text-right'>
-                      <span>Rp {RupiahFormat(totalPayment - pricePromo)}</span>
-                    </div>
+              }
+            </li>
+            <li>
+              <div className='columns is-mobile is-multiline no-margin-bottom'>
+                <div className='column'>
+                  <div className='label-text is-left'>
+                    <span>
+                        Sisa Pembayaran
+                    </span>
                   </div>
                 </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </li>
-  )
-}
+                <div className='column is-one-third'>
+                  <div className='has-text-right'>
+                    <span>Rp {RupiahFormat(totalPayment - pricePromo)}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </li>
+)
 
 const mapStateToProps = (state) => ({
   saldoHistoryDetail: state.saldoHistoryDetail
