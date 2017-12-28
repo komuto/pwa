@@ -15,8 +15,8 @@ let FormData = require('form-data')
 
 const styles = {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  alignItems: 'left',
+  justifyContent: 'left',
   flexWrap: 'wrap',
   width: '100%'
 }
@@ -218,7 +218,7 @@ class ProductPhotoManage extends Component {
           message={notification.message} />
         <div className='add-product'>
           <div className='container is-fluid'>
-            <p>Masukkan Gambar Produk minimal satu foto. Gunakan 4 foto terbaik untuk gambar produk anda.</p>
+            <p>Masukkan Gambar Produk minimal satu foto. <br />Gunakan 4 foto terbaik untuk gambar produk anda.</p>
             <ul className='add-photo-list'>
               <FlipMove enterAnimation='fade' leaveAnimation='fade' style={styles}>
                 {
