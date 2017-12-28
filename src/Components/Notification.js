@@ -21,7 +21,7 @@ export const FieldError = (props) => {
  */
 export const NotificationPage = ({ icon, title, subTitle, path, alias, text }) => {
   return (
-    <div className='main user user-success'>
+    <div className='user user-success'>
       <section className='content'>
         <div className='container is-fluid'>
           <div className='desc has-text-centered'>
