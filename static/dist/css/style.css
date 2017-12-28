@@ -7545,16 +7545,16 @@ strong.total {
         font-size: 12px; }
       .columns.custom .slick-slide .column .box.grid .media .media-content .content .detail .price {
         font-size: 14px; }
-  .columns.custom .slick-slide:last-child .column .box.grid {
+  .columns.custom .slick-slide.fav-store:last-child .column .box.grid {
     top: 50%;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%); }
-    .columns.custom .slick-slide:last-child .column .box.grid .media .media-left .image {
+    .columns.custom .slick-slide.fav-store:last-child .column .box.grid .media .media-left .image {
       width: 40px;
       display: block;
       margin-left: auto;
       margin-right: auto; }
-    .columns.custom .slick-slide:last-child .column .box.grid .media .media-content .content span {
+    .columns.custom .slick-slide.fav-store:last-child .column .box.grid .media .media-content .content span {
       font-size: 12px; }
 
 @media screen and (max-width: 360px) {
@@ -9700,6 +9700,10 @@ strong.total {
     margin-bottom: 20px; }
   .spec-price .is-horizontal .field:not(:last-child) {
     margin-bottom: 0; }
+  .spec-price .switch .slider:before {
+    background-color: #ffffff; }
+  .spec-price .switch input:checked + .slider:before {
+    background-color: #009688; }
 
 .detail.spec {
   border-top: 0.5px solid #dedede; }
@@ -9924,18 +9928,23 @@ strong.total {
 
 .customer-order {
   border-bottom: 0.5px solid #dedede;
-  background-color: #ffffff; }
+  background-color: #ffffff;
+  padding-bottom: 1px; }
   .customer-order li.label-order {
     padding-top: 10px; }
-  .customer-order li .columns.custom .column {
-    padding: 10px 20px;
-    border: none; }
-    .customer-order li .columns.custom .column span {
-      font-size: 12px;
-      letter-spacing: 0.2px;
-      color: #a0a3ae; }
-      .customer-order li .columns.custom .column span.notif-akun {
-        color: #ffffff; }
+  .customer-order li .columns {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center; }
+    .customer-order li .columns.custom .column {
+      padding: 10px 20px;
+      border: none; }
+      .customer-order li .columns.custom .column span {
+        font-size: 12px;
+        letter-spacing: 0.2px;
+        color: #a0a3ae; }
+        .customer-order li .columns.custom .column span.notif-akun {
+          color: #ffffff; }
 
 .seller-items {
   position: absolute;
