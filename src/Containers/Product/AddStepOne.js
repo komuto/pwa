@@ -13,8 +13,8 @@ import * as productActions from '../../actions/product'
 
 const styles = {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  alignItems: 'left',
+  justifyContent: 'left',
   flexWrap: 'wrap',
   width: '100%'
 }
