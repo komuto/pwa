@@ -6,7 +6,7 @@ import DefaultLayout from '../../Layout/DefaultLayout'
 export default () => (
   <DefaultLayout>
     <NotificationPage
-      icon={Images.regSuccess}
+      icon={Images.phoneSuccess}
       title='Berhasil Menambah Produk'
       subTitle='Anda telah berhasil menambah produk baru ke dalam toko anda'
       path='/product-list'
