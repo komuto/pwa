@@ -610,9 +610,11 @@ const ContentProduk = (props) => {
           )
         })
       }
-      <a className='catalog-button js-option' onClick={() => props.showListCatalogPress()}>
-        <span className='icon-catalog' /> Daftar Katalog
-      </a>
+      <div className='wrapper-sticky'>
+        <a className='catalog-button js-option' onClick={() => props.showListCatalogPress()}>
+          <span className='icon-catalog' /> Daftar Katalog
+        </a>
+      </div>
       <div className='sort-option' style={{ display: showListCatalog && 'block' }}>
         <div className='sort-list catalog-list'>
           <ul>
