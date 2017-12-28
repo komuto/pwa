@@ -294,7 +294,7 @@ class ProductAddStepTwo extends Component {
             <div className='field' style={error === 'name' ? styleError : {}}>
               <label>Nama Produk *</label>
               <p className='control'>
-                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name) ? form.name : ''} />
+                <input onChange={(e) => this.formHandling(e)} name='name' type='text' className='input' style={error === 'name' ? styleError : {}} value={(form.name) ? form.name : ''} placeholder='Nama Produk Anda' />
                 {this.renderValidation('name', 'Mohon isi nama produk 3-30 karakter')}
               </p>
             </div>
@@ -303,7 +303,7 @@ class ProductAddStepTwo extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.category_id ? form.category_id : ''} name='category_id' style={error === 'category_id' ? styleError : {}}>
-                    <option style={{display: 'none'}} disabled> Pilih</option>
+                    <option style={{display: 'none'}} disabled> Pilih Kategori</option>
                     {
                         category.isFound &&
                         category.categories.map((category) => {
@@ -320,7 +320,7 @@ class ProductAddStepTwo extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryOne ? form.categoryOne : ''} name='categoryOne' style={error === 'categoryOne' ? styleError : {}}>
-                    <option style={{display: 'none'}} disabled> Pilih</option>
+                    <option style={{display: 'none'}} disabled> Pilih Sub Kategori 1</option>
                     {
                       subCategory.isFound &&
                       subCategory.categories && subCategory.categories.sub_categories.map((sc) => {
@@ -337,7 +337,7 @@ class ProductAddStepTwo extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryTwo ? form.categoryTwo : ''} name='categoryTwo' style={error === 'categoryTwo' ? styleError : {}}>
-                    <option style={{display: 'none'}} disabled> Pilih</option>
+                    <option style={{display: 'none'}} disabled> Pilih Sub Kategori 2</option>
                     {
                       subCategory2.isFound &&
                       subCategory2.categories.sub_categories.map((sc) => {
@@ -354,7 +354,7 @@ class ProductAddStepTwo extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.categoryThree ? form.categoryThree : ''} name='categoryThree' style={error === 'categoryThree' ? styleError : {}}>
-                    <option style={{display: 'none'}} disabled> Pilih</option>
+                    <option style={{display: 'none'}} disabled> Pilih Sub Kategori 3</option>
                     {
                       subCategory3.isFound &&
                       subCategory3.categories.sub_categories.map((sc) => {
@@ -394,7 +394,7 @@ class ProductAddStepTwo extends Component {
             <div className='field'>
               <label style={error === 'description' ? styleError : {}}>Deskripsi Produk *</label>
               <p className='control'>
-                <textarea onChange={(e) => this.formHandling(e)} value={form.description ? form.description : ''} name='description' className='textarea' rows='2' />
+                <textarea onChange={(e) => this.formHandling(e)} value={form.description ? form.description : ''} name='description' className='textarea' rows='2' placeholder='Deskripsi Produk Anda' />
                 {this.renderValidation('description', 'Mohon isi deskripsi min 30 karakter')}
               </p>
             </div>
