@@ -152,7 +152,7 @@ class ProductAddStepOne extends Component {
         <Wizard total={4} active={1} />
         <div className='add-product'>
           <div className='container is-fluid'>
-            <p>Masukkan Gambar Produk minimal satu foto. Gunakan 4 foto terbaik untuk gambar produk anda.</p>
+            <p>Masukkan Gambar Produk minimal satu foto. <br /> Gunakan 4 foto terbaik untuk gambar produk anda.</p>
             <ul className='add-photo-list'>
               <FlipMove enterAnimation='fade' leaveAnimation='fade' style={styles}>
                 {
