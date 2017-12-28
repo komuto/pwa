@@ -493,7 +493,7 @@ class ProductAddStepThree extends Component {
               <p className='control'>
                 <span className='select'>
                   <select onChange={(e) => this.formHandling(e)} value={form.catalog_id ? form.catalog_id : 'default'} name='catalog_id' style={catalogError}>
-                    <option value='default' >Pilih</option>
+                    <option value='default' >Katalog Anda</option>
                     {
                       catalogs.data.isFound &&
                       catalogs.data.catalogs.map((catalog) => {
