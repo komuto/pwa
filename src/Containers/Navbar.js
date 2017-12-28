@@ -105,7 +105,7 @@ export class Navbar extends PureComponent {
           {
             (searchActive || searchStandard) &&
             <div className='button-search' onClick={() => Router.push('/search')}>
-              <span className='icon-search white' />
+              <span className={`icon-search ${searchStandard ? 'white' : ''}`} />
             </div>
           }
           {
