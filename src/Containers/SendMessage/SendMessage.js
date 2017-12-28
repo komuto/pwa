@@ -30,7 +30,10 @@ class SendMessage extends React.Component {
       },
       validation: false
     }
-    this.submitting = false
+    this.submitting = {
+      newOrderDetail: false,
+      transactionMessage: false
+    }
   }
 
   handleInput (e) {
@@ -45,6 +48,7 @@ class SendMessage extends React.Component {
     const { id } = this.state
     if (id) {
       NProgress.start()
+      this.submitting = { ...this.submitting, newOrderDetail: true }
       this.props.getNewOrderDetail({ id })
       // if (type === 'buyer') {
       // }
@@ -117,7 +121,8 @@ class SendMessage extends React.Component {
     let messageValid = form.content !== ''
     let isValid = titleValid && messageValid
     if (isValid) {
-      this.submitting = true
+      console.log('isValid: ', isValid)
+      this.submitting = { ...this.submitting, transactionMessage: true }
       if (type === 'buyer') {
         this.props.messageBuyer({ id, subject: form.subject, content: form.content })
       }
@@ -135,8 +140,9 @@ class SendMessage extends React.Component {
   componentWillReceiveProps (nextProps) {
     const { newOrderDetail, transactionMessage } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    if (!isFetching(newOrderDetail)) {
+    if (!isFetching(newOrderDetail) && this.submitting.newOrderDetail) {
       NProgress.done()
+      this.submitting = { ...this.submitting, newOrderDetail: false }
       if (isFound(newOrderDetail)) {
         this.setState({ newOrderDetail })
       }
@@ -144,7 +150,8 @@ class SendMessage extends React.Component {
         this.setState({ notification: notifError(newOrderDetail.message) })
       }
     }
-    if (!isFetching(transactionMessage) && this.submitting) {
+    if (!isFetching(transactionMessage) && this.submitting.transactionMessage) {
+      this.submitting = { ...this.submitting, transactionMessage: false }
       this.submitting = false
       if (isFound(transactionMessage)) {
         this.setState({ notification: notifSuccess(transactionMessage.message) })
@@ -211,7 +218,7 @@ class SendMessage extends React.Component {
                   {validation && this.renderValidation('content', 'Mohon isi pesan')}
                 </p>
                 <p className='control'>
-                  <button className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
+                  <button className={`button is-primary is-large is-fullwidth ${this.submitting.transactionMessage && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
                 </p>
               </div>
             </div>
