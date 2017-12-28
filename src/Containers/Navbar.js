@@ -63,7 +63,7 @@ export class Navbar extends PureComponent {
 
   render () {
     const { deleteButton, messageType, navbar, navtab, productDetail, moreButton, messageButton, productId, share } = this.props
-    const { path, textPath, searchBoox, searchActive, callBack, filterBalance, moreMessage, countCart } = navbar
+    const { path, textPath, searchBoox, callBack, filterBalance, moreMessage, countCart, searchActive, searchStandard } = navbar
     const { activeMoreOptions, openMessageOptions } = this.state
     return (
       <div>
@@ -72,18 +72,17 @@ export class Navbar extends PureComponent {
             <a className='level-item'>
               <span className={(path) ? '' : 'is-paddingless'}>
                 {
-                  path
-                  ? <span className='back' onClick={() => callBack ? callBack() : Router.back()}>
+                  path &&
+                  <span className='back' onClick={() => callBack ? callBack() : Router.back()}>
                     <span className={`icon-arrow-left ${searchActive ? 'black' : ''}`} />
                   </span>
-                    : null
                 }
                 {textPath}
               </span>
             </a>
             {
-              productDetail
-              ? <div className='box is-paddingless'>
+              productDetail &&
+              <div className='box is-paddingless'>
                 <article className='media'>
                   <div className='media-left is-bordered'>
                     <figure className='image product-pict'>
@@ -101,19 +100,17 @@ export class Navbar extends PureComponent {
                   </div>
                 </article>
               </div>
-              : null
             }
           </div>
           {
-            searchActive
-            ? <div className='button-search' onClick={() => Router.push('/search')}>
-              <span className='icon-search' />
+            (searchActive || searchStandard) &&
+            <div className='button-search' onClick={() => Router.push('/search')}>
+              <span className='icon-search white' />
             </div>
-            : null
           }
           {
-            searchBoox
-            ? <div className='nav-right'>
+            searchBoox &&
+            <div className='nav-right'>
               <span className='icon-love' onClick={() => this.wishListPress()} />
               <span className='icon-cart' onClick={() => this.shoppingCartPress()}>
                 {
@@ -121,7 +118,6 @@ export class Navbar extends PureComponent {
                 }
               </span>
             </div>
-            : null
           }
           {
             moreButton &&

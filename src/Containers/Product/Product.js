@@ -512,7 +512,8 @@ class MyProduct extends Component {
         path: '/',
         callBack: () => Router.push('/'),
         textPath: 'Produk',
-        searchActive: !!q
+        searchActive: !!q,
+        searchStandard: true
       }
     }
 
