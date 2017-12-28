@@ -28,7 +28,7 @@ class History extends Component {
     super(props)
     /** define state */
     this.state = {
-      saldoHistory: props.saldoHistory || null,
+      saldoHistory: null,
       hasMore: true,
       datepicker: {
         isActive: false,
@@ -81,7 +81,7 @@ class History extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { isFound(saldoHistory) &&
+        { (saldoHistory && isFound(saldoHistory)) &&
           <HistoryContent
             {...this.state}
             submitting={this.submitting}
@@ -90,14 +90,14 @@ class History extends Component {
             datePickerPress={(e, selected) => this.datePickerPress(e, selected)}
             filterPress={() => this.filterPress()}
             submitPress={() => this.submitPress()} />
-          }
+        }
         {
-            this.state.datepicker.isActive &&
-            <DatePicker
-              {...this.state.datepicker}
-              datePickerPress={(e, selected) => this.datePickerPress(e, selected)}
-              selectedDatePicker={(date) => this.selectedDatePicker(date)} />
-          }
+          this.state.datepicker.isActive &&
+          <DatePicker
+            {...this.state.datepicker}
+            datePickerPress={(e, selected) => this.datePickerPress(e, selected)}
+            selectedDatePicker={(date) => this.selectedDatePicker(date)} />
+        }
       </Content>
     )
   }
@@ -133,7 +133,12 @@ class History extends Component {
           })
         } else {
           // handling when user press pagination / default
-          let history = saldoHistory.history.concat(this.state.saldoHistory.history)
+          let history = null
+          if (this.state.saldoHistory) {
+            history = saldoHistory.history.concat(this.state.saldoHistory.history)
+          } else {
+            history = saldoHistory.history
+          }
           this.setState({
             saldoHistory: { ...saldoHistory, history },
             hasMore: saldoHistory.history.length >= this.state.params.limit
