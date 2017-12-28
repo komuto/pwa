@@ -36,14 +36,6 @@ class DeliveryConfirmation extends React.Component {
     this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
-  detailOrder (id, type) {
-    if (type === 'reseller') {
-      Router.push(`/input-shipment-number-dropship?id=${id}`)
-    } else {
-      Router.push(`/input-shipment-number?id=${id}`)
-    }
-  }
-
   componentDidMount () {
     NProgress.start()
     this.fetching = { ...this.fetching, fetchingFirst: true }
@@ -179,7 +171,7 @@ class DeliveryConfirmation extends React.Component {
                         </li>
                       </ul>
                     </div>
-                    <div className='block-add-resi has-text-centered' onClick={() => this.detailOrder(order.invoice.id, order.invoice.type)}>
+                    <div className='block-add-resi has-text-centered' onClick={() => Router.push(`/input-shipment-number?id=${order.invoice.id}`)}>
                       {
                         order.invoice.type === 'reseller' ? <a>Menunggu Input No Resi dari Seller</a> : <a>Masukkan No Resi Pengiriman</a>
                       }
