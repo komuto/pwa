@@ -123,7 +123,8 @@ class InputShipmentNumber extends React.Component {
             renderValidation={(name, textFailed) => this.renderValidation(name, textFailed)}
             handleInput={(e) => this.handleInput(e)} />
           : <SaleDetail
-            newOrderDetail={newOrderDetail} />
+            newOrderDetail={newOrderDetail}
+            proccessOrder='processingOrder' />
         }
         <div className='sort-option' style={{ display: showModal && 'block' }}>
           <div className='notif-report'>
@@ -257,22 +258,52 @@ const ShipmentReceiptNumber = (props) => {
           </div>
         </div>
       </section>
-      <section className='section is-paddingless has-shadow'>
-        <div className='content-header'>
-          <h3>Nomor Resi</h3>
+      { processingOrderDetail.orderDetail.invoice.type === 'seller' && <div>
+        <section className='section is-paddingless has-shadow'>
+          <div className='content-header'>
+            <h3>Nomor Resi</h3>
+          </div>
+          <div className={`content-body ${validation && 'is-error'}`}>
+            <input type='text' className='input' value={receiptNumber} placeholder='Masukkan nomor resi disini'
+              onChange={(e) => props.handleInput(e)} />
+            {validation && props.renderValidation('receiptNumber', 'Mohon isi no Resi')}
+          </div>
+        </section>
+        <section className='section is-paddingless'>
+          <div className='container is-fluid'>
+            <a className={`button is-primary is-large is-fullwidth js-option ${props.submiting && 'is-loading'}`}
+              onClick={() => props.submit()}>Proses Info Pengiriman</a>
+          </div>
+        </section>
+      </div>
+      }
+      {
+        processingOrderDetail.orderDetail.invoice.type === 'reseller' && <div>
+          <section className='section is-paddingless has-shadow'>
+            <div className='info-purchase'>
+              <div className='detail-rate is-purchase'>
+                <div className='columns total-items is-mobile is-multiline no-margin-bottom'>
+                  <div className='column is-half'>
+                    <div className='rating-content is-left'>
+                      <strong>No Resi</strong>
+                    </div>
+                  </div>
+                  <div className='column is-half'>
+                    <div className='rating-content item-qty has-text-right'>
+                      <span className='has-text-left text-grey'>Menunggu No Resi dari Seller</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section className='section is-paddingless'>
+            <div className='container is-fluid'>
+              <a className='button is-primary is-outlined is-large is-fullwidth' onClick={() => Router.push(`/send-message?id=${processingOrderDetail.orderDetail.invoice.id}&proccessOrder=processingOrder&msgTo=seller`)}>Kirim Pesan ke Seller</a>
+            </div>
+          </section>
         </div>
-        <div className={`content-body ${validation && 'is-error'}`}>
-          <input type='text' className='input' value={receiptNumber} placeholder='Masukkan nomor resi disini'
-            onChange={(e) => props.handleInput(e)} />
-          {validation && props.renderValidation('receiptNumber', 'Mohon isi no Resi')}
-        </div>
-      </section>
-      <section className='section is-paddingless'>
-        <div className='container is-fluid'>
-          <a className={`button is-primary is-large is-fullwidth js-option ${props.submiting && 'is-loading'}`}
-            onClick={() => props.submit()}>Proses Info Pengiriman</a>
-        </div>
-      </section>
+      }
     </div>
   )
 }

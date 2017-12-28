@@ -27,6 +27,7 @@ class OrderDetail extends React.Component {
         message: 'Error, default message.'
       }
     }
+    this.fetching = false
     this.submiting = false
   }
   modalConfirm () {
@@ -103,7 +104,9 @@ class OrderDetail extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         { (newOrderDetail.isFound) && <div>
-          <SaleDetail newOrderDetail={newOrderDetail} />
+          <SaleDetail
+            newOrderDetail={newOrderDetail}
+            proccessOrder='newOrder' />
           {
             (newOrderDetail.orderDetail.invoice.type === 'seller' || newOrderDetail.orderDetail.invoice.type === 'buyer') && <div className='level btn-wrapp' style={{ marginBottom: 0 }}>
               <div className='columns is-mobile'>
@@ -118,7 +121,7 @@ class OrderDetail extends React.Component {
           }
           {
             newOrderDetail.orderDetail.invoice.type === 'reseller' && <div className='level btn-wrapp'>
-              <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=seller`)}>Kirim Pesan ke Seller</a>
+              <a className='button is-primary is-large is-fullwidth is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&proccessOrder=newOrder&msgTo=seller`)}>Kirim Pesan ke Seller</a>
             </div>
           }
           <div className='sort-option' style={{ display: this.state.showModalConfirm ? 'block' : 'none', zIndex: 1000 }}>

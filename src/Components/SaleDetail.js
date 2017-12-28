@@ -4,7 +4,7 @@ import MyImage from '../Components/MyImage'
 import Router from 'next/router'
 let subTotal = 0
 
-export default ({ newOrderDetail }) => (
+export default ({ newOrderDetail, proccessOrder }) => (
   <div>
     <section className='section is-paddingless has-shadow'>
       <div className='info-purchase'>
@@ -67,8 +67,8 @@ export default ({ newOrderDetail }) => (
                     <div className='right-top'>
                       {
                         newOrderDetail.orderDetail.invoice.type === 'seller'
-                        ? <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=reseller`)}>Kirim Pesan</a>
-                        : <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&type=buyer`)}>Kirim Pesan</a>
+                        ? <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&proccessOrder=${proccessOrder}&msgTo=reseller`)}>Kirim Pesan</a>
+                        : <a className='button is-primary is-outlined' onClick={() => Router.push(`/send-message?id=${newOrderDetail.orderDetail.invoice.id}&proccessOrder=${proccessOrder}&msgTo=buyer`)}>Kirim Pesan</a>
                       }
                     </div>
                   </div>

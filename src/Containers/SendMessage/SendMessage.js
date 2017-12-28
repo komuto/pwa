@@ -17,8 +17,9 @@ class SendMessage extends React.Component {
     // let content = `${messages.substring(0, 20)} ...`
     this.state = {
       id: props.query.id || null,
-      type: props.query.type || null,
-      newOrderDetail: props.newOrderDetail,
+      msgTo: props.query.msgTo || null,
+      proccessOrder: props.query.proccessOrder || null,
+      data: props.newOrderDetail || null,
       form: {
         subject: '',
         content: ''
@@ -30,10 +31,8 @@ class SendMessage extends React.Component {
       },
       validation: false
     }
-    this.submitting = {
-      newOrderDetail: false,
-      transactionMessage: false
-    }
+    this.submitting = false
+    this.fetching = { newOrderDetail: false, processingOrderDetail: false, saleDetail: false }
   }
 
   handleInput (e) {
@@ -42,65 +41,6 @@ class SendMessage extends React.Component {
     const newState = { form }
     newState.form[name] = value
     this.setState(newState)
-  }
-
-  componentDidMount () {
-    const { id } = this.state
-    if (id) {
-      NProgress.start()
-      this.submitting = { ...this.submitting, newOrderDetail: true }
-      this.props.getNewOrderDetail({ id })
-      // if (type === 'buyer') {
-      // }
-      // if (type === 'seller') {
-      //   this.props.getProcessingOrderDetail({ id })
-      // }
-      // if (type === 'reseller') {
-      //   this.props.getSaleDetail({ id })
-      // }
-    }
-  }
-
-  photoType (type, newOrderDetail) {
-    let photo
-    if (type === 'buyer') {
-      photo = newOrderDetail.orderDetail.buyer.photo
-    }
-    if (type === 'seller') {
-      photo = newOrderDetail.orderDetail.seller.photo
-    }
-    if (type === 'reseller') {
-      photo = newOrderDetail.orderDetail.reseller.store.logo
-    }
-    return photo
-  }
-
-  nameType (type, newOrderDetail) {
-    let nameType
-    if (type === 'buyer') {
-      nameType = newOrderDetail.orderDetail.buyer.name
-    }
-    if (type === 'seller') {
-      nameType = newOrderDetail.orderDetail.seller.name
-    }
-    if (type === 'reseller') {
-      nameType = newOrderDetail.orderDetail.reseller.store.name
-    }
-    return nameType
-  }
-
-  typeInvoice (type) {
-    let typeInvoice
-    if (type === 'buyer') {
-      typeInvoice = 'Pembeli'
-    }
-    if (type === 'seller') {
-      typeInvoice = 'Seller'
-    }
-    if (type === 'reseller') {
-      typeInvoice = 'Reseller'
-    }
-    return typeInvoice
   }
 
   renderValidation (name, textFailed) {
@@ -116,20 +56,19 @@ class SendMessage extends React.Component {
   }
 
   submit () {
-    const { form, type, id } = this.state
+    const { form, id, msgTo } = this.state
     let titleValid = form.subject !== ''
     let messageValid = form.content !== ''
     let isValid = titleValid && messageValid
     if (isValid) {
-      console.log('isValid: ', isValid)
-      this.submitting = { ...this.submitting, transactionMessage: true }
-      if (type === 'buyer') {
+      this.submitting = true
+      if (msgTo === 'buyer') {
         this.props.messageBuyer({ id, subject: form.subject, content: form.content })
       }
-      if (type === 'seller') {
+      if (msgTo === 'seller') {
         this.props.messageSeller({ id, subject: form.subject, content: form.content })
       }
-      if (type === 'reseller') {
+      if (msgTo === 'reseller') {
         this.props.messageReseller({ id, subject: form.subject, content: form.content })
       }
     } else {
@@ -137,38 +76,97 @@ class SendMessage extends React.Component {
     }
   }
 
+  componentDidMount () {
+    const { id, proccessOrder } = this.state
+    if (id) {
+      NProgress.start()
+      if (proccessOrder === 'newOrder') {
+        this.fetching = { ...this.fetching, newOrderDetail: true }
+        this.props.getNewOrderDetail({ id })
+      }
+      if (proccessOrder === 'processingOrder') {
+        this.fetching = { ...this.fetching, processingOrderDetail: true }
+        this.props.getProcessingOrderDetail({ id })
+      }
+      if (proccessOrder === 'sale') {
+        this.fetching = { ...this.fetching, saleDetail: true }
+        this.props.getSaleDetail({ id })
+      }
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
-    const { newOrderDetail, transactionMessage } = nextProps
+    const { newOrderDetail, processingOrderDetail, saleDetail, transactionMessage } = nextProps
     const { isFetching, isFound, isError, notifError, notifSuccess } = this.props
-    if (!isFetching(newOrderDetail) && this.submitting.newOrderDetail) {
+    if (!isFetching(newOrderDetail) && this.fetching.newOrderDetail) {
       NProgress.done()
-      this.submitting = { ...this.submitting, newOrderDetail: false }
+      this.fetching = { ...this.fetching, newOrderDetail: false }
       if (isFound(newOrderDetail)) {
-        this.setState({ newOrderDetail })
+        this.setState({ data: newOrderDetail })
       }
       if (isError(newOrderDetail)) {
         this.setState({ notification: notifError(newOrderDetail.message) })
       }
     }
-    if (!isFetching(transactionMessage) && this.submitting.transactionMessage) {
-      this.submitting = { ...this.submitting, transactionMessage: false }
+    if (!isFetching(processingOrderDetail) && this.fetching.processingOrderDetail) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, processingOrderDetail: false }
+      if (isFound(processingOrderDetail)) {
+        this.setState({ data: processingOrderDetail })
+      }
+      if (isError(processingOrderDetail)) {
+        this.setState({ notification: notifError(newOrderDetail.message) })
+      }
+    }
+    if (!isFetching(saleDetail) && this.fetching.saleDetail) {
+      NProgress.done()
+      this.fetching = { ...this.fetching, saleDetail: false }
+      if (isFound(saleDetail)) {
+        const { sale } = saleDetail
+        const data = { orderDetail: sale, ...saleDetail }
+        this.setState({ data })
+      }
+      if (isError(saleDetail)) {
+        this.setState({ notification: notifError(saleDetail.message) })
+      }
+    }
+    if (!isFetching(transactionMessage) && this.submitting) {
       this.submitting = false
       if (isFound(transactionMessage)) {
-        this.setState({ notification: notifSuccess(transactionMessage.message) })
+        this.setState({ notification: notifSuccess('Berhasil mengirim Pesan') })
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           Router.back()
         }, 3000)
       }
       if (isError(transactionMessage)) {
-        this.submitting = false
-        this.setState({ notification: notifError(transactionMessage.message) })
+        this.setState({ notification: notifError('Gagal mengirim Pesan') })
       }
     }
   }
 
   render () {
-    const { newOrderDetail, type, form, validation, notification } = this.state
+    const { data, form, validation, msgTo, notification } = this.state
+    let photo
+    let nameType
+    let typeInvoice
+    if (data.isFound) {
+      if (msgTo === 'buyer') {
+        photo = data.orderDetail.buyer.photo
+        nameType = data.orderDetail.buyer.name
+        typeInvoice = 'Pembeli'
+      }
+      if (msgTo === 'seller') {
+        photo = data.orderDetail.seller.photo
+        nameType = data.orderDetail.seller.name
+        typeInvoice = 'Seller'
+      }
+      if (msgTo === 'reseller') {
+        photo = data.orderDetail.reseller.store.logo
+        nameType = data.orderDetail.reseller.store.name
+        typeInvoice = 'Reseller'
+      }
+    }
     return (
       <section className='section is-paddingless bg-white'>
         <Notification
@@ -178,7 +176,7 @@ class SendMessage extends React.Component {
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
         {
-          this.props.isFound(newOrderDetail) && <div>
+          this.props.isFound(data) && <div>
             <div className='profile-wrapp border-bottom'>
               <ul>
                 <li>
@@ -186,15 +184,15 @@ class SendMessage extends React.Component {
                     <article className='media'>
                       <div className='media-left'>
                         <figure className='image user-pict'>
-                          <MyImage src={this.photoType(type, newOrderDetail)} alt='pict' />
+                          <MyImage src={photo} alt='pict' />
                         </figure>
                       </div>
                       <div className='media-content'>
                         <div className='content reseller'>
                           <p className='products-name'>
-                            <strong>{this.nameType(type, newOrderDetail)}</strong>
+                            <strong>{ nameType }</strong>
                             <br />
-                            <span>{this.typeInvoice(type)}</span>
+                            <span>{ typeInvoice }</span>
                           </p>
                         </div>
                       </div>
@@ -218,7 +216,7 @@ class SendMessage extends React.Component {
                   {validation && this.renderValidation('content', 'Mohon isi pesan')}
                 </p>
                 <p className='control'>
-                  <button className={`button is-primary is-large is-fullwidth ${this.submitting.transactionMessage && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
+                  <button className={`button is-primary is-large is-fullwidth ${this.submitting && 'is-loading'}`} onClick={() => this.submit()}>Kirim Pesan</button>
                 </p>
               </div>
             </div>

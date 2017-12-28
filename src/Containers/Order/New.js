@@ -37,14 +37,6 @@ class OrdersNew extends React.Component {
     this.fetching = { fetchingFirst: false, fetchingMore: false }
   }
 
-  detailOrder (id, type) {
-    if (type === 'reseller') {
-      Router.push(`/order-detail-dropshiper?id=${id}`)
-    } else {
-      Router.push(`/order-detail?id=${id}`)
-    }
-  }
-
   componentDidMount () {
     NProgress.start()
     this.fetching = { ...this.fetching, fetchingFirst: true }
@@ -113,7 +105,7 @@ class OrdersNew extends React.Component {
             {
               newOrders.orders.map((order, i) => {
                 return (
-                  <section className='section is-paddingless has-shadow list-order' key={i} onClick={() => this.detailOrder(order.invoice.id, order.invoice.type)}>
+                  <section className='section is-paddingless has-shadow list-order' key={i} onClick={() => Router.push(`/order-detail?id=${order.invoice.id}`)}>
                     <ul className='customer-order'>
                       <li className='label-order'>
                         {

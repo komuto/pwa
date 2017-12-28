@@ -246,7 +246,8 @@ class SalesDetail extends React.Component {
       // delete newOrderDetail.sale
       return (
         <SaleDetail
-          newOrderDetail={newOrderDetail} />
+          newOrderDetail={newOrderDetail}
+          proccessOrder='sale' />
       )
     }
   }
