@@ -15,9 +15,6 @@ export default class HomeDocument extends Document {
           <meta charset='UTF-8' />
           <meta content='width=device-width, initial-scale=1, maximum-scale=1' name='viewport' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black' />
-
-          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
-          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
           {/* Chrome, Firefox OS and Opera */}
           <meta name='theme-color' content='#ef5656' />
           {/* Windows Phone */}
@@ -32,6 +29,8 @@ export default class HomeDocument extends Document {
           <NextScript />
           <script src='https://code.jquery.com/jquery-2.1.4.min.js' />
           <script src={`${AppConfig.baseURL}static/js/nprogress.js`} />
+          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
+          <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
         </body>
       </html>
     )
