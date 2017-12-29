@@ -61,6 +61,10 @@ class Header extends Component {
         <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/nprogress.min.css`} />
         <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/react-infinite-calendar.min.css`} />
         <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/notify.min.css`} />
+        <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css' />
+        <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css' />
+        <link rel='stylesheet prefetch' href={`${hostName}static/dist/css/custom-slick-dots.css`} />
+        {/* <link rel='stylesheet prefetch' href={`http://localhost:8889/static/dist/css/custom-slick-dots.css`} /> */}
         <script type='text/javascript' src={AppConfig.midTrans.BASE_URL} data-client-key={AppConfig.midTrans.ACCESS_KEY} />
         <link rel='manifest' href={`${hostName}manifest.json`} />
       </Head>

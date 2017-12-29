@@ -347,10 +347,11 @@ Home.defaultProps = {
   sliders: {
     infinite: true,
     autoplay: true,
-    dots: false,
+    dots: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1
+    // dotsClass: 'custom-slick-dots'
   }
 }
 
