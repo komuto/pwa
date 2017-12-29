@@ -214,6 +214,7 @@ class Home extends Component {
     if (isFound(countCart)) {
       params.navbar.countCart = countCart.cartCount
     }
+
     return (
       <Content style={{ height: '100%', width: '100%', position: 'absolute' }}>
         <Header {...this.props} {...params} />
@@ -233,9 +234,7 @@ class Home extends Component {
               activeClose
               onClose={() => this.setState({notification: {status: false, message: ''}})}
               message={notification.message} />
-            {
-              banners.isFound && <SliderContent {...this.props} {...this.state} />
-            }
+            { banners.isFound && <SliderContent {...this.props} {...this.state} /> }
             <CategoryContent {...this.props} {...this.state} />
             <ProductContent {...this.props} {...this.state} wishlistPress={(id) => this.wishlistPress(id)} />
             { (params.tabbar) && <Tabbar {...this.props} {...params} /> }

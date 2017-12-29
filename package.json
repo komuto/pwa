@@ -57,7 +57,7 @@
     "react-redux": "^5.0.4",
     "react-scroll": "^1.5.5",
     "react-share": "^1.16.0",
-    "react-slick": "^0.14.11",
+    "react-slick": "^0.16.0",
     "react-sticky": "tchock/react-sticky#6.0.1-1",
     "react-window-size": "^1.0.1",
     "redux": "^3.6.0",

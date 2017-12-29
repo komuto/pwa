@@ -143,6 +143,9 @@ class InputShipmentNumber extends React.Component {
 const ShipmentReceiptNumber = (props) => {
   const { processingOrderDetail, receiptNumber, validation } = props
   if (processingOrderDetail === undefined) return null
+  let isTypeSeller = processingOrderDetail.orderDetail.invoice.type === 'seller'
+  let isTypeBuyer = processingOrderDetail.orderDetail.invoice.type === 'buyer'
+  let isTypeReseller = processingOrderDetail.orderDetail.invoice.type === 'reseller'
   moment.locale('id')
   return (
     <div>
@@ -258,7 +261,7 @@ const ShipmentReceiptNumber = (props) => {
           </div>
         </div>
       </section>
-      { processingOrderDetail.orderDetail.invoice.type === 'seller' && <div>
+      { (isTypeSeller || isTypeBuyer) && <div>
         <section className='section is-paddingless has-shadow'>
           <div className='content-header'>
             <h3>Nomor Resi</h3>
@@ -278,7 +281,7 @@ const ShipmentReceiptNumber = (props) => {
       </div>
       }
       {
-        processingOrderDetail.orderDetail.invoice.type === 'reseller' && <div>
+        isTypeReseller && <div>
           <section className='section is-paddingless has-shadow'>
             <div className='info-purchase'>
               <div className='detail-rate is-purchase'>
