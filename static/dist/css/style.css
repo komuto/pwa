@@ -5911,8 +5911,10 @@ strong {
         margin-top: 0; }
       .box .media .media-left.is-bordered img {
         border-radius: 3px; }
-      .box .media .media-left.is-full-bordered img {
+      .box .media .media-left.is-full-bordered .image {
         border-radius: 700px; }
+        .box .media .media-left.is-full-bordered .image img {
+          border-radius: 700px; }
       .box .media .media-left .image {
         position: relative;
         width: 100%;
@@ -9785,8 +9787,10 @@ strong.total {
     transform: translate(-50%, -50%);
     z-index: 2; }
 
-.box .media .media-left.is-full-bordered .image.list-transaction img {
+.box .media .media-left.is-full-bordered .image.list-transaction {
   border-radius: 700px; }
+  .box .media .media-left.is-full-bordered .image.list-transaction img {
+    border-radius: 700px; }
 
 .price-items {
   display: inline-block;
