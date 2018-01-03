@@ -27,6 +27,7 @@ class TransactionDetail extends Component {
     super(props)
     this.state = {
       id: props.query.id,
+      marketplace: props.marketplace,
       transType: props.query.transType,
       saldoHistoryDetail: null,
       balanceDetail: {
@@ -87,7 +88,9 @@ class TransactionDetail extends Component {
   }
 }
 
-const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail }) => {
+const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail, marketplace }) => {
+  let hD = saldoHistoryDetail.historyDetail
+  let marketplaceName = (marketplace.status === 200 && marketplace.data) ? marketplace.data.name : ''
   let IndexOfSummTransType = SummTransType.indexOf(transType)
   let TransTypeMessage = SummTransTypeMessage[IndexOfSummTransType]
   let TransDate = null
@@ -99,53 +102,54 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
   // let isCommission = transType === SummTransType[3]
   let isWithdraw = transType === SummTransType[5]
   let amount = 0
+  let yourAmount = 0
   let refundNumber = null
   let balanceUsed = 0
   let comission = 0
   let comissionPercent = 0
   let realRefund = false
+  // set transactation date
+  TransDate = moment.unix(hD.transaction.date).format('dddd, Do MMMM YY')
 
   /** ReSell */
   if (isReSell) {
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.invoice.total_price
-    comission = saldoHistoryDetail.historyDetail.commission.nominal
-    comissionPercent = saldoHistoryDetail.historyDetail.commission.percent * 100
+    amount = hD.invoice.total_price
+    comission = hD.commission.nominal
+    comissionPercent = hD.commission.percent * 100
   }
 
   /** SELL / sell transaction */
   if (isSell) {
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.invoice.total_price
+    amount = hD.invoice.total_price
+    comission = hD.commission.nominal
+    comissionPercent = hD.commission.percent * 100
+    yourAmount = hD.transaction.amount
   }
 
   /** PAID / paid transaction  */
   if (isPaid) {
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.bucket.total_bill
-    balanceUsed = saldoHistoryDetail.historyDetail.bucket.wallet
+    amount = hD.bucket.total_bill
+    balanceUsed = hD.bucket.wallet
   }
 
   /** RFND / refund transaction  */
   if (isRefund) {
-    realRefund = saldoHistoryDetail.historyDetail.transaction.summaryable_type === 'bucket_refund'
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.transaction.amount
+    realRefund = hD.transaction.summaryable_type === 'bucket_refund'
+    amount = hD.transaction.amount
     if (realRefund) {
-      refundNumber = saldoHistoryDetail.historyDetail.refund.refund_number
+      refundNumber = hD.refund.refund_number
     }
   }
 
   /** TPUP / topup transaction */
   if (isTopup) {
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.amount
+    TransDate = moment.unix(hD.date).format('dddd, Do MMMM YY')
+    amount = hD.amount
   }
 
   /** WTHD / withdraw transaction */
   if (isWithdraw) {
-    TransDate = moment.unix(saldoHistoryDetail.historyDetail.transaction.date).format('dddd, Do MMMM YY')
-    amount = saldoHistoryDetail.historyDetail.transaction.amount
+    amount = hD.transaction.amount
   }
 
   return (
@@ -169,7 +173,7 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
             { isWithdraw && <List title='Jumlah Penarikan' data={<BalanceDecreases amount={amount} />} /> }
             { isWithdraw && <List title='Metode Pembayaran' data='Transfer Bank' /> }
             { isTopup && <List title='Jumlah Top-up Saldo' data={<BalanceIncreases amount={amount} />} /> }
-            { isTopup && <List title='Metode Pembayaran' data={saldoHistoryDetail.historyDetail.payment_method} /> }
+            { isTopup && <List title='Metode Pembayaran' data={hD.payment_method} /> }
             { isRefund && <List title='Uang Yang Anda Terima' data={<BalanceIncreases amount={amount} />} /> }
             { (isRefund && realRefund) && <List title='Nomor Refund' data={refundNumber} /> }
           </ul>
@@ -179,6 +183,13 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
         isReSell &&
         <WrapperList>
           <List title={`Komisi yang Anda terima (${comissionPercent.toFixed(0)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
+        </WrapperList>
+      }
+      {
+        isSell &&
+        <WrapperList>
+          <List title={`Komisi ${marketplaceName} (${comissionPercent.toFixed(0)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
+          <List title={`Uang yang anda terima`} data={`Rp ${RupiahFormat(yourAmount)}`} />
         </WrapperList>
       }
       { (isSell || isReSell) && <SellInformation {...saldoHistoryDetail.historyDetail} /> }
@@ -513,7 +524,8 @@ const Detail = ({ active, totalPayment, promoCode, pricePromo }) => (
 )
 
 const mapStateToProps = (state) => ({
-  saldoHistoryDetail: state.saldoHistoryDetail
+  saldoHistoryDetail: state.saldoHistoryDetail,
+  marketplace: state.marketplace
 })
 
 const mapDispatchToProps = (dispatch) => ({
