@@ -271,9 +271,10 @@ class AddAddress extends React.Component {
           <div className='edit-data-delivery bg-white edit'>
             <form className='form edit'>
               <div className='field'>
-                <label className='label'>Nama Alias</label>
+                {/* <label className='label'>Nama Alias</label> */}
                 <p className='control'>
                   <input
+                    placeholder='Nama Alias'
                     className='input'
                     type='text'
                     name='alias_address'
@@ -284,9 +285,10 @@ class AddAddress extends React.Component {
                 {this.renderValidation('alias_address', 'Mohon isi nama alias anda')}
               </div>
               <div className='field'>
-                <label className='label'>Nama Penerima</label>
+                {/* <label className='label'>Nama Penerima</label> */}
                 <p className='control'>
                   <input
+                    placeholder='Nama Penerima'
                     className='input'
                     type='text'
                     name='name'
@@ -296,9 +298,10 @@ class AddAddress extends React.Component {
                 {this.renderValidation('name', 'Mohon isi nama penerima')}
               </div>
               <div className='field'>
-                <label className='label'>Nomor Handphone</label>
+                {/* <label className='label'>Nomor Handphone</label> */}
                 <p className='control'>
                   <input
+                    placeholder='Nomor Handphone'
                     className='input'
                     type='text'
                     name='phone_number'
@@ -320,9 +323,10 @@ class AddAddress extends React.Component {
           <div className='edit-data-delivery bg-white edit'>
             <form className='form edit'>
               <div className='field'>
-                <label className='label'>Alamat Lengkap</label>
+                {/* <label className='label'>Alamat Lengkap</label> */}
                 <p className='control'>
                   <input
+                    placeholder='Alamat Lengkap'
                     className='input'
                     type='text'
                     name='address'
@@ -332,14 +336,14 @@ class AddAddress extends React.Component {
                 {this.renderValidation('address', 'Mohon isi alamat lengkap anda')}
               </div>
               <div className='field'>
-                <label className='label'>Provinsi</label>
+                {/* <label className='label'>Provinsi</label> */}
                 <p className='control detail-address'>
                   <span className='select'>
                     <select
                       name='province_id'
                       value={formAddress.province_id}
                       onChange={(e) => this.handleAddress(e)}>
-                      <option disabled='disabled' value=''>Pilih Provinsi </option>
+                      <option disabled='disabled' value=''>Provinsi </option>
                       { provinces.data.provinces.map((province, index) => {
                         return (
                           <option
@@ -355,14 +359,14 @@ class AddAddress extends React.Component {
                 {this.renderValidation('province_id', 'Mohon isi provinsi anda')}
               </div>
               <div className='field'>
-                <label className='label'>Kota/Kabupaten</label>
+                {/* <label className='label'>Kota/Kabupaten</label> */}
                 <p className='control detail-address'>
                   <span className='select'>
                     <select
                       name='district_id'
                       value={formAddress.district_id}
                       onChange={(e) => this.handleAddress(e)}>
-                      <option disabled='disabled' value=''>Pilih Kota / Kabupaten </option>
+                      <option disabled='disabled' value=''>Kota / Kabupaten </option>
                       { districts.data.districts.map((district, index) => {
                         return (
                           <option
@@ -378,14 +382,14 @@ class AddAddress extends React.Component {
                 {this.renderValidation('district_id', 'Mohon isi kota / kabupaten anda')}
               </div>
               <div className='field'>
-                <label className='label'>Kecamatan</label>
+                {/* <label className='label'>Kecamatan</label> */}
                 <p className='control detail-address'>
                   <span className='select'>
                     <select
                       name='sub_district_id'
                       value={formAddress.sub_district_id}
                       onChange={(e) => this.handleAddress(e)}>
-                      <option disabled='disabled' value=''>Pilih Kecamatan </option>
+                      <option disabled='disabled' value=''>Kecamatan </option>
                       { subdistricts.data.subdistricts.map((subdistrict, index) => {
                         return (
                           <option
@@ -401,14 +405,14 @@ class AddAddress extends React.Component {
                 {this.renderValidation('sub_district_id', 'Mohon isi kecamatan anda')}
               </div>
               <div className='field'>
-                <label className='label'>Kelurahan</label>
+                {/* <label className='label'>Kelurahan</label> */}
                 <p className='control detail-address'>
                   <span className='select'>
                     <select
                       name='village_id'
                       value={formAddress.village_id}
                       onChange={(e) => this.handleAddress(e)}>
-                      <option disabled='disabled' value=''>Pilih Kelurahan </option>
+                      <option disabled='disabled' value=''>Kelurahan </option>
                       { villages.data.villages.map((village, index) => {
                         return (
                           <option
@@ -424,9 +428,10 @@ class AddAddress extends React.Component {
                 {this.renderValidation('village_id', 'Mohon isi kelurahan anda')}
               </div>
               <div className='field'>
-                <label className='label'>Kode Pos</label>
+                {/* <label className='label'>Kode Pos</label> */}
                 <p className='control'>
                   <input
+                    placeholder='Kode Pos'
                     className='input'
                     type='text'
                     name='postal_code'
@@ -457,7 +462,7 @@ class AddAddress extends React.Component {
             <a
               className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
               onClick={(e) => this.submitAddressInfo(e)}>
-              Simpan Perubahan
+              Buat Alamat Baru
             </a>
           </div>
         </section>
@@ -466,15 +471,13 @@ class AddAddress extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    statusAddAddress: state.addAddress,
-    provinces: state.provinces,
-    districts: state.districts,
-    subdistricts: state.subdistricts,
-    villages: state.villages
-  }
-}
+const mapStateToProps = (state) => ({
+  statusAddAddress: state.addAddress,
+  provinces: state.provinces,
+  districts: state.districts,
+  subdistricts: state.subdistricts,
+  villages: state.villages
+})
 
 const mapDispatchToProps = dispatch => ({
   getProvince: () => dispatch(actionLocationTypes.getProvince()),
