@@ -10,12 +10,12 @@ const Index = (props) => {
   const params = {
     style: 'main user',
     header: {
-      title: 'Edit Katalog'
+      title: 'Edit Nama Katalog'
     },
     navbar: {
       searchBoox: false,
       path: '/',
-      textPath: 'Edit Katalog'
+      textPath: 'Edit Nama Katalog'
     }
   }
   return (

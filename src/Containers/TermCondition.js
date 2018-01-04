@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Notification from '../Components/Notification'
 // actions
@@ -84,6 +85,10 @@ class TermCondition extends React.Component {
       this.setState({ submiting: false })
       if (isFound(updateStore)) {
         this.setState({ notification: notifSuccess(updateStore.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 3000)
       }
       if (isError(updateStore)) {
         this.setState({ notification: notifError(updateStore.message) })
@@ -93,12 +98,31 @@ class TermCondition extends React.Component {
       this.fetchingFirst = false
       NProgress.done()
       if (isFound(profile)) {
-        let term = profile.user.store.term_condition ? profile.user.store.term_condition : ''
-        this.setState({ profile, term })
+        // let term = profile.user.store.term_condition ? profile.user.store.term_condition : ''
+        this.setState({ profile })
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
       }
+    }
+  }
+
+  exampleTerm () {
+    const { profile } = this.state
+    if (profile.user.store.term_condition) {
+      return (
+        <div>
+          <p className='ex'>Term and Conditions Toko {profile.user.store.name } :</p>
+          <p className='ex'>{ profile.user.store.term_condition } </p>
+        </div>
+      )
+    } else {
+      return (
+        <p className='ex'><strong>Contoh:</strong> <br />
+        - Toko Hanya melakukan pengiriman di hari kamis <br />
+        - Pesanan diatas jam 10 pagi akan diproses besok
+        </p>
+      )
     }
   }
 
@@ -118,28 +142,23 @@ class TermCondition extends React.Component {
           </div>
           <section className='content'>
             <div className='container is-fluid'>
-              <form action='#' className='form edit'>
-                <div className='field '>
-                  <p className='control'>
-                    <input
-                      className='input'
-                      type='text'
-                      placeholder='Tulis Terms and Conditions'
-                      name='term'
-                      value={term}
-                      onChange={(e) => this.handleInput(e)} />
-                  </p>
-                  {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
-                  <p className='ex'><strong>Contoh:</strong> <br />
-                  - Toko Hanya melakukan pengiriman di hari kamis <br />
-                  - Pesanan diatas jam 10 pagi akan diproses besok
-                  </p>
-                </div>
-                <a
-                  className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
-                  onClick={(e) => this.updateTerm(e)}>Simpan Perubahan
-                </a>
-              </form>
+              <div className='field '>
+                <p className='control'>
+                  <input
+                    className='input'
+                    type='text'
+                    placeholder='Tulis Terms and Conditions'
+                    name='term'
+                    value={term}
+                    onChange={(e) => this.handleInput(e)} />
+                </p>
+                {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
+                { this.exampleTerm() }
+              </div>
+              <a
+                className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
+                onClick={(e) => this.updateTerm(e)}>Simpan Perubahan
+              </a>
             </div>
           </section>
         </div>

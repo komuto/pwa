@@ -150,13 +150,14 @@ class AddEditCatalog extends Component {
           <form className='form edit'>
             <div className='has-text-centered noted' />
             <div className='field '>
-              <label className='label'>Nama Katalog</label>
+              <label className='label' />
               <p className='control'>
                 <input
                   className='input'
                   type='text'
                   value={catalog}
-                  onChange={(e) => this.handleInput(e)} />
+                  onChange={(e) => this.handleInput(e)}
+                  placeholder='Masukkan nama katalog' />
               </p>
               {validation && this.renderValidation('catalog', 'Mohon isi nama katalog')}
             </div>

@@ -27,7 +27,7 @@ class AboutDropshipping extends React.Component {
 
   toProductAddFromDropshipper (e) {
     e.preventDefault()
-    Router.push(`/dropship?sort=newest`)
+    Router.push(`/dropship`)
   }
 
   componentDidMount () {
