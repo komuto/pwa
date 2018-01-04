@@ -530,7 +530,7 @@ class ProductAddFromDropshipper extends React.Component {
       navbar: {
         searchBoox: false,
         path: '/',
-        textPath: 'Produk',
+        textPath: 'Pilih Barang dari Dropshipping',
         searchActive: !!q
       }
     }
@@ -573,7 +573,7 @@ class ProductAddFromDropshipper extends React.Component {
                 type='text'
                 name='search'
                 onChange={(e) => this.doSearch(e)}
-                placeholder='Cari barang'
+                placeholder='Cari Produk'
                 value={searchText} />
               <span className='icon is-left'>
                 <span className='icon-search' />

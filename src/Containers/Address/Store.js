@@ -5,9 +5,12 @@ import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import Notification from '../../Components/Notification'
+import MyImage from '../../Components/MyImage'
 // actions
 import * as actionTypes from '../../actions/stores'
 import * as actionUserTypes from '../../actions/user'
+/** including themes */
+import Images from '../../Themes/Images'
 
 class AddressStore extends React.Component {
   constructor (props) {
@@ -177,6 +180,7 @@ class AddressStore extends React.Component {
           </section>
           <div className='sort-option' style={{display: editAddress && 'block'}}>
             <div className='notif-report'>
+              <MyImage src={Images.store} alt={Images.store} />
               <h3>Dengan mengubah alamat, status Toko anda menjadi tidak terverifikasi</h3>
               <p>Anda harus menverifikasi Alamat baru Anda dengan kode yang akan kami kirim ke alamat baru</p>
               <button
