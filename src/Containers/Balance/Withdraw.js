@@ -331,13 +331,13 @@ const WithdrawContent = ({ defProps, balance, banks, listBankAccounts, inputAcco
             <label className='label'>Nominal Penarikan Dana</label>
             <p className={`control with-currency ${error.includes(amount) && 'is-error'}`}>
               <span className='cur-val'>Rp</span>
-              <input name={amount} onChange={(e) => handleInput(e.target)} className='input' type='number' placeholder='0000' />
+              <input name={amount} onChange={(e) => handleInput(e.target)} className='input' type='number' placeholder='100000' />
               <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
           <div className='field sortButton' onClick={(e) => listBankAccounts.showPress(e)}>
             <p className={`control detail-address sortButton with-currency ${error.includes(bankAccountId) && 'is-error'}`}>
-              <span className='location-label js-option sortButton'>{ dispalayAccount || 'Pilih Rekening' }</span>
+              <span className='location-label js-option sortButton'>{ dispalayAccount || 'Pilih Rekening Bank' }</span>
               <span className='error-msg'>* Wajib diisi</span>
             </p>
           </div>
