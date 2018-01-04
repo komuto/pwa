@@ -11,3 +11,7 @@ export default (props) => {
     loader={loader}
     unloader={unloader} />
 }
+
+export const ImageRounded = ({ img, width, height, borderRadius, padding }) => (
+  <div style={{ width, height, borderRadius, padding, backgroundImage: `url(${img})`, backgroundPosition: 'center', backgroundSize: 'cover' }} />
+)
