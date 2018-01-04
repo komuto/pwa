@@ -38,11 +38,9 @@ class Add extends React.Component {
         this.setState({ notification: notifError(saleCount.message) })
       }
     }
-    console.log('nextProps', nextProps)
   }
 
   render () {
-    console.log('state', this.state)
     const { notification } = this.state
     return (
       <Content>

@@ -53,8 +53,6 @@ class Buyer extends Component {
 
   render () {
     let { buyerComplainedOrders, buyerComplainedOrders2, tab, notification } = this.state
-    console.log('buyerComplainedOrders2: ', buyerComplainedOrders2)
-    console.log('buyerComplainedOrders: ', buyerComplainedOrders)
 
     let { isFound } = this.props
     let countUnreadResolved = 0

@@ -94,7 +94,6 @@ class OrderDetail extends React.Component {
   }
   render () {
     const { newOrderDetail, notification } = this.state
-    console.log('newOrder', newOrderDetail)
     return (
       <div>
         <Notification

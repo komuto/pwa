@@ -286,7 +286,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getComplainedOrderDetailBuyer: (params) => dispatch(transactionActions.getComplainedOrderDetailBuyer(params)),
-  // setAddReviews: (params) => console.log('params: ', params)
   setAddReviews: (params) => dispatch(transactionActions.buyerDisputeReceived(params))
 })
 
