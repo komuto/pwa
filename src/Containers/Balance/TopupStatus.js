@@ -109,7 +109,6 @@ class TopupStatus extends Component {
 
 /** content from this component */
 const TopupContent = ({ topupStatus, handleLoadMore, hasMore }) => {
-  console.log('hasMore: ', hasMore)
   return (
     <Section>
       <WrapperList>
