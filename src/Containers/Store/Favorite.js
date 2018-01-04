@@ -15,7 +15,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import Content from '../../Components/Content'
 import Notification from '../../Components/Notification'
 import Loading from '../../Components/Loading'
-import MyImage from '../../Components/MyImage'
+import MyImage, { ImageRounded } from '../../Components/MyImage'
 import Images from '../../Themes/Images'
 /** including actions */
 import * as userActions from '../../actions/user'
@@ -223,11 +223,15 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                             </figure>
                           </div>
                           <div className='media-content'>
-                            <div className='content'>
-                              <h4> { ReadAbleText(product.name)}</h4>
+                            <div className='content min-height'>
+                              <h4 className='wrapword' style={{ minHeight: '34px' }}> { ReadAbleText(product.name)}</h4>
                               <div className='detail'>
                                 { isDiscount && <div className='discount'>Rp {RupiahFormat(price)}</div> }
                                 <span className='price'>Rp {RupiahFormat(priceAfterDiscount)} </span>
+                                <span className='wish'>
+                                  <span style={{ zIndex: 100 }} className={`icon-wishlist`} />
+                                  { product.count_like }
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -243,8 +247,8 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                   <div className='detail'>
                     <div className='detail-product'>
                       <div className='purchase'>
-                        <figure className='img-item is-bordered ms'>
-                          <MyImage src={data.store.logo} alt={data.store.name} />
+                        <figure className='img-item is-bordered ms' style={{ marginRight: '20px' }}>
+                          <ImageRounded img={data.store.logo} width={`100%`} height={`100%`} borderRadius={0} padding={20} />
                         </figure>
                         <h3 onClick={() => Router.push(`/store?id=${data.store.id}&tab=Produk`)}>{ ReadAbleText(data.store.name) } <span className='icon-verified' /></h3>
                         <span className='price'>{ ReadAbleText(data.store.province.name) }</span>
