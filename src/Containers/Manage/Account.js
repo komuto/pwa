@@ -260,7 +260,7 @@ class ManageAccount extends Component {
                       <div className='media-content'>
                         <div className='content'>
                           <p>
-                            <strong>Log Out</strong><br />
+                            <strong>Keluar</strong><br />
                           </p>
                         </div>
                       </div>
