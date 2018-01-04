@@ -5,6 +5,7 @@ import Router from 'next/router'
 import NProgress from 'nprogress'
 // components
 import Notification from '../../Components/Notification'
+import { ModalSlide } from '../../Components/Modal'
 // validation
 import { inputNumber } from '../../Validations/Input'
 // actions
@@ -136,32 +137,58 @@ class AddRekening extends React.Component {
     }
   }
 
+  showPress (e) {
+    e.preventDefault()
+    if (!e.target.className.includes('sortButton')) return
+    this.setState({ showListBank: !this.state.showListBank })
+  }
+
   renderModalListBanks () {
     const { showListBank, banks } = this.state
     return (
-      <div className='sort-option' style={{display: showListBank && 'block'}}>
-        <div className='sort-list'>
-          <p><strong>Pilih Bank</strong></p>
-          <form className='form'>
-            <div className='field'>
-              <div className='control popup-option'>
-                { banks.banks.map(bank => {
-                  return (
-                    <label
-                      className='radio'
-                      key={bank.id}
-                      onClick={(e) => this.handleSelectBank(e, bank)} >
-                      <input type='radio' name='bank' />
-                      {bank.name}
-                    </label>
-                  )
-                })}
-              </div>
-            </div>
-          </form>
+      <ModalSlide
+        title='Pilih Bank'
+        show={showListBank}
+        showPress={(e) => this.showPress(e)} >
+        <div>
+          { banks.banks.map(bank => {
+            return (
+              <label
+                className='radio'
+                key={bank.id}
+                onClick={(e) => this.handleSelectBank(e, bank)} >
+                <input type='radio' name='bank' />
+                {bank.name}
+              </label>
+            )
+          })}
         </div>
-      </div>
+      </ModalSlide>
     )
+    // return (
+    //   <div className='sort-option' style={{display: showListBank && 'block'}}>
+    //     <div className='sort-list'>
+    //       <p><strong>Pilih Bank</strong></p>
+    //       <form className='form'>
+    //         <div className='field'>
+    //           <div className='control popup-option'>
+    //             { banks.banks.map(bank => {
+    //               return (
+    //                 <label
+    //                   className='radio'
+    //                   key={bank.id}
+    //                   onClick={(e) => this.handleSelectBank(e, bank)} >
+    //                   <input type='radio' name='bank' />
+    //                   {bank.name}
+    //                 </label>
+    //               )
+    //             })}
+    //           </div>
+    //         </div>
+    //       </form>
+    //     </div>
+    //   </div>
+    // )
   }
 
   render () {
@@ -177,9 +204,10 @@ class AddRekening extends React.Component {
         <div className='edit-data-delivery bg-white edit'>
           <form className='form edit'>
             <div className='field '>
-              <label className='label'>Pemilik Akun</label>
+              {/* <label className='label'>Pemilik Akun</label> */}
               <p className='control'>
                 <input
+                  placeholder='Pemilik Akun'
                   className='input'
                   type='text'
                   name='holder_name'
@@ -189,9 +217,10 @@ class AddRekening extends React.Component {
               {this.renderValidation('holder_name', 'Mohon isi nama pemilik akun')}
             </div>
             <div className='field '>
-              <label className='label'>Nomor Rekening</label>
+              {/* <label className='label'>Nomor Rekening</label> */}
               <p className='control'>
                 <input
+                  placeholder='Nomor Rekening'
                   className='input'
                   type='text'
                   name='holder_account_number'
@@ -201,19 +230,20 @@ class AddRekening extends React.Component {
               {this.renderValidation('holder_account_number', 'Mohon isi nomor rekening anda')}
             </div>
             <div className='field'>
-              <label className='label'>Nama Bank</label>
+              {/* <label className='label'>Nama Bank</label> */}
               <p className='control detail-address'>
                 <span onClick={(e) => this.modalListBank(e)}
                   className='location-label js-option'>
-                  {selectedBank || 'Pilih Nama Bank'}
+                  {selectedBank || 'Nama Bank'}
                 </span>
               </p>
               {this.renderValidation('master_bank_id', 'Mohon isi nama bank')}
             </div>
             <div className='field '>
-              <label className='label'>Cabang Bank</label>
+              {/* <label className='label'>Cabang Bank</label> */}
               <p className='control'>
                 <input
+                  placeholder='Cabang Bank'
                   className='input'
                   type='text'
                   name='bank_branch_office_name'
@@ -236,12 +266,10 @@ class AddRekening extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    banks: state.banks,
-    statusSendOTPBank: state.sendOTPBank
-  }
-}
+const mapStateToProps = (state) => ({
+  banks: state.banks,
+  statusSendOTPBank: state.sendOTPBank
+})
 
 const mapDispatchToProps = dispatch => ({
   listBank: () => dispatch(actionBank.listBank()),
