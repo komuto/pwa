@@ -115,14 +115,14 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
   if (isReSell) {
     amount = hD.invoice.total_price
     comission = hD.commission.nominal
-    comissionPercent = hD.commission.percent * 100
+    comissionPercent = hD.commission.percent
   }
 
   /** SELL / sell transaction */
   if (isSell) {
     amount = hD.invoice.total_price
     comission = hD.commission.nominal
-    comissionPercent = hD.commission.percent * 100
+    comissionPercent = hD.commission.percent
     yourAmount = hD.transaction.amount
   }
 
@@ -182,13 +182,13 @@ const TransactionDetailContent = ({ transType, saldoHistoryDetail, balanceDetail
       {
         isReSell &&
         <WrapperList>
-          <List title={`Komisi yang Anda terima (${comissionPercent.toFixed(0)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
+          <List title={`Komisi yang Anda terima (${comissionPercent.toFixed(1)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
         </WrapperList>
       }
       {
         isSell &&
         <WrapperList>
-          <List title={`Komisi ${marketplaceName} (${comissionPercent.toFixed(0)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
+          <List title={`Komisi ${marketplaceName} (${comissionPercent.toFixed(1)}%)`} data={`Rp ${RupiahFormat(comission)}`} />
           <List title={`Uang yang anda terima`} data={`Rp ${RupiahFormat(yourAmount)}`} />
         </WrapperList>
       }
