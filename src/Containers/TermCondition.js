@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
+import Router from 'next/router'
 // components
 import Notification from '../Components/Notification'
 // actions
@@ -84,6 +85,10 @@ class TermCondition extends React.Component {
       this.setState({ submiting: false })
       if (isFound(updateStore)) {
         this.setState({ notification: notifSuccess(updateStore.message) })
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          Router.back()
+        }, 3000)
       }
       if (isError(updateStore)) {
         this.setState({ notification: notifError(updateStore.message) })
@@ -123,7 +128,6 @@ class TermCondition extends React.Component {
 
   render () {
     const { submiting, term, profile, notification } = this.state
-    console.log('state', this.state)
     if (profile.isFound) {
       return (
         <div>
@@ -138,25 +142,23 @@ class TermCondition extends React.Component {
           </div>
           <section className='content'>
             <div className='container is-fluid'>
-              <form action='#' className='form edit'>
-                <div className='field '>
-                  <p className='control'>
-                    <input
-                      className='input'
-                      type='text'
-                      placeholder='Tulis Terms and Conditions'
-                      name='term'
-                      value={term}
-                      onChange={(e) => this.handleInput(e)} />
-                  </p>
-                  {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
-                  { this.exampleTerm() }
-                </div>
-                <a
-                  className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
-                  onClick={(e) => this.updateTerm(e)}>Simpan Perubahan
-                </a>
-              </form>
+              <div className='field '>
+                <p className='control'>
+                  <input
+                    className='input'
+                    type='text'
+                    placeholder='Tulis Terms and Conditions'
+                    name='term'
+                    value={term}
+                    onChange={(e) => this.handleInput(e)} />
+                </p>
+                {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
+                { this.exampleTerm() }
+              </div>
+              <a
+                className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
+                onClick={(e) => this.updateTerm(e)}>Simpan Perubahan
+              </a>
             </div>
           </section>
         </div>
