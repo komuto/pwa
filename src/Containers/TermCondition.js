@@ -93,8 +93,8 @@ class TermCondition extends React.Component {
       this.fetchingFirst = false
       NProgress.done()
       if (isFound(profile)) {
-        let term = profile.user.store.term_condition ? profile.user.store.term_condition : ''
-        this.setState({ profile, term })
+        // let term = profile.user.store.term_condition ? profile.user.store.term_condition : ''
+        this.setState({ profile })
       }
       if (isError(profile)) {
         this.setState({ notification: notifError(profile.message) })
@@ -102,8 +102,28 @@ class TermCondition extends React.Component {
     }
   }
 
+  exampleTerm () {
+    const { profile } = this.state
+    if (profile.user.store.term_condition) {
+      return (
+        <div>
+          <p className='ex'>Term and Conditions Toko {profile.user.store.name } :</p>
+          <p className='ex'>{ profile.user.store.term_condition } </p>
+        </div>
+      )
+    } else {
+      return (
+        <p className='ex'><strong>Contoh:</strong> <br />
+        - Toko Hanya melakukan pengiriman di hari kamis <br />
+        - Pesanan diatas jam 10 pagi akan diproses besok
+        </p>
+      )
+    }
+  }
+
   render () {
     const { submiting, term, profile, notification } = this.state
+    console.log('state', this.state)
     if (profile.isFound) {
       return (
         <div>
@@ -130,10 +150,7 @@ class TermCondition extends React.Component {
                       onChange={(e) => this.handleInput(e)} />
                   </p>
                   {this.renderValidation('term', 'Mohon isi Terms and Conditions')}
-                  <p className='ex'><strong>Contoh:</strong> <br />
-                  - Toko Hanya melakukan pengiriman di hari kamis <br />
-                  - Pesanan diatas jam 10 pagi akan diproses besok
-                  </p>
+                  { this.exampleTerm() }
                 </div>
                 <a
                   className={`button is-primary is-large is-fullwidth ${submiting && 'is-loading'}`}
