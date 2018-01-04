@@ -46,8 +46,8 @@ export class Filter extends Component {
           name: 'Rentang Harga',
           viewCheckAll: false,
           customComponent: true,
-          priceMinimum: '',
-          priceMaximum: '',
+          priceMinimum: '100000',
+          priceMaximum: '250000',
           errorPriceMinimum: '',
           errorPriceMaximum: ''
         },
@@ -227,6 +227,21 @@ export class Filter extends Component {
     this.setState({ tabs })
   }
 
+  textSelectAll (key) {
+    let text
+    switch (key) {
+      case 'condition':
+        text = 'Semua Kondisi'
+        break
+      case 'expeditionServices':
+        text = 'Semua Ekspedisi'
+        break
+      default:
+        text = 'Pilih Semua'
+    }
+    return text
+  }
+
   render () {
     const { isShow } = this.props
     const { tabActive, tabs, provinces, districts } = this.state
@@ -234,7 +249,7 @@ export class Filter extends Component {
     const tabsNav = tabs.map((tab) => { return <li key={tab.id} className={`${tabActive === tab.id ? 'is-active' : ''}`}><a onClick={() => this.setTabActive(tab.id)}>{ tab.name }</a></li> })
     const checkAllButton = filterTabResults.viewCheckAll
           ? <label className='checkbox'>
-            <span className='sort-text active'>Pilih Semua</span>
+            <span className='sort-text active'>{this.textSelectAll(filterTabResults.id)}</span>
             <span className={`input-wrapper ${filterTabResults.selectedAll ? 'checked' : ''}`}>
               <input type='checkbox' checked={filterTabResults.selectedAll} onChange={(event) => this.viewCheckAll(event, tabActive)} />
             </span>
