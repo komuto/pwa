@@ -62,7 +62,7 @@ export const Item = ({ data }) => (
   </li>
 )
 /** add new discussion */
-export const New = ({ onSubmit, onChange, value, submitting, placeHolder }) => {
+export const New = ({ onChange, onSubmit, value, submitting, placeHolder }) => {
   let isActive = false
   if (value !== '') {
     isActive = true
@@ -74,10 +74,10 @@ export const New = ({ onSubmit, onChange, value, submitting, placeHolder }) => {
   return (
     <div className='add-comment'>
       <div className='field'>
-        <p className='control'>
+        <div className='control'>
           <textarea onChange={onChange} value={submitting ? 'Loading...' : value} className='textarea' placeholder={`${placeHolder !== undefined ? placeHolder : 'Tulis Komentar'}`} readOnly={submitting} />
           <button onClick={() => isActive && onSubmit()} className={`icon-btn-send-inactive ${(isActive) ? 'active' : ''}`} />
-        </p>
+        </div>
       </div>
     </div>
   )

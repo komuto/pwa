@@ -4,10 +4,11 @@ import { connect } from 'react-redux'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 import moment from 'moment'
+import { animateScroll } from 'react-scroll'
 // components
 import { Navbar } from '../Navbar'
 import Images from '../../Themes/Images'
-import MyImage from '../../Components/MyImage'
+import MyImage, { ImageRounded } from '../../Components/MyImage'
 import Notification from '../../Components/Notification'
 import { New } from '../../Components/Comment'
 // actions
@@ -29,9 +30,13 @@ class MessageDetail extends React.Component {
         message: 'Error, default message.'
       }
     }
-    this.afterSendMessage = false
-    this.moveMessage = false
-    this.deleteMessage = false
+
+    this.submitting = {
+      deleteMessage: false,
+      moveMessage: false,
+      replyMessage: false,
+      getBuyerDetailMessage: false
+    }
   }
 
   handleInput (e) {
@@ -39,12 +44,11 @@ class MessageDetail extends React.Component {
     this.setState({ message: value })
   }
 
-  async submitMessage (e) {
+  submitMessage (e) {
     const { id, message } = this.state
     if (this.state.message !== '') {
-      this.afterSendMessage = true
-      await this.props.buyerReplyMessage({ id: id, content: message })
-      this.setState({ message: '' })
+      this.submitting = { ...this.submitting, replyMessage: true }
+      this.props.buyerReplyMessage({ id: id, content: message })
     }
   }
 
@@ -52,12 +56,13 @@ class MessageDetail extends React.Component {
     const { id } = this.state
     if (id) {
       NProgress.start()
+      this.submitting = { ...this.submitting, getBuyerDetailMessage: true }
       this.props.getBuyerDetailMessage({ id })
     }
   }
 
   updateMoveMessage () {
-    this.moveMessage = true
+    this.submitting = { ...this.submitting, moveMessage: true }
     const { messageType } = this.state
     if (messageType === 'conversation') {
       this.props.updateBuyerMessage({ id: this.state.id, messageType: 'archive' })
@@ -68,33 +73,47 @@ class MessageDetail extends React.Component {
   }
 
   deleteMessageForever () {
-    this.deleteMessage = true
+    this.submitting = { ...this.submitting, deleteMessage: true }
     this.props.buyerDeleteMessage({ id: this.state.id })
+  }
+
+  scrollToBottom () {
+    animateScroll.scrollToBottom()
   }
 
   componentWillReceiveProps (nextProps) {
     const { buyerDetailMessage, replyMessage, updateMessage, deleteMessage } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
-    if (!isFetching(buyerDetailMessage)) {
+    if (!isFetching(buyerDetailMessage) && this.submitting.getBuyerDetailMessage) {
       NProgress.done()
+      this.submitting = { ...this.submitting, getBuyerDetailMessage: false }
       if (isFound(buyerDetailMessage)) {
         this.setState({ buyerDetailMessage, messageType: buyerDetailMessage.buyerDetailMessage.type })
+        this.scrollToBottom()
       }
       if (isError(buyerDetailMessage)) {
         this.setState({ notification: notifError(buyerDetailMessage.message) })
       }
     }
-    if (!isFetching(replyMessage) && this.afterSendMessage) {
-      this.afterSendMessage = false
+
+    if (!isFetching(replyMessage) && this.submitting.replyMessage) {
+      this.submitting = { ...this.submitting, replyMessage: false }
       if (isFound(replyMessage)) {
-        this.props.getBuyerDetailMessage({ id: this.state.id, is_archived: false })
+        let detailMessages = buyerDetailMessage.buyerDetailMessage.detail_messages
+        buyerDetailMessage.buyerDetailMessage.detail_messages = detailMessages.concat(replyMessage.message)
+        this.setState({
+          message: '',
+          buyerDetailMessage
+        })
+        this.scrollToBottom()
       }
       if (isError(replyMessage)) {
         this.setState({ notification: notifError(replyMessage.message) })
       }
     }
-    if (!isFetching(updateMessage) && this.moveMessage) {
-      this.moveMessage = false
+
+    if (!isFetching(updateMessage) && this.submitting.moveMessage) {
+      this.submitting = { ...this.submitting, moveMessage: false }
       if (isFound(updateMessage)) {
         if (this.state.messageType === 'conversation') {
           Router.push(`/messages?tab=CHAT&toArchive=success`)
@@ -107,8 +126,9 @@ class MessageDetail extends React.Component {
         this.setState({ notification: notifError(updateMessage.message) })
       }
     }
-    if (!isFetching(deleteMessage) && this.deleteMessage) {
-      this.deleteMessage = false
+
+    if (!isFetching(deleteMessage) && this.submitting.deleteMessage) {
+      this.submitting = { ...this.submitting, deleteMessage: false }
       if (isFound(deleteMessage)) {
         if (this.state.messageType === 'conversation') {
           Router.push(`/messages?tab=CHAT&toDelete=success`)
@@ -134,7 +154,7 @@ class MessageDetail extends React.Component {
               <article className='media'>
                 <div className='media-left top sm'>
                   <figure className='image user-pict'>
-                    <MyImage src={message.user.photo} alt='pict' />
+                    <ImageRounded img={message.user.photo} width={40} height={40} borderRadius={20} padding={20} />
                   </figure>
                 </div>
                 <div className='media-content'>
@@ -195,22 +215,21 @@ class MessageDetail extends React.Component {
         </div>
         <section className='section is-paddingless'>
           <div className='discuss'>
-            <ul className='notif-detail conversation bordered'>
+            <ul className='notif-detail conversation'>
               {this.renderListMessages()}
             </ul>
           </div>
         </section>
         <div className='add-comment'>
           <div className='field'>
-            <p className='control'>
-              <span className={`${this.afterSendMessage && 'button self is-loading right'}`} />
+            <div className='control'>
+              <span className={`${this.afterSendMessage ? 'button self is-loading right' : ''}`} />
               <New
-                onSubmit={(e) => !this.afterSendMessage && this.submitMessage(e)}
-                onChange={(e) => !this.afterSendMessage && this.handleInput(e)}
+                onChange={(e) => this.handleInput(e)}
+                onSubmit={(e) => this.submitMessage(e)}
                 value={message}
-                submitting={this.afterSendMessage}
-              />
-            </p>
+                submitting={this.submitting.replyMessage} />
+            </div>
           </div>
         </div>
       </div>
