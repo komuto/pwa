@@ -8,11 +8,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import _ from 'lodash'
 import NProgress from 'nprogress'
+import InfiniteScroll from 'react-infinite-scroller'
 /** including component */
 import Content from '../../Components/Content'
 import Section from '../../Components/Section'
 import Notification from '../../Components/Notification'
+import Loading from '../../Components/Loading'
 /** including actions */
 import * as saldoActions from '../../actions/saldo'
 /** including custom lib */
@@ -23,8 +26,13 @@ class TopupStatus extends Component {
     super(props)
     /** define state */
     this.state = {
-      topupStatus: props.topupStatus || null,
-      notification: props.notification
+      hasMore: false,
+      topupStatus: null,
+      notification: props.notification,
+      params: {
+        page: 1,
+        limit: 10
+      }
     }
     /** define submitting status, status when they call or not [TRUE, FALSE] */
     this.submitting = {
@@ -45,16 +53,32 @@ class TopupStatus extends Component {
           activeClose
           onClose={() => this.setState({notification: {status: false, message: ''}})}
           message={notification.message} />
-        { isFound(topupStatus) && <TopupContent {...this.state} /> }
+        {
+          (topupStatus && isFound(topupStatus)) &&
+          <TopupContent
+            {...this.state}
+            handleLoadMore={() => this.handleLoadMore()} />
+        }
       </Content>
     )
+  }
+
+  /** load more history */
+  handleLoadMore () {
+    if (!this.submitting.topupStatus) {
+      let { params } = this.state
+      params.page += 1
+      this.submitting = { ...this.submitting, topupStatus: true }
+      this.props.getTopupStatus(this.state.params)
+      this.setState({ params })
+    }
   }
 
   componentDidMount () {
     /** set submitting topupStatus true then call get topupStatus api */
     NProgress.start()
     this.submitting = { ...this.submitting, topupStatus: true }
-    this.props.getTopupStatus({})
+    this.props.getTopupStatus(this.state.params)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -72,22 +96,34 @@ class TopupStatus extends Component {
         this.setState({ notification: notifError(topupStatus.message) })
       }
       if (isFound(topupStatus)) {
-        this.setState({ topupStatus })
+        let hasMore = topupStatus.statuses.length >= 9
+        if (this.state.topupStatus) {
+          let statuses = topupStatus.statuses
+          topupStatus.statuses = this.state.topupStatus.statuses.concat(statuses)
+        }
+        this.setState({ topupStatus, hasMore })
       }
     }
   }
 }
 
 /** content from this component */
-const TopupContent = ({ topupStatus }) => {
+const TopupContent = ({ topupStatus, handleLoadMore, hasMore }) => {
+  console.log('hasMore: ', hasMore)
   return (
     <Section>
       <WrapperList>
-        {
-          topupStatus.statuses.map((status, index) => {
-            return <List key={index} {...status} />
-          })
-        }
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={_.debounce(handleLoadMore, 250)}
+          hasMore={hasMore}
+          loader={<Loading size={12} color='#ef5656' className='is-fullwidth has-text-centered' />}>
+          {
+            topupStatus.statuses.map((status, index) => {
+              return <List key={index} {...status} />
+            })
+          }
+        </InfiniteScroll>
       </WrapperList>
     </Section>
   )
