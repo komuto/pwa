@@ -7052,7 +7052,8 @@ strong.total {
         padding-top: 6px; }
         .level.header .nav-left .box .media .media-left {
           width: 30px;
-          height: 30px; }
+          height: 30px;
+          overflow: hidden; }
         .level.header .nav-left .box .media .media-content p strong {
           color: #ffffff; }
   .level.header.bg-white {
@@ -7869,12 +7870,13 @@ strong.total {
   position: relative; }
   .filter-price .input {
     border: none;
-    padding: 10px 10px 10px 25px; }
+    padding: 10px 10px 10px 25px;
+    font-size: 12px; }
     .filter-price .input:focus {
       border-bottom: 1px solid #cccccc; }
   .filter-price .currency {
     position: absolute;
-    top: 6px;
+    top: 8px;
     left: 0;
     z-index: 2; }
 
@@ -8579,7 +8581,9 @@ strong.total {
           color: #404852;
           z-index: 2; }
         .edit-data-delivery .field .control.with-currency .input {
-          padding-left: 28px; }
+          padding-left: 28px;
+          padding-top: 0;
+          padding-bottom: 0; }
   .edit-data-delivery.edit .field .control.detail-address .location-label {
     color: #41475e;
     font-size: 13px; }
