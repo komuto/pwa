@@ -386,7 +386,7 @@ const ContentHidden = (props) => {
                         { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                         <p>Jumlah Stok : { p.stock }</p>
                         <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p>
-                        <p>Komisi yang diterima : Rp { RupiahFormat(priceReceive) }</p>
+                        <p>{ p.dropship_origin ? 'Komisi' : 'Uang' } yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                       </div>
                     </div>
                   </div>
@@ -402,6 +402,7 @@ const ContentHidden = (props) => {
 
 const ContentShow = (props) => {
   const { isEmpty, searchValue } = props
+  console.log('props: ', props)
   if (isEmpty.storeProducts) return (<ProductShowEmpty />)
   if (isEmpty.searchProducts) return (<ProductNotFound />)
   return (
@@ -481,7 +482,7 @@ const ContentShow = (props) => {
                           { (!p.hasOwnProperty('dropship_origin') && p.is_dropship) && <p className='dropship-item'>Terbuka untuk dropshipper</p> }
                           <p>Jumlah Stok : { p.stock }</p>
                           { p.is_discount && <p>Harga jual setelah diskon : Rp { RupiahFormat(priceAfterDiscount) }</p> }
-                          <p>Komisi yang diterima : Rp { RupiahFormat(priceReceive) }</p>
+                          <p>{ p.dropship_origin ? 'Komisi' : 'Uang' } yang diterima : Rp { RupiahFormat(priceReceive) }</p>
                         </div>
                       </div>
                     </div>
