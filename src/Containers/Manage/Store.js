@@ -6,6 +6,7 @@ import { animateScroll } from 'react-scroll'
 // components
 import Content from '../../Components/Content'
 // actions
+import * as transactionAction from '../../actions/transaction'
 import * as actionTypes from '../../actions/user'
 import * as storesAction from '../../actions/stores'
 // services
@@ -15,9 +16,14 @@ class ManageStore extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      sellerComplainedOrders: props.sellerComplainedOrders || null,
       profile: props.profile,
       loadingBiodata: false,
       unreadDisputesStore: null,
+      pagination: {
+        page: 1,
+        limit: 10
+      },
       notification: {
         status: false,
         color: 'is-success',
@@ -28,6 +34,8 @@ class ManageStore extends Component {
       unreadDisputesStore: false,
       profile: false
     }
+    this.fetchingFirst = false
+    this.fetching = false
   }
 
   /** reset scroll */
@@ -42,6 +50,17 @@ class ManageStore extends Component {
     this.setState(newState)
   }
 
+  async loadMore () {
+    let { pagination } = this.state
+    if (!this.fetching) {
+      const newState = { pagination }
+      newState.pagination['page'] = pagination.page + 1
+      this.setState(newState)
+      this.fetching = true
+      await this.props.getComplainedOrdersSeller(pagination)
+    }
+  }
+
   componentDidMount () {
     this.scrollToTop()
     const { isFound } = this.props
@@ -50,12 +69,14 @@ class ManageStore extends Component {
       this.submitting = { ...this.submitting, profile: true }
       this.props.getProfile()
     }
-    this.submitting = { ...this.submitting, unreadDisputesStore: true }
-    this.props.getUnreadDisputeStore()
+    // this.submitting = { ...this.submitting, sellerComplainedOrders: true }
+    // this.props.getUnreadDisputeStore()
+    this.fetchingFirst = true
+    this.props.getComplainedOrdersSeller({ page: 1, limit: 10, is_resolved: false })
   }
 
   componentWillReceiveProps (nextProps) {
-    const { profile, unreadDisputesStore } = nextProps
+    const { profile, unreadDisputesStore, sellerComplainedOrders } = nextProps
     const { isFetching, isError, isFound, notifError } = this.props
 
     if (!isFetching(unreadDisputesStore) && this.submitting.unreadDisputesStore) {
@@ -65,6 +86,33 @@ class ManageStore extends Component {
       }
       if (isFound(unreadDisputesStore)) {
         this.setState({ unreadDisputesStore })
+      }
+    }
+
+    if (!isFetching(sellerComplainedOrders) && this.fetchingFirst) {
+      if (isFound(sellerComplainedOrders)) {
+        this.fetchingFirst = false
+        this.setState({ sellerComplainedOrders }, () => {
+          if (isFound(this.state.sellerComplainedOrders)) {
+            this.loadMore()
+          }
+        })
+      }
+    }
+    if (!isFetching(sellerComplainedOrders) && this.fetching) {
+      if (isFound(sellerComplainedOrders)) {
+        let newData = this.state.sellerComplainedOrders
+        if (sellerComplainedOrders.orders.length > 0) {
+          this.fetching = false
+          newData.orders = newData.orders.concat(sellerComplainedOrders.orders)
+          this.setState({ sellerComplainedOrders: newData })
+          this.loadMore()
+        } else {
+          this.fetching = false
+        }
+      }
+      if (isError(sellerComplainedOrders)) {
+        this.fetching = false
       }
     }
 
@@ -102,14 +150,14 @@ class ManageStore extends Component {
   }
 
   render () {
-    const { profile, unreadDisputesStore } = this.state
+    console.log('state', this.state)
+    const { profile, sellerComplainedOrders } = this.state
     const { isFound } = this.props
     let countDispute = 0
 
-    if (unreadDisputesStore) {
-      if (isFound(unreadDisputesStore)) {
-        const { disputes } = unreadDisputesStore
-        countDispute = disputes.disputes
+    if (sellerComplainedOrders) {
+      if (isFound(sellerComplainedOrders)) {
+        countDispute = sellerComplainedOrders.orders.length
       }
     }
 
@@ -320,12 +368,14 @@ const VerificationContent = ({ store }) => (
 const mapStateToProps = (state) => ({
   profile: state.profile,
   changePassword: state.changePassword,
-  unreadDisputesStore: state.unreadDisputesStore
+  unreadDisputesStore: state.unreadDisputesStore,
+  sellerComplainedOrders: state.sellerComplainedOrders
 })
 
 const mapDispatchToProps = dispatch => ({
   getProfile: () => dispatch(actionTypes.getProfile()),
   logout: () => dispatch(actionTypes.logout()),
+  getComplainedOrdersSeller: (params) => dispatch(transactionAction.getComplainedOrdersSeller(params)),
   getUnreadDisputeStore: () => dispatch(storesAction.getUnreadDisputeStore())
 })
 
