@@ -150,7 +150,6 @@ class ManageStore extends Component {
   }
 
   render () {
-    console.log('state', this.state)
     const { profile, sellerComplainedOrders } = this.state
     const { isFound } = this.props
     let countDispute = 0
