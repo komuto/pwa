@@ -402,7 +402,6 @@ const ContentHidden = (props) => {
 
 const ContentShow = (props) => {
   const { isEmpty, searchValue } = props
-  console.log('props: ', props)
   if (isEmpty.storeProducts) return (<ProductShowEmpty />)
   if (isEmpty.searchProducts) return (<ProductNotFound />)
   return (
