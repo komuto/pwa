@@ -7870,13 +7870,13 @@ strong.total {
   position: relative; }
   .filter-price .input {
     border: none;
-    padding: 10px 10px 10px 25px;
+    padding: 0 10px 0 25px;
     font-size: 12px; }
     .filter-price .input:focus {
       border-bottom: 1px solid #cccccc; }
   .filter-price .currency {
     position: absolute;
-    top: 8px;
+    top: 5px;
     left: 0;
     z-index: 2; }
 
