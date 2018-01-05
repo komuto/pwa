@@ -46,8 +46,8 @@ export class Filter extends Component {
           name: 'Rentang Harga',
           viewCheckAll: false,
           customComponent: true,
-          priceMinimum: '100000',
-          priceMaximum: '250000',
+          priceMinimum: '',
+          priceMaximum: '',
           errorPriceMinimum: '',
           errorPriceMaximum: ''
         },
@@ -274,14 +274,14 @@ export class Filter extends Component {
           <span className='label'>Harga Minimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
-            <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} placeholder='0' />
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMinimum(e)} value={filterTabResults.priceMinimum} placeholder='100.000' />
           </div>
         </label>
         <label className='checkbox is-other'>
           <span className='label'>Harga Maksimal</span>
           <div className='filter-price'>
             <span className='currency'>Rp</span>
-            <input type='text' className='input' onChange={(e) => this.onChangePriceMaximun(e)} value={filterTabResults.priceMaximum} placeholder='0' />
+            <input type='text' className='input' onChange={(e) => this.onChangePriceMaximun(e)} value={filterTabResults.priceMaximum} placeholder='250.000' />
           </div>
         </label>
       </Content>
