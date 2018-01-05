@@ -350,7 +350,7 @@ const ContentHidden = (props) => {
       <section className='section is-paddingless'>
         <div className='field search-form paddingless'>
           <p className='control has-icons-left'>
-            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari barang ' onChange={(e) => props.searchOnChange(e)} />
+            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari Produk ' onChange={(e) => props.searchOnChange(e)} />
             <span className='icon is-left'>
               <span className='icon-search' />
             </span>
@@ -409,7 +409,7 @@ const ContentShow = (props) => {
       <section className='section is-paddingless'>
         <div className='field search-form paddingless'>
           <p className='control has-icons-left'>
-            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari barang ' onChange={(e) => props.searchOnChange(e)} />
+            <input className='input is-medium' type='text' value={searchValue} placeholder='Cari Produk ' onChange={(e) => props.searchOnChange(e)} />
             <span className='icon is-left'>
               <span className='icon-search' />
             </span>

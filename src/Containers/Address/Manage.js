@@ -124,6 +124,7 @@ class DataAddress extends React.Component {
   }
 
   render () {
+    console.log('state', this.state)
     const { listAddress, dropdownSelected, confirmDelete, notification, submiting } = this.state
     return (
       <div>
@@ -167,7 +168,7 @@ class DataAddress extends React.Component {
                   <div className='title-content'>
                     <h3>Alamat</h3>
                   </div>
-                  <p>{val.address}</p>
+                  <p>{`${val.address}, ${val.village.name}, ${val.subDistrict.name}, ${val.district.name}, ${val.province.name}, ${val.postal_code}`}</p>
                 </div>
               </div>
             </section>
