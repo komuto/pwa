@@ -67,7 +67,7 @@ class History extends Component {
         filterBalance: {
           show: true,
           value: this.state.params.filter.length,
-          press: () => this.filterPress()
+          press: (e) => this.filterPress(e)
         }
       }
     }
@@ -88,7 +88,7 @@ class History extends Component {
             handleLoadMore={() => this.handleLoadMore()}
             summTransSelected={(e, type) => this.summTransSelected(e, type)}
             datePickerPress={(e, selected) => this.datePickerPress(e, selected)}
-            filterPress={() => this.filterPress()}
+            filterPress={(e) => this.filterPress(e)}
             submitPress={() => this.submitPress()} />
         }
         {
@@ -165,7 +165,8 @@ class History extends Component {
   }
 
   /** filter press */
-  filterPress () {
+  filterPress (e) {
+    if (!e.target.className.includes('sortButton')) return
     this.setState({
       filter: {
         ...this.state.filter,
@@ -245,7 +246,7 @@ const HistoryContent = ({ params, saldoHistory, submitting, handleLoadMore, hasM
         submitting={submitting}
         summTransSelected={(e, type) => summTransSelected(e, type)}
         datePickerPress={(e, selected) => datePickerPress(e, selected)}
-        filterPress={() => filterPress()}
+        filterPress={(e) => filterPress(e)}
         submitPress={() => submitPress()} />
     </Content>
   )
@@ -255,8 +256,8 @@ const FilterContent = ({ params, filter, submitting, summTransSelected, datePick
   let startAt = getStartAt(params)
   let endAt = getEndAt(params)
   return (
-    <div className='sort-option' style={{ display: filter.isActive ? 'block' : 'none' }}>
-      <div className='sort-list edit-data-delivery edit'>
+    <div className='sort-option sortButton' onClick={(e) => filterPress(e)} style={{ display: filter.isActive ? 'block' : 'none' }}>
+      <div className='sort-list edit-data-delivery edit sortButton'>
         <form className='form edit'>
           <div className='filter-option active '>
             <div className='sort-list check-list middle item-select'>

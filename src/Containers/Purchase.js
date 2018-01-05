@@ -90,6 +90,11 @@ class Purchase extends Component {
       productDetail: false
     }
 
+    this.objNull = {
+      id: null,
+      name: null
+    }
+
     this.loadingSpan = <span className='has-text-right' style={{ position: 'absolute', right: 20 }}><Loading size={14} type='ovals' color='#ef5656' /></span>
   }
 
@@ -98,9 +103,8 @@ class Purchase extends Component {
   }
 
   wholesalesPrice (amountProduct) {
-    const { productDetail } = this.state
     let wholesalerSelected = null
-    productDetail.detail.wholesaler.forEach(wholesale => {
+    this.state.productDetail.detail.wholesaler.forEach(wholesale => {
       if (amountProduct >= wholesale.min && amountProduct <= wholesale.max) {
         wholesalerSelected = wholesale
         return true
@@ -112,22 +116,28 @@ class Purchase extends Component {
     this.setState({ wholesalerSelected })
   }
 
-  // min button press
-  async plussPress () {
-    let { amountProduct } = this.state
-    amountProduct += 1
-    this.wholesalesPrice(amountProduct)
-    await this.props.setAmountProduct({ amountProduct })
-    this.setState({ amountProduct })
+  // plus button press
+  plussPress () {
+    this.updateAmountProduct(this.state.amountProduct + 1)
   }
 
-  // plus button press
-  async minPress () {
-    let { amountProduct } = this.state
-    amountProduct -= 1
+  // min button press
+  minPress () {
+    this.updateAmountProduct(this.state.amountProduct - 1)
+  }
+
+  updateAmountProduct (amountProduct) {
+    let { id, productDetail, address } = this.state
     this.wholesalesPrice(amountProduct)
-    await this.props.setAmountProduct({ amountProduct })
+    this.props.setAmountProduct({ amountProduct })
     this.setState({ amountProduct })
+    if (address.selected.status) {
+      let originId = productDetail.detail.location.district.ro_id
+      let destinationId = address.selected.district.ro_id
+      let weight = productDetail.detail.product.weight * amountProduct
+      this.submiting = { ...this.submiting, estimatedCharges: true }
+      this.props.setEstimatedShipping({ id, origin_id: originId, destination_id: destinationId, weight })
+    }
   }
 
   // address event
@@ -136,22 +146,36 @@ class Purchase extends Component {
     this.setState({ address: { ...this.state.address, show: !this.state.address.show } })
   }
 
-  async addressSelected (e, selected) {
+  addressSelected (e, selected) {
     e.preventDefault()
-    const { id, productDetail } = this.state
+    // define var
+    let { id, productDetail, amountProduct } = this.state
+    let originId = productDetail.detail.location.district.ro_id
+    let destinationId = selected.district.ro_id
+    let weight = productDetail.detail.product.weight * amountProduct
+    // trigger
     this.submiting = { ...this.submiting, estimatedCharges: true }
-    await this.props.setEstimatedShipping({
-      id,
-      origin_id: productDetail.detail.location.district.ro_id,
-      destination_id: selected.district.ro_id,
-      weight: 1000
-    })
-    await this.props.setAddressSelected({ ...selected, status: true })
+    // get shipping price
+    this.props.setEstimatedShipping({ id, origin_id: originId, destination_id: destinationId, weight })
+    // set address selected
+    this.props.setAddressSelected({ ...selected, status: true })
     this.setState({
-      address: {...this.state.address, show: false, selected: { ...selected, status: true }, submiting: true},
-      expeditions: { ...this.state.expeditions, selected: { id: null, name: null } },
-      expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
-      error: this.state.error === 'addressSelected' && null })
+      address: {
+        ...this.state.address,
+        show: false,
+        selected: { ...selected, status: true },
+        submiting: true
+      },
+      expeditions: {
+        ...this.state.expeditions,
+        selected: { ...this.objNull }
+      },
+      expeditionsPackage: {
+        ...this.state.expeditionsPackage,
+        selected: { ...this.objNull }
+      },
+      error: this.state.error === 'addressSelected' && null
+    })
   }
 
   // expedition event
@@ -160,9 +184,9 @@ class Purchase extends Component {
     this.setState({ expeditions: { ...this.state.expeditions, show: !this.state.expeditions.show } })
   }
 
-  async expeditionSelected (e, selected) {
+  expeditionSelected (e, selected) {
     e.preventDefault()
-    await this.props.setCourierExpedition(selected)
+    this.props.setCourierExpedition(selected)
     let isServiceAvailable = this.state.expeditionsPackage.data.filter((data) => {
       return data.expedition_id === selected.id
     }).length > 0
@@ -172,9 +196,17 @@ class Purchase extends Component {
     }
 
     this.setState({
-      expeditions: { ...this.state.expeditions, show: false, selected },
-      expeditionsPackage: { ...this.state.expeditionsPackage, selected: { id: null, name: null } },
-      error: this.state.error === 'expeditions' && null })
+      expeditions: {
+        ...this.state.expeditions,
+        show: false,
+        selected
+      },
+      expeditionsPackage: {
+        ...this.state.expeditionsPackage,
+        selected: { ...this.objNull }
+      },
+      error: this.state.error === 'expeditions' && null
+    })
   }
 
   // expedition package event
@@ -369,7 +401,15 @@ class Purchase extends Component {
 
     // delevery price
     if (expeditionsPackage.selected.cost) {
-      deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000))
+      // deliveryPrice = (expeditionsPackage.selected.cost * Math.ceil((amountProduct * product.weight) / 1000))
+      let selectedPackage = null
+      expeditionsPackage.data.forEach((data) => {
+        if (data.id === expeditionsPackage.selected.id) {
+          selectedPackage = data
+          return true
+        }
+      })
+      deliveryPrice = selectedPackage.cost
     }
 
     // insurance price

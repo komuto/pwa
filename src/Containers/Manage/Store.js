@@ -80,6 +80,7 @@ class ManageStore extends Component {
     const { isFetching, isError, isFound, notifError } = this.props
 
     if (!isFetching(unreadDisputesStore) && this.submitting.unreadDisputesStore) {
+      console.log('unreadDisputesStore: ', unreadDisputesStore)
       this.submitting = { ...this.submitting, unreadDisputesStore: false }
       if (isError(unreadDisputesStore)) {
         this.setState({ notification: notifError(unreadDisputesStore.message) })
