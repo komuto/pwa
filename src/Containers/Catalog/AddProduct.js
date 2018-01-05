@@ -30,6 +30,7 @@ class CatalogAddProduct extends React.Component {
       selectedCatalog: null,
       confirmDelete: false,
       catalog: '',
+      isEmptyProduct: { productDetail: false, storeProductDetail: false },
       isEmpty: false,
       notification: {
         status: false,
@@ -133,7 +134,8 @@ class CatalogAddProduct extends React.Component {
       NProgress.done()
       this.fetching = { ...this.fetching, productDetail: false }
       if (isFound(productDetail)) {
-        this.setState({ productDetail })
+        let isEmpty = !isFound(productDetail)
+        this.setState({ productDetail, isEmptyProduct: { ...this.state.isEmptyProduct, productDetail: isEmpty } })
       }
       if (isError(productDetail)) {
         this.setState({ notification: notifError(productDetail.message) })
@@ -144,7 +146,8 @@ class CatalogAddProduct extends React.Component {
       NProgress.done()
       this.fetching = { ...this.fetching, storeProductDetail: false }
       if (isFound(storeProductDetail)) {
-        this.setState({ storeProductDetail })
+        let isEmpty = !isFound(storeProductDetail)
+        this.setState({ storeProductDetail, isEmptyProduct: { ...this.state.isEmptyProduct, storeProductDetail: isEmpty } })
       }
       if (isError(storeProductDetail)) {
         this.setState({ notification: notifError(storeProductDetail.message) })
@@ -204,57 +207,38 @@ class CatalogAddProduct extends React.Component {
   }
 
   renderProductDetail () {
-    const { productDetail, storeProductDetail } = this.state
-    if (productDetail.isFound) {
-      return (
-        <li>
-          <div className='box is-paddingless'>
-            <article className='media'>
-              <div className='media-left'>
-                <figure className='image product-pict img-catalog'>
-                  <MyImage src={productDetail.detail.images[0].file} alt='pict' />
-                </figure>
-              </div>
-              <div className='media-content'>
-                <div className='content'>
-                  <p className='products-name'>
-                    <strong>{productDetail.detail.product.name}</strong>
-                    <br />
-                    Rp { RupiahFormat(productDetail.detail.product.price)} <span>- Komisi {this.props.query.commission }%</span>
-                  </p>
+    const { productDetail, storeProductDetail, isEmptyProduct } = this.state
+    const isDetailDropship = this.props.query.type === 'detailDropship'
+    if (productDetail.isFound || storeProductDetail.isFound) {
+      let price = isDetailDropship ? storeProductDetail.storeProductDetail.product.price : productDetail.detail.product.price
+      if (isEmptyProduct.productDetail || isEmptyProduct.storeProductDetail) {
+        return (
+          <ProductEmpty />
+        )
+      } else {
+        return (
+          <li>
+            <div className='box is-paddingless'>
+              <article className='media'>
+                <div className='media-left'>
+                  <figure className='image product-pict img-catalog'>
+                    <MyImage src={isDetailDropship ? storeProductDetail.storeProductDetail.images[0].file : productDetail.detail.images[0].file} alt='pict' />
+                  </figure>
                 </div>
-              </div>
-            </article>
-          </div>
-        </li>
-      )
-    } else if (storeProductDetail.isFound) {
-      return (
-        <li>
-          <div className='box is-paddingless'>
-            <article className='media'>
-              <div className='media-left'>
-                <figure className='image user-pict img-catalog'>
-                  <MyImage src={storeProductDetail.storeProductDetail.images[0].file} alt='pict' />
-                </figure>
-              </div>
-              <div className='media-content'>
-                <div className='content'>
-                  <p className='products-name'>
-                    <strong>{storeProductDetail.storeProductDetail.product.name}</strong>
-                    <br />
-                    Rp { RupiahFormat(storeProductDetail.storeProductDetail.product.price)} <span>- Komisi {this.props.query.commission * 100}%</span>
-                  </p>
+                <div className='media-content'>
+                  <div className='content'>
+                    <p className='products-name'>
+                      <strong>{isDetailDropship ? storeProductDetail.storeProductDetail.product.name : productDetail.detail.product.name}</strong>
+                      <br />
+                      Rp { RupiahFormat(price)} <span>- Komisi {this.props.query.commission }%</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </article>
-          </div>
-        </li>
-      )
-    } else {
-      return (
-        <ProductEmpty />
-      )
+              </article>
+            </div>
+          </li>
+        )
+      }
     }
   }
 
