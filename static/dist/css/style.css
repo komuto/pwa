@@ -7548,17 +7548,18 @@ strong.total {
         font-size: 12px; }
       .columns.custom .slick-slide .column .box.grid .media .media-content .content .detail .price {
         font-size: 14px; }
-  .columns.custom .slick-slide.fav-store:last-child .column .box.grid {
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%); }
-    .columns.custom .slick-slide.fav-store:last-child .column .box.grid .media .media-left .image {
-      width: 40px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto; }
-    .columns.custom .slick-slide.fav-store:last-child .column .box.grid .media .media-content .content span {
-      font-size: 12px; }
+
+.columns.custom .slide-items.fav-store .slick-slide:last-child .column .box.grid {
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%); }
+  .columns.custom .slide-items.fav-store .slick-slide:last-child .column .box.grid .media .media-left .image {
+    width: 40px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; }
+  .columns.custom .slide-items.fav-store .slick-slide:last-child .column .box.grid .media .media-content .content span {
+    font-size: 12px; }
 
 @media screen and (max-width: 360px) {
   .discuss ul li .time-discuss.relativeMobile {

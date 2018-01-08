@@ -257,7 +257,7 @@ const StoreFavoriteContent = ({ listFavoriteStore, submitting }) => {
                     </div>
                   </div>
                   <div className='columns custom'>
-                    <div className='slide-items owl-theme'>
+                    <div className='slide-items owl-theme fav-store'>
                       {
                         data.products.length > 0 &&
                         <Slider {...settings}>
