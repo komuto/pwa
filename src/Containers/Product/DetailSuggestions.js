@@ -43,7 +43,7 @@ class ProductDetailSuggestions extends Component {
                   <div className='box list'>
                     <div className='media'>
                       <div className='media-left' style={{width: '40%'}}>
-                        <figure className='image'>
+                        <figure className='image img-product'>
                           <a>
                             <MyImage src={product.image} alt={product.name} />
                           </a>
