@@ -257,7 +257,7 @@ class Store extends Component {
             } >
             <div className='media'>
               <div className='media-left'>
-                <figure className='image' style={{ width: 212 }}>
+                <figure className='image img-product' style={{ width: 212 }}>
                   <a><MyImage src={product.image} alt={product.name} /></a>
                   { pin }
                 </figure>
