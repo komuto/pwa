@@ -588,7 +588,7 @@ const ContentProduk = (props) => {
             <Element name={`ID${catalog.id}`} className={`section is-paddingless`} key={index}>
               <div className='columns is-mobile view-all'>
                 <div className='column'>
-                  <p>{ ReadAbleText(catalog.name) } {String(catalog.id)}</p><p /></div>
+                  <p>{ ReadAbleText(catalog.name) }</p><p /></div>
                 <div className='column has-text-right'>
                   <span onClick={() =>
                     Router.push(
