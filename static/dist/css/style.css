@@ -7996,7 +7996,7 @@ strong.total {
       border-radius: 700px;
       width: 78px;
       height: 78px;
-      border: 7px solid rgba(183, 183, 183, 0.2); }
+      border: 7px solid rgba(183, 183, 183, 0.9); }
       .seller-info .box.seller .media .media-left .image img {
         border-radius: 700px; }
     .seller-info .box.seller .media .media-content .content h4 {
@@ -8735,7 +8735,7 @@ strong.total {
     width: 99px;
     height: 99px;
     border-radius: 700px;
-    border: 7px solid rgba(183, 183, 183, 0.2);
+    border: 5px solid rgba(183, 183, 183, 0.9);
     margin: 0 auto;
     margin-bottom: 20px;
     overflow: hidden; }
