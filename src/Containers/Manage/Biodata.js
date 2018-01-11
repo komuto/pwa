@@ -429,7 +429,7 @@ class ManageBiodata extends React.Component {
                     confirmText='Set Tanggal Lahir'
                     cancelText='Batal' />
                   <span className='location-label js-option' onClick={(e) => this.handleCancel(e)}>
-                    {!formBiodata.date_of_birth ? 'Tanggal Anda' : moment(formBiodata.date_of_birth).format('DD-MM-YYYY')}
+                    {!formBiodata.date_of_birth ? 'Tanggal Anda' : moment(formBiodata.date_of_birth).format('DD MMMM YYYY')}
                   </span>
                 </p>
                 {this.renderValidation('date_of_birth', 'Mohon pilih tanggal lahir anda')}

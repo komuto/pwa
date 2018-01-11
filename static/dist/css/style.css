@@ -8059,10 +8059,13 @@ strong.total {
     padding-bottom: 0; }
     .profile-content.rating .profile-wrapp .detail-seller li .box .media .media-left .image {
       width: 45px;
-      height: 45px; }
+      height: 45px;
+      overflow: hidden; }
       .profile-content.rating .profile-wrapp .detail-seller li .box .media .media-left .image.sm {
         width: 30px;
         height: 30px; }
+        .profile-content.rating .profile-wrapp .detail-seller li .box .media .media-left .image.sm img {
+          height: 45px; }
     .profile-content.rating .profile-wrapp .detail-seller li .box .media .media-content .content p {
       color: #41475e; }
       .profile-content.rating .profile-wrapp .detail-seller li .box .media .media-content .content p > span {
