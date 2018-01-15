@@ -5921,14 +5921,16 @@ strong {
         max-width: 150px;
         margin: 0 auto; }
         .box .media .media-left .image.img-product img {
-          height: 150px; }
+          height: 150px;
+          width: 100%; }
         .box .media .media-left .image.img-catalog {
           width: 40px;
           height: 40px;
           max-width: inherit;
           overflow: hidden; }
         .box .media .media-left .image img {
-          max-width: 100%; }
+          max-width: 100%;
+          width: 100%; }
         .box .media .media-left .image.list-detail {
           width: 100%;
           max-width: 65px;
@@ -9984,7 +9986,8 @@ strong.total {
       .seller-items li a.inline-text {
         margin-right: 10px; }
       .seller-items li a img {
-        height: 30px; }
+        height: 30px;
+        width: 100%; }
 
 @media screen and (max-width: 766px) {
   .box .media.list-item {
@@ -10045,7 +10048,8 @@ strong.total {
       height: 30px;
       overflow: hidden; }
       .discuss .conversation li .box .media .media-left.sm .user-pict img {
-        height: 30px; }
+        height: 30px;
+        width: 100%; }
     .discuss .conversation li .box .media .media-content .content {
       margin-right: 0; }
       .discuss .conversation li .box .media .media-content .content .invoice-link {
