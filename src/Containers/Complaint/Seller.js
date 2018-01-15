@@ -397,8 +397,8 @@ const EmptyComplain = () => {
         <div className='desc has-text-centered'>
           <MyImage src={Images.emptyComplaint} alt='komuto' />
           <br /><br />
-          <p><strong className='bold'>Komplain Barang Kosong</strong></p>
-          <p>Anda belum memiliki komplain barang untuk diselesaikan masalahnya</p>
+          <p><strong className='bold'>Komplain Barang Anda kosong</strong></p>
+          <p>Anda belum pernah mengirimkan komplain terkait barang yang Anda beli</p>
         </div>
       </div>
     </div>
