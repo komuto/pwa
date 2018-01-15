@@ -183,6 +183,7 @@ const UnResolvedContent = ({ data }) => {
   if (data.orders.length > 0) {
     return (
       <Content>
+        <div className="noteComplain">Berikut adalah daftar pembelian yang terdapat barang bermasalah di dalamnya</div>
         {
         data.orders.map((order, index) => (
           <ItemStore key={index} order={order} />
