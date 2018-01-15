@@ -7391,9 +7391,11 @@ strong.total {
         .profile-wrapp ul li .box .media-left .user-pict, .discuss ul li .box .media-left .user-pict {
           width: 40px;
           height: 40px;
-          border-radius: 700px; }
+          border-radius: 700px;
+          overflow: hidden; }
           .profile-wrapp ul li .box .media-left .user-pict img, .discuss ul li .box .media-left .user-pict img {
             width: 100%;
+            height: 40px;
             border-radius: 700px; }
         .profile-wrapp ul li .box .media-left .product-pict img, .discuss ul li .box .media-left .product-pict img {
           width: 100%;
@@ -9975,11 +9977,14 @@ strong.total {
       border-radius: 3px;
       display: inline-block;
       overflow: hidden;
-      vertical-align: middle; }
+      vertical-align: middle;
+      overflow: hidden; }
       .seller-items li a.is-bordered {
         border-radius: 700px; }
       .seller-items li a.inline-text {
         margin-right: 10px; }
+      .seller-items li a img {
+        height: 30px; }
 
 @media screen and (max-width: 766px) {
   .box .media.list-item {
@@ -10037,7 +10042,10 @@ strong.total {
     border-bottom: none; }
     .discuss .conversation li .box .media .media-left.sm .user-pict {
       width: 30px;
-      height: 30px; }
+      height: 30px;
+      overflow: hidden; }
+      .discuss .conversation li .box .media .media-left.sm .user-pict img {
+        height: 30px; }
     .discuss .conversation li .box .media .media-content .content {
       margin-right: 0; }
       .discuss .conversation li .box .media .media-content .content .invoice-link {
