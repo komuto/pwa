@@ -183,9 +183,6 @@ const UnResolvedContent = ({ data }) => {
   if (data.orders.length > 0) {
     return (
       <Content>
-        <div className='noteComplain'>
-            Berikut adalah daftar pembelian yang terdapat barang bermasalah di dalamnya
-        </div>
         {
         data.orders.map((order, index) => (
           <ItemStore key={index} order={order} />
@@ -202,9 +199,6 @@ const ResolvedContent = ({ data }) => {
   if (data.orders.length > 0) {
     return (
       <Content>
-        <div className='noteComplain'>
-            Berikut adalah daftar pembelian yang terdapat barang bermasalah di dalamnya
-        </div>
         {
         data.orders.map((order, index) => (
           <ItemStore key={index} order={order} />
@@ -218,81 +212,86 @@ const ResolvedContent = ({ data }) => {
 }
 
 export const ItemStore = ({ order }) => (
-  <section onClick={() =>
-    Router.push(
-      `/complaint?type=buyer&id=${order.id}&tab=Detail`,
-      `/complaint/buyer/${order.id}?tab=Detail`
-    )} className='section is-paddingless has-shadow xs-margin-top'>
-    <ul className='customer-order'>
-      <li>
-        <div className='columns custom is-mobile'>
-          <div className='column is-half'><strong>{ order.store.name }</strong></div>
-          {
-            order.count_unread > 0 &&
-            <div className='column is-half has-text-right'><span className='notif-akun right'>{order.count_unread}</span></div>
-          }
-        </div>
-      </li>
-    </ul>
-    <div className='payment-detail step-pay'>
-      <ul>
-        <li>
-          <div className='columns is-mobile is-multiline no-margin-bottom'>
-            <div className='column'>
-              <div className='box'>
-                {
-                  order.dispute_products.length === 1
-                  ? <div className='media is-right-content'>
-                    <div className='media-left'>
-                      <figure className='image list-transaction md'>
-                        <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
-                      </figure>
-                    </div>
-                    <div className='media-content middle'>
-                      <div className='content'>
-                        <h4 className='txt-overflow'>{order.dispute_products[0].name}</h4>
-                      </div>
-                    </div>
-                    <div className='right-middle'>
-                      <span className='icon-arrow-right' />
-                    </div>
-                  </div>
-                  : <div className='media list-item is-right-content middle'>
-                    {
-                      order.dispute_products.map((p, i) => {
-                        if (i < 3) {
-                          return (
-                            <div className='media-left md-margin' key={i}>
-                              <figure className='image list-transaction xs'>
-                                <a><MyImage src={p.image} alt='Pict' /></a>
-                              </figure>
-                            </div>
-                          )
-                        } else {
-                          return (
-                            <div className='media-left md-margin'>
-                              <figure className='image list-transaction md plus3'>
-                                <span>+{i++}</span>
-                                <a><MyImage src={p.image} alt='Pict' /></a>
-                              </figure>
-                            </div>
-                          )
-                        }
-                      })
-                    }
-                    <div className='right-middle'>
-                      <span className='icon-arrow-right' />
-                    </div>
-                  </div>
-                }
-              </div>
-
-            </div>
-          </div>
-        </li>
-      </ul>
+  <div>
+    <div className='noteComplain'>
+        Berikut adalah daftar pembelian yang terdapat barang bermasalah di dalamnya
     </div>
-  </section>
+      <section onClick={() =>
+        Router.push(
+          `/complaint?type=buyer&id=${order.id}&tab=Detail`,
+          `/complaint/buyer/${order.id}?tab=Detail`
+        )} className='section is-paddingless has-shadow xs-margin-top'>
+        <ul className='customer-order'>
+          <li>
+            <div className='columns custom is-mobile'>
+              <div className='column is-half'><strong>{ order.store.name }</strong></div>
+              {
+                order.count_unread > 0 &&
+                <div className='column is-half has-text-right'><span className='notif-akun right'>{order.count_unread}</span></div>
+              }
+            </div>
+          </li>
+        </ul>
+        <div className='payment-detail step-pay'>
+          <ul>
+            <li>
+              <div className='columns is-mobile is-multiline no-margin-bottom'>
+                <div className='column'>
+                  <div className='box'>
+                    {
+                      order.dispute_products.length === 1
+                      ? <div className='media is-right-content'>
+                        <div className='media-left'>
+                          <figure className='image list-transaction md'>
+                            <a><MyImage src={order.dispute_products[0].image} alt='Pict' /></a>
+                          </figure>
+                        </div>
+                        <div className='media-content middle'>
+                          <div className='content'>
+                            <h4 className='txt-overflow'>{order.dispute_products[0].name}</h4>
+                          </div>
+                        </div>
+                        <div className='right-middle'>
+                          <span className='icon-arrow-right' />
+                        </div>
+                      </div>
+                      : <div className='media list-item is-right-content middle'>
+                        {
+                          order.dispute_products.map((p, i) => {
+                            if (i < 3) {
+                              return (
+                                <div className='media-left md-margin' key={i}>
+                                  <figure className='image list-transaction xs'>
+                                    <a><MyImage src={p.image} alt='Pict' /></a>
+                                  </figure>
+                                </div>
+                              )
+                            } else {
+                              return (
+                                <div className='media-left md-margin'>
+                                  <figure className='image list-transaction md plus3'>
+                                    <span>+{i++}</span>
+                                    <a><MyImage src={p.image} alt='Pict' /></a>
+                                  </figure>
+                                </div>
+                              )
+                            }
+                          })
+                        }
+                        <div className='right-middle'>
+                          <span className='icon-arrow-right' />
+                        </div>
+                      </div>
+                    }
+                  </div>
+    
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
 )
 
 const TabsName = ['Menunggu', 'Terselesaikan']
